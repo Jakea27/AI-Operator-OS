@@ -1,22 +1,58 @@
 {
   "appId": "com.aioperator.os",
   "productName": "AI Operator OS",
+  "copyright": "Copyright © 2026 AI Operator",
+  "asar": true,
+  "compression": "maximum",
   "directories": {
+    "buildResources": "assets",
     "output": "release"
   },
   "files": [
     "dist/**/*",
     "electron/**/*",
+    "assets/icon.ico",
     "package.json"
   ],
   "win": {
-    "target": "nsis"
+    "icon": "assets/icon.ico",
+    "executableName": "AI Operator OS",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "legalTrademarks": "AI Operator",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": "always",
+    "createStartMenuShortcut": true,
+    "shortcutName": "AI Operator OS",
+    "uninstallDisplayName": "AI Operator OS",
+    "runAfterFinish": true,
+    "installerIcon": "assets/icon.ico",
+    "uninstallerIcon": "assets/icon.ico",
+    "installerHeaderIcon": "assets/icon.ico"
+  },
+  "portable": {
+    "artifactName": "${productName}-${version}-portable-${arch}.${ext}"
   },
   "mac": {
+    "icon": "assets/icon-source.png",
     "target": "dmg",
     "category": "public.app-category.business"
   },
   "linux": {
+    "icon": "assets/icon-source.png",
     "target": "AppImage",
     "category": "Office"
   }

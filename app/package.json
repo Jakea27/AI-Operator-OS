@@ -1,7 +1,12 @@
 {
   "name": "ai-operator-os",
+  "productName": "AI Operator OS",
   "version": "0.1.0-alpha",
   "description": "A local-first operating system for AI-powered businesses.",
+  "author": {
+    "name": "AI Operator"
+  },
+  "license": "UNLICENSED",
   "main": "electron/main.cjs",
   "type": "module",
   "private": true,
@@ -9,7 +14,9 @@
     "dev": "concurrently -k \"vite --configLoader runner\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "tsc --noEmit && vite build --configLoader runner",
     "preview": "vite preview --configLoader runner",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder --win nsis portable --config electron-builder.json",
+    "dist:installer": "npm run build && electron-builder --win nsis --config electron-builder.json",
+    "dist:portable": "npm run build && electron-builder --win portable --config electron-builder.json"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

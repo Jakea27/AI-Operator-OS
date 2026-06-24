@@ -2,6 +2,12 @@ const { app, BrowserWindow, shell } = require('electron')
 const path = require('node:path')
 
 const isDev = !app.isPackaged
+const iconPath = path.join(__dirname, '../assets/icon.ico')
+
+app.setName('AI Operator OS')
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.aioperator.os')
+}
 
 function createWindow() {
   const window = new BrowserWindow({
@@ -10,6 +16,8 @@ function createWindow() {
     minWidth: 1100,
     minHeight: 720,
     backgroundColor: '#090d0c',
+    icon: iconPath,
+    title: 'AI Operator OS',
     titleBarStyle: 'hiddenInset',
     show: false,
     webPreferences: {

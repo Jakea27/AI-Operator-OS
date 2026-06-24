@@ -18,6 +18,27 @@ npm run dev
 
 The application includes dedicated workspaces for Dashboard, CEO, Money, Development, Memory, Roadmap, and Settings. Workspace state is persisted locally on the device.
 
+## Windows Release Builds
+
+From the `app` directory:
+
+```bash
+npm install
+npm run build
+npm run dist
+```
+
+`npm run dist` creates both a guided Windows installer and a portable executable in `app/release/`.
+
+Additional release commands:
+
+```bash
+npm run dist:installer
+npm run dist:portable
+```
+
+The installer creates shortcuts on the desktop and in the Start Menu. Windows builds are currently produced for x64.
+
 ## North Star
 
 Maximize owner profit while minimizing owner time.

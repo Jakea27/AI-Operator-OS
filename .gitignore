@@ -25,4 +25,6 @@ app/.npm-cache/
 app/.electron-cache/
 app/.local-app-data/
 app/dist/
-app/release/
+app/release/win-unpacked/
+app/release/builder-debug.yml
+app/release/builder-effective-config.yaml
