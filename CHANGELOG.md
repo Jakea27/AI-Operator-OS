@@ -25,6 +25,10 @@
 - Manual entry workflows for revenue, expenses, projects, tasks, approvals, and memory
 - Optional sample dataset available only through an explicit Settings action
 - Empty-by-default operating state with no automatically loaded financial demo data
+- Fixed stale Windows release artifacts that still contained the pre-local-store dashboard
+- Added a prominent zero-data Dashboard state with direct revenue and expense entry actions
+- Added cross-window localStorage synchronization for real-time operating updates
+- Verified Dashboard and Money share the same persisted operating store and derived metrics
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

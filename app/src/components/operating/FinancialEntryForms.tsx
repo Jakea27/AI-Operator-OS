@@ -36,7 +36,7 @@ export function FinancialEntryForms() {
   }
 
   return (
-    <section className="panel col-span-12 p-6">
+    <section id="manual-entry" className="panel col-span-12 scroll-mt-24 p-6">
       <div className="mb-5">
         <p className="eyebrow mb-1">Manual Entry</p>
         <h3 className="m-0 text-lg font-semibold">Record operating activity</h3>

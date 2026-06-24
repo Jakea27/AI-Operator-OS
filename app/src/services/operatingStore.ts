@@ -119,6 +119,14 @@ function readState(): OperatingState {
 
 let state = readState()
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (event) => {
+    if (event.key !== STORAGE_KEY) return
+    state = readState()
+    listeners.forEach((listener) => listener())
+  })
+}
+
 function persist(next: OperatingState) {
   state = next
   try {

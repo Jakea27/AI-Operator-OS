@@ -10,6 +10,7 @@ import {
   Target,
   X,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { MetricCard } from '@/components/MetricCard'
 import { PageIntro } from '@/components/PageIntro'
 import { EmptyState } from '@/components/EmptyState'
@@ -30,6 +31,13 @@ export function Dashboard() {
   const approvalActivity = buildApprovalActivity(data)
   const pendingApprovals = data.approvals.filter((approval) => approval.status === 'pending')
   const activeProject = data.projects.find((project) => project.status === 'active')
+  const hasOperatingData =
+    data.revenueEntries.length > 0 ||
+    data.expenseEntries.length > 0 ||
+    data.approvals.length > 0 ||
+    data.projects.length > 0 ||
+    data.tasks.length > 0 ||
+    data.memoryEntries.length > 0
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -48,6 +56,20 @@ export function Dashboard() {
         }
         action={<div className={`flex items-center gap-2 rounded-full border border-line px-3 py-2 text-xs ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}><span className={`h-2 w-2 rounded-full ${storageAvailable ? 'bg-mint' : 'bg-[#ff9e8f]'}`} />{storageAvailable ? 'Local data healthy' : 'Storage unavailable'}</div>}
       />
+
+      {!hasOperatingData && (
+        <section className="panel mb-4 flex items-center justify-between gap-6 border-lime/25 bg-gradient-to-r from-lime/[0.08] to-panel p-5">
+          <div>
+            <p className="eyebrow mb-1 text-lime">Empty local workspace</p>
+            <h3 className="m-0 text-base font-semibold">Add your first operating record</h3>
+            <p className="mb-0 mt-1 text-xs text-muted">The dashboard intentionally starts at $0. Revenue and expense entries immediately update these metrics and the Money charts.</p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Link to="/money#manual-entry" className="btn-primary">Add revenue</Link>
+            <Link to="/money#manual-entry" className="btn-secondary">Add expense</Link>
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-4 gap-4">
         <MetricCard label="Revenue Today" value={formatCurrency(metrics.revenueToday)} change="From today’s entries" icon={CircleDollarSign} accent />
