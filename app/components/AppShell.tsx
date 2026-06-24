@@ -10,6 +10,7 @@ import {
   UserRound,
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useOperatingStore } from '@/src/services/operatingStore'
 
 const navigation = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
@@ -32,6 +33,8 @@ const titles: Record<string, string> = {
 
 export function AppShell() {
   const location = useLocation()
+  const { data, storageAvailable } = useOperatingStore()
+  const workspaceName = data.settings.businessName || 'Local workspace'
 
   return (
     <div className="flex min-h-screen">
@@ -81,7 +84,7 @@ export function AppShell() {
           <div className="mt-4 flex items-center gap-3 rounded-xl border border-line bg-white/[0.025] p-3">
             <div className="grid h-8 w-8 place-items-center rounded-full bg-mint/15 text-xs font-semibold text-mint">OS</div>
             <div className="min-w-0 flex-1">
-              <p className="m-0 truncate text-xs font-medium text-white">Operator Studio</p>
+              <p className="m-0 truncate text-xs font-medium text-white">{workspaceName}</p>
               <p className="m-0 text-[10px] text-muted">Local workspace</p>
             </div>
             <ChevronDown size={14} className="text-muted" />
@@ -99,8 +102,8 @@ export function AppShell() {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-2 text-xs text-[#aeb8b3]">
-              <span className="h-2 w-2 rounded-full bg-lime shadow-[0_0_10px_#c8f560]" />
-              Systems operational
+              <span className={`h-2 w-2 rounded-full ${storageAvailable ? 'bg-lime shadow-[0_0_10px_#c8f560]' : 'bg-[#ff9e8f]'}`} />
+              {storageAvailable ? 'Local systems operational' : 'Storage unavailable'}
             </div>
             <div className="grid h-9 w-9 place-items-center rounded-full border border-line bg-panel text-xs font-semibold">OS</div>
           </div>

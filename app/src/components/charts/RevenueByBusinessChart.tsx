@@ -7,16 +7,21 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { revenueByBusiness } from '@/src/data/mockBusinessMetrics'
 import { ChartTooltip } from './ChartTooltip'
 import { chartTheme, currencyTick } from './chartTheme'
 
-export function RevenueByBusinessChart() {
+type BusinessPoint = { business: string; revenue: number }
+
+export function RevenueByBusinessChart({ data }: { data: BusinessPoint[] }) {
+  if (data.length === 0) {
+    return <div className="grid h-64 place-items-center text-center text-xs text-muted">No revenue recorded this month.</div>
+  }
+
   return (
     <div className="h-64 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={revenueByBusiness}
+          data={data}
           layout="vertical"
           margin={{ top: 4, right: 10, left: 14, bottom: 0 }}
         >

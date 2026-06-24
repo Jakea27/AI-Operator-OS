@@ -19,6 +19,12 @@
 - Local mock business metrics for revenue, profit, expenses, portfolio, and approval activity
 - Responsive revenue and approval charts on the Dashboard
 - Responsive revenue, profit, business portfolio, and expense charts on the Money page
+- Unified typed local operating store for revenue, expenses, approvals, projects, tasks, sprint progress, and memory
+- Real-time Dashboard and Money calculations from persisted local records
+- Metric-driven CEO report and local storage health status
+- Manual entry workflows for revenue, expenses, projects, tasks, approvals, and memory
+- Optional sample dataset available only through an explicit Settings action
+- Empty-by-default operating state with no automatically loaded financial demo data
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

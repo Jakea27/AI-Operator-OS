@@ -1,10 +1,14 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
-import { expenseBreakdown } from '@/src/data/mockBusinessMetrics'
 import { ChartTooltip } from './ChartTooltip'
 import { currencyValue } from './chartTheme'
 
-export function ExpenseBreakdownChart() {
-  const total = expenseBreakdown.reduce((sum, item) => sum + item.value, 0)
+type ExpensePoint = { name: string; value: number; color: string }
+
+export function ExpenseBreakdownChart({ data }: { data: ExpensePoint[] }) {
+  const total = data.reduce((sum, item) => sum + item.value, 0)
+  if (total === 0) {
+    return <div className="grid h-64 place-items-center text-center text-xs text-muted">No expenses recorded this month.</div>
+  }
 
   return (
     <div>
@@ -12,7 +16,7 @@ export function ExpenseBreakdownChart() {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={expenseBreakdown}
+              data={data}
               dataKey="value"
               nameKey="name"
               innerRadius={62}
@@ -20,7 +24,7 @@ export function ExpenseBreakdownChart() {
               paddingAngle={3}
               stroke="none"
             >
-              {expenseBreakdown.map((item) => (
+              {data.map((item) => (
                 <Cell key={item.name} fill={item.color} />
               ))}
             </Pie>
@@ -35,7 +39,7 @@ export function ExpenseBreakdownChart() {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-        {expenseBreakdown.map((item) => (
+        {data.map((item) => (
           <div key={item.name} className="flex items-center justify-between gap-2 text-[11px]">
             <span className="flex items-center gap-2 text-muted">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color }} />

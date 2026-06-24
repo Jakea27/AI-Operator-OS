@@ -29,6 +29,11 @@ export function TrendLineChart({
   color = chartTheme.lime,
   gradientId,
 }: TrendLineChartProps) {
+  const hasData = data.some((point) => Number(point[dataKey]) !== 0)
+  if (!hasData) {
+    return <div className="grid h-64 place-items-center text-center text-xs text-muted">No financial activity recorded for this period.</div>
+  }
+
   return (
     <div className="h-64 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">

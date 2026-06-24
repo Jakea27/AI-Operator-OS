@@ -21,6 +21,10 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [x] Approval Queue
 - [x] Cost Tracker
 - [x] Local business metric charts
+- [x] Shared local operating data store
+- [x] Manual revenue and expense entry
+- [x] Manual project, task, approval, and memory entry
+- [x] Metrics-driven CEO report
 
 ## Sprint 0.2 - Business Builder
 
@@ -28,6 +32,8 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [ ] Business profile templates
 - [ ] Department generator
 - [ ] Prompt generator
+- [ ] Local data export, backup, and restore
+- [ ] Operating record validation and audit history
 
 ## Sprint 0.3 - Research Department
 

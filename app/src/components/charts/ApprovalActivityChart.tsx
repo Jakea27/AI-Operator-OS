@@ -7,15 +7,21 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { approvalActivity } from '@/src/data/mockBusinessMetrics'
 import { ChartTooltip } from './ChartTooltip'
 import { chartTheme } from './chartTheme'
 
-export function ApprovalActivityChart() {
+type ApprovalPoint = { day: string; approved: number; rejected: number }
+
+export function ApprovalActivityChart({ data }: { data: ApprovalPoint[] }) {
+  const hasData = data.some((point) => point.approved > 0 || point.rejected > 0)
+  if (!hasData) {
+    return <div className="grid h-56 place-items-center text-center text-xs text-muted">No approval decisions recorded this week.</div>
+  }
+
   return (
     <div className="h-56 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={approvalActivity} margin={{ top: 6, right: 2, left: -28, bottom: 0 }}>
+        <BarChart data={data} margin={{ top: 6, right: 2, left: -28, bottom: 0 }}>
           <CartesianGrid stroke={chartTheme.grid} strokeDasharray="3 5" vertical={false} />
           <XAxis
             dataKey="day"

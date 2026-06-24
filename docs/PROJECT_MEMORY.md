@@ -7,7 +7,9 @@ Last Updated: 2026-06-24
 
 AI Operator OS has a production-capable Electron desktop shell built with React, Vite, TypeScript, and Tailwind. The application includes Dashboard, CEO, Money, Development, Memory, Roadmap, and Settings workspaces.
 
-Dashboard and Money use a reusable Recharts component system with responsive, dark-mode charts. Business metrics remain local mock data in `app/src/data/mockBusinessMetrics.ts` until a future local data layer replaces them.
+Dashboard, Money, CEO, Development, Memory, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and memory persist in one localStorage document.
+
+Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.
 
 ## Active Sprint
 
@@ -31,11 +33,12 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - No direct automatic GitHub push from ChatGPT chat.
 - Local-first during early build.
 - AI drafts before it executes.
-- Chart data is currently mocked and must not be treated as live financial reporting.
+- LocalStorage is the current persistence layer and is not yet backed up or encrypted.
+- Financial reporting reflects manually entered local records only.
 
 ## Next Priorities
 
-1. Connect charts to the future local business metrics store.
+1. Add export, backup, and restore for the local operating store.
 2. Build the Business Builder workflow.
 3. Expand approval history and decision audit trails.
-4. Add automated chart and desktop UI tests.
+4. Add validation and automated tests for derived metrics.
