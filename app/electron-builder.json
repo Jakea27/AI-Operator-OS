@@ -1,0 +1,23 @@
+{
+  "appId": "com.aioperator.os",
+  "productName": "AI Operator OS",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "package.json"
+  ],
+  "win": {
+    "target": "nsis"
+  },
+  "mac": {
+    "target": "dmg",
+    "category": "public.app-category.business"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Office"
+  }
+}

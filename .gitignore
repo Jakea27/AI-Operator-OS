@@ -18,3 +18,11 @@ secrets/
 # Logs
 *.log
 logs/
+
+# Desktop application
+app/node_modules/
+app/.npm-cache/
+app/.electron-cache/
+app/.local-app-data/
+app/dist/
+app/release/

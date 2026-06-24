@@ -1,3 +1,17 @@
-# App
+# AI Operator OS Desktop
 
-Frontend application files live here.
+Electron desktop application powered by React, Vite, TypeScript, and Tailwind CSS.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+npm run dist
+```

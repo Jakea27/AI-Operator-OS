@@ -1,8 +1,8 @@
 # Version
 
-Current Version: 0.1.0
+Current Version: 0.1.0-alpha
 
-Last Updated: 2026-06-23
+Last Updated: 2026-06-24
 
 ## Version Rules
 

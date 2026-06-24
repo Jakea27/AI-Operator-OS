@@ -4,7 +4,19 @@ AI Operator OS is a local-first AI business operating system designed to help on
 
 ## Current Version
 
-0.1.0
+0.1.0-alpha
+
+## Desktop Application
+
+The desktop command center lives in `app/` and is built with Electron, React, Vite, TypeScript, and Tailwind CSS.
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+The application includes dedicated workspaces for Dashboard, CEO, Money, Development, Memory, Roadmap, and Settings. Workspace state is persisted locally on the device.
 
 ## North Star
 
