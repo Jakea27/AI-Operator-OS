@@ -14,6 +14,12 @@ import { MetricCard } from '@/components/MetricCard'
 import { PageIntro } from '@/components/PageIntro'
 import { EmptyState } from '@/components/EmptyState'
 import { useOperatorData } from '@/hooks/useOperatorData'
+import {
+  ApprovalActivityChart,
+  ChartShell,
+  TrendLineChart,
+} from '@/src/components/charts'
+import { revenueTrend } from '@/src/data/mockBusinessMetrics'
 
 const money = (value: number) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
@@ -36,6 +42,31 @@ export function Dashboard() {
         <MetricCard label="Monthly Revenue" value={money(data.monthlyRevenue)} change="+14.2% vs plan" icon={Banknote} />
         <MetricCard label="Monthly Cost" value={money(data.monthlyCost)} change="6.1% under budget" icon={Coins} />
         <MetricCard label="Profit" value={money(profit)} change={`${Math.round((profit / data.monthlyRevenue) * 100)}% margin`} icon={Gauge} />
+      </div>
+
+      <div className="mt-4 grid grid-cols-12 gap-4">
+        <ChartShell
+          eyebrow="Revenue Trend"
+          title="Six month growth"
+          meta="Jan — Jun 2026"
+          className="col-span-8"
+        >
+          <TrendLineChart
+            data={revenueTrend}
+            dataKey="revenue"
+            label="Revenue"
+            xKey="month"
+            gradientId="dashboardRevenue"
+          />
+        </ChartShell>
+        <ChartShell
+          eyebrow="Approval Activity"
+          title="Decisions this week"
+          meta="40 reviewed"
+          className="col-span-4"
+        >
+          <ApprovalActivityChart />
+        </ChartShell>
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4">

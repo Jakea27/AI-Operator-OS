@@ -11,7 +11,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "concurrently -k \"vite --configLoader runner\" \"wait-on http://localhost:5173 && electron .\"",
+    "dev": "npm run build && concurrently -k \"vite build --watch --configLoader runner\" \"vite preview --configLoader runner --port 5173 --strictPort\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "tsc --noEmit && vite build --configLoader runner",
     "preview": "vite preview --configLoader runner",
     "dist": "npm run build && electron-builder --win nsis portable --config electron-builder.json",
@@ -22,7 +22,8 @@
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "recharts": "^3.9.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

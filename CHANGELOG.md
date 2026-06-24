@@ -15,6 +15,10 @@
 - Branded application, executable, installer, and taskbar icon
 - Windows application metadata for AI Operator OS
 - Dedicated installer and portable release scripts
+- Reusable dark-mode chart component system powered by Recharts
+- Local mock business metrics for revenue, profit, expenses, portfolio, and approval activity
+- Responsive revenue and approval charts on the Dashboard
+- Responsive revenue, profit, business portfolio, and expense charts on the Money page
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

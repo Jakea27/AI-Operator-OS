@@ -1,7 +1,7 @@
 # Roadmap
 
-Version: 0.1.0
-Last Updated: 2026-06-23
+Version: 0.1.0-alpha
+Last Updated: 2026-06-24
 
 ## Sprint 0.1 - Foundation
 
@@ -12,14 +12,15 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [x] GitHub repository
 - [x] ChatGPT Project
 - [x] Bootstrap Generator
-- [ ] Dashboard
-- [ ] CEO Department
-- [ ] Development Department
-- [ ] Settings
-- [ ] Memory
-- [ ] Roadmap UI
-- [ ] Approval Queue
-- [ ] Cost Tracker
+- [x] Dashboard
+- [x] CEO Department
+- [x] Development Department
+- [x] Settings
+- [x] Memory
+- [x] Roadmap UI
+- [x] Approval Queue
+- [x] Cost Tracker
+- [x] Local business metric charts
 
 ## Sprint 0.2 - Business Builder
 
