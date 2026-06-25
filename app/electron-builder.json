@@ -17,6 +17,7 @@
   "win": {
     "icon": "assets/icon.ico",
     "executableName": "AI Operator OS",
+    "signAndEditExecutable": false,
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "legalTrademarks": "AI Operator",
     "target": [

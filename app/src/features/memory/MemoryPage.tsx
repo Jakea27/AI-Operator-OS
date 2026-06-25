@@ -1,11 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Archive, Brain, Lightbulb, Pin, Plus } from 'lucide-react'
+import { Brain, Lightbulb, Pin, Scale } from 'lucide-react'
 import { PageIntro } from '@/components/PageIntro'
 import {
-  collectMemoryTags,
   collectMemoryCategories,
   getOpenIdeas,
-  getPinnedMemories,
   getRecentMemories,
   MemoryDraft,
   MemoryEntry,
@@ -17,7 +15,6 @@ import { MemoryCard } from './MemoryCard'
 import { MemoryEditor } from './MemoryEditor'
 import { MemoryDetail } from './MemoryDetail'
 import { MemoryFilters } from './MemoryFilters'
-import { MemorySearch } from './MemorySearch'
 
 const defaultFilters: FilterState = {
   query: '',
@@ -32,19 +29,25 @@ const defaultFilters: FilterState = {
 export function MemoryPage() {
   const { memoryEntries, add, update, delete: remove, toggleArchive, togglePin } = useMemoryStore()
   const [filters, setFilters] = useState(defaultFilters)
-  const [editor, setEditor] = useState<MemoryEntry | 'new' | null>(null)
+  const [editing, setEditing] = useState<MemoryEntry | null>(null)
   const [detail, setDetail] = useState<MemoryEntry | null>(null)
   const visibleEntries = useMemo(() => searchMemories(memoryEntries, filters), [memoryEntries, filters])
-  const tags = useMemo(() => collectMemoryTags(memoryEntries), [memoryEntries])
   const categories = useMemo(() => collectMemoryCategories(memoryEntries), [memoryEntries])
-  const pinned = getPinnedMemories(memoryEntries)
   const recent = getRecentMemories(memoryEntries)
   const ideas = getOpenIdeas(memoryEntries)
+  const pinnedRules = memoryEntries
+    .filter((entry) => entry.type === 'Business Rule' && entry.pinned && !entry.archived)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 4)
+  const recentDecisions = memoryEntries
+    .filter((entry) => entry.type === 'Decision' && !entry.archived)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 4)
 
   const save = (draft: MemoryDraft) => {
-    if (editor && editor !== 'new') update(editor.id, draft)
+    if (editing) update(editing.id, draft)
     else add(draft)
-    setEditor(null)
+    setEditing(null)
     setDetail(null)
   }
 
@@ -54,75 +57,99 @@ export function MemoryPage() {
         eyebrow="Business Memory"
         title="Build an operating system that remembers."
         description="Capture decisions, rules, sprint history, SOPs, issues, research, architecture, and institutional knowledge locally."
-        action={<button onClick={() => setEditor('new')} className="btn-primary flex items-center gap-2"><Plus size={15} /> Add memory</button>}
       />
 
-      <div className="mb-4 grid grid-cols-4 gap-4">
-        <Stat icon={Brain} label="Active memories" value={memoryEntries.filter((entry) => !entry.archived).length} />
-        <Stat icon={Pin} label="Pinned" value={pinned.length} />
-        <Stat icon={Lightbulb} label="Open ideas" value={ideas.length} />
-        <Stat icon={Archive} label="Archived" value={memoryEntries.filter((entry) => entry.archived).length} />
-      </div>
-
-      {editor && (
-        <div className="mb-4">
+      <div className="grid grid-cols-12 items-start gap-4">
+        <div className="col-span-9 space-y-4">
           <MemoryEditor
-            entry={editor === 'new' ? undefined : editor}
-            memories={memoryEntries}
+            entry={editing ?? undefined}
             onSave={save}
-            onClose={() => setEditor(null)}
+            onClose={() => setEditing(null)}
           />
+
+          {detail && !editing && (
+            <MemoryDetail
+              entry={memoryEntries.find((entry) => entry.id === detail.id) ?? detail}
+              memories={memoryEntries}
+              onClose={() => setDetail(null)}
+              onEdit={() => {
+                setEditing(detail)
+                setDetail(null)
+              }}
+              onDelete={() => {
+                if (confirmDelete(detail, remove)) setDetail(null)
+              }}
+              onArchive={() => toggleArchive(detail.id)}
+              onPin={() => togglePin(detail.id)}
+              onOpenRelated={setDetail}
+            />
+          )}
+
+          <MemoryFilters filters={filters} categories={categories} onChange={setFilters} />
+
+          <div className="flex items-center justify-between pt-2">
+            <div>
+              <p className="eyebrow mb-1">{filters.archived ? 'Archived Memories' : 'Memory List'}</p>
+              <h2 className="m-0 text-lg font-semibold">{visibleEntries.length} {visibleEntries.length === 1 ? 'memory' : 'memories'}</h2>
+            </div>
+            {!filters.archived && recent[0] && <span className="text-[11px] text-muted">Latest: {recent[0].title}</span>}
+          </div>
+
+          {visibleEntries.length === 0 ? (
+            <section className="panel px-6 py-14 text-center">
+              <Brain size={24} className="mx-auto mb-3 text-muted" />
+              <h3 className="m-0 text-sm font-semibold">No memories match this view</h3>
+              <p className="mb-0 mt-2 text-xs text-muted">Create a memory above or adjust the filters.</p>
+            </section>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {visibleEntries.map((entry) => <MemoryCard key={entry.id} entry={entry} onView={() => setDetail(entry)} onEdit={() => {
+                setEditing(entry)
+                setDetail(null)
+              }} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}
+            </div>
+          )}
         </div>
-      )}
 
-      {detail && !editor && (
-        <MemoryDetail
-          entry={memoryEntries.find((entry) => entry.id === detail.id) ?? detail}
-          memories={memoryEntries}
-          onClose={() => setDetail(null)}
-          onEdit={() => setEditor(detail)}
-          onDelete={() => {
-            if (confirmDelete(detail, remove)) setDetail(null)
-          }}
-          onArchive={() => toggleArchive(detail.id)}
-          onPin={() => togglePin(detail.id)}
-          onOpenRelated={setDetail}
-        />
-      )}
-
-      <div className="mb-4 space-y-3">
-        <MemorySearch value={filters.query} onChange={(query) => setFilters({ ...filters, query })} />
-        <MemoryFilters filters={filters} categories={categories} tags={tags} onChange={setFilters} />
+        <aside className="col-span-3 space-y-4">
+          <section className="panel p-5">
+            <p className="eyebrow mb-2">Memory Count</p>
+            <p className="m-0 font-display text-4xl font-semibold">{memoryEntries.filter((entry) => !entry.archived).length}</p>
+            <p className="mb-0 mt-2 text-xs text-muted">{memoryEntries.filter((entry) => entry.archived).length} archived</p>
+          </section>
+          <SidebarGroup icon={Pin} title="Pinned Rules" entries={pinnedRules} onOpen={setDetail} />
+          <SidebarGroup icon={Scale} title="Recent Decisions" entries={recentDecisions} onOpen={setDetail} />
+          <SidebarGroup icon={Lightbulb} title="Recent Ideas" entries={ideas} onOpen={setDetail} />
+        </aside>
       </div>
-
-      {!filters.query && filters.type === 'All' && !filters.category && !filters.tag && filters.pinned === 'all' && !filters.archived && pinned.length > 0 && (
-        <section className="mb-4">
-          <p className="eyebrow mb-3">Pinned knowledge</p>
-          <div className="grid grid-cols-2 gap-4">{pinned.slice(0, 4).map((entry) => <MemoryCard key={entry.id} entry={entry} onView={() => setDetail(entry)} onEdit={() => setEditor(entry)} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}</div>
-        </section>
-      )}
-
-      <div className="mb-3 flex items-center justify-between">
-        <div><p className="eyebrow mb-1">{filters.archived ? 'Archived Memories' : filters.query || filters.type !== 'All' || filters.category || filters.tag || filters.pinned !== 'all' ? 'Filtered Memories' : 'Recent Memories'}</p><h2 className="m-0 text-lg font-semibold">{visibleEntries.length} {visibleEntries.length === 1 ? 'entry' : 'entries'}</h2></div>
-        {!filters.archived && recent[0] && <span className="text-[11px] text-muted">Latest: {recent[0].title}</span>}
-      </div>
-      {visibleEntries.length === 0 ? (
-        <section className="panel px-6 py-14 text-center">
-          <Brain size={24} className="mx-auto mb-3 text-muted" />
-          <h3 className="m-0 text-sm font-semibold">No memories match this view</h3>
-          <p className="mb-0 mt-2 text-xs text-muted">Add a memory or adjust the search and filters.</p>
-        </section>
-      ) : (
-        <div className="grid grid-cols-2 gap-4">
-          {visibleEntries.map((entry) => <MemoryCard key={entry.id} entry={entry} onView={() => setDetail(entry)} onEdit={() => setEditor(entry)} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}
-        </div>
-      )}
     </>
   )
 }
 
-function Stat({ icon: Icon, label, value }: { icon: typeof Brain; label: string; value: number }) {
-  return <section className="panel flex items-center gap-4 p-5"><div className="rounded-xl bg-lime/10 p-3 text-lime"><Icon size={18} /></div><div><p className="m-0 text-xs text-muted">{label}</p><p className="mb-0 mt-1 text-2xl font-semibold">{value}</p></div></section>
+function SidebarGroup({
+  icon: Icon,
+  title,
+  entries,
+  onOpen,
+}: {
+  icon: typeof Pin
+  title: string
+  entries: MemoryEntry[]
+  onOpen: (entry: MemoryEntry) => void
+}) {
+  return (
+    <section className="panel p-5">
+      <div className="mb-4 flex items-center gap-2 text-lime"><Icon size={15} /><p className="eyebrow m-0">{title}</p></div>
+      {entries.length === 0 ? (
+        <p className="m-0 text-xs text-muted">No entries yet.</p>
+      ) : entries.map((entry) => (
+        <button key={entry.id} onClick={() => onOpen(entry)} className="block w-full border-b border-line py-3 text-left last:border-0 last:pb-0 first:pt-0">
+          <span className="block text-xs font-medium text-white">{entry.title}</span>
+          <span className="mt-1 block line-clamp-2 text-[10px] leading-4 text-muted">{entry.summary}</span>
+        </button>
+      ))}
+    </section>
+  )
 }
 
 function confirmDelete(entry: MemoryEntry, remove: (id: string) => void) {

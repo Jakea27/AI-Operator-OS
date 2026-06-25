@@ -1,4 +1,4 @@
-import { Archive, ArchiveRestore, Eye, Link2, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
+import { Archive, ArchiveRestore, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
 import { MemoryEntry } from '@/src/core/memory'
 
 export function MemoryCard({
@@ -22,36 +22,32 @@ export function MemoryCard({
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <span className="rounded-md bg-lime/10 px-2 py-1 text-[10px] font-medium text-lime">{entry.type}</span>
-            <span className="text-[10px] text-muted">{entry.category}</span>
-            {entry.relatedIssue && <span className="text-[10px] font-medium text-mint">{entry.relatedIssue}</span>}
+            <span className="rounded-md bg-white/[0.05] px-2 py-1 text-[10px] text-[#b8c2bd]">{entry.category}</span>
           </div>
           <button onClick={onView} className="m-0 text-left text-base font-semibold text-white hover:text-lime">{entry.title}</button>
         </div>
         {entry.pinned && <Pin size={15} className="shrink-0 text-lime" />}
       </div>
       <p className="mb-4 mt-3 text-xs leading-6 text-[#aeb8b3]">{entry.summary}</p>
-      {entry.details && <p className="mb-4 line-clamp-3 text-xs leading-5 text-muted">{entry.details}</p>}
       <div className="mb-4 flex flex-wrap gap-2">
         {entry.tags.map((tag) => <span key={tag} className="rounded-full bg-white/[0.05] px-2 py-1 text-[10px] text-muted">#{tag}</span>)}
       </div>
-      {(entry.relatedSprint || entry.relatedMemoryIds.length > 0) && (
-        <div className="mb-4 flex items-center gap-3 text-[10px] text-muted">
-          {entry.relatedSprint && <span>{entry.relatedSprint}</span>}
-          {entry.relatedMemoryIds.length > 0 && <span className="flex items-center gap-1"><Link2 size={11} /> {entry.relatedMemoryIds.length} related</span>}
+      {(entry.relatedIssue || entry.relatedSprint) && (
+        <div className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-line bg-ink/30 p-3 text-[10px]">
+          <div><span className="block text-muted">Related Issue</span><span className="mt-1 block text-mint">{entry.relatedIssue || 'None'}</span></div>
+          <div><span className="block text-muted">Related Sprint</span><span className="mt-1 block text-[#b8c2bd]">{entry.relatedSprint || 'None'}</span></div>
         </div>
       )}
       <div className="flex items-center justify-between border-t border-line pt-4">
         <div className="text-[10px] text-muted">
-          <p className="m-0">{entry.author || 'Unknown author'}</p>
-          <p className="mb-0 mt-1">Created {new Date(entry.createdAt).toLocaleString()}</p>
-          <p className="m-0">Updated {new Date(entry.updatedAt).toLocaleString()}</p>
+          <p className="m-0">Created: {new Date(entry.createdAt).toLocaleString()}</p>
+          <p className="mb-0 mt-1">Updated: {new Date(entry.updatedAt).toLocaleString()}</p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={onView} className="rounded-lg border border-line p-2 text-muted hover:text-white" aria-label="View details"><Eye size={14} /></button>
-          <button onClick={onPin} className="rounded-lg border border-line p-2 text-muted hover:text-lime" aria-label={entry.pinned ? 'Unpin' : 'Pin'}>{entry.pinned ? <PinOff size={14} /> : <Pin size={14} />}</button>
-          <button onClick={onArchive} className="rounded-lg border border-line p-2 text-muted hover:text-white" aria-label={entry.archived ? 'Restore' : 'Archive'}>{entry.archived ? <ArchiveRestore size={14} /> : <Archive size={14} />}</button>
-          <button onClick={onEdit} className="rounded-lg border border-line p-2 text-muted hover:text-white" aria-label="Edit"><Pencil size={14} /></button>
-          <button onClick={onDelete} className="rounded-lg border border-line p-2 text-muted hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]" aria-label="Delete"><Trash2 size={14} /></button>
+        <div className="flex flex-wrap justify-end gap-2">
+          <button onClick={onEdit} className="btn-secondary flex items-center gap-1.5 px-3 py-2"><Pencil size={13} /> Edit</button>
+          <button onClick={onArchive} className="btn-secondary flex items-center gap-1.5 px-3 py-2">{entry.archived ? <ArchiveRestore size={13} /> : <Archive size={13} />}{entry.archived ? 'Unarchive' : 'Archive'}</button>
+          <button onClick={onDelete} className="btn-secondary flex items-center gap-1.5 px-3 py-2 text-[#ff9e8f]"><Trash2 size={13} /> Delete</button>
+          <button onClick={onPin} className="btn-secondary flex items-center gap-1.5 px-3 py-2 text-lime">{entry.pinned ? <PinOff size={13} /> : <Pin size={13} />}{entry.pinned ? 'Unpin' : 'Pin'}</button>
         </div>
       </div>
     </article>
