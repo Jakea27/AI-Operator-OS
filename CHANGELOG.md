@@ -16,7 +16,7 @@
 - Windows application metadata for AI Operator OS
 - Dedicated installer and portable release scripts
 - Reusable dark-mode chart component system powered by Recharts
-- Local mock business metrics for revenue, profit, expenses, portfolio, and approval activity
+- Initial local chart metrics for revenue, profit, expenses, portfolio, and approval activity
 - Responsive revenue and approval charts on the Dashboard
 - Responsive revenue, profit, business portfolio, and expense charts on the Money page
 - Unified typed local operating store for revenue, expenses, approvals, projects, tasks, sprint progress, and memory
@@ -29,6 +29,13 @@
 - Added a prominent zero-data Dashboard state with direct revenue and expense entry actions
 - Added cross-window localStorage synchronization for real-time operating updates
 - Verified Dashboard and Money share the same persisted operating store and derived metrics
+- Completed Issue #001: functional local-first Money Department
+- Added revenue and expense categories, business assignment, and notes
+- Added revenue and expense editing and deletion with immediate metric recalculation
+- Added separate revenue and expense history tables
+- Added revenue-today, monthly revenue, monthly expenses, profit, and profit-margin accounting summaries
+- Added expense trend reporting alongside revenue, profit, business, and category charts
+- Added backward-compatible migration for financial records created before the accounting schema
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

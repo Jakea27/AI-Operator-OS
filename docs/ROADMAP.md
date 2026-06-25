@@ -25,6 +25,11 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [x] Manual revenue and expense entry
 - [x] Manual project, task, approval, and memory entry
 - [x] Metrics-driven CEO report
+- [x] Money Department revenue CRUD
+- [x] Money Department expense CRUD
+- [x] Revenue and expense categories
+- [x] Business-level financial attribution
+- [x] Revenue, expense, profit, business, and category charts
 
 ## Sprint 0.2 - Business Builder
 

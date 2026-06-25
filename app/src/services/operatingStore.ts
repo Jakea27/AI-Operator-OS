@@ -5,15 +5,21 @@ export type RevenueEntry = {
   amount: number
   date: string
   business: string
-  description: string
+  category: string
+  notes: string
+  createdAt: string
+  updatedAt: string
 }
 
 export type ExpenseEntry = {
   id: string
   amount: number
   date: string
+  business: string
   category: string
-  description: string
+  notes: string
+  createdAt: string
+  updatedAt: string
 }
 
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected'
@@ -111,7 +117,41 @@ function readState(): OperatingState {
   if (typeof window === 'undefined') return emptyState
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY)
-    return stored ? { ...emptyState, ...JSON.parse(stored) } : emptyState
+    if (!stored) return emptyState
+    type LegacyRevenueEntry = Partial<RevenueEntry> & { description?: string }
+    type LegacyExpenseEntry = Partial<ExpenseEntry> & { description?: string }
+    const raw = JSON.parse(stored) as Record<string, unknown>
+    const parsed = { ...emptyState, ...raw } as OperatingState
+    const legacyRevenueEntries = Array.isArray(raw.revenueEntries)
+      ? (raw.revenueEntries as LegacyRevenueEntry[])
+      : []
+    const legacyExpenseEntries = Array.isArray(raw.expenseEntries)
+      ? (raw.expenseEntries as LegacyExpenseEntry[])
+      : []
+    const now = new Date().toISOString()
+    return {
+      ...parsed,
+      revenueEntries: legacyRevenueEntries.map((entry) => ({
+        id: entry.id ?? id('rev'),
+        amount: Number(entry.amount) || 0,
+        date: entry.date ?? localDate(),
+        business: entry.business || 'Unassigned',
+        category: entry.category || 'Other revenue',
+        notes: entry.notes ?? entry.description ?? '',
+        createdAt: entry.createdAt ?? now,
+        updatedAt: entry.updatedAt ?? entry.createdAt ?? now,
+      })),
+      expenseEntries: legacyExpenseEntries.map((entry) => ({
+        id: entry.id ?? id('exp'),
+        amount: Number(entry.amount) || 0,
+        date: entry.date ?? localDate(),
+        business: entry.business || parsed.settings?.businessName || 'Unassigned',
+        category: entry.category || 'Other expense',
+        notes: entry.notes ?? entry.description ?? '',
+        createdAt: entry.createdAt ?? now,
+        updatedAt: entry.updatedAt ?? entry.createdAt ?? now,
+      })),
+    }
   } catch {
     return emptyState
   }
@@ -239,8 +279,40 @@ export const operatingStore = {
   addRevenue(entry: Omit<RevenueEntry, 'id'>) {
     persist({ ...state, revenueEntries: [{ ...entry, id: id('rev') }, ...state.revenueEntries] })
   },
+  updateRevenue(entryId: string, patch: Omit<RevenueEntry, 'id' | 'createdAt' | 'updatedAt'>) {
+    persist({
+      ...state,
+      revenueEntries: state.revenueEntries.map((entry) =>
+        entry.id === entryId
+          ? { ...entry, ...patch, updatedAt: new Date().toISOString() }
+          : entry,
+      ),
+    })
+  },
+  deleteRevenue(entryId: string) {
+    persist({
+      ...state,
+      revenueEntries: state.revenueEntries.filter((entry) => entry.id !== entryId),
+    })
+  },
   addExpense(entry: Omit<ExpenseEntry, 'id'>) {
     persist({ ...state, expenseEntries: [{ ...entry, id: id('exp') }, ...state.expenseEntries] })
+  },
+  updateExpense(entryId: string, patch: Omit<ExpenseEntry, 'id' | 'createdAt' | 'updatedAt'>) {
+    persist({
+      ...state,
+      expenseEntries: state.expenseEntries.map((entry) =>
+        entry.id === entryId
+          ? { ...entry, ...patch, updatedAt: new Date().toISOString() }
+          : entry,
+      ),
+    })
+  },
+  deleteExpense(entryId: string) {
+    persist({
+      ...state,
+      expenseEntries: state.expenseEntries.filter((entry) => entry.id !== entryId),
+    })
   },
   addApproval(entry: Omit<ApprovalRecord, 'id' | 'status' | 'createdAt'>) {
     persist({
@@ -319,13 +391,13 @@ export const operatingStore = {
     persist({
       ...state,
       revenueEntries: [
-        { id: id('sample-rev'), amount: 2400, date: date(0), business: 'Sample Studio', description: 'Sample client payment' },
-        { id: id('sample-rev'), amount: 1800, date: date(4), business: 'Sample Studio', description: 'Sample subscription revenue' },
-        { id: id('sample-rev'), amount: 950, date: date(12), business: 'Sample Advisory', description: 'Sample advisory session' },
+        { id: id('sample-rev'), amount: 2400, date: date(0), business: 'Sample Studio', category: 'Client services', notes: 'Sample client payment', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-rev'), amount: 1800, date: date(4), business: 'Sample Studio', category: 'Subscriptions', notes: 'Sample subscription revenue', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-rev'), amount: 950, date: date(12), business: 'Sample Advisory', category: 'Consulting', notes: 'Sample advisory session', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
       ],
       expenseEntries: [
-        { id: id('sample-exp'), amount: 320, date: date(2), category: 'Software', description: 'Sample software expense' },
-        { id: id('sample-exp'), amount: 600, date: date(8), category: 'Growth', description: 'Sample campaign expense' },
+        { id: id('sample-exp'), amount: 320, date: date(2), business: 'Sample Studio', category: 'Software', notes: 'Sample software expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-exp'), amount: 600, date: date(8), business: 'Sample Studio', category: 'Marketing', notes: 'Sample campaign expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
       ],
       approvals: [
         { id: id('sample-approval'), title: 'Sample campaign approval', category: 'Marketing', amount: 600, status: 'pending', createdAt: new Date().toISOString() },

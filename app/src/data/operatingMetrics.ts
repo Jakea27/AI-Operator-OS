@@ -21,6 +21,7 @@ export function buildMonthlyTrend(state: OperatingState, now = new Date()) {
     return {
       month: date.toLocaleDateString('en-US', { month: 'short' }),
       revenue,
+      expense: cost,
       profit: revenue - cost,
     }
   })

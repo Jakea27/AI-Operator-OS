@@ -8,6 +8,8 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
+Current Milestone: Issue #001 Money Department complete
+
 ## Version Rules
 
 - 0.x = foundation and development builds
