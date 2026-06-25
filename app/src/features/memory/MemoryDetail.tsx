@@ -1,5 +1,7 @@
 import { Archive, ArchiveRestore, Link2, Pencil, Pin, PinOff, Trash2, X } from 'lucide-react'
 import { MemoryEntry } from '@/src/core/memory'
+import { MemoryMarkdown } from './MemoryMarkdown'
+import { memoryTypeClass } from './memoryPresentation'
 
 export function MemoryDetail({
   entry,
@@ -29,8 +31,8 @@ export function MemoryDetail({
       <div className="flex items-start justify-between gap-5">
         <div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-lime/10 px-2 py-1 text-[10px] font-medium text-lime">{entry.type}</span>
-            <span className="text-[10px] text-muted">{entry.category}</span>
+            <span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${memoryTypeClass(entry.type)}`}>{entry.type}</span>
+            <span className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-1 text-[10px] text-muted">{entry.category}</span>
             {entry.relatedIssue && <span className="text-[10px] font-medium text-mint">{entry.relatedIssue}</span>}
             {entry.relatedSprint && <span className="text-[10px] text-muted">{entry.relatedSprint}</span>}
           </div>
@@ -42,7 +44,7 @@ export function MemoryDetail({
 
       <div className="mt-6 border-t border-line pt-6">
         <p className="eyebrow mb-3">Details</p>
-        <div className="whitespace-pre-wrap text-sm leading-7 text-[#aeb8b3]">{entry.details || 'No additional details recorded.'}</div>
+        <MemoryMarkdown>{entry.details || 'No additional details recorded.'}</MemoryMarkdown>
       </div>
 
       {related.length > 0 && (

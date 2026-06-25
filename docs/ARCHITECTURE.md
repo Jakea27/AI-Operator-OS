@@ -50,6 +50,10 @@ AO-003.1 adds schema normalization for older local records, category and pin-sta
 
 Dashboard selectors provide pinned business rules, recent decisions, recent ideas, and latest sprint notes. The CEO Briefing selector returns active pinned decisions and business rules, the three most recent important memories, and open ideas. Both integrations use the core memory API without duplicating persistence or domain logic.
 
+AO-003.2 adds `memoryTemplates.ts` for reusable structured capture and expands `memorySearch.ts` with `queryBusinessMemory`, the AI-facing local knowledge retrieval API. Presentation remains under the existing Memory feature: type colors are centralized in `memoryPresentation.ts`, while `MemoryMarkdown.tsx` safely renders locally stored Markdown with GitHub Flavored Markdown tables.
+
+Relationship IDs remain part of the canonical `MemoryEntry` schema. The editor selects existing records, the detail view resolves IDs through the current store, and deletion removes stale references. No second memory store or route exists.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

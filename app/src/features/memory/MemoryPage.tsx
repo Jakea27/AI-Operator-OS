@@ -63,6 +63,7 @@ export function MemoryPage() {
         <div className="col-span-9 space-y-4">
           <MemoryEditor
             entry={editing ?? undefined}
+            memories={memoryEntries}
             onSave={save}
             onClose={() => setEditing(null)}
           />

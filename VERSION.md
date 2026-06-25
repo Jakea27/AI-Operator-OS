@@ -8,7 +8,7 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: AO-003.1 Business Memory Engine enhancement complete
+Current Milestone: AO-003.2 Business Knowledge System finalized
 
 ## Version Rules
 

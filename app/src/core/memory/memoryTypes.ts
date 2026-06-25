@@ -46,3 +46,16 @@ export type MemoryFilters = {
   sort: MemorySort
   archived: boolean
 }
+
+export type MemorySearchQuery = {
+  text?: string
+  types?: MemoryType[]
+  categories?: string[]
+  tags?: string[]
+  relatedIssue?: string
+  relatedSprint?: string
+  relatedMemoryIds?: string[]
+  pinned?: boolean
+  archived?: boolean
+  limit?: number
+}

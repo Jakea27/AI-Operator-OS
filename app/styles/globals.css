@@ -66,4 +66,64 @@ button {
   .btn-secondary {
     @apply rounded-xl border border-line bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-white transition hover:border-muted hover:bg-white/[0.06];
   }
+
+  .memory-markdown {
+    @apply text-sm leading-7 text-[#aeb8b3];
+  }
+
+  .memory-markdown h1 {
+    @apply mb-3 mt-6 font-display text-2xl font-semibold text-white first:mt-0;
+  }
+
+  .memory-markdown h2 {
+    @apply mb-2 mt-5 font-display text-xl font-semibold text-white first:mt-0;
+  }
+
+  .memory-markdown h3 {
+    @apply mb-2 mt-4 text-base font-semibold text-white;
+  }
+
+  .memory-markdown p {
+    @apply my-3;
+  }
+
+  .memory-markdown ul {
+    @apply my-3 list-disc space-y-1 pl-6;
+  }
+
+  .memory-markdown ol {
+    @apply my-3 list-decimal space-y-1 pl-6;
+  }
+
+  .memory-markdown blockquote {
+    @apply my-4 border-l-2 border-lime/50 bg-lime/[0.04] px-4 py-2 italic text-[#c3cbc7];
+  }
+
+  .memory-markdown code {
+    @apply rounded bg-white/[0.07] px-1.5 py-0.5 font-mono text-[12px] text-mint;
+  }
+
+  .memory-markdown pre {
+    @apply my-4 overflow-x-auto rounded-xl border border-line bg-ink p-4;
+  }
+
+  .memory-markdown pre code {
+    @apply bg-transparent p-0 text-[#c3cbc7];
+  }
+
+  .memory-markdown a {
+    @apply text-lime underline decoration-lime/40 underline-offset-4;
+  }
+
+  .memory-markdown table {
+    @apply my-4 w-full border-collapse overflow-hidden rounded-xl text-left text-xs;
+  }
+
+  .memory-markdown th {
+    @apply border border-line bg-white/[0.05] px-3 py-2 font-semibold text-white;
+  }
+
+  .memory-markdown td {
+    @apply border border-line px-3 py-2;
+  }
 }

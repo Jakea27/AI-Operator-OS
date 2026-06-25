@@ -19,8 +19,8 @@ import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMe
 import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
 import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
 import {
-  getLatestSprintMemories,
-  getOpenIdeas,
+  getLatestMemoryByType,
+  getMemoryHealth,
   useMemoryStore,
 } from '@/src/core/memory'
 
@@ -173,21 +173,21 @@ export function Dashboard() {
 }
 
 function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memory').MemoryEntry[] }) {
-  const decisions = memories
-    .filter((entry) => entry.type === 'Decision' && !entry.archived)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 2)
   const pinnedBusinessRules = memories
     .filter((entry) => entry.type === 'Business Rule' && entry.pinned && !entry.archived)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 2)
-  const sprint = getLatestSprintMemories(memories, 1)
-  const ideas = getOpenIdeas(memories, 2)
+    .slice(0, 3)
+  const latestDecision = getLatestMemoryByType(memories, 'Decision')
+  const latestArchitecture = getLatestMemoryByType(memories, 'Architecture')
+  const latestSprint = getLatestMemoryByType(memories, 'Sprint')
+  const latestIdea = getLatestMemoryByType(memories, 'Idea')
+  const health = getMemoryHealth(memories)
   const groups = [
-    ['Pinned business rules', pinnedBusinessRules],
-    ['Recent decisions', decisions],
-    ['Recent ideas', ideas],
-    ['Latest sprint notes', sprint],
+    ['Pinned Rules', pinnedBusinessRules],
+    ['Latest Decision', latestDecision ? [latestDecision] : []],
+    ['Latest Architecture', latestArchitecture ? [latestArchitecture] : []],
+    ['Latest Sprint', latestSprint ? [latestSprint] : []],
+    ['Latest Idea', latestIdea ? [latestIdea] : []],
   ] as const
   return (
     <section className="panel col-span-12 p-6">
@@ -195,13 +195,24 @@ function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memor
         <div><p className="eyebrow mb-1">Business Memory</p><h3 className="m-0 text-lg font-semibold">What the operating system remembers</h3></div>
         <Link to="/memory" className="btn-secondary">Open memory</Link>
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         {groups.map(([label, entries]) => (
           <div key={label} className="rounded-xl border border-line bg-ink/40 p-4">
             <p className="eyebrow mb-3">{label}</p>
             {entries.length === 0 ? <p className="m-0 text-xs text-muted">No entries yet.</p> : entries.map((entry) => <p key={entry.id} className="mb-2 text-xs leading-5 text-[#aeb8b3] last:mb-0">{entry.relatedIssue && <span className="mr-1 text-mint">{entry.relatedIssue}</span>}{entry.title}</p>)}
           </div>
         ))}
+        <div className="rounded-xl border border-lime/20 bg-lime/[0.04] p-4">
+          <p className="eyebrow mb-3 text-lime">Memory Health</p>
+          <div className="grid grid-cols-5 gap-2">
+            {Object.entries(health).map(([label, value]) => (
+              <div key={label} className="rounded-lg bg-ink/45 p-2 text-center">
+                <p className="m-0 text-lg font-semibold text-white">{value}</p>
+                <p className="mb-0 mt-1 text-[9px] capitalize text-muted">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

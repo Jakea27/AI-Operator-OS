@@ -78,3 +78,20 @@ export function getBriefingMemories(entries: MemoryEntry[]) {
     .slice(0, 3)
   return [...pinnedExecutiveMemory, ...recentImportant, ...openIdeas]
 }
+
+export function getLatestMemoryByType(entries: MemoryEntry[], type: MemoryType) {
+  return entries
+    .filter((entry) => entry.type === type && !entry.archived)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0]
+}
+
+export function getMemoryHealth(entries: MemoryEntry[]) {
+  const active = entries.filter((entry) => !entry.archived)
+  return {
+    active: active.length,
+    pinned: active.filter((entry) => entry.pinned).length,
+    archived: entries.filter((entry) => entry.archived).length,
+    ideas: active.filter((entry) => entry.type === 'Idea').length,
+    decisions: active.filter((entry) => entry.type === 'Decision').length,
+  }
+}

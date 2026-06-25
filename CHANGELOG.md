@@ -62,6 +62,15 @@
 - Added distinct Newest, Oldest, Updated, and Pinned-first memory sorting
 - Aligned legacy migration so context becomes summary, legacy tags become tag arrays, missing categories default to Development, and available created dates are preserved
 - Expanded CEO Briefing memory context with pinned business rules and current open ideas
+- Completed AO-003.2 Business Knowledge System finalization
+- Added color-coded memory type badges and richer pinned, relationship, metadata, and action hierarchy on memory cards
+- Added Markdown rendering with headings, lists, emphasis, code blocks, quotes, links, and GitHub-style tables while preserving raw Markdown for editing
+- Added Decision, Business Rule, SOP, Sprint, Idea, Bug, and Research quick-entry templates
+- Added relationship selection to the active memory editor and relationship navigation in memory details
+- Added reusable AI-ready memory querying by text, type, category, tags, issue, sprint, pin state, archive state, and related memory IDs
+- Made pinned memory ordering immediate across Memory lists and executive selectors
+- Expanded the Dashboard Business Memory widget with pinned rules, latest decision, architecture, sprint, idea, and memory-health metrics
+- Added React Markdown and GitHub Flavored Markdown support without external services
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation
