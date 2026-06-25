@@ -52,7 +52,7 @@ export function MemoryEditor({
   }
 
   return (
-    <section className="panel p-6">
+    <section className="panel p-6" data-testid="structured-memory-editor">
       <div className="mb-5 flex items-start justify-between">
         <div><p className="eyebrow mb-1">{entry ? 'Edit memory' : 'New memory'}</p><h2 className="m-0 text-xl font-semibold">{entry ? entry.title : 'Capture business knowledge'}</h2></div>
         <button onClick={onClose} className="rounded-lg border border-line p-2 text-muted hover:text-white"><X size={16} /></button>

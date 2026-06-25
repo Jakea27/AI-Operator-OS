@@ -17,7 +17,7 @@ export function MemoryCard({
   onPin: () => void
 }) {
   return (
-    <article className={`panel p-5 ${entry.pinned ? 'border-lime/30 bg-gradient-to-br from-lime/[0.06] to-panel' : ''}`}>
+    <article data-testid="structured-memory-card" className={`panel p-5 ${entry.pinned ? 'border-lime/30 bg-gradient-to-br from-lime/[0.06] to-panel' : ''}`}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-2">

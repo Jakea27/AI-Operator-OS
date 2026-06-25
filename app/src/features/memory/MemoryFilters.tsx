@@ -12,7 +12,7 @@ export function MemoryFilters({
   onChange: (filters: Filters) => void
 }) {
   return (
-    <div className="panel grid grid-cols-3 gap-3 p-3">
+    <div className="panel grid grid-cols-3 gap-3 p-3" data-testid="structured-memory-filters">
       <select className="field" value={filters.type} onChange={(event) => onChange({ ...filters, type: event.target.value as MemoryType | 'All' })}>
         <option value="All">All types</option>
         {memoryTypes.map((type) => <option key={type} value={type}>{type}</option>)}
