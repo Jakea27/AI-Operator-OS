@@ -40,7 +40,9 @@ export type MemorySort = 'newest' | 'oldest' | 'pinned'
 export type MemoryFilters = {
   query: string
   type: MemoryType | 'All'
+  category: string
   tag: string
+  pinned: 'all' | 'pinned' | 'unpinned'
   sort: MemorySort
   archived: boolean
 }

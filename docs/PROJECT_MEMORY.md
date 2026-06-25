@@ -23,6 +23,10 @@ AO-003 created the permanent Business Memory Engine under `app/src/core/memory`.
 
 Memory entries include type, category, tags, summary, details, author, issue/sprint relationships, related memories, pin state, archive state, and audit timestamps. The feature UI under `app/src/features/memory` provides CRUD, full-text search, type/tag filters, newest/oldest/pinned sorting, and separate archived views. Existing memory records are migrated automatically.
 
+AO-003.1 upgraded this foundation into a structured Business Knowledge System. The Memory workspace now filters by type, category, tag, pin state, and archive state; pinned entries remain first; and each memory has a full detail view with created/updated timestamps and navigable relationships. Existing stored records are normalized automatically with safe defaults for newly required metadata.
+
+The Dashboard Business Memory widget now presents recent decisions, pinned business rules, recent ideas, and latest sprint notes. Daily Briefings include all active pinned decisions followed by the three most recent important memories.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.

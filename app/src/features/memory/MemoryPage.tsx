@@ -3,6 +3,7 @@ import { Archive, Brain, Lightbulb, Pin, Plus } from 'lucide-react'
 import { PageIntro } from '@/components/PageIntro'
 import {
   collectMemoryTags,
+  collectMemoryCategories,
   getOpenIdeas,
   getPinnedMemories,
   getRecentMemories,
@@ -14,13 +15,16 @@ import {
 } from '@/src/core/memory'
 import { MemoryCard } from './MemoryCard'
 import { MemoryEditor } from './MemoryEditor'
+import { MemoryDetail } from './MemoryDetail'
 import { MemoryFilters } from './MemoryFilters'
 import { MemorySearch } from './MemorySearch'
 
 const defaultFilters: FilterState = {
   query: '',
   type: 'All',
+  category: '',
   tag: '',
+  pinned: 'all',
   sort: 'newest',
   archived: false,
 }
@@ -29,8 +33,10 @@ export function MemoryPage() {
   const { memoryEntries, add, update, delete: remove, toggleArchive, togglePin } = useMemoryStore()
   const [filters, setFilters] = useState(defaultFilters)
   const [editor, setEditor] = useState<MemoryEntry | 'new' | null>(null)
+  const [detail, setDetail] = useState<MemoryEntry | null>(null)
   const visibleEntries = useMemo(() => searchMemories(memoryEntries, filters), [memoryEntries, filters])
   const tags = useMemo(() => collectMemoryTags(memoryEntries), [memoryEntries])
+  const categories = useMemo(() => collectMemoryCategories(memoryEntries), [memoryEntries])
   const pinned = getPinnedMemories(memoryEntries)
   const recent = getRecentMemories(memoryEntries)
   const ideas = getOpenIdeas(memoryEntries)
@@ -39,6 +45,7 @@ export function MemoryPage() {
     if (editor && editor !== 'new') update(editor.id, draft)
     else add(draft)
     setEditor(null)
+    setDetail(null)
   }
 
   return (
@@ -68,20 +75,36 @@ export function MemoryPage() {
         </div>
       )}
 
+      {detail && !editor && (
+        <MemoryDetail
+          entry={memoryEntries.find((entry) => entry.id === detail.id) ?? detail}
+          memories={memoryEntries}
+          onClose={() => setDetail(null)}
+          onEdit={() => setEditor(detail)}
+          onDelete={() => {
+            confirmDelete(detail, remove)
+            setDetail(null)
+          }}
+          onArchive={() => toggleArchive(detail.id)}
+          onPin={() => togglePin(detail.id)}
+          onOpenRelated={setDetail}
+        />
+      )}
+
       <div className="mb-4 space-y-3">
         <MemorySearch value={filters.query} onChange={(query) => setFilters({ ...filters, query })} />
-        <MemoryFilters filters={filters} tags={tags} onChange={setFilters} />
+        <MemoryFilters filters={filters} categories={categories} tags={tags} onChange={setFilters} />
       </div>
 
-      {!filters.query && filters.type === 'All' && !filters.tag && !filters.archived && pinned.length > 0 && (
+      {!filters.query && filters.type === 'All' && !filters.category && !filters.tag && filters.pinned === 'all' && !filters.archived && pinned.length > 0 && (
         <section className="mb-4">
           <p className="eyebrow mb-3">Pinned knowledge</p>
-          <div className="grid grid-cols-2 gap-4">{pinned.slice(0, 4).map((entry) => <MemoryCard key={entry.id} entry={entry} onEdit={() => setEditor(entry)} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}</div>
+          <div className="grid grid-cols-2 gap-4">{pinned.slice(0, 4).map((entry) => <MemoryCard key={entry.id} entry={entry} onView={() => setDetail(entry)} onEdit={() => setEditor(entry)} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}</div>
         </section>
       )}
 
       <div className="mb-3 flex items-center justify-between">
-        <div><p className="eyebrow mb-1">{filters.archived ? 'Archived Memories' : filters.query || filters.type !== 'All' || filters.tag ? 'Filtered Memories' : 'Recent Memories'}</p><h2 className="m-0 text-lg font-semibold">{visibleEntries.length} {visibleEntries.length === 1 ? 'entry' : 'entries'}</h2></div>
+        <div><p className="eyebrow mb-1">{filters.archived ? 'Archived Memories' : filters.query || filters.type !== 'All' || filters.category || filters.tag || filters.pinned !== 'all' ? 'Filtered Memories' : 'Recent Memories'}</p><h2 className="m-0 text-lg font-semibold">{visibleEntries.length} {visibleEntries.length === 1 ? 'entry' : 'entries'}</h2></div>
         {!filters.archived && recent[0] && <span className="text-[11px] text-muted">Latest: {recent[0].title}</span>}
       </div>
       {visibleEntries.length === 0 ? (
@@ -92,7 +115,7 @@ export function MemoryPage() {
         </section>
       ) : (
         <div className="grid grid-cols-2 gap-4">
-          {visibleEntries.map((entry) => <MemoryCard key={entry.id} entry={entry} onEdit={() => setEditor(entry)} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}
+          {visibleEntries.map((entry) => <MemoryCard key={entry.id} entry={entry} onView={() => setDetail(entry)} onEdit={() => setEditor(entry)} onDelete={() => confirmDelete(entry, remove)} onArchive={() => toggleArchive(entry.id)} onPin={() => togglePin(entry.id)} />)}
         </div>
       )}
     </>

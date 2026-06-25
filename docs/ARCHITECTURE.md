@@ -46,6 +46,10 @@ AO-003 defines Business Memory under `app/src/core/memory`:
 
 The Memory feature UI lives under `app/src/features/memory`. Dashboard and CEO Briefing consume the same core memory API.
 
+AO-003.1 adds schema normalization for older local records, category and pin-state filtering, pinned-first ordering, and a relationship-aware detail view. Memory edits preserve `createdAt` while every mutation refreshes `updatedAt`; deletion also removes the deleted ID from surviving memory relationships.
+
+Dashboard selectors provide recent decisions, pinned business rules, recent ideas, and latest sprint notes. The CEO Briefing selector returns active pinned decisions followed by the three most recent important memories. Both integrations use the core memory API without duplicating persistence or domain logic.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

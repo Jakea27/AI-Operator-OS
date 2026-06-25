@@ -51,6 +51,13 @@
 - Added Business Memory Dashboard widget for decisions, pinned knowledge, sprint notes, and ideas
 - Added recent important memory to CEO Daily Briefings
 - Adopted AO issue naming for AO-001 through AO-006
+- Completed AO-003.1: upgraded Business Memory into a structured Business Knowledge System
+- Added category and pin-state filters while keeping full-text search and archived-memory discovery
+- Added a full memory detail view with markdown-ready details, created/updated timestamps, and navigable related memories
+- Added automatic normalization for existing stored memories so older entries gain required metadata without data loss
+- Made pinned memories remain at the top of active and filtered memory lists
+- Updated the Dashboard memory widget with recent decisions, pinned business rules, recent ideas, and latest sprint notes
+- Updated CEO Daily Briefings to include pinned decisions and the three most recent important memories
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

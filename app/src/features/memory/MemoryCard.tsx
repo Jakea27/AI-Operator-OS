@@ -1,15 +1,17 @@
-import { Archive, ArchiveRestore, Link2, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
+import { Archive, ArchiveRestore, Eye, Link2, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
 import { MemoryEntry } from '@/src/core/memory'
 
 export function MemoryCard({
   entry,
   onEdit,
+  onView,
   onDelete,
   onArchive,
   onPin,
 }: {
   entry: MemoryEntry
   onEdit: () => void
+  onView: () => void
   onDelete: () => void
   onArchive: () => void
   onPin: () => void
@@ -23,7 +25,7 @@ export function MemoryCard({
             <span className="text-[10px] text-muted">{entry.category}</span>
             {entry.relatedIssue && <span className="text-[10px] font-medium text-mint">{entry.relatedIssue}</span>}
           </div>
-          <h3 className="m-0 text-base font-semibold text-white">{entry.title}</h3>
+          <button onClick={onView} className="m-0 text-left text-base font-semibold text-white hover:text-lime">{entry.title}</button>
         </div>
         {entry.pinned && <Pin size={15} className="shrink-0 text-lime" />}
       </div>
@@ -41,9 +43,11 @@ export function MemoryCard({
       <div className="flex items-center justify-between border-t border-line pt-4">
         <div className="text-[10px] text-muted">
           <p className="m-0">{entry.author || 'Unknown author'}</p>
-          <p className="mb-0 mt-1">Updated {new Date(entry.updatedAt).toLocaleString()}</p>
+          <p className="mb-0 mt-1">Created {new Date(entry.createdAt).toLocaleString()}</p>
+          <p className="m-0">Updated {new Date(entry.updatedAt).toLocaleString()}</p>
         </div>
         <div className="flex gap-2">
+          <button onClick={onView} className="rounded-lg border border-line p-2 text-muted hover:text-white" aria-label="View details"><Eye size={14} /></button>
           <button onClick={onPin} className="rounded-lg border border-line p-2 text-muted hover:text-lime" aria-label={entry.pinned ? 'Unpin' : 'Pin'}>{entry.pinned ? <PinOff size={14} /> : <Pin size={14} />}</button>
           <button onClick={onArchive} className="rounded-lg border border-line p-2 text-muted hover:text-white" aria-label={entry.archived ? 'Restore' : 'Archive'}>{entry.archived ? <ArchiveRestore size={14} /> : <Archive size={14} />}</button>
           <button onClick={onEdit} className="rounded-lg border border-line p-2 text-muted hover:text-white" aria-label="Edit"><Pencil size={14} /></button>

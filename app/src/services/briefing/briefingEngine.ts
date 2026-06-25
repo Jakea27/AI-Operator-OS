@@ -3,7 +3,7 @@ import {
   formatCurrency,
   OperatingState,
 } from '@/src/services/operatingStore'
-import { getImportantRecentMemories, MemoryEntry } from '@/src/core/memory'
+import { getBriefingMemories, getImportantRecentMemories, MemoryEntry } from '@/src/core/memory'
 
 export type DailyBriefing = {
   greeting: string
@@ -175,7 +175,7 @@ export function generateDailyBriefing({
       metrics.profit,
     ),
     recommendations: buildRecommendations(state, metrics.profit, metrics.sprintProgress),
-    recentMemory: getImportantRecentMemories(memories, 5).map((entry) => (
+    recentMemory: getBriefingMemories(memories).map((entry) => (
       `${entry.relatedIssue ? `${entry.relatedIssue} ` : ''}${entry.title}`
     )),
     executiveSignal: buildExecutiveSignal(

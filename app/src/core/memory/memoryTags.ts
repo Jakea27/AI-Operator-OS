@@ -13,6 +13,16 @@ export const suggestedMemoryTags = [
   'research',
 ]
 
+export const suggestedMemoryCategories = [
+  'Development',
+  'Finance',
+  'Marketing',
+  'Operations',
+  'AI',
+  'Product',
+  'Research',
+]
+
 export function normalizeTags(tags: string[]) {
   return Array.from(
     new Set(
@@ -25,4 +35,8 @@ export function normalizeTags(tags: string[]) {
 
 export function collectMemoryTags(entries: MemoryEntry[]) {
   return Array.from(new Set(entries.flatMap((entry) => entry.tags))).sort()
+}
+
+export function collectMemoryCategories(entries: MemoryEntry[]) {
+  return Array.from(new Set(entries.map((entry) => entry.category).filter(Boolean))).sort()
 }

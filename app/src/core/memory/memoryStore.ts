@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { MemoryDraft, MemoryEntry } from './memoryTypes'
+import { MemoryDraft, MemoryEntry, MemoryType, memoryTypes } from './memoryTypes'
 import { normalizeTags } from './memoryTags'
 
 const STORAGE_KEY = 'ai-operator-os-business-memory-v1'
@@ -77,14 +77,57 @@ function migrateLegacyMemory(): MemoryEntry[] {
   return Array.from(new Map(migrated.map((entry) => [entry.id, entry])).values())
 }
 
+type StoredMemory = Partial<MemoryEntry> & {
+  body?: string
+  context?: string
+  tag?: string
+}
+
+function normalizeEntry(entry: StoredMemory): MemoryEntry {
+  const timestamp = new Date().toISOString()
+  const type = memoryTypes.includes(entry.type as MemoryType)
+    ? entry.type as MemoryType
+    : 'Knowledge'
+  const rawTags = Array.isArray(entry.tags)
+    ? entry.tags
+    : entry.tag
+      ? [entry.tag]
+      : []
+  const details = entry.details ?? entry.body ?? entry.context ?? ''
+  return {
+    id: entry.id ?? createId(),
+    title: entry.title?.trim() || 'Untitled memory',
+    type,
+    category: entry.category?.trim() || 'General',
+    tags: normalizeTags(rawTags),
+    summary: entry.summary?.trim() || details.slice(0, 240),
+    details,
+    createdAt: entry.createdAt ?? timestamp,
+    updatedAt: entry.updatedAt ?? entry.createdAt ?? timestamp,
+    author: entry.author?.trim() || 'AI Operator',
+    relatedIssue: entry.relatedIssue?.trim().toUpperCase() || '',
+    relatedSprint: entry.relatedSprint?.trim() || '',
+    relatedMemoryIds: Array.isArray(entry.relatedMemoryIds)
+      ? entry.relatedMemoryIds.filter((id): id is string => typeof id === 'string')
+      : [],
+    pinned: Boolean(entry.pinned),
+    archived: Boolean(entry.archived),
+  }
+}
+
 function readEntries(): MemoryEntry[] {
   if (typeof window === 'undefined') return []
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) return JSON.parse(stored) as MemoryEntry[]
+    if (stored) {
+      const normalized = (JSON.parse(stored) as StoredMemory[]).map(normalizeEntry)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized))
+      return normalized
+    }
     const migrated = migrateLegacyMemory()
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated))
-    return migrated
+    const normalized = migrated.map(normalizeEntry)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized))
+    return normalized
   } catch {
     return []
   }

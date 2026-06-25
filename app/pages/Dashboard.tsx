@@ -21,7 +21,6 @@ import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
 import {
   getLatestSprintMemories,
   getOpenIdeas,
-  getPinnedMemories,
   useMemoryStore,
 } from '@/src/core/memory'
 
@@ -178,14 +177,17 @@ function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memor
     .filter((entry) => entry.type === 'Decision' && !entry.archived)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
     .slice(0, 2)
-  const pinned = getPinnedMemories(memories, 2)
+  const pinnedBusinessRules = memories
+    .filter((entry) => entry.type === 'Business Rule' && entry.pinned && !entry.archived)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 2)
   const sprint = getLatestSprintMemories(memories, 1)
   const ideas = getOpenIdeas(memories, 2)
   const groups = [
     ['Recent decisions', decisions],
-    ['Pinned knowledge', pinned],
+    ['Pinned business rules', pinnedBusinessRules],
     ['Latest sprint notes', sprint],
-    ['Open ideas', ideas],
+    ['Recent ideas', ideas],
   ] as const
   return (
     <section className="panel col-span-12 p-6">
