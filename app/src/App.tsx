@@ -4,7 +4,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { CEO } from '@/pages/CEO'
 import { Money } from '@/pages/Money'
 import { Development } from '@/pages/Development'
-import { Memory } from '@/pages/Memory'
+import { MemoryPage } from '@/src/features/memory/MemoryPage'
 import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
 
@@ -16,7 +16,7 @@ export default function App() {
         <Route path="ceo" element={<CEO />} />
         <Route path="money" element={<Money />} />
         <Route path="development" element={<Development />} />
-        <Route path="memory" element={<Memory />} />
+        <Route path="memory" element={<MemoryPage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />
       </Route>

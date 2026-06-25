@@ -33,6 +33,14 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [x] CEO Daily Briefing Engine
 - [x] Persisted daily briefing snapshots
 - [x] Briefing priorities, risks, and recommendations
+## AO Issue Roadmap
+
+- [x] AO-001 Money Department
+- [x] AO-002 CEO Daily Briefing
+- [x] AO-003 Business Memory Engine
+- [ ] AO-004 AI Operator Framework
+- [ ] AO-005 Approval Queue
+- [ ] AO-006 Automation Engine
 
 ## Sprint 0.2 - Business Builder
 

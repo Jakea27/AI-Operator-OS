@@ -18,6 +18,12 @@ import { ApprovalEntryForm } from '@/src/components/operating/ApprovalEntryForm'
 import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMetrics'
 import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
 import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
+import {
+  getLatestSprintMemories,
+  getOpenIdeas,
+  getPinnedMemories,
+  useMemoryStore,
+} from '@/src/core/memory'
 
 export function Dashboard() {
   const {
@@ -27,7 +33,8 @@ export function Dashboard() {
     resolveApproval,
     saveDailyBriefing,
   } = useOperatingStore()
-  const liveBriefing = generateDailyBriefing({ state: data, storageAvailable })
+  const { memoryEntries } = useMemoryStore()
+  const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
   const briefingIsCurrent =
     data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
   const briefing = briefingIsCurrent && data.latestBriefing
@@ -43,14 +50,14 @@ export function Dashboard() {
     data.approvals.length > 0 ||
     data.projects.length > 0 ||
     data.tasks.length > 0 ||
-    data.memoryEntries.length > 0
+    memoryEntries.length > 0
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
   })
   const runBriefing = () => {
-    saveDailyBriefing(generateDailyBriefing({ state: data, storageAvailable, now: new Date() }))
+    saveDailyBriefing(generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable, now: new Date() }))
   }
 
   return (
@@ -102,6 +109,7 @@ export function Dashboard() {
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4">
+        <BusinessMemoryWidget memories={memoryEntries} />
         <section className="panel col-span-7 p-6">
           <div className="flex items-center justify-between">
             <div><p className="eyebrow mb-2">CEO Daily Briefing</p><h3 className="m-0 font-display text-xl font-semibold">{briefing.greeting}</h3></div>
@@ -162,5 +170,37 @@ export function Dashboard() {
         </section>
       </div>
     </>
+  )
+}
+
+function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memory').MemoryEntry[] }) {
+  const decisions = memories
+    .filter((entry) => entry.type === 'Decision' && !entry.archived)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 2)
+  const pinned = getPinnedMemories(memories, 2)
+  const sprint = getLatestSprintMemories(memories, 1)
+  const ideas = getOpenIdeas(memories, 2)
+  const groups = [
+    ['Recent decisions', decisions],
+    ['Pinned knowledge', pinned],
+    ['Latest sprint notes', sprint],
+    ['Open ideas', ideas],
+  ] as const
+  return (
+    <section className="panel col-span-12 p-6">
+      <div className="mb-5 flex items-center justify-between">
+        <div><p className="eyebrow mb-1">Business Memory</p><h3 className="m-0 text-lg font-semibold">What the operating system remembers</h3></div>
+        <Link to="/memory" className="btn-secondary">Open memory</Link>
+      </div>
+      <div className="grid grid-cols-4 gap-4">
+        {groups.map(([label, entries]) => (
+          <div key={label} className="rounded-xl border border-line bg-ink/40 p-4">
+            <p className="eyebrow mb-3">{label}</p>
+            {entries.length === 0 ? <p className="m-0 text-xs text-muted">No entries yet.</p> : entries.map((entry) => <p key={entry.id} className="mb-2 text-xs leading-5 text-[#aeb8b3] last:mb-0">{entry.relatedIssue && <span className="mr-1 text-mint">{entry.relatedIssue}</span>}{entry.title}</p>)}
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }

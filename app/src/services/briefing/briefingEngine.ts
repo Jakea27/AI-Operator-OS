@@ -3,6 +3,7 @@ import {
   formatCurrency,
   OperatingState,
 } from '@/src/services/operatingStore'
+import { getImportantRecentMemories, MemoryEntry } from '@/src/core/memory'
 
 export type DailyBriefing = {
   greeting: string
@@ -17,6 +18,7 @@ export type DailyBriefing = {
   topPriorities: string[]
   risks: string[]
   recommendations: string[]
+  recentMemory: string[]
   executiveSignal: string
   generatedAt: string
   sourceFingerprint: string
@@ -24,17 +26,18 @@ export type DailyBriefing = {
 
 export type BriefingContext = {
   state: OperatingState
+  memories: MemoryEntry[]
   storageAvailable: boolean
   now?: Date
 }
 
-function fingerprint(state: OperatingState) {
+function fingerprint(state: OperatingState, memories: MemoryEntry[]) {
   return JSON.stringify({
     revenue: state.revenueEntries.map(({ id, amount, date, updatedAt }) => [id, amount, date, updatedAt]),
     expenses: state.expenseEntries.map(({ id, amount, date, updatedAt }) => [id, amount, date, updatedAt]),
     approvals: state.approvals.map(({ id, status, resolvedAt }) => [id, status, resolvedAt]),
     tasks: state.tasks.map(({ id, status, sprint, completedAt }) => [id, status, sprint, completedAt]),
-    memory: state.memoryEntries.map(({ id, createdAt }) => [id, createdAt]),
+    memory: memories.map(({ id, updatedAt, pinned, archived }) => [id, updatedAt, pinned, archived]),
     settings: state.settings,
   })
 }
@@ -45,7 +48,7 @@ function greetingFor(date: Date, ownerName: string) {
   return `${salutation}${ownerName ? `, ${ownerName}` : ''}.`
 }
 
-function buildPriorities(state: OperatingState) {
+function buildPriorities(state: OperatingState, memories: MemoryEntry[]) {
   const pendingApprovals = state.approvals
     .filter((approval) => approval.status === 'pending')
     .slice(0, 3)
@@ -58,10 +61,9 @@ function buildPriorities(state: OperatingState) {
     })
     .slice(0, 3)
     .map((task) => `Advance sprint task: ${task.title}`)
-  const recentMemory = [...state.memoryEntries]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  const recentMemory = getImportantRecentMemories(memories, 1)
     .slice(0, 1)
-    .map((entry) => `Apply recent ${entry.tag.toLowerCase()} memory: ${entry.title}`)
+    .map((entry) => `Apply recent ${entry.type.toLowerCase()} memory: ${entry.title}`)
 
   const priorities = [...pendingApprovals, ...sprintTasks, ...recentMemory].slice(0, 5)
   return priorities.length > 0 ? priorities : ['No urgent priorities are recorded.']
@@ -144,6 +146,7 @@ function buildExecutiveSignal(
 
 export function generateDailyBriefing({
   state,
+  memories,
   storageAvailable,
   now = new Date(),
 }: BriefingContext): DailyBriefing {
@@ -163,7 +166,7 @@ export function generateDailyBriefing({
     profitMargin: metrics.profitMargin,
     pendingApprovals: metrics.pendingApprovalCount,
     sprintProgress: metrics.sprintProgress,
-    topPriorities: buildPriorities(state),
+    topPriorities: buildPriorities(state, memories),
     risks: buildRisks(
       state,
       storageAvailable,
@@ -172,6 +175,9 @@ export function generateDailyBriefing({
       metrics.profit,
     ),
     recommendations: buildRecommendations(state, metrics.profit, metrics.sprintProgress),
+    recentMemory: getImportantRecentMemories(memories, 5).map((entry) => (
+      `${entry.relatedIssue ? `${entry.relatedIssue} ` : ''}${entry.title}`
+    )),
     executiveSignal: buildExecutiveSignal(
       state,
       metrics.monthlyRevenue,
@@ -181,7 +187,7 @@ export function generateDailyBriefing({
       metrics.pendingApprovalCount,
     ),
     generatedAt: now.toISOString(),
-    sourceFingerprint: fingerprint(state),
+    sourceFingerprint: fingerprint(state, memories),
   }
   validateDailyBriefing(briefing)
   return briefing

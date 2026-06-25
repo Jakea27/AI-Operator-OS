@@ -29,20 +29,28 @@
 - Added a prominent zero-data Dashboard state with direct revenue and expense entry actions
 - Added cross-window localStorage synchronization for real-time operating updates
 - Verified Dashboard and Money share the same persisted operating store and derived metrics
-- Completed Issue #001: functional local-first Money Department
+- Completed AO-001: functional local-first Money Department
 - Added revenue and expense categories, business assignment, and notes
 - Added revenue and expense editing and deletion with immediate metric recalculation
 - Added separate revenue and expense history tables
 - Added revenue-today, monthly revenue, monthly expenses, profit, and profit-margin accounting summaries
 - Added expense trend reporting alongside revenue, profit, business, and category charts
 - Added backward-compatible migration for financial records created before the accounting schema
-- Completed Issue #002: local-first CEO Daily Briefing Engine
+- Completed AO-002: local-first CEO Daily Briefing Engine
 - Added typed daily briefings generated from Money, approvals, sprint tasks, memory, and storage health
 - Added live briefing drafts that react to operating-data changes
 - Added explicit daily briefing regeneration with locally persisted snapshots and timestamps
 - Added CEO-style priorities, risks, recommendations, metrics, and executive signal
 - Added truthful empty-state briefing language for missing financial, approval, and sprint data
 - Added runtime briefing validation without introducing a new test dependency
+- Completed AO-003: local-first Business Memory Engine
+- Added dedicated core memory types, store, engine, search, and tag modules
+- Added backward migration from both previous local memory formats
+- Added complete memory CRUD with pinning, archiving, relationships, and metadata
+- Added full-text search plus type, tag, archived, and sorting filters
+- Added Business Memory Dashboard widget for decisions, pinned knowledge, sprint notes, and ideas
+- Added recent important memory to CEO Daily Briefings
+- Adopted AO issue naming for AO-001 through AO-006
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

@@ -2,10 +2,12 @@ import { ArrowUpRight, Compass, Flag, Lightbulb, Sparkles } from 'lucide-react'
 import { PageIntro } from '@/components/PageIntro'
 import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
 import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
+import { useMemoryStore } from '@/src/core/memory'
 
 export function CEO() {
   const { data, storageAvailable, saveDailyBriefing } = useOperatingStore()
-  const liveBriefing = generateDailyBriefing({ state: data, storageAvailable })
+  const { memoryEntries } = useMemoryStore()
+  const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
   const briefingIsCurrent = data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
   const briefing = briefingIsCurrent && data.latestBriefing ? data.latestBriefing : liveBriefing
   const priorities = [
@@ -24,7 +26,7 @@ export function CEO() {
   ].slice(0, 6)
 
   const runBriefing = () => {
-    saveDailyBriefing(generateDailyBriefing({ state: data, storageAvailable, now: new Date() }))
+    saveDailyBriefing(generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable, now: new Date() }))
   }
 
   return (
@@ -39,10 +41,11 @@ export function CEO() {
         <section className="panel col-span-8 p-6">
           <div className="flex items-center gap-3"><div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Compass size={19} /></div><div><p className="eyebrow mb-1">CEO Daily Briefing</p><h3 className="m-0 text-lg font-semibold">{briefing.greeting}</h3></div></div>
           <p className="mb-0 mt-6 rounded-xl border border-line bg-ink/50 p-4 text-sm leading-7 text-[#c3cbc7]">{briefing.executiveSignal}</p>
-          <div className="mt-5 grid grid-cols-3 gap-4">
+          <div className="mt-5 grid grid-cols-4 gap-4">
             <BriefingList title="Priorities" items={briefing.topPriorities} />
             <BriefingList title="Risks" items={briefing.risks} />
             <BriefingList title="Recommendations" items={briefing.recommendations} />
+            <BriefingList title="Recent Memory" items={briefing.recentMemory.length > 0 ? briefing.recentMemory : ['No important memory entries recorded yet.']} />
           </div>
           <div className="mt-5 flex justify-between border-t border-line pt-4 text-[11px] text-muted">
             <span>{data.latestBriefing ? `Last generated ${new Date(data.latestBriefing.generatedAt).toLocaleString()}` : 'Run the briefing to save the first local snapshot.'}</span>

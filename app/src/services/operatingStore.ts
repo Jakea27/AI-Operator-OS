@@ -56,14 +56,6 @@ export type TaskRecord = {
   completedAt?: string
 }
 
-export type MemoryEntry = {
-  id: string
-  title: string
-  body: string
-  tag: string
-  createdAt: string
-}
-
 export type WorkspaceSettings = {
   businessName: string
   ownerName: string
@@ -77,7 +69,6 @@ export type OperatingState = {
   approvals: ApprovalRecord[]
   projects: ProjectRecord[]
   tasks: TaskRecord[]
-  memoryEntries: MemoryEntry[]
   latestBriefing: DailyBriefing | null
   settings: WorkspaceSettings
   sampleDataLoaded: boolean
@@ -104,7 +95,6 @@ const emptyState: OperatingState = {
   approvals: [],
   projects: [],
   tasks: [],
-  memoryEntries: [],
   latestBriefing: null,
   settings: {
     businessName: '',
@@ -124,7 +114,8 @@ function readState(): OperatingState {
     type LegacyRevenueEntry = Partial<RevenueEntry> & { description?: string }
     type LegacyExpenseEntry = Partial<ExpenseEntry> & { description?: string }
     const raw = JSON.parse(stored) as Record<string, unknown>
-    const parsed = { ...emptyState, ...raw } as OperatingState
+    const { memoryEntries: _legacyMemoryEntries, ...rawWithoutMemory } = raw
+    const parsed = { ...emptyState, ...rawWithoutMemory } as OperatingState
     const legacyRevenueEntries = Array.isArray(raw.revenueEntries)
       ? (raw.revenueEntries as LegacyRevenueEntry[])
       : []
@@ -336,15 +327,6 @@ export const operatingStore = {
       ),
     })
   },
-  addMemory(entry: Omit<MemoryEntry, 'id' | 'createdAt'>) {
-    persist({
-      ...state,
-      memoryEntries: [
-        { ...entry, id: id('memory'), createdAt: new Date().toISOString() },
-        ...state.memoryEntries,
-      ],
-    })
-  },
   saveDailyBriefing(briefing: DailyBriefing) {
     persist({ ...state, latestBriefing: briefing })
   },
@@ -357,8 +339,7 @@ export const operatingStore = {
       state.expenseEntries.length > 0 ||
       state.approvals.length > 0 ||
       state.projects.length > 0 ||
-      state.tasks.length > 0 ||
-      state.memoryEntries.length > 0
+      state.tasks.length > 0
     ) {
       return
     }
@@ -388,9 +369,6 @@ export const operatingStore = {
       tasks: [
         { id: id('sample-task'), title: 'Review sample offer', projectId: 'sample-project', status: 'done', sprint: true, createdAt: new Date().toISOString(), completedAt: new Date().toISOString() },
         { id: id('sample-task'), title: 'Publish sample landing page', projectId: 'sample-project', status: 'in-progress', sprint: true, createdAt: new Date().toISOString() },
-      ],
-      memoryEntries: [
-        { id: id('sample-memory'), title: 'Sample operating note', body: 'This entry was loaded from optional sample data.', tag: 'Sample', createdAt: new Date().toISOString() },
       ],
       sampleDataLoaded: true,
     })

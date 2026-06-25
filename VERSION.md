@@ -8,7 +8,7 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: Issue #002 CEO Daily Briefing Engine complete
+Current Milestone: AO-003 Business Memory Engine complete
 
 ## Version Rules
 
