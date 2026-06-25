@@ -35,7 +35,7 @@ export type MemoryEntry = {
 
 export type MemoryDraft = Omit<MemoryEntry, 'id' | 'createdAt' | 'updatedAt'>
 
-export type MemorySort = 'newest' | 'oldest' | 'pinned'
+export type MemorySort = 'newest' | 'oldest' | 'updated' | 'pinned'
 
 export type MemoryFilters = {
   query: string

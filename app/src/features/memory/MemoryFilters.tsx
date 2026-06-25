@@ -33,7 +33,8 @@ export function MemoryFilters({
       <select className="field" value={filters.sort} onChange={(event) => onChange({ ...filters, sort: event.target.value as Filters['sort'] })}>
         <option value="newest">Newest</option>
         <option value="oldest">Oldest</option>
-        <option value="pinned">Recently updated</option>
+        <option value="updated">Updated</option>
+        <option value="pinned">Pinned first</option>
       </select>
       <select className="field" value={filters.archived ? 'archived' : 'active'} onChange={(event) => onChange({ ...filters, archived: event.target.value === 'archived' })}>
         <option value="active">Active memories</option>

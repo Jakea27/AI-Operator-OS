@@ -58,6 +58,10 @@
 - Made pinned memories remain at the top of active and filtered memory lists
 - Updated the Dashboard memory widget with recent decisions, pinned business rules, recent ideas, and latest sprint notes
 - Updated CEO Daily Briefings to include pinned decisions and the three most recent important memories
+- Expanded structured categories with Sales, Automation, and Strategy
+- Added distinct Newest, Oldest, Updated, and Pinned-first memory sorting
+- Aligned legacy migration so context becomes summary, legacy tags become tag arrays, missing categories default to Development, and available created dates are preserved
+- Expanded CEO Briefing memory context with pinned business rules and current open ideas
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

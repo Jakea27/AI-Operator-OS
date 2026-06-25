@@ -82,8 +82,7 @@ export function MemoryPage() {
           onClose={() => setDetail(null)}
           onEdit={() => setEditor(detail)}
           onDelete={() => {
-            confirmDelete(detail, remove)
-            setDetail(null)
+            if (confirmDelete(detail, remove)) setDetail(null)
           }}
           onArchive={() => toggleArchive(detail.id)}
           onPin={() => togglePin(detail.id)}
@@ -127,5 +126,7 @@ function Stat({ icon: Icon, label, value }: { icon: typeof Brain; label: string;
 }
 
 function confirmDelete(entry: MemoryEntry, remove: (id: string) => void) {
-  if (window.confirm(`Delete "${entry.title}" permanently?`)) remove(entry.id)
+  if (!window.confirm(`Delete "${entry.title}" permanently?`)) return false
+  remove(entry.id)
+  return true
 }

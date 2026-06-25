@@ -27,8 +27,12 @@ export function searchMemories(entries: MemoryEntry[], filters: MemoryFilters) {
   })
 
   return filtered.sort((a, b) => {
-    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
+    if (filters.sort === 'pinned') {
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
+      return b.updatedAt.localeCompare(a.updatedAt)
+    }
+    if (filters.sort === 'updated') return b.updatedAt.localeCompare(a.updatedAt)
     if (filters.sort === 'oldest') return a.createdAt.localeCompare(b.createdAt)
-    return b.updatedAt.localeCompare(a.updatedAt)
+    return b.createdAt.localeCompare(a.createdAt)
   })
 }

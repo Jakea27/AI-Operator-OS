@@ -12,7 +12,7 @@ import {
 const emptyDraft: MemoryDraft = {
   title: '',
   type: 'Knowledge',
-  category: 'General',
+  category: 'Development',
   tags: [],
   summary: '',
   details: '',
@@ -60,7 +60,7 @@ export function MemoryEditor({
       <form onSubmit={submit} className="grid grid-cols-2 gap-4">
         <label className="col-span-2 text-xs text-muted">Title<input required className="field mt-2" value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} /></label>
         <label className="text-xs text-muted">Type<select required className="field mt-2" value={draft.type} onChange={(event) => setDraft({ ...draft, type: event.target.value as MemoryType })}>{memoryTypes.map((type) => <option key={type}>{type}</option>)}</select></label>
-        <label className="text-xs text-muted">Category<input required className="field mt-2" list="memory-categories" value={draft.category} onChange={(event) => setDraft({ ...draft, category: event.target.value })} /><datalist id="memory-categories">{suggestedMemoryCategories.map((category) => <option key={category} value={category} />)}</datalist></label>
+        <label className="text-xs text-muted">Category<select required className="field mt-2" value={draft.category} onChange={(event) => setDraft({ ...draft, category: event.target.value })}>{!suggestedMemoryCategories.includes(draft.category) && <option value={draft.category}>{draft.category}</option>}{suggestedMemoryCategories.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
         <label className="col-span-2 text-xs text-muted">Tags<input className="field mt-2" list="memory-tags" placeholder="strategy, money, customer" value={tagText} onChange={(event) => setTagText(event.target.value)} /><datalist id="memory-tags">{suggestedMemoryTags.map((tag) => <option key={tag} value={tag} />)}</datalist></label>
         <label className="col-span-2 text-xs text-muted">Summary<textarea required className="field mt-2 min-h-20 resize-y" value={draft.summary} onChange={(event) => setDraft({ ...draft, summary: event.target.value })} /></label>
         <label className="col-span-2 text-xs text-muted">Details<textarea className="field mt-2 min-h-36 resize-y" value={draft.details} onChange={(event) => setDraft({ ...draft, details: event.target.value })} /></label>

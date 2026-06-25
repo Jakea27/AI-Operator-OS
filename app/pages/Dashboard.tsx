@@ -184,10 +184,10 @@ function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memor
   const sprint = getLatestSprintMemories(memories, 1)
   const ideas = getOpenIdeas(memories, 2)
   const groups = [
-    ['Recent decisions', decisions],
     ['Pinned business rules', pinnedBusinessRules],
-    ['Latest sprint notes', sprint],
+    ['Recent decisions', decisions],
     ['Recent ideas', ideas],
+    ['Latest sprint notes', sprint],
   ] as const
   return (
     <section className="panel col-span-12 p-6">

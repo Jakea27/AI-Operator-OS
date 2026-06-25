@@ -21,6 +21,7 @@ function migrateLegacyMemory(): MemoryEntry[] {
         id?: string
         title?: string
         body?: string
+        context?: string
         tag?: string
         createdAt?: string
       }>
@@ -30,10 +31,10 @@ function migrateLegacyMemory(): MemoryEntry[] {
         id: entry.id ?? createId(),
         title: entry.title ?? 'Migrated memory',
         type: 'Knowledge',
-        category: 'Legacy',
+        category: 'Development',
         tags: normalizeTags([entry.tag ?? 'legacy']),
-        summary: entry.body ?? '',
-        details: entry.body ?? '',
+        summary: entry.context ?? entry.body ?? '',
+        details: entry.body ?? entry.context ?? '',
         createdAt: entry.createdAt ?? now,
         updatedAt: entry.createdAt ?? now,
         author: 'AI Operator',
@@ -49,6 +50,7 @@ function migrateLegacyMemory(): MemoryEntry[] {
       id?: number | string
       title?: string
       body?: string
+      context?: string
       tag?: string
       date?: string
     }>
@@ -57,12 +59,12 @@ function migrateLegacyMemory(): MemoryEntry[] {
         id: entry.id ? `legacy-${entry.id}` : createId(),
         title: entry.title ?? 'Migrated memory',
         type: 'Knowledge',
-        category: 'Legacy',
+        category: 'Development',
         tags: normalizeTags([entry.tag ?? 'legacy']),
-        summary: entry.body ?? '',
-        details: entry.body ?? '',
-        createdAt: now,
-        updatedAt: now,
+        summary: entry.context ?? entry.body ?? '',
+        details: entry.body ?? entry.context ?? '',
+        createdAt: entry.date ?? now,
+        updatedAt: entry.date ?? now,
         author: 'AI Operator',
         relatedIssue: '',
         relatedSprint: '',
@@ -94,13 +96,16 @@ function normalizeEntry(entry: StoredMemory): MemoryEntry {
       ? [entry.tag]
       : []
   const details = entry.details ?? entry.body ?? entry.context ?? ''
+  const category = entry.category?.trim()
   return {
     id: entry.id ?? createId(),
     title: entry.title?.trim() || 'Untitled memory',
     type,
-    category: entry.category?.trim() || 'General',
+    category: !category || category === 'General' || category === 'Legacy'
+      ? 'Development'
+      : category,
     tags: normalizeTags(rawTags),
-    summary: entry.summary?.trim() || details.slice(0, 240),
+    summary: entry.summary?.trim() || entry.context?.trim() || details.slice(0, 240),
     details,
     createdAt: entry.createdAt ?? timestamp,
     updatedAt: entry.updatedAt ?? entry.createdAt ?? timestamp,

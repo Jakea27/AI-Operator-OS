@@ -59,13 +59,22 @@ export function getImportantRecentMemories(entries: MemoryEntry[], limit = 5) {
 }
 
 export function getBriefingMemories(entries: MemoryEntry[]) {
-  const pinnedDecisions = entries
-    .filter((entry) => entry.type === 'Decision' && entry.pinned && !entry.archived)
+  const pinnedExecutiveMemory = entries
+    .filter((entry) => (
+      (entry.type === 'Decision' || entry.type === 'Business Rule') &&
+      entry.pinned &&
+      !entry.archived
+    ))
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-  const pinnedIds = new Set(pinnedDecisions.map((entry) => entry.id))
+  const pinnedIds = new Set(pinnedExecutiveMemory.map((entry) => entry.id))
   const recentImportant = entries
     .filter((entry) => !entry.archived && importantTypes.has(entry.type) && !pinnedIds.has(entry.id))
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
     .slice(0, 3)
-  return [...pinnedDecisions, ...recentImportant]
+  const selectedIds = new Set([...pinnedExecutiveMemory, ...recentImportant].map((entry) => entry.id))
+  const openIdeas = entries
+    .filter((entry) => entry.type === 'Idea' && !entry.archived && !selectedIds.has(entry.id))
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 3)
+  return [...pinnedExecutiveMemory, ...recentImportant, ...openIdeas]
 }

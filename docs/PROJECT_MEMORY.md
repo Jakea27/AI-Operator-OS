@@ -25,7 +25,9 @@ Memory entries include type, category, tags, summary, details, author, issue/spr
 
 AO-003.1 upgraded this foundation into a structured Business Knowledge System. The Memory workspace now filters by type, category, tag, pin state, and archive state; pinned entries remain first; and each memory has a full detail view with created/updated timestamps and navigable relationships. Existing stored records are normalized automatically with safe defaults for newly required metadata.
 
-The Dashboard Business Memory widget now presents recent decisions, pinned business rules, recent ideas, and latest sprint notes. Daily Briefings include all active pinned decisions followed by the three most recent important memories.
+The Dashboard Business Memory widget now presents pinned business rules, recent decisions, recent ideas, and latest sprint notes. Daily Briefings include active pinned decisions and business rules, the three most recent important memories, and current open ideas.
+
+The structured category set is Development, Finance, Marketing, Operations, AI, Product, Research, Sales, Automation, and Strategy. Existing simple entries preserve their title and available created date; context becomes summary, a single legacy tag becomes a tags array, and missing type/category values default to Knowledge and Development.
 
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
