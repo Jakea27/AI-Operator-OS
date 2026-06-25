@@ -2,13 +2,13 @@
 
 Current Version: 0.1.0-alpha
 
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: Issue #001 Money Department complete
+Current Milestone: Issue #002 CEO Daily Briefing Engine complete
 
 ## Version Rules
 

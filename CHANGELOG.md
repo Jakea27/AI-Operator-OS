@@ -36,6 +36,13 @@
 - Added revenue-today, monthly revenue, monthly expenses, profit, and profit-margin accounting summaries
 - Added expense trend reporting alongside revenue, profit, business, and category charts
 - Added backward-compatible migration for financial records created before the accounting schema
+- Completed Issue #002: local-first CEO Daily Briefing Engine
+- Added typed daily briefings generated from Money, approvals, sprint tasks, memory, and storage health
+- Added live briefing drafts that react to operating-data changes
+- Added explicit daily briefing regeneration with locally persisted snapshots and timestamps
+- Added CEO-style priorities, risks, recommendations, metrics, and executive signal
+- Added truthful empty-state briefing language for missing financial, approval, and sprint data
+- Added runtime briefing validation without introducing a new test dependency
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

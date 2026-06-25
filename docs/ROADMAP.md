@@ -1,7 +1,7 @@
 # Roadmap
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-24
+Last Updated: 2026-06-25
 
 ## Sprint 0.1 - Foundation
 
@@ -30,6 +30,9 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [x] Revenue and expense categories
 - [x] Business-level financial attribution
 - [x] Revenue, expense, profit, business, and category charts
+- [x] CEO Daily Briefing Engine
+- [x] Persisted daily briefing snapshots
+- [x] Briefing priorities, risks, and recommendations
 
 ## Sprint 0.2 - Business Builder
 

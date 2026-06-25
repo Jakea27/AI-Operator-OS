@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   Banknote,
   Check,
   CircleDollarSign,
@@ -18,15 +17,22 @@ import { ApprovalActivityChart, ChartShell, TrendLineChart } from '@/src/compone
 import { ApprovalEntryForm } from '@/src/components/operating/ApprovalEntryForm'
 import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMetrics'
 import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
+import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
 
 export function Dashboard() {
   const {
     data,
     metrics,
-    ceoReport,
     storageAvailable,
     resolveApproval,
+    saveDailyBriefing,
   } = useOperatingStore()
+  const liveBriefing = generateDailyBriefing({ state: data, storageAvailable })
+  const briefingIsCurrent =
+    data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
+  const briefing = briefingIsCurrent && data.latestBriefing
+    ? data.latestBriefing
+    : liveBriefing
   const trend = buildMonthlyTrend(data)
   const approvalActivity = buildApprovalActivity(data)
   const pendingApprovals = data.approvals.filter((approval) => approval.status === 'pending')
@@ -43,6 +49,9 @@ export function Dashboard() {
     month: 'long',
     day: 'numeric',
   })
+  const runBriefing = () => {
+    saveDailyBriefing(generateDailyBriefing({ state: data, storageAvailable, now: new Date() }))
+  }
 
   return (
     <>
@@ -54,7 +63,12 @@ export function Dashboard() {
             ? 'Your command center is calculated from operating records stored locally on this device.'
             : 'Local storage is unavailable. Changes may not persist after this session.'
         }
-        action={<div className={`flex items-center gap-2 rounded-full border border-line px-3 py-2 text-xs ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}><span className={`h-2 w-2 rounded-full ${storageAvailable ? 'bg-mint' : 'bg-[#ff9e8f]'}`} />{storageAvailable ? 'Local data healthy' : 'Storage unavailable'}</div>}
+        action={
+          <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2 rounded-full border border-line px-3 py-2 text-xs ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}><span className={`h-2 w-2 rounded-full ${storageAvailable ? 'bg-mint' : 'bg-[#ff9e8f]'}`} />{storageAvailable ? 'Local data healthy' : 'Storage unavailable'}</div>
+            <button onClick={runBriefing} className="btn-primary flex items-center gap-2"><Sparkles size={15} /> Run daily briefing</button>
+          </div>
+        }
       />
 
       {!hasOperatingData && (
@@ -90,11 +104,26 @@ export function Dashboard() {
       <div className="mt-4 grid grid-cols-12 gap-4">
         <section className="panel col-span-7 p-6">
           <div className="flex items-center justify-between">
-            <div><p className="eyebrow mb-2">CEO Report</p><h3 className="m-0 font-display text-xl font-semibold">Current executive signal</h3></div>
+            <div><p className="eyebrow mb-2">CEO Daily Briefing</p><h3 className="m-0 font-display text-xl font-semibold">{briefing.greeting}</h3></div>
             <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Sparkles size={18} /></div>
           </div>
-          <p className="my-6 text-[15px] leading-7 text-[#c3cbc7]">{ceoReport}</p>
-          <div className="flex items-center gap-2 border-t border-line pt-4 text-xs font-medium text-lime">Calculated from local operating data <ArrowRight size={14} /></div>
+          <p className="my-5 text-[15px] leading-7 text-[#c3cbc7]">{briefing.executiveSignal}</p>
+          <div className="grid grid-cols-2 gap-4 border-t border-line pt-4">
+            <div>
+              <p className="eyebrow mb-2">Top priorities</p>
+              <ul className="m-0 space-y-1.5 pl-4 text-xs leading-5 text-[#aeb8b3]">
+                {briefing.topPriorities.slice(0, 3).map((priority) => <li key={priority}>{priority}</li>)}
+              </ul>
+            </div>
+            <div>
+              <p className="eyebrow mb-2">Recommendation</p>
+              <p className="m-0 text-xs leading-5 text-[#aeb8b3]">{briefing.recommendations[0]}</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between border-t border-line pt-4 text-[11px] text-muted">
+            <span>{data.latestBriefing ? `Last generated ${new Date(data.latestBriefing.generatedAt).toLocaleString()}` : 'Not yet saved'}</span>
+            {!briefingIsCurrent && data.latestBriefing && <span className="font-medium text-[#ffcc66]">Operating data changed — refresh recommended</span>}
+          </div>
         </section>
 
         <section className="panel col-span-5 p-6">

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import type { DailyBriefing } from '@/src/services/briefing/briefingEngine'
 
 export type RevenueEntry = {
   id: string
@@ -77,6 +78,7 @@ export type OperatingState = {
   projects: ProjectRecord[]
   tasks: TaskRecord[]
   memoryEntries: MemoryEntry[]
+  latestBriefing: DailyBriefing | null
   settings: WorkspaceSettings
   sampleDataLoaded: boolean
 }
@@ -103,6 +105,7 @@ const emptyState: OperatingState = {
   projects: [],
   tasks: [],
   memoryEntries: [],
+  latestBriefing: null,
   settings: {
     businessName: '',
     ownerName: '',
@@ -227,32 +230,6 @@ export function calculateMetrics(source: OperatingState, now = new Date()): Oper
   }
 }
 
-export function createCeoReport(metrics: OperatingMetrics) {
-  if (
-    metrics.monthlyRevenue === 0 &&
-    metrics.monthlyCost === 0 &&
-    metrics.sprintTotal === 0 &&
-    metrics.pendingApprovalCount === 0
-  ) {
-    return 'No operating data has been recorded yet. Add revenue, expenses, sprint tasks, or approvals to generate an executive signal.'
-  }
-
-  const financialSignal =
-    metrics.monthlyRevenue === 0
-      ? `Costs are ${formatCurrency(metrics.monthlyCost)} this month with no recorded revenue.`
-      : `Monthly revenue is ${formatCurrency(metrics.monthlyRevenue)}, producing ${formatCurrency(metrics.profit)} in profit at a ${metrics.profitMargin.toFixed(1)}% margin.`
-  const sprintSignal =
-    metrics.sprintTotal === 0
-      ? 'No sprint tasks are currently defined.'
-      : `The current sprint is ${metrics.sprintProgress}% complete (${metrics.sprintCompleted} of ${metrics.sprintTotal} tasks).`
-  const approvalSignal =
-    metrics.pendingApprovalCount === 0
-      ? 'The approval queue is clear.'
-      : `${metrics.pendingApprovalCount} approval${metrics.pendingApprovalCount === 1 ? '' : 's'} require CEO review.`
-
-  return `${financialSignal} ${sprintSignal} ${approvalSignal}`
-}
-
 export function checkStorageHealth() {
   try {
     const key = `${STORAGE_KEY}-health`
@@ -368,6 +345,9 @@ export const operatingStore = {
       ],
     })
   },
+  saveDailyBriefing(briefing: DailyBriefing) {
+    persist({ ...state, latestBriefing: briefing })
+  },
   clearOperatingData() {
     persist({ ...emptyState, settings: state.settings })
   },
@@ -423,7 +403,6 @@ export function useOperatingStore() {
   return {
     data,
     metrics,
-    ceoReport: createCeoReport(metrics),
     storageAvailable: checkStorageHealth(),
     ...operatingStore,
   }
