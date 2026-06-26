@@ -122,6 +122,10 @@
 - Added Approval detail view with recommendation context, business value, supporting evidence, recommended next action, linked recommendation, related issue, and full decision history
 - Added CTO recommendation Submit for CEO Approval action with linked approval status and last CEO decision display
 - Updated Dashboard and Operators summaries to read pending, approved-today, rejected-today, and deferred counts from the shared approval store
+- Completed AO-005.2.1 Approval State Cleanup
+- Fixed CTO recommendation cards so linked approvals show accurate CEO decision text for Approved, Rejected, Changes Requested, Deferred, Archived, and Pending states
+- Hid duplicate Submit, Approve, and Reject actions once a recommendation has been submitted or received a CEO decision
+- Synced Changes Requested, Deferred, and Archived approval decisions back into CTO recommendation status and history
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

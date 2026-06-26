@@ -69,6 +69,10 @@ The Approval Queue page now supports CEO actions: Approve, Reject, Request Chang
 
 The CTO workspace now includes Submit for CEO Approval on structured recommendation cards. Submitting creates a Pending approval linked by recommendationId, records a CTO recommendation history item, and displays linked approval status plus last CEO decision. Dashboard and Operators summary cards now read approval counts from the shared approval queue store.
 
+AO-005.2.1 cleans up recommendation approval state display. CTO recommendation cards now derive Last CEO Decision from the linked approval status and decision timestamp instead of relying only on a custom decision note. Approved shows “Approved by CEO,” Rejected shows “Rejected by CEO,” Changes Requested shows “Changes requested by CEO,” Deferred shows “Deferred by CEO,” Archived shows “Archived,” and Pending shows “Waiting on CEO decision.”
+
+Submitted, pending, and terminal approval states hide duplicate Submit for CEO Approval, Approve, and Reject controls. Draft recommendations can still be submitted for CEO approval. Approval Queue decisions for Changes Requested, Deferred, and Archived now sync back into CTO recommendation status/history so the Approval Queue and CTO workspace remain aligned after reload.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.

@@ -31,10 +31,11 @@ export function ApprovalQueuePage() {
   const recordDecision = (approval: Approval, status: ApprovalStatus, note: string) => {
     approvalStore.updateStatus(approval.id, status, note)
     if (!approval.recommendationId) return
-    if (status === 'Approved') ctoRecommendations.updateStatus(approval.recommendationId, 'Approved', note || 'CEO approved the linked approval request. Execution is not automated yet.')
-    if (status === 'Rejected') ctoRecommendations.updateStatus(approval.recommendationId, 'Rejected', note || 'CEO rejected the linked approval request.')
-    if (status === 'Changes Requested') ctoRecommendations.updateStatus(approval.recommendationId, 'Needs Approval', note || 'CEO requested changes to the linked recommendation.')
-    if (status === 'Deferred') ctoRecommendations.updateStatus(approval.recommendationId, 'Needs Approval', note || 'CEO deferred the linked approval request.')
+    if (status === 'Approved') ctoRecommendations.updateStatus(approval.recommendationId, 'Approved', note || 'Approved by CEO. Execution is not automated yet.')
+    if (status === 'Rejected') ctoRecommendations.updateStatus(approval.recommendationId, 'Rejected', note || 'Rejected by CEO.')
+    if (status === 'Changes Requested') ctoRecommendations.updateStatus(approval.recommendationId, 'Changes Requested', note || 'Changes requested by CEO.')
+    if (status === 'Deferred') ctoRecommendations.updateStatus(approval.recommendationId, 'Deferred', note || 'Deferred by CEO.')
+    if (status === 'Archived') ctoRecommendations.updateStatus(approval.recommendationId, 'Archived', note || 'Archived.')
   }
 
   return (

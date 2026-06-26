@@ -30,7 +30,7 @@ import {
   useOperatorStore,
 } from '@/src/core/operators'
 import { roadmapStore } from '@/src/core/roadmap'
-import { approvalStore, useApprovalStore } from '@/src/features/approval'
+import { Approval, approvalStore, useApprovalStore } from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorTaskQueue } from './OperatorTaskQueue'
 import { OperatorStatus } from './OperatorStatus'
@@ -329,20 +329,22 @@ export function OperatorDetail() {
               ) : (
                 <div className="space-y-4">
                   <p className="eyebrow mb-0">Recommendations</p>
-                  {structuredCTORecommendations.map((recommendation) => (
-                    <CTORecommendationDetailCard
-                      key={recommendation.id}
-                      recommendation={recommendation}
-                      onApprove={() => approveCTORecommendation(recommendation)}
-                      onReject={() => rejectCTORecommendation(recommendation)}
-                      onSubmitForApproval={() => submitCTORecommendationForApproval(recommendation)}
-                      onAddToRoadmap={() => addCTORecommendationToRoadmap(recommendation)}
-                      onConvertToIssue={() => convertCTORecommendationToIssue(recommendation)}
-                      onSaveToMemory={() => saveCTORecommendationToMemory(recommendation)}
-                      approvalStatus={approvals.approvals.find((approval) => approval.recommendationId === recommendation.id)?.status}
-                      lastDecision={approvals.approvals.find((approval) => approval.recommendationId === recommendation.id)?.decisionNote}
-                    />
-                  ))}
+                  {structuredCTORecommendations.map((recommendation) => {
+                    const linkedApproval = approvals.approvals.find((approval) => approval.recommendationId === recommendation.id)
+                    return (
+                      <CTORecommendationDetailCard
+                        key={recommendation.id}
+                        recommendation={recommendation}
+                        onApprove={() => approveCTORecommendation(recommendation)}
+                        onReject={() => rejectCTORecommendation(recommendation)}
+                        onSubmitForApproval={() => submitCTORecommendationForApproval(recommendation)}
+                        onAddToRoadmap={() => addCTORecommendationToRoadmap(recommendation)}
+                        onConvertToIssue={() => convertCTORecommendationToIssue(recommendation)}
+                        onSaveToMemory={() => saveCTORecommendationToMemory(recommendation)}
+                        linkedApproval={linkedApproval}
+                      />
+                    )
+                  })}
                 </div>
               )}
             </section>
@@ -504,8 +506,7 @@ function CTORecommendationDetailCard({
   onAddToRoadmap,
   onConvertToIssue,
   onSaveToMemory,
-  approvalStatus,
-  lastDecision,
+  linkedApproval,
 }: {
   recommendation: CTORecommendation
   onApprove: () => void
@@ -514,9 +515,19 @@ function CTORecommendationDetailCard({
   onAddToRoadmap: () => void
   onConvertToIssue: () => void
   onSaveToMemory: () => void
-  approvalStatus?: string
-  lastDecision?: string
+  linkedApproval?: Approval
 }) {
+  const approvalStatus = linkedApproval?.status
+  const approvalDecision = getApprovalDecisionDisplay(linkedApproval)
+  const hasLinkedApproval = Boolean(linkedApproval)
+  const waitingOnCEO = approvalStatus === 'Pending' || recommendation.status === 'Needs Approval'
+  const terminalApproval = approvalStatus === 'Approved' ||
+    approvalStatus === 'Rejected' ||
+    approvalStatus === 'Changes Requested' ||
+    approvalStatus === 'Deferred' ||
+    approvalStatus === 'Archived'
+  const canSubmitForApproval = recommendation.status === 'Draft' && !hasLinkedApproval
+
   return (
     <article className="rounded-2xl border border-lime/15 bg-gradient-to-br from-lime/[0.04] to-ink/40 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -550,8 +561,13 @@ function CTORecommendationDetailCard({
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
         <InfoTile label="Approval Status" value={approvalStatus ?? 'Not submitted'} />
-        <InfoTile label="Last CEO Decision" value={lastDecision ?? 'No CEO decision yet'} />
+        <InfoTile label="Last CEO Decision" value={approvalDecision} />
       </div>
+      {(waitingOnCEO || terminalApproval) && (
+        <p className={`mt-4 rounded-xl border p-3 text-xs leading-5 ${terminalApproval ? 'border-lime/20 bg-lime/[0.04] text-lime' : 'border-orange-400/20 bg-orange-400/10 text-orange-300'}`}>
+          {terminalApproval ? 'CEO decision recorded. Execution is not automated.' : 'Waiting on CEO decision.'}
+        </p>
+      )}
 
       <div className="mt-5 border-t border-line pt-4">
         <p className="eyebrow mb-3">Recommendation History</p>
@@ -566,15 +582,28 @@ function CTORecommendationDetailCard({
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
-        <button onClick={onApprove} className="btn-secondary">Approve</button>
-        <button onClick={onReject} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]/70">Reject</button>
-        <button onClick={onSubmitForApproval} className="btn-primary">Submit for CEO Approval</button>
+        {!hasLinkedApproval && recommendation.status === 'Draft' && <button onClick={onApprove} className="btn-secondary">Approve</button>}
+        {!hasLinkedApproval && recommendation.status === 'Draft' && <button onClick={onReject} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]/70">Reject</button>}
+        {canSubmitForApproval && <button onClick={onSubmitForApproval} className="btn-primary">Submit for CEO Approval</button>}
         <button onClick={onAddToRoadmap} className="btn-secondary">Add to Roadmap</button>
         <button onClick={onConvertToIssue} className="btn-secondary">Convert to AO Issue</button>
         <button onClick={onSaveToMemory} className="btn-secondary">Save to Memory</button>
       </div>
     </article>
   )
+}
+
+function getApprovalDecisionDisplay(approval?: Approval) {
+  if (!approval) return 'No CEO decision yet'
+  const date = approval.decidedAt ?? approval.decisionHistory.find((item) => item.action !== 'Submitted')?.createdAt
+  const suffix = date ? ` · ${new Date(date).toLocaleString()}` : ''
+  if (approval.status === 'Approved') return `Approved by CEO${suffix}`
+  if (approval.status === 'Rejected') return `Rejected by CEO${suffix}`
+  if (approval.status === 'Changes Requested') return `Changes requested by CEO${suffix}`
+  if (approval.status === 'Deferred') return `Deferred by CEO${suffix}`
+  if (approval.status === 'Archived') return `Archived${suffix}`
+  if (approval.status === 'Pending') return 'Waiting on CEO decision'
+  return 'No CEO decision yet'
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
@@ -629,8 +658,10 @@ function CTORecommendationStatusBadge({ status }: { status: CTORecommendation['s
     ? 'border-orange-400/30 bg-orange-400/10 text-orange-300'
     : status === 'Approved' || status === 'Added to Roadmap' || status === 'Converted to AO Issue' || status === 'Saved to Memory'
       ? 'border-lime/30 bg-lime/10 text-lime'
-      : status === 'Rejected'
+      : status === 'Rejected' || status === 'Archived'
         ? 'border-red-400/30 bg-red-400/10 text-red-300'
+        : status === 'Changes Requested' || status === 'Deferred'
+          ? 'border-blue-400/30 bg-blue-400/10 text-blue-300'
         : 'border-white/10 bg-white/[0.05] text-muted'
   return <span className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${className}`}>{status}</span>
 }
