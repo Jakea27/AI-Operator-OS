@@ -63,6 +63,7 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [ ] Approval execution handoff
 - [ ] AO-006 Automation Engine
   - [x] AO-006.1 Money Store Foundation: shared local-first money types, store adapter, cost schedule tracking, reusable calculations, and Dashboard/Money integration
+  - [x] AO-006.2 Money Department Dashboard: monthly summary cards, cost overview, expense category breakdown, recent activity, and financial health status
 - [ ] AO-090 UX & Visual Polish
   - [ ] Complete deferred visual, UX, desktop, and quality-of-life improvements tracked in `docs/POLISH_BACKLOG.md`
 

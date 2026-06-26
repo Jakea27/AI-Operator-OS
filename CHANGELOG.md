@@ -137,6 +137,10 @@
 - Extended persisted expense records with one-time and monthly-recurring cost classification
 - Updated Money and Dashboard financial summaries to read from the shared Money foundation
 - Added visible cost-type entry and history display while preserving the existing local operating store
+- Completed AO-006.2 Money Department Dashboard
+- Added Money page dashboard sections for cost overview, expense category breakdown, recent financial activity, and financial health
+- Added shared Money helper calculations for expense category totals, recent activity, and Healthy/Stable/Warning status
+- Updated Money summary cards to focus on monthly revenue, monthly expenses, monthly profit, and profit margin
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

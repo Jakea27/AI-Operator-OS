@@ -1,6 +1,13 @@
 import { normalizeCostType } from '@/src/services/operatingStore'
 import type { ExpenseEntry, RevenueEntry } from '@/src/services/operatingStore'
-import type { MoneyCostItem, MoneyMetrics, MoneyRevenueItem } from './moneyTypes'
+import type {
+  MoneyActivityItem,
+  MoneyCategoryBreakdownItem,
+  MoneyCostItem,
+  MoneyHealthSummary,
+  MoneyMetrics,
+  MoneyRevenueItem,
+} from './moneyTypes'
 
 function localDate(date = new Date()) {
   const offset = date.getTimezoneOffset() * 60_000
@@ -63,5 +70,67 @@ export function calculateMoneyMetrics(
       oneTimeCosts,
       profit,
     },
+  }
+}
+
+export function buildExpenseCategoryBreakdown(
+  costItems: ExpenseEntry[],
+  now = new Date(),
+): MoneyCategoryBreakdownItem[] {
+  const currentMonthItems = costItems.filter((entry) => sameMonth(entry.date, now))
+  const categories = currentMonthItems.reduce<Record<string, MoneyCategoryBreakdownItem>>((grouped, entry) => {
+    const category = entry.category || 'Uncategorized'
+    const current = grouped[category] ?? { category, total: 0, count: 0 }
+    grouped[category] = {
+      ...current,
+      total: current.total + entry.amount,
+      count: current.count + 1,
+    }
+    return grouped
+  }, {})
+
+  return Object.values(categories).sort((a, b) => b.total - a.total || a.category.localeCompare(b.category))
+}
+
+export function buildRecentMoneyActivity(
+  revenueItems: RevenueEntry[],
+  costItems: ExpenseEntry[],
+  limit = 8,
+): MoneyActivityItem[] {
+  return [
+    ...revenueItems.map((entry) => ({
+      id: entry.id,
+      recordType: 'revenue' as const,
+      amount: entry.amount,
+      category: entry.category,
+      date: entry.date,
+      description: entry.notes || 'Revenue entry',
+    })),
+    ...costItems.map((entry) => ({
+      id: entry.id,
+      recordType: 'cost' as const,
+      amount: entry.amount,
+      category: entry.category,
+      date: entry.date,
+      description: entry.notes || 'Cost entry',
+    })),
+  ]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit)
+}
+
+export function getMoneyHealthSummary(metrics: MoneyMetrics): MoneyHealthSummary {
+  const status =
+    metrics.profit > 0 && metrics.profitMargin >= 30
+      ? 'Healthy'
+      : metrics.profit > 0
+        ? 'Stable'
+        : 'Warning'
+
+  return {
+    netProfit: metrics.profit,
+    recurringCostTotal: metrics.monthlyRecurringCosts,
+    profitMargin: metrics.profitMargin,
+    status,
   }
 }

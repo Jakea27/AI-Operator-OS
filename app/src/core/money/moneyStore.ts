@@ -1,4 +1,11 @@
-import { calculateMoneyMetrics, toMoneyCostItem, toMoneyRevenueItem } from './moneyCalculations'
+import {
+  buildExpenseCategoryBreakdown,
+  buildRecentMoneyActivity,
+  calculateMoneyMetrics,
+  getMoneyHealthSummary,
+  toMoneyCostItem,
+  toMoneyRevenueItem,
+} from './moneyCalculations'
 import type { MoneyCostInput, MoneyRevenueInput } from './moneyTypes'
 import { normalizeCostType, useOperatingStore } from '@/src/services/operatingStore'
 
@@ -7,11 +14,17 @@ export function useMoneyStore() {
   const revenueItems = operating.data.revenueEntries.map(toMoneyRevenueItem)
   const costItems = operating.data.expenseEntries.map(toMoneyCostItem)
   const metrics = calculateMoneyMetrics(operating.data.revenueEntries, operating.data.expenseEntries)
+  const categoryBreakdown = buildExpenseCategoryBreakdown(operating.data.expenseEntries)
+  const recentActivity = buildRecentMoneyActivity(operating.data.revenueEntries, operating.data.expenseEntries)
+  const health = getMoneyHealthSummary(metrics)
 
   return {
     revenueItems,
     costItems,
     metrics,
+    categoryBreakdown,
+    recentActivity,
+    health,
     storageAvailable: operating.storageAvailable,
     addRevenueItem: (entry: MoneyRevenueInput) => operating.addRevenue(entry),
     updateRevenueItem: (entryId: string, patch: Omit<MoneyRevenueInput, 'createdAt' | 'updatedAt'>) =>

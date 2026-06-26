@@ -45,6 +45,8 @@ AO-006.1 defines the shared Money foundation under `app/src/core/money`:
 
 The Money foundation intentionally does not create a second localStorage document. Revenue and expense records remain in the existing operating store so Dashboard, Money, Briefing, Operators, and Approval integrations keep one shared source of truth. Expense records now carry a cost type of one-time or monthly recurring; older records are migrated safely to one-time costs unless already marked recurring.
 
+AO-006.2 extends the same Money core with reusable dashboard helpers for expense category breakdowns, recent revenue/cost activity, and financial health status. The active Money page consumes those helpers through `useMoneyStore` and renders modular dashboard sections without adding routes, stores, external services, or approval behavior changes.
+
 ## Business Memory Architecture
 
 AO-003 defines Business Memory under `app/src/core/memory`:

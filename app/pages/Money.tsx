@@ -2,13 +2,18 @@ import { useState } from 'react'
 import {
   CircleDollarSign,
   CreditCard,
-  DollarSign,
   Percent,
   Plus,
   Wallet,
 } from 'lucide-react'
 import { MetricCard } from '@/components/MetricCard'
 import { PageIntro } from '@/components/PageIntro'
+import {
+  CostBreakdown,
+  CostOverview,
+  FinancialHealthCard,
+  RecentFinancialActivity,
+} from '@/src/components/money/MoneyDashboardSections'
 import {
   ChartShell,
   ExpenseBreakdownChart,
@@ -64,7 +69,7 @@ export function Money() {
       <PageIntro
         eyebrow="Money Department"
         title="Local-first accounting, in one place."
-        description="Revenue, expenses, calculations, and charts all use the same persisted records that power the Dashboard."
+        description="Revenue, expenses, calculations, and financial health all use the same persisted records that power the Dashboard."
         action={
           <div className="flex gap-2">
             <button onClick={() => setEditor({ mode: 'revenue' })} className="btn-primary flex items-center gap-2"><Plus size={15} /> Add Revenue</button>
@@ -73,11 +78,10 @@ export function Money() {
         }
       />
 
-      <div className="grid grid-cols-5 gap-4">
-        <MetricCard label="Revenue Today" value={formatCurrency(money.metrics.revenueToday)} change="Today's entries" icon={CircleDollarSign} accent />
-        <MetricCard label="Revenue This Month" value={formatCurrency(money.metrics.currentMonthRevenue)} change="Current month" icon={DollarSign} />
-        <MetricCard label="Expenses This Month" value={formatCurrency(money.metrics.currentMonthCosts)} change="Current month" icon={CreditCard} positive={money.metrics.currentMonthCosts === 0} />
-        <MetricCard label="Profit" value={formatCurrency(money.metrics.profit)} change="Revenue minus expenses" icon={Wallet} positive={money.metrics.profit >= 0} />
+      <div className="grid grid-cols-4 gap-4">
+        <MetricCard label="Monthly Revenue" value={formatCurrency(money.metrics.currentMonthRevenue)} change="Current calendar month" icon={CircleDollarSign} accent />
+        <MetricCard label="Monthly Expenses" value={formatCurrency(money.metrics.currentMonthCosts)} change="Recurring + one-time" icon={CreditCard} positive={money.metrics.currentMonthCosts === 0} />
+        <MetricCard label="Monthly Profit" value={formatCurrency(money.metrics.profit)} change="Revenue minus expenses" icon={Wallet} positive={money.metrics.profit >= 0} />
         <MetricCard label="Profit Margin" value={`${money.metrics.profitMargin.toFixed(1)}%`} change="Profit ÷ revenue" icon={Percent} positive={money.metrics.profitMargin >= 0} />
       </div>
 
@@ -100,6 +104,21 @@ export function Money() {
             </div>
           </section>
         )}
+
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-7">
+            <CostOverview metrics={money.metrics} />
+          </div>
+          <div className="col-span-5">
+            <FinancialHealthCard health={money.health} />
+          </div>
+          <div className="col-span-5">
+            <CostBreakdown breakdown={money.categoryBreakdown} />
+          </div>
+          <div className="col-span-7">
+            <RecentFinancialActivity activity={money.recentActivity} />
+          </div>
+        </div>
 
         <div className="grid grid-cols-12 gap-4">
           <ChartShell eyebrow="Revenue Trend" title="Six month revenue" meta="Local records" className="col-span-6">

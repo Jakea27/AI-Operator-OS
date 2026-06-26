@@ -35,3 +35,27 @@ export type MoneyMetrics = {
   profitMargin: number
   currentMonthTotals: MoneyCurrentMonthTotals
 }
+
+export type MoneyCategoryBreakdownItem = {
+  category: string
+  total: number
+  count: number
+}
+
+export type MoneyActivityItem = {
+  id: string
+  recordType: MoneyRecordType
+  amount: number
+  category: string
+  date: string
+  description: string
+}
+
+export type MoneyHealthStatus = 'Healthy' | 'Stable' | 'Warning'
+
+export type MoneyHealthSummary = {
+  netProfit: number
+  recurringCostTotal: number
+  profitMargin: number
+  status: MoneyHealthStatus
+}
