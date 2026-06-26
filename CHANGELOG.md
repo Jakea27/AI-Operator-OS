@@ -111,6 +111,8 @@
 - Added Operator Backlog, Roadmap filters, and reusable Roadmap cards under the existing Roadmap page
 - Connected the CTO Recommendation Engine Add to Roadmap action to create persisted roadmap backlog items
 - Added roadmap search, operator/priority/status filters, priority sorting, status changes, archive action, and Dashboard backlog count
+- Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
+- Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

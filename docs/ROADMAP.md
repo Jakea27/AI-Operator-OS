@@ -58,6 +58,8 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] CTO recommendation backlog conversion, local roadmap store, Operator Backlog UI, search, filters, status persistence, archive, and Dashboard backlog count
 - [ ] AO-005 Approval Queue
 - [ ] AO-006 Automation Engine
+- [ ] AO-090 UX & Visual Polish
+  - [ ] Complete deferred visual, UX, desktop, and quality-of-life improvements tracked in `docs/POLISH_BACKLOG.md`
 
 ## Sprint 0.2 - Business Builder
 
@@ -84,3 +86,9 @@ Goal: Build the foundation of the OS before building revenue automation.
 ## Sprint 1.0 - First Revenue
 
 Goal: Use AI Operator OS to help land the first paying client.
+
+## Deferred Polish
+
+Non-critical UI, UX, desktop, visual consistency, performance, and theme improvements are tracked in `docs/POLISH_BACKLOG.md`.
+
+Core architecture, functionality, and business value take priority until a dedicated polish milestone begins.
