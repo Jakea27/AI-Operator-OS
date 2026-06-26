@@ -1,7 +1,7 @@
 # Architecture
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-25
+Last Updated: 2026-06-26
 
 ## Operating Model
 
@@ -53,6 +53,23 @@ Dashboard selectors provide pinned business rules, recent decisions, recent idea
 AO-003.2 adds `memoryTemplates.ts` for reusable structured capture and expands `memorySearch.ts` with `queryBusinessMemory`, the AI-facing local knowledge retrieval API. Presentation remains under the existing Memory feature: type colors are centralized in `memoryPresentation.ts`, while `MemoryMarkdown.tsx` safely renders locally stored Markdown with GitHub Flavored Markdown tables.
 
 Relationship IDs remain part of the canonical `MemoryEntry` schema. The editor selects existing records, the detail view resolves IDs through the current store, and deletion removes stale references. No second memory store or route exists.
+
+## AI Operator Framework Architecture
+
+AO-004.1 defines specialized AI Operators under `app/src/core/operators` without adding chat behavior or external AI APIs:
+
+- `operatorTypes.ts` — shared operator, status, task, recommendation, memory-access, event, and context models.
+- `operatorRegistry.ts` — initial CTO, CFO, CMO, COO, and Research operator definitions.
+- `operatorEngine.ts` — framework entry points for building operator snapshots from shared local context.
+- `operator.ts` — operator hydration and detail snapshot composition.
+- `operatorMemory.ts` — Business Memory access through the existing memory search API.
+- `operatorTasks.ts` — task queue selectors and deterministic system task derivation.
+- `operatorEvents.ts` — local operator event projection.
+- `index.ts` — public operator API.
+
+The Operators UI lives under `app/src/features/operators` and is routed through the existing shell at `/operators`. It consumes the operating store, Money metrics, Business Memory, daily briefing snapshots, projects, tasks, and approvals as one shared business context. Operators are not isolated assistants; they are reusable specialized roles that read the same local OS state and remain subject to CEO approval rules.
+
+AI reasoning is intentionally deferred. AO-004.1 only establishes the local framework, models, task queues, status display, recommendation history, and shared-context UI.
 
 ## AO Issue Naming
 

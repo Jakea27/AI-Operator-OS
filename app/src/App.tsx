@@ -5,6 +5,7 @@ import { CEO } from '@/pages/CEO'
 import { Money } from '@/pages/Money'
 import { Development } from '@/pages/Development'
 import { MemoryPage } from '@/src/features/memory/MemoryPage'
+import { OperatorsPage } from '@/src/features/operators/OperatorsPage'
 import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
 
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="money" element={<Money />} />
         <Route path="development" element={<Development />} />
         <Route path="memory" element={<MemoryPage />} />
+        <Route path="operators" element={<OperatorsPage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />
       </Route>

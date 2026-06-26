@@ -1,7 +1,7 @@
 # Roadmap
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-25
+Last Updated: 2026-06-26
 
 ## Sprint 0.1 - Foundation
 
@@ -44,7 +44,9 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] Type colors, Markdown details, quick templates, relationship editing, AI search API, and memory-health Dashboard intelligence
 - [x] AO-003.2.1 Business Knowledge System Polish Sprint
   - [x] Consistent type colors, label-style tags, contextual empty states, custom confirmation modal, and dedicated Business Rules access
-- [ ] AO-004 AI Operator Framework
+- [x] AO-004.1 AI Operator Framework Foundation
+  - [x] Shared operator models, registry, task queues, memory access, status, recommendations, events, and Operators workspace
+- [ ] AO-004.2 Operator Reasoning Planner
 - [ ] AO-005 Approval Queue
 - [ ] AO-006 Automation Engine
 

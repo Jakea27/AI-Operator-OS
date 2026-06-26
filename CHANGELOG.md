@@ -77,6 +77,11 @@
 - Added contextual Memory empty states for first use, archived views, filtered views, and Business Rules
 - Replaced browser delete confirmations with an AI Operator OS confirmation modal
 - Added a dedicated Business Rules panel and one-click Business Rule filter in the active Memory workspace
+- Completed AO-004.1 AI Operator Framework foundation
+- Added reusable local operator core modules for types, registry, engine, memory access, tasks, events, and snapshots
+- Added initial CTO, CFO, CMO, COO, and Research operators with missions, tools, approval levels, task queues, status, and recommendation history
+- Added Operators workspace with operator cards, status badges, shared-context summaries, detail view, and task queue
+- Connected operators to existing Money metrics, Business Memory, Daily Briefing snapshots, tasks, projects, and approval context without external AI APIs
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

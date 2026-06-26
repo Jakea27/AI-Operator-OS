@@ -2,13 +2,13 @@
 
 Current Version: 0.1.0-alpha
 
-Last Updated: 2026-06-25
+Last Updated: 2026-06-26
 
 Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: AO-003.2 Business Knowledge System finalized
+Current Milestone: AO-004.1 AI Operator Framework foundation
 
 ## Version Rules
 

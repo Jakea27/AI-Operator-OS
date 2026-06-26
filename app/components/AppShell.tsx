@@ -5,6 +5,7 @@ import {
   Code2,
   LayoutDashboard,
   Map,
+  Network,
   Settings,
   Sparkles,
   UserRound,
@@ -19,6 +20,7 @@ const navigation = [
   { label: 'Development', to: '/development', icon: Code2 },
   { label: 'Memory', to: '/memory', icon: Brain },
   { label: 'Roadmap', to: '/roadmap', icon: Map },
+  { label: 'Operators', to: '/operators', icon: Network },
 ]
 
 const titles: Record<string, string> = {
@@ -27,6 +29,7 @@ const titles: Record<string, string> = {
   '/money': 'Financial cockpit',
   '/development': 'Development',
   '/memory': 'Operator memory',
+  '/operators': 'AI operators',
   '/roadmap': 'Roadmap',
   '/settings': 'Settings',
 }

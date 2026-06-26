@@ -1,11 +1,11 @@
 # Project Memory
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-25
+Last Updated: 2026-06-26
 
 ## Current State
 
-AI Operator OS has a production-capable Electron desktop shell built with React, Vite, TypeScript, and Tailwind. The application includes Dashboard, CEO, Money, Development, Memory, Roadmap, and Settings workspaces.
+AI Operator OS has a production-capable Electron desktop shell built with React, Vite, TypeScript, and Tailwind. The application includes Dashboard, CEO, Money, Development, Memory, Operators, Roadmap, and Settings workspaces.
 
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
@@ -35,6 +35,10 @@ The core memory API now exports `queryBusinessMemory`, a reusable local query fu
 
 AO-003.2.1 polished the active Memory workspace before AO-004. Memory type badges now use a consistent palette, tags read as GitHub-style labels, cards always expose related issue and sprint context, empty states explain the next useful action, deletion uses an AI Operator OS confirmation modal instead of the browser dialog, and Business Rules have a dedicated panel plus one-click filter path.
 
+AO-004.1 created the foundational AI Operator Framework under `app/src/core/operators`. The framework defines shared operator models, status, approval levels, tools, memory access, task queues, recommendation history, events, and shared-context snapshots. It ships with five initial operators: CTO, CFO, CMO, COO, and Research.
+
+The Operators workspace lives under `app/src/features/operators` and is routed through the existing app shell at `/operators`. It shows all five operators, status, current task, last recommendation, open detail views, task queues, tool access, and relevant Business Memory context. This is not a chat system and does not perform AI reasoning yet; it is a reusable local-first framework that consumes existing Money, Memory, Briefing, project/task, and approval data.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
@@ -56,6 +60,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - CEO approval remains required for consequential actions.
 - Shared visualization components live under `app/src/components/charts`.
 - Core business memory logic lives under `app/src/core/memory`.
+- Core AI Operator framework logic lives under `app/src/core/operators`.
 - New work uses the AO issue naming format.
 
 ## Known Constraints
@@ -68,10 +73,11 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Development and packaged builds maintain separate localStorage datasets.
 - Daily briefings are deterministic local summaries, not AI-generated analysis.
 - Business memory is local-only and currently has no encrypted backup.
+- Operators are framework objects only; AI reasoning and external model/API calls are intentionally not implemented yet.
 
 ## Next Priorities
 
-1. AO-004 AI Operator Framework.
+1. AO-004.2 Operator reasoning planner.
 2. AO-005 Approval Queue.
 3. AO-006 Automation Engine.
 4. Add export, backup, and restore for operating and memory stores.
