@@ -109,6 +109,8 @@ export const operatorStore = {
     priority: OperatorTaskPriority
     relatedIssue?: string
     relatedMemoryId?: string
+    source?: OperatorTask['source']
+    requiresApproval?: boolean
   }) {
     const entry: OperatorTask = {
       id: createId(`${operatorId}-task`),
@@ -117,8 +119,8 @@ export const operatorStore = {
       priority: task.priority,
       status: 'queued',
       createdAt: new Date().toISOString(),
-      source: 'operator',
-      requiresApproval: false,
+      source: task.source ?? 'operator',
+      requiresApproval: task.requiresApproval ?? false,
       relatedIssue: task.relatedIssue,
       relatedMemoryId: task.relatedMemoryId,
     }

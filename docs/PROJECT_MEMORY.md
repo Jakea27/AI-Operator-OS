@@ -47,6 +47,10 @@ Operator workspace state is persisted locally in `app/src/core/operators/operato
 
 AO-004.2.1 polished the routed operator workspaces. Each operator now has a permanent icon, standardized status badge, always-visible Mission card, Current Objective card, executive statistics row, structured recommendation cards, and chronological activity timeline. Recommendation records now carry confidence and risk-level metadata while remaining deterministic local drafts.
 
+AO-004.3 added the internal Executive Coordinator at `app/src/core/operators/executiveCoordinator.ts`. The coordinator is not a visible operator and is not shown as a sidebar item or operator card. It receives local requests, classifies request type, selects the best operator or operators, creates local operator tasks, records routing history, generates a deterministic summary, and queues risky requests into the existing approval workflow.
+
+The Operators page now includes a small Route to operator panel and Coordinator Activity feed. Routed requests persist locally, and coordinator-created tasks appear in the same operator workspaces as other local operator tasks. No external AI APIs are used.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.

@@ -76,6 +76,12 @@ AO-004.2 adds routed operator workspaces under `/operators/:operatorId`. The wor
 
 AO-004.2.1 keeps the same architecture and upgrades presentation/state metadata only. Operator status display is standardized as Working, Idle, Waiting, Analyzing, Needs Context, and Blocked. Operator presentation metadata such as permanent icons and status colors lives in `app/src/features/operators/operatorPresentation.ts`. Recommendation records include confidence and risk level for future approval and reasoning workflows.
 
+AO-004.3 adds the internal Executive Coordinator service:
+
+- `executiveCoordinator.ts` — deterministic request classification, operator selection, task creation, coordinator history persistence, and local coordination summaries.
+
+The Executive Coordinator is not an operator and does not appear in navigation. It writes local coordinator history and creates ordinary operator tasks through the existing operator store. Risky routed requests are sent to the existing approval queue rather than executed. The coordinator uses rules only; no external AI APIs or autonomous execution are connected.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

@@ -34,7 +34,7 @@ export type OperatorTask = {
   status: OperatorTaskStatus
   createdAt: string
   completedAt?: string
-  source: 'system' | 'operator' | 'ceo'
+  source: 'system' | 'operator' | 'coordinator' | 'ceo'
   requiresApproval: boolean
   relatedMemoryId?: string
   relatedIssue?: string
