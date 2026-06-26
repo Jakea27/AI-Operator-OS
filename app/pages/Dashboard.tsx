@@ -32,6 +32,10 @@ export function Dashboard() {
   const roadmap = useRoadmapStore()
   const approvalQueue = useApprovalStore()
   const approvalStats = getApprovalStats(approvalQueue.approvals)
+  const approvalWidgetTitle = approvalStats.pending > 0
+    ? `${approvalStats.pending} pending CEO decision${approvalStats.pending === 1 ? '' : 's'}`
+    : 'No pending CEO decisions'
+  const approvalWidgetSubtitle = getDashboardApprovalSubtitle(approvalQueue.approvals.length, approvalStats.latestDecision)
   const pendingSharedApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Pending')
   const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
   const briefingIsCurrent = data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
@@ -110,8 +114,8 @@ export function Dashboard() {
             <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${approvalStats.pending > 0 ? 'bg-[#ffcc66]/10 text-[#ffcc66]' : 'bg-lime/10 text-lime'}`}><ShieldAlert size={19} /></div>
             <div>
               <p className="eyebrow mb-1">{approvalStats.pending > 0 ? 'CEO decisions waiting' : 'Approval status'}</p>
-              <h3 className="m-0 text-lg font-semibold text-white">{approvalStats.pending > 0 ? `${approvalStats.pending} approval${approvalStats.pending === 1 ? '' : 's'} need CEO review` : 'No CEO decisions pending.'}</h3>
-              <p className="mb-0 mt-2 text-xs leading-5 text-muted">Latest decision: {getApprovalDecisionLabel(approvalStats.latestDecision)}</p>
+              <h3 className="m-0 text-lg font-semibold text-white">{approvalWidgetTitle}</h3>
+              <p className="mb-0 mt-2 text-xs leading-5 text-muted">{approvalWidgetSubtitle}</p>
             </div>
           </div>
           <Link to="/approval" className={approvalStats.pending > 0 ? 'btn-primary' : 'btn-secondary'}>Open Approval Queue</Link>
@@ -201,6 +205,12 @@ function ApprovalMetric({ label, value }: { label: string; value: number }) {
       <p className="m-0 text-xl font-semibold text-white">{value}</p>
     </div>
   )
+}
+
+function getDashboardApprovalSubtitle(totalApprovals: number, latestDecision?: Parameters<typeof getApprovalDecisionLabel>[0]) {
+  if (latestDecision) return `Last completed decision: ${getApprovalDecisionLabel(latestDecision)}`
+  if (totalApprovals > 0) return 'Awaiting CEO review.'
+  return 'No CEO decisions recorded yet.'
 }
 
 function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memory').MemoryEntry[] }) {
