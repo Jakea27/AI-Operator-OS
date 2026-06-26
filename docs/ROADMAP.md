@@ -46,7 +46,8 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] Consistent type colors, label-style tags, contextual empty states, custom confirmation modal, and dedicated Business Rules access
 - [x] AO-004.1 AI Operator Framework Foundation
   - [x] Shared operator models, registry, task queues, memory access, status, recommendations, events, and Operators workspace
-- [ ] AO-004.2 Operator Reasoning Planner
+- [x] AO-004.2 Operator Workspace
+  - [x] Routed operator workspaces, persistent local task queues, recommendations, shared context panels, and CTO deterministic architecture actions
 - [ ] AO-005 Approval Queue
 - [ ] AO-006 Automation Engine
 

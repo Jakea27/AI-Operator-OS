@@ -41,6 +41,10 @@ The Operators workspace lives under `app/src/features/operators` and is routed t
 
 AO-004.1 integration fix: the active sidebar is `app/components/AppShell.tsx`, and the active router is `app/src/App.tsx`. Operators is intentionally rendered after Roadmap in the main navigation and before the bottom Settings link. If the installed Windows app does not show Operators, the installed `resources/app.asar` is stale and must be refreshed from a new build/package.
 
+AO-004.2 expands Operators from summary cards into routed department-head workspaces. `/operators/:operatorId` opens a dedicated workspace for CTO, CFO, CMO, COO, or Research. Each workspace shows identity, role, mission, status, approval level, current task, local task queue, recommendation history, shared context counts, operator history, and an actions panel.
+
+Operator workspace state is persisted locally in `app/src/core/operators/operatorStore.ts`. Tasks and recommendations are local drafts only; they do not execute automatically and do not call external AI APIs. The CTO workspace is the most complete example: it can run deterministic architecture analysis, generate a local architecture recommendation, add operator tasks, and save an important note into Business Memory.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
@@ -75,11 +79,10 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Development and packaged builds maintain separate localStorage datasets.
 - Daily briefings are deterministic local summaries, not AI-generated analysis.
 - Business memory is local-only and currently has no encrypted backup.
-- Operators are framework objects only; AI reasoning and external model/API calls are intentionally not implemented yet.
+- Operators can analyze, recommend, draft, persist local tasks/recommendations, and save notes to Business Memory. External model/API calls and automatic execution are intentionally not implemented yet.
 
 ## Next Priorities
 
-1. AO-004.2 Operator reasoning planner.
-2. AO-005 Approval Queue.
-3. AO-006 Automation Engine.
-4. Add export, backup, and restore for operating and memory stores.
+1. AO-005 Approval Queue.
+2. AO-006 Automation Engine.
+3. Add export, backup, and restore for operating and memory stores.

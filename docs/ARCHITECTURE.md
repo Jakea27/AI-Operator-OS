@@ -65,11 +65,14 @@ AO-004.1 defines specialized AI Operators under `app/src/core/operators` without
 - `operatorMemory.ts` — Business Memory access through the existing memory search API.
 - `operatorTasks.ts` — task queue selectors and deterministic system task derivation.
 - `operatorEvents.ts` — local operator event projection.
+- `operatorStore.ts` — localStorage-backed workspace task and recommendation persistence.
 - `index.ts` — public operator API.
 
 The Operators UI lives under `app/src/features/operators` and is routed through the existing shell at `/operators`. It consumes the operating store, Money metrics, Business Memory, daily briefing snapshots, projects, tasks, and approvals as one shared business context. Operators are not isolated assistants; they are reusable specialized roles that read the same local OS state and remain subject to CEO approval rules.
 
-AI reasoning is intentionally deferred. AO-004.1 only establishes the local framework, models, task queues, status display, recommendation history, and shared-context UI.
+AI reasoning is intentionally deferred. AO-004.1 establishes the local framework, models, task queues, status display, recommendation history, and shared-context UI.
+
+AO-004.2 adds routed operator workspaces under `/operators/:operatorId`. The workspaces continue to use the same operator registry and shared context instead of creating a second operator system. Operator task queues and recommendation histories are local-first drafts persisted through `operatorStore.ts`. Workspace actions are deterministic placeholders: run local analysis, generate a local recommendation, add an operator task, and save a note to Business Memory. No action executes externally without CEO approval.
 
 ## AO Issue Naming
 

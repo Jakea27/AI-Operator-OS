@@ -1,16 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Network, ShieldCheck } from 'lucide-react'
 import { PageIntro } from '@/components/PageIntro'
 import { useMemoryStore } from '@/src/core/memory'
-import { AIOperator, buildOperators, OperatorId, OperatorSharedContext } from '@/src/core/operators'
+import { AIOperator, buildOperators, OperatorSharedContext, useOperatorStore } from '@/src/core/operators'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorCard } from './OperatorCard'
-import { OperatorDetail } from './OperatorDetail'
 
 export function OperatorsPage() {
   const { data, metrics, storageAvailable } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
-  const [selectedId, setSelectedId] = useState<OperatorId | null>(null)
+  const { data: operatorState } = useOperatorStore()
   const context: OperatorSharedContext = useMemo(() => ({
     operatingState: data,
     metrics,
@@ -18,8 +17,7 @@ export function OperatorsPage() {
     briefing: data.latestBriefing,
     storageAvailable,
   }), [data, metrics, memoryEntries, storageAvailable])
-  const operators = useMemo(() => buildOperators(context), [context])
-  const selected = selectedId ? operators.find((operator) => operator.id === selectedId) ?? null : null
+  const operators = useMemo(() => buildOperators(context, operatorState), [context, operatorState])
 
   return (
     <>
@@ -35,15 +33,11 @@ export function OperatorsPage() {
         <SummaryCard label="Approval posture" value="CEO" detail="Consequential actions remain approval-gated" />
       </div>
 
-      {selected ? (
-        <OperatorDetail operator={selected} context={context} onClose={() => setSelectedId(null)} />
-      ) : (
-        <div className="grid grid-cols-3 gap-4">
-          {operators.map((operator: AIOperator) => (
-            <OperatorCard key={operator.id} operator={operator} onOpen={() => setSelectedId(operator.id)} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-3 gap-4">
+        {operators.map((operator: AIOperator) => (
+          <OperatorCard key={operator.id} operator={operator} />
+        ))}
+      </div>
 
       <section className="panel mt-5 p-5">
         <div className="flex items-start gap-3">

@@ -8,7 +8,7 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: AO-004.1 AI Operator Framework foundation
+Current Milestone: AO-004.2 Operator Workspace
 
 ## Version Rules
 

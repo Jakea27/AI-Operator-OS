@@ -24,22 +24,31 @@ export type OperatorTool =
   | 'Local Research Notes'
 
 export type OperatorTaskStatus = 'queued' | 'active' | 'waiting' | 'blocked' | 'done'
+export type OperatorTaskPriority = 'Low' | 'Medium' | 'High'
 
 export type OperatorTask = {
   id: string
   title: string
   description: string
+  priority: OperatorTaskPriority
   status: OperatorTaskStatus
   createdAt: string
   source: 'system' | 'operator' | 'ceo'
   requiresApproval: boolean
+  relatedMemoryId?: string
+  relatedIssue?: string
 }
+
+export type OperatorRecommendationStatus = 'Draft' | 'Needs Approval' | 'Accepted' | 'Rejected'
 
 export type OperatorRecommendation = {
   id: string
+  title: string
   summary: string
   rationale: string
   createdAt: string
+  source: string
+  status: OperatorRecommendationStatus
   requiresApproval: boolean
 }
 
@@ -79,4 +88,18 @@ export type OperatorSharedContext = {
   memories: MemoryEntry[]
   briefing: DailyBriefing | null
   storageAvailable: boolean
+}
+
+export type OperatorLocalState = {
+  version: 1
+  tasks: Record<OperatorId, OperatorTask[]>
+  recommendations: Record<OperatorId, OperatorRecommendation[]>
+}
+
+export type OperatorWorkspaceContextCounts = {
+  businessMemory: number
+  moneyRecords: number
+  ceoBriefing: number
+  developmentItems: number
+  approvalQueue: number
 }

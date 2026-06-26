@@ -1,8 +1,9 @@
 import { ArrowUpRight, ListChecks } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { AIOperator, getLastRecommendation } from '@/src/core/operators'
 import { OperatorStatus } from './OperatorStatus'
 
-export function OperatorCard({ operator, onOpen }: { operator: AIOperator; onOpen: () => void }) {
+export function OperatorCard({ operator }: { operator: AIOperator }) {
   return (
     <article className="panel flex h-full flex-col p-5">
       <div className="flex items-start justify-between gap-4">
@@ -29,9 +30,9 @@ export function OperatorCard({ operator, onOpen }: { operator: AIOperator; onOpe
         <p className="m-0 line-clamp-3 text-xs leading-5 text-muted">{getLastRecommendation(operator)}</p>
       </div>
 
-      <button onClick={onOpen} className="btn-secondary mt-5 flex items-center justify-center gap-2">
+      <Link to={`/operators/${operator.id}`} className="btn-secondary mt-5 flex items-center justify-center gap-2">
         Open operator <ArrowUpRight size={14} />
-      </button>
+      </Link>
     </article>
   )
 }
