@@ -33,6 +33,8 @@ AO-003.2 finalizes Business Memory as the Business Knowledge System. Memory card
 
 The core memory API now exports `queryBusinessMemory`, a reusable local query function for future AI Operators. It supports text, type, category, tags, issue, sprint, related-memory IDs, pinned state, archived state, and result limits. Dashboard memory intelligence now includes pinned rules, the latest decision, architecture note, sprint note, idea, and active/pinned/archived/idea/decision health counts.
 
+AO-003.2.1 polished the active Memory workspace before AO-004. Memory type badges now use a consistent palette, tags read as GitHub-style labels, cards always expose related issue and sprint context, empty states explain the next useful action, deletion uses an AI Operator OS confirmation modal instead of the browser dialog, and Business Rules have a dedicated panel plus one-click filter path.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.

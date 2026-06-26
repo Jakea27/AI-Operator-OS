@@ -1,7 +1,7 @@
 import { Archive, ArchiveRestore, Link2, Pencil, Pin, PinOff, Trash2, X } from 'lucide-react'
 import { MemoryEntry } from '@/src/core/memory'
 import { MemoryMarkdown } from './MemoryMarkdown'
-import { memoryTypeClass } from './memoryPresentation'
+import { memoryTypeClass, memoryTypeDotClass } from './memoryPresentation'
 
 export function MemoryDetail({
   entry,
@@ -31,7 +31,10 @@ export function MemoryDetail({
       <div className="flex items-start justify-between gap-5">
         <div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${memoryTypeClass(entry.type)}`}>{entry.type}</span>
+            <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-semibold ${memoryTypeClass(entry.type)}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${memoryTypeDotClass(entry.type)}`} />
+              {entry.type}
+            </span>
             <span className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-1 text-[10px] text-muted">{entry.category}</span>
             {entry.relatedIssue && <span className="text-[10px] font-medium text-mint">{entry.relatedIssue}</span>}
             {entry.relatedSprint && <span className="text-[10px] text-muted">{entry.relatedSprint}</span>}
@@ -72,7 +75,7 @@ export function MemoryDetail({
           <button onClick={onPin} className="btn-secondary flex items-center gap-2">{entry.pinned ? <PinOff size={14} /> : <Pin size={14} />}{entry.pinned ? 'Unpin' : 'Pin'}</button>
           <button onClick={onArchive} className="btn-secondary flex items-center gap-2">{entry.archived ? <ArchiveRestore size={14} /> : <Archive size={14} />}{entry.archived ? 'Restore' : 'Archive'}</button>
           <button onClick={onEdit} className="btn-secondary flex items-center gap-2"><Pencil size={14} /> Edit</button>
-          <button onClick={onDelete} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]"><Trash2 size={14} /></button>
+          <button onClick={onDelete} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]"><Trash2 size={14} /> Delete</button>
         </div>
       </div>
     </section>

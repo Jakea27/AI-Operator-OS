@@ -1,6 +1,6 @@
 import { Archive, ArchiveRestore, Link2, Pencil, Pin, PinOff, Trash2 } from 'lucide-react'
 import { MemoryEntry } from '@/src/core/memory'
-import { memoryTypeClass } from './memoryPresentation'
+import { memoryTypeClass, memoryTypeDotClass } from './memoryPresentation'
 
 export function MemoryCard({
   entry,
@@ -22,8 +22,11 @@ export function MemoryCard({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${memoryTypeClass(entry.type)}`}>{entry.type}</span>
-            <span className="rounded-md border border-white/10 bg-white/[0.05] px-2 py-1 text-[10px] text-[#b8c2bd]">{entry.category}</span>
+            <span className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10px] font-semibold ${memoryTypeClass(entry.type)}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${memoryTypeDotClass(entry.type)}`} />
+              {entry.type}
+            </span>
+            <span className="rounded-md border border-mint/15 bg-mint/[0.06] px-2 py-1 text-[10px] font-medium text-[#b8c2bd]">{entry.category}</span>
           </div>
           <button onClick={onView} className="m-0 text-left text-base font-semibold text-white hover:text-lime">{entry.title}</button>
         </div>
@@ -31,14 +34,18 @@ export function MemoryCard({
       </div>
       <p className="mb-4 mt-3 text-xs leading-6 text-[#aeb8b3]">{entry.summary}</p>
       <div className="mb-4 flex flex-wrap gap-2">
-        {entry.tags.map((tag) => <span key={tag} className="rounded-full bg-white/[0.05] px-2 py-1 text-[10px] text-muted">#{tag}</span>)}
+        {entry.tags.length === 0 ? (
+          <span className="rounded-full border border-dashed border-line px-2.5 py-1 text-[10px] text-muted">no labels yet</span>
+        ) : entry.tags.map((tag) => (
+          <span key={tag} className="rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-1 text-[10px] font-medium text-blue-200">
+            {tag}
+          </span>
+        ))}
       </div>
-      {(entry.relatedIssue || entry.relatedSprint) && (
-        <div className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-line bg-ink/30 p-3 text-[10px]">
-          <div><span className="block text-muted">Related Issue</span><span className="mt-1 block text-mint">{entry.relatedIssue || 'None'}</span></div>
-          <div><span className="block text-muted">Related Sprint</span><span className="mt-1 block text-[#b8c2bd]">{entry.relatedSprint || 'None'}</span></div>
-        </div>
-      )}
+      <div className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-line bg-ink/30 p-3 text-[10px]">
+        <div><span className="block text-muted">Related Issue</span><span className="mt-1 block font-medium text-mint">{entry.relatedIssue || 'Not linked yet'}</span></div>
+        <div><span className="block text-muted">Related Sprint</span><span className="mt-1 block font-medium text-[#b8c2bd]">{entry.relatedSprint || 'Not assigned'}</span></div>
+      </div>
       {entry.relatedMemoryIds.length > 0 && <div className="mb-4 flex items-center gap-2 text-[10px] text-muted"><Link2 size={12} className="text-mint" /> {entry.relatedMemoryIds.length} related {entry.relatedMemoryIds.length === 1 ? 'memory' : 'memories'}</div>}
       <div className="flex items-center justify-between border-t border-line pt-4">
         <div className="text-[10px] text-muted">

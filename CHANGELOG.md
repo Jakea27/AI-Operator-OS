@@ -71,6 +71,12 @@
 - Made pinned memory ordering immediate across Memory lists and executive selectors
 - Expanded the Dashboard Business Memory widget with pinned rules, latest decision, architecture, sprint, idea, and memory-health metrics
 - Added React Markdown and GitHub Flavored Markdown support without external services
+- Completed AO-003.2.1 Business Knowledge System polish sprint
+- Standardized memory type badge colors and visual dots across cards and details
+- Improved memory tags with GitHub-style label treatment and always-visible related issue/sprint metadata
+- Added contextual Memory empty states for first use, archived views, filtered views, and Business Rules
+- Replaced browser delete confirmations with an AI Operator OS confirmation modal
+- Added a dedicated Business Rules panel and one-click Business Rule filter in the active Memory workspace
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation
