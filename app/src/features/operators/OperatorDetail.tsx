@@ -30,6 +30,7 @@ import {
   useOperatorStore,
 } from '@/src/core/operators'
 import { roadmapStore } from '@/src/core/roadmap'
+import { approvalStore } from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorTaskQueue } from './OperatorTaskQueue'
 import { OperatorStatus } from './OperatorStatus'
@@ -40,7 +41,7 @@ const operatorIds: OperatorId[] = ['cto', 'cfo', 'cmo', 'coo', 'research']
 export function OperatorDetail() {
   const { operatorId } = useParams()
   const id = operatorId as OperatorId
-  const { data, metrics, storageAvailable, addApproval } = useOperatingStore()
+  const { data, metrics, storageAvailable } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
   const operatorStore = useOperatorStore()
   const ctoRecommendations = useCTORecommendationStore()
@@ -108,9 +109,19 @@ export function OperatorDetail() {
         requiresApproval: recommendation.requiresCEOApproval,
       })
       if (recommendation.requiresCEOApproval) {
-        addApproval({
-          title: `CTO recommendation approval: ${recommendation.title}`,
-          category: 'CTO Recommendation',
+        approvalStore.addApproval({
+          title: recommendation.title,
+          description: recommendation.summary,
+          submittedBy: 'CTO Operator',
+          operator: 'CTO',
+          department: 'Technology',
+          relatedIssue: 'AO-004.4',
+          recommendationId: recommendation.id,
+          priority: recommendation.risk === 'High' ? 'High' : 'Medium',
+          effort: recommendation.estimatedEffort === 'Small' ? 'Low' : recommendation.estimatedEffort === 'Large' ? 'High' : 'Medium',
+          risk: recommendation.risk,
+          status: 'Pending',
+          requiresCEOApproval: true,
         })
       }
       setAnalysis(recommendation.summary)

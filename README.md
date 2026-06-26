@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-The application includes dedicated workspaces for Dashboard, CEO, Money, Development, Memory, Roadmap, and Settings. Workspace state is persisted locally on the device.
+The application includes dedicated workspaces for Dashboard, CEO, Money, Development, Memory, Roadmap, Operators, Approval Queue, and Settings. Workspace state is persisted locally on the device.
 
 ## Windows Release Builds
 

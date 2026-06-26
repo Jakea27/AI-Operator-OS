@@ -4,6 +4,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { CEO } from '@/pages/CEO'
 import { Money } from '@/pages/Money'
 import { Development } from '@/pages/Development'
+import { ApprovalQueuePage } from '@/src/features/approval'
 import { MemoryPage } from '@/src/features/memory/MemoryPage'
 import { OperatorDetail } from '@/src/features/operators/OperatorDetail'
 import { OperatorsPage } from '@/src/features/operators/OperatorsPage'
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="memory" element={<MemoryPage />} />
         <Route path="operators" element={<OperatorsPage />} />
         <Route path="operators/:operatorId" element={<OperatorDetail />} />
+        <Route path="approval" element={<ApprovalQueuePage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />
       </Route>

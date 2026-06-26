@@ -2,6 +2,7 @@ import {
   Banknote,
   Brain,
   ChevronDown,
+  ClipboardCheck,
   Code2,
   LayoutDashboard,
   Map,
@@ -21,6 +22,7 @@ const navigation = [
   { label: 'Memory', to: '/memory', icon: Brain },
   { label: 'Roadmap', to: '/roadmap', icon: Map },
   { label: 'Operators', to: '/operators', icon: Network },
+  { label: 'Approval Queue', to: '/approval', icon: ClipboardCheck },
 ]
 
 const titles: Record<string, string> = {
@@ -30,6 +32,7 @@ const titles: Record<string, string> = {
   '/development': 'Development',
   '/memory': 'Operator memory',
   '/operators': 'AI operators',
+  '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
   '/settings': 'Settings',
 }

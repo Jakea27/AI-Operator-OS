@@ -12,11 +12,12 @@ import {
   useExecutiveCoordinatorStore,
   useOperatorStore,
 } from '@/src/core/operators'
+import { approvalStore } from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorCard } from './OperatorCard'
 
 export function OperatorsPage() {
-  const { data, metrics, storageAvailable, addApproval } = useOperatingStore()
+  const { data, metrics, storageAvailable } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
   const { data: operatorState } = useOperatorStore()
   const coordinator = useExecutiveCoordinatorStore()
@@ -47,7 +48,22 @@ export function OperatorsPage() {
         priority: requestDraft.priority,
       },
       context,
-      addApproval,
+      addApproval: (entry) => {
+        approvalStore.addApproval({
+          title: entry.title,
+          description: requestDraft.details.trim() || 'Executive Coordinator routed a consequential request for CEO review.',
+          submittedBy: 'Executive Coordinator',
+          operator: requestDraft.type === 'finance' ? 'CFO' : requestDraft.type === 'marketing' ? 'CMO' : requestDraft.type === 'research' ? 'Research' : requestDraft.type === 'operations' || requestDraft.type === 'approval' ? 'COO' : 'CTO',
+          department: entry.category,
+          relatedIssue: requestDraft.details.match(/AO-\d+(?:\.\d+)?/)?.[0] ?? '',
+          recommendationId: '',
+          priority: requestDraft.priority === 'High' ? 'High' : requestDraft.priority === 'Low' ? 'Low' : 'Medium',
+          effort: 'Medium',
+          risk: requestDraft.priority === 'High' ? 'High' : 'Medium',
+          status: 'Pending',
+          requiresCEOApproval: true,
+        })
+      },
     })
     setRoutingSummary(decision.summary)
     setRequestDraft({ title: '', details: '', type: 'general', priority: 'Medium' })

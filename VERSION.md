@@ -8,7 +8,7 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: AO-004.5 Roadmap Integration
+Current Milestone: AO-005.1 Approval Queue Framework
 
 ## Version Rules
 

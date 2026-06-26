@@ -97,6 +97,18 @@ AO-004.5 adds the local Roadmap core under `app/src/core/roadmap`:
 
 The existing strategic Roadmap page remains the only Roadmap route. Operator backlog UI lives under `app/src/features/roadmap` and is rendered beneath the strategic timeline. CTO recommendations now create canonical roadmap items through the roadmap store instead of writing duplicate data into development tasks. Dashboard reads the same roadmap store for its backlog count.
 
+## Approval Queue Architecture
+
+AO-005.1 establishes the Approval Queue framework under `app/src/features/approval`:
+
+- `types/approvalTypes.ts` — approval schema, status, priority, effort, risk, operator, and filter models.
+- `store/approvalStore.ts` — localStorage-backed approval queue persistence and shared read API.
+- `utils/approvalFilters.ts` — search, status, operator, priority, and date sorting helpers.
+- `components/` — summary cards, filter bar, read-only approval cards, and executive empty state.
+- `pages/ApprovalQueuePage.tsx` — the dedicated Approval Queue department page.
+
+The Approval Queue is routed at `/approval` and appears in the active sidebar between Operators and Settings. AO-005.1 is infrastructure only: it displays approval requests but intentionally does not add approval decision buttons or execution behavior. CTO recommendation submissions and risky Executive Coordinator routes can create pending approval records in the shared local queue.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:
@@ -118,6 +130,7 @@ All new implementation issues use the `AO-###` format:
 - Delivery
 - Analytics
 - Memory
+- Approval Queue
 - Settings
 
 ## Approval Architecture

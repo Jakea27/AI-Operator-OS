@@ -111,6 +111,11 @@
 - Added Operator Backlog, Roadmap filters, and reusable Roadmap cards under the existing Roadmap page
 - Connected the CTO Recommendation Engine Add to Roadmap action to create persisted roadmap backlog items
 - Added roadmap search, operator/priority/status filters, priority sorting, status changes, archive action, and Dashboard backlog count
+- Completed AO-005.1 Approval Queue Framework
+- Added a dedicated Approval Queue department route and sidebar navigation item between Operators and Settings
+- Added local approval models, store, filters, summary cards, read-only approval cards, and executive empty state under `app/src/features/approval`
+- Connected CTO recommendation approval submissions and risky Executive Coordinator routes to the shared approval queue store
+- Preserved approval workflow boundaries by omitting decision buttons and approval decision logic from the new Approval Queue page
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

@@ -59,6 +59,10 @@ AO-004.5 integrates CTO recommendations with the active Roadmap module. The Road
 
 The Operator Backlog supports search by title/description, filters by operator, priority, and status, sorting by newest/oldest/priority, status changes to planned/in-progress/complete, and archive. Dashboard reads the same roadmap store and shows the current active roadmap backlog count.
 
+AO-005.1 creates the Approval Queue framework as a dedicated department. The active router now includes `/approval`, and the active sidebar shows Approval Queue between Operators and Settings. The feature lives under `app/src/features/approval` with local approval types, a localStorage-backed store, filter utilities, summary cards, read-only approval cards, and an executive empty state.
+
+The Approval Queue model includes title, description, submittedBy, operator, department, relatedIssue, recommendationId, priority, effort, risk, status, requiresCEOApproval, created, and updated. Statuses are Pending, Approved, Rejected, Deferred, and Archived. AO-005.1 intentionally does not add approval decision buttons or approval decision logic; it only creates the infrastructure and review UI. CTO recommendation approval submissions and risky Executive Coordinator routes now create pending approval records in the shared approval queue store.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
@@ -82,6 +86,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Core business memory logic lives under `app/src/core/memory`.
 - Core AI Operator framework logic lives under `app/src/core/operators`.
 - Core roadmap backlog logic lives under `app/src/core/roadmap`.
+- Core approval queue feature logic lives under `app/src/features/approval`.
 - New work uses the AO issue naming format.
 
 ## Known Constraints
