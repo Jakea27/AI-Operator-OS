@@ -214,33 +214,33 @@ export function OperatorDetail() {
   }
 
   const submitCTORecommendationForApproval = (recommendation: CTORecommendation) => {
-    const existingApproval = approvals.approvals.find((approval) => approval.recommendationId === recommendation.id && approval.status !== 'Archived')
-    if (!existingApproval) {
-      approvalStore.addApproval({
-        title: recommendation.title,
-        description: [
-          recommendation.summary,
-          '',
-          `Reasoning: ${recommendation.reasoning}`,
-          `Business value: ${recommendation.businessValue}`,
-          `Recommended next action: ${recommendation.recommendedNextAction}`,
-        ].join('\n'),
-        submittedBy: 'CTO Operator',
-        operator: 'CTO',
-        department: 'Technology',
-        relatedIssue: 'AO-004.4',
-        recommendationId: recommendation.id,
-        priority: recommendation.risk === 'High' ? 'High' : recommendation.risk === 'Medium' ? 'Medium' : 'Low',
-        effort: recommendation.estimatedEffort === 'Small' ? 'Low' : recommendation.estimatedEffort === 'Large' ? 'High' : 'Medium',
-        risk: recommendation.risk,
-        status: 'Pending',
-        requiresCEOApproval: true,
-        submittedAt: new Date().toISOString(),
-        businessValue: recommendation.businessValue,
-        supportingEvidence: recommendation.supportingEvidence,
-        recommendedNextAction: recommendation.recommendedNextAction,
-      })
-    }
+    const existingApproval = getLinkedApproval(approvals.approvals, recommendation.id)
+    if (recommendation.status !== 'Draft' || existingApproval) return
+
+    approvalStore.addApproval({
+      title: recommendation.title,
+      description: [
+        recommendation.summary,
+        '',
+        `Reasoning: ${recommendation.reasoning}`,
+        `Business value: ${recommendation.businessValue}`,
+        `Recommended next action: ${recommendation.recommendedNextAction}`,
+      ].join('\n'),
+      submittedBy: 'CTO Operator',
+      operator: 'CTO',
+      department: 'Technology',
+      relatedIssue: 'AO-004.4',
+      recommendationId: recommendation.id,
+      priority: recommendation.risk === 'High' ? 'High' : recommendation.risk === 'Medium' ? 'Medium' : 'Low',
+      effort: recommendation.estimatedEffort === 'Small' ? 'Low' : recommendation.estimatedEffort === 'Large' ? 'High' : 'Medium',
+      risk: recommendation.risk,
+      status: 'Pending',
+      requiresCEOApproval: true,
+      submittedAt: new Date().toISOString(),
+      businessValue: recommendation.businessValue,
+      supportingEvidence: recommendation.supportingEvidence,
+      recommendedNextAction: recommendation.recommendedNextAction,
+    })
     ctoRecommendations.updateStatus(recommendation.id, 'Needs Approval', 'Submitted for CEO approval.')
   }
 
@@ -330,7 +330,7 @@ export function OperatorDetail() {
                 <div className="space-y-4">
                   <p className="eyebrow mb-0">Recommendations</p>
                   {structuredCTORecommendations.map((recommendation) => {
-                    const linkedApproval = approvals.approvals.find((approval) => approval.recommendationId === recommendation.id)
+                    const linkedApproval = getLinkedApproval(approvals.approvals, recommendation.id)
                     return (
                       <CTORecommendationDetailCard
                         key={recommendation.id}
@@ -518,14 +518,15 @@ function CTORecommendationDetailCard({
   linkedApproval?: Approval
 }) {
   const approvalStatus = linkedApproval?.status
-  const approvalDecision = getApprovalDecisionDisplay(linkedApproval)
+  const effectiveApprovalStatus = approvalStatus ?? getRecommendationApprovalStatus(recommendation.status)
+  const approvalDecision = getApprovalDecisionDisplayFixed(linkedApproval, recommendation.status)
   const hasLinkedApproval = Boolean(linkedApproval)
-  const waitingOnCEO = approvalStatus === 'Pending' || recommendation.status === 'Needs Approval'
-  const terminalApproval = approvalStatus === 'Approved' ||
-    approvalStatus === 'Rejected' ||
-    approvalStatus === 'Changes Requested' ||
-    approvalStatus === 'Deferred' ||
-    approvalStatus === 'Archived'
+  const waitingOnCEO = effectiveApprovalStatus === 'Pending' || recommendation.status === 'Needs Approval'
+  const terminalApproval = effectiveApprovalStatus === 'Approved' ||
+    effectiveApprovalStatus === 'Rejected' ||
+    effectiveApprovalStatus === 'Changes Requested' ||
+    effectiveApprovalStatus === 'Deferred' ||
+    effectiveApprovalStatus === 'Archived'
   const canSubmitForApproval = recommendation.status === 'Draft' && !hasLinkedApproval
 
   return (
@@ -560,7 +561,7 @@ function CTORecommendationDetailCard({
         <InfoTile label="Updated" value={new Date(recommendation.updatedAt).toLocaleString()} />
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
-        <InfoTile label="Approval Status" value={approvalStatus ?? 'Not submitted'} />
+        <InfoTile label="Approval Status" value={effectiveApprovalStatus} />
         <InfoTile label="Last CEO Decision" value={approvalDecision} />
       </div>
       {(waitingOnCEO || terminalApproval) && (
@@ -582,8 +583,6 @@ function CTORecommendationDetailCard({
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
-        {!hasLinkedApproval && recommendation.status === 'Draft' && <button onClick={onApprove} className="btn-secondary">Approve</button>}
-        {!hasLinkedApproval && recommendation.status === 'Draft' && <button onClick={onReject} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]/70">Reject</button>}
         {canSubmitForApproval && <button onClick={onSubmitForApproval} className="btn-primary">Submit for CEO Approval</button>}
         <button onClick={onAddToRoadmap} className="btn-secondary">Add to Roadmap</button>
         <button onClick={onConvertToIssue} className="btn-secondary">Convert to AO Issue</button>
@@ -591,6 +590,47 @@ function CTORecommendationDetailCard({
       </div>
     </article>
   )
+}
+
+function getLinkedApproval(approvals: Approval[], recommendationId: string) {
+  const linked = approvals.filter((approval) => approval.recommendationId === recommendationId)
+  if (linked.length === 0) return undefined
+  return linked.sort((a, b) => {
+    const aTime = a.updated ?? a.decidedAt ?? a.created
+    const bTime = b.updated ?? b.decidedAt ?? b.created
+    return bTime.localeCompare(aTime)
+  })[0]
+}
+
+function getRecommendationApprovalStatus(status: CTORecommendation['status']) {
+  if (status === 'Approved') return 'Approved'
+  if (status === 'Rejected') return 'Rejected'
+  if (status === 'Changes Requested') return 'Changes Requested'
+  if (status === 'Deferred') return 'Deferred'
+  if (status === 'Archived') return 'Archived'
+  if (status === 'Needs Approval') return 'Pending'
+  return 'Not submitted'
+}
+
+function getApprovalDecisionDisplayFixed(approval: Approval | undefined, recommendationStatus: CTORecommendation['status']) {
+  if (!approval) {
+    if (recommendationStatus === 'Approved') return 'Approved by CEO'
+    if (recommendationStatus === 'Rejected') return 'Rejected by CEO'
+    if (recommendationStatus === 'Changes Requested') return 'Changes requested by CEO'
+    if (recommendationStatus === 'Deferred') return 'Deferred by CEO'
+    if (recommendationStatus === 'Archived') return 'Archived'
+    if (recommendationStatus === 'Needs Approval') return 'Waiting on CEO decision'
+    return 'Not submitted'
+  }
+  const date = approval.decidedAt ?? approval.decisionHistory.find((item) => item.action !== 'Submitted')?.createdAt
+  const suffix = date ? ` · ${new Date(date).toLocaleString()}` : ''
+  if (approval.status === 'Approved') return `Approved by CEO${suffix}`
+  if (approval.status === 'Rejected') return `Rejected by CEO${suffix}`
+  if (approval.status === 'Changes Requested') return `Changes requested by CEO${suffix}`
+  if (approval.status === 'Deferred') return `Deferred by CEO${suffix}`
+  if (approval.status === 'Archived') return `Archived${suffix}`
+  if (approval.status === 'Pending') return 'Waiting on CEO decision'
+  return 'Not submitted'
 }
 
 function getApprovalDecisionDisplay(approval?: Approval) {

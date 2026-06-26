@@ -110,20 +110,36 @@ export const ctoRecommendationStore = {
     persist({
       ...state,
       recommendations: state.recommendations.map((recommendation) => recommendation.id === id
-        ? {
-          ...recommendation,
-          status,
-          updatedAt: timestamp,
-          history: [{
-            id: createId('cto-rec-event'),
-            event,
-            status,
-            createdAt: timestamp,
-          }, ...recommendation.history],
-        }
+        ? updateRecommendationStatus(recommendation, status, event, timestamp)
         : recommendation),
     })
   },
+}
+
+function updateRecommendationStatus(
+  recommendation: CTORecommendation,
+  status: CTORecommendationStatus,
+  event: string,
+  timestamp: string,
+) {
+  const latest = recommendation.history[0]
+  const isDuplicateLatestEvent = recommendation.status === status &&
+    latest?.status === status &&
+    latest?.event === event
+
+  return {
+    ...recommendation,
+    status,
+    updatedAt: isDuplicateLatestEvent ? recommendation.updatedAt : timestamp,
+    history: isDuplicateLatestEvent
+      ? recommendation.history
+      : [{
+          id: createId('cto-rec-event'),
+          event,
+          status,
+          createdAt: timestamp,
+        }, ...recommendation.history],
+  }
 }
 
 export function useCTORecommendationStore() {

@@ -109,30 +109,51 @@ export const approvalStore = {
     const now = new Date().toISOString()
     persist(state.map((approval) =>
       approval.id === approvalId
-        ? {
-            ...approval,
-            status,
-            updated: now,
-            decidedAt: ['Approved', 'Rejected', 'Changes Requested', 'Deferred'].includes(status) ? now : approval.decidedAt,
-            decision: status,
-            decisionNote: note || approval.decisionNote,
-            decisionHistory: [
-              {
-                id: historyId(),
-                action: status,
-                actor,
-                note: note || decisionNoteFor(status),
-                createdAt: now,
-              },
-              ...approval.decisionHistory,
-            ],
-          }
+        ? updateApprovalStatus(approval, status, note, actor, now)
         : approval,
     ))
   },
   getApprovals() {
     return state
   },
+}
+
+function updateApprovalStatus(
+  approval: Approval,
+  status: ApprovalStatus,
+  note: string,
+  actor: string,
+  timestamp: string,
+) {
+  const historyNote = note || decisionNoteFor(status)
+  const latest = approval.decisionHistory[0]
+  const isDuplicateLatestDecision = approval.status === status &&
+    latest?.action === status &&
+    latest?.actor === actor &&
+    latest?.note === historyNote
+
+  return {
+    ...approval,
+    status,
+    updated: isDuplicateLatestDecision ? approval.updated : timestamp,
+    decidedAt: ['Approved', 'Rejected', 'Changes Requested', 'Deferred', 'Archived'].includes(status)
+      ? (isDuplicateLatestDecision ? approval.decidedAt : timestamp)
+      : approval.decidedAt,
+    decision: status,
+    decisionNote: note || approval.decisionNote || historyNote,
+    decisionHistory: isDuplicateLatestDecision
+      ? approval.decisionHistory
+      : [
+          {
+            id: historyId(),
+            action: status,
+            actor,
+            note: historyNote,
+            createdAt: timestamp,
+          },
+          ...approval.decisionHistory,
+        ],
+  }
 }
 
 export function useApprovalStore() {

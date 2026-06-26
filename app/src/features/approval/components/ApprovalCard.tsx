@@ -25,7 +25,12 @@ export function ApprovalCard({
   onViewDetails: () => void
 }) {
   const [note, setNote] = useState('')
+  const isPending = approval.status === 'Pending'
+  const isArchived = approval.status === 'Archived'
+  const hasCeoDecision = ['Approved', 'Rejected', 'Changes Requested', 'Deferred'].includes(approval.status)
   const submitDecision = (status: ApprovalStatus) => {
+    if (!isPending && status !== 'Archived') return
+    if (isArchived) return
     onDecision(status, note.trim())
     setNote('')
   }
@@ -68,21 +73,31 @@ export function ApprovalCard({
       </div>
 
       <div className="mt-4 border-t border-line pt-4">
-        <textarea
-          className="field min-h-20 resize-y"
-          placeholder="Optional CEO decision note"
-          value={note}
-          onChange={(event) => setNote(event.target.value)}
-        />
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button onClick={() => submitDecision('Approved')} className="btn-secondary flex items-center gap-2" type="button"><Check size={14} /> Approve</button>
-          <button onClick={() => submitDecision('Rejected')} className="rounded-lg border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:border-red-400/70" type="button"><X size={14} className="mr-1 inline" /> Reject</button>
-          <button onClick={() => submitDecision('Changes Requested')} className="btn-secondary flex items-center gap-2" type="button"><RotateCcw size={14} /> Request Changes</button>
-          <button onClick={() => submitDecision('Deferred')} className="btn-secondary flex items-center gap-2" type="button"><Clock3 size={14} /> Defer</button>
-          <button onClick={() => submitDecision('Archived')} className="rounded-lg border border-line px-3 py-2 text-xs text-muted hover:border-red-400/40 hover:text-red-300" type="button"><Archive size={14} className="mr-1 inline" /> Archive</button>
-        </div>
-        {approval.status === 'Approved' && (
-          <p className="mb-0 mt-3 rounded-xl border border-lime/20 bg-lime/[0.04] p-3 text-xs leading-5 text-lime">Approved locally. Execution is not automated yet.</p>
+        {isPending && (
+          <>
+            <textarea
+              className="field min-h-20 resize-y"
+              placeholder="Optional CEO decision note"
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+            />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button onClick={() => submitDecision('Approved')} className="btn-secondary flex items-center gap-2" type="button"><Check size={14} /> Approve</button>
+              <button onClick={() => submitDecision('Rejected')} className="rounded-lg border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:border-red-400/70" type="button"><X size={14} className="mr-1 inline" /> Reject</button>
+              <button onClick={() => submitDecision('Changes Requested')} className="btn-secondary flex items-center gap-2" type="button"><RotateCcw size={14} /> Request Changes</button>
+              <button onClick={() => submitDecision('Deferred')} className="btn-secondary flex items-center gap-2" type="button"><Clock3 size={14} /> Defer</button>
+              <button onClick={() => submitDecision('Archived')} className="rounded-lg border border-line px-3 py-2 text-xs text-muted hover:border-red-400/40 hover:text-red-300" type="button"><Archive size={14} className="mr-1 inline" /> Archive</button>
+            </div>
+          </>
+        )}
+        {hasCeoDecision && (
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="m-0 rounded-xl border border-lime/20 bg-lime/[0.04] p-3 text-xs leading-5 text-lime">CEO decision recorded. Execution is not automated.</p>
+            <button onClick={() => submitDecision('Archived')} className="rounded-lg border border-line px-3 py-2 text-xs text-muted hover:border-red-400/40 hover:text-red-300" type="button"><Archive size={14} className="mr-1 inline" /> Archive</button>
+          </div>
+        )}
+        {isArchived && (
+          <p className="m-0 rounded-xl border border-line bg-white/[0.025] p-3 text-xs leading-5 text-muted">Archived approval. Decision controls are hidden.</p>
         )}
       </div>
     </article>
