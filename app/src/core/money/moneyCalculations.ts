@@ -1,12 +1,16 @@
 import { normalizeCostType } from '@/src/services/operatingStore'
-import type { ExpenseEntry, RevenueEntry } from '@/src/services/operatingStore'
+import type { ExpenseEntry, MoneyBudget, RevenueEntry } from '@/src/services/operatingStore'
 import type {
   MoneyActivityItem,
+  MoneyBudgetProgress,
+  MoneyBudgetStatus,
+  MoneyBudgetSummary,
   MoneyCategoryBreakdownItem,
   MoneyCostItem,
   MoneyHealthSummary,
   MoneyMetrics,
   MoneyRevenueItem,
+  RecurringCostItem,
 } from './moneyTypes'
 
 function localDate(date = new Date()) {
@@ -133,4 +137,67 @@ export function getMoneyHealthSummary(metrics: MoneyMetrics): MoneyHealthSummary
     profitMargin: metrics.profitMargin,
     status,
   }
+}
+
+export function buildBudgetProgress(
+  budgets: MoneyBudget[],
+  costItems: ExpenseEntry[],
+  now = new Date(),
+): MoneyBudgetProgress[] {
+  return budgets
+    .map((budget) => {
+      const spent = costItems
+        .filter((entry) => entry.category === budget.category && sameMonth(entry.date, now))
+        .reduce((sum, entry) => sum + entry.amount, 0)
+      const percentageUsed = budget.amount > 0 ? (spent / budget.amount) * 100 : spent > 0 ? 100 : 0
+      const status: MoneyBudgetStatus = percentageUsed >= 100 ? 'Over Budget' : percentageUsed >= 75 ? 'Watch' : 'Healthy'
+
+      return {
+        ...budget,
+        spent,
+        remaining: Math.max(0, budget.amount - spent),
+        percentageUsed,
+        status,
+      }
+    })
+    .sort((a, b) => b.percentageUsed - a.percentageUsed || a.category.localeCompare(b.category))
+}
+
+export function calculateBudgetSummary(
+  budgetProgress: MoneyBudgetProgress[],
+  recurringMonthlyCostTotal: number,
+): MoneyBudgetSummary {
+  const totalBudget = budgetProgress.reduce((sum, budget) => sum + budget.amount, 0)
+  const totalSpent = budgetProgress.reduce((sum, budget) => sum + budget.spent, 0)
+
+  return {
+    totalBudget,
+    totalSpent,
+    remainingBudget: Math.max(0, totalBudget - totalSpent),
+    recurringMonthlyCostTotal,
+  }
+}
+
+export function buildRecurringCostItems(costItems: ExpenseEntry[], now = new Date()): RecurringCostItem[] {
+  return costItems
+    .filter((entry) => normalizeCostType(entry.costType) === 'monthly-recurring')
+    .map((entry) => {
+      const nextBillingDate = getNextBillingDate(entry.date, now)
+      return {
+        ...toMoneyCostItem(entry),
+        name: entry.notes || entry.category,
+        nextBillingDate,
+      }
+    })
+    .sort((a, b) => (a.nextBillingDate ?? '').localeCompare(b.nextBillingDate ?? '') || b.amount - a.amount)
+}
+
+function getNextBillingDate(sourceDate: string, now: Date) {
+  const parsed = new Date(`${sourceDate}T12:00:00`)
+  if (Number.isNaN(parsed.getTime())) return undefined
+  const candidate = new Date(now.getFullYear(), now.getMonth(), parsed.getDate(), 12, 0, 0)
+  if (candidate < new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0)) {
+    candidate.setMonth(candidate.getMonth() + 1)
+  }
+  return localDate(candidate)
 }

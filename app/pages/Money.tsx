@@ -9,9 +9,12 @@ import {
 import { MetricCard } from '@/components/MetricCard'
 import { PageIntro } from '@/components/PageIntro'
 import {
+  BudgetManager,
   CostBreakdown,
   CostOverview,
   FinancialHealthCard,
+  MonthlyFinancialSummary,
+  RecurringCostManager,
   RecentFinancialActivity,
 } from '@/src/components/money/MoneyDashboardSections'
 import {
@@ -106,6 +109,15 @@ export function Money() {
         )}
 
         <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12">
+            <MonthlyFinancialSummary summary={money.budgetSummary} />
+          </div>
+          <div className="col-span-7">
+            <BudgetManager budgets={money.budgetProgress} onSaveBudget={money.setBudget} onDeleteBudget={money.deleteBudget} />
+          </div>
+          <div className="col-span-5">
+            <RecurringCostManager recurringCosts={money.recurringCosts} monthlyTotal={money.metrics.monthlyRecurringCosts} />
+          </div>
           <div className="col-span-7">
             <CostOverview metrics={money.metrics} />
           </div>

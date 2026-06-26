@@ -64,6 +64,7 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [ ] AO-006 Automation Engine
   - [x] AO-006.1 Money Store Foundation: shared local-first money types, store adapter, cost schedule tracking, reusable calculations, and Dashboard/Money integration
   - [x] AO-006.2 Money Department Dashboard: monthly summary cards, cost overview, expense category breakdown, recent activity, and financial health status
+  - [x] AO-006.3 Budgeting & Recurring Cost Management: persisted category budgets, progress/status tracking, recurring cost manager, and monthly budget summary
 - [ ] AO-090 UX & Visual Polish
   - [ ] Complete deferred visual, UX, desktop, and quality-of-life improvements tracked in `docs/POLISH_BACKLOG.md`
 

@@ -141,6 +141,11 @@
 - Added Money page dashboard sections for cost overview, expense category breakdown, recent financial activity, and financial health
 - Added shared Money helper calculations for expense category totals, recent activity, and Healthy/Stable/Warning status
 - Updated Money summary cards to focus on monthly revenue, monthly expenses, monthly profit, and profit margin
+- Completed AO-006.3 Budgeting & Recurring Cost Management
+- Added persisted monthly budgets by expense category to the existing local operating store
+- Added shared budget progress, budget summary, and recurring cost selectors to the Money core
+- Added Money page budget manager with Healthy, Watch, and Over Budget status indicators
+- Added recurring monthly cost manager with monthly total and next billing dates
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

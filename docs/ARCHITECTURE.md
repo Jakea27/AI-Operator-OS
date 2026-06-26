@@ -47,6 +47,8 @@ The Money foundation intentionally does not create a second localStorage documen
 
 AO-006.2 extends the same Money core with reusable dashboard helpers for expense category breakdowns, recent revenue/cost activity, and financial health status. The active Money page consumes those helpers through `useMoneyStore` and renders modular dashboard sections without adding routes, stores, external services, or approval behavior changes.
 
+AO-006.3 stores configurable monthly category budgets inside the existing operating store as `moneyBudgets`. The Money core exposes budget progress, monthly budget summary, and recurring-cost selectors through `useMoneyStore`. Recurring costs are not a separate store; they are expense records whose `costType` is `monthly-recurring`. This keeps Budgeting, Money, Dashboard, CEO Briefing, Operators, and future approval workflows on one local financial source of truth.
+
 ## Business Memory Architecture
 
 AO-003 defines Business Memory under `app/src/core/memory`:

@@ -1,6 +1,9 @@
 import {
+  buildBudgetProgress,
   buildExpenseCategoryBreakdown,
   buildRecentMoneyActivity,
+  buildRecurringCostItems,
+  calculateBudgetSummary,
   calculateMoneyMetrics,
   getMoneyHealthSummary,
   toMoneyCostItem,
@@ -17,15 +20,24 @@ export function useMoneyStore() {
   const categoryBreakdown = buildExpenseCategoryBreakdown(operating.data.expenseEntries)
   const recentActivity = buildRecentMoneyActivity(operating.data.revenueEntries, operating.data.expenseEntries)
   const health = getMoneyHealthSummary(metrics)
+  const budgetProgress = buildBudgetProgress(operating.data.moneyBudgets, operating.data.expenseEntries)
+  const recurringCosts = buildRecurringCostItems(operating.data.expenseEntries)
+  const budgetSummary = calculateBudgetSummary(budgetProgress, metrics.monthlyRecurringCosts)
 
   return {
     revenueItems,
     costItems,
+    budgets: operating.data.moneyBudgets,
     metrics,
     categoryBreakdown,
     recentActivity,
     health,
+    budgetProgress,
+    budgetSummary,
+    recurringCosts,
     storageAvailable: operating.storageAvailable,
+    setBudget: operating.setMoneyBudget,
+    deleteBudget: operating.deleteMoneyBudget,
     addRevenueItem: (entry: MoneyRevenueInput) => operating.addRevenue(entry),
     updateRevenueItem: (entryId: string, patch: Omit<MoneyRevenueInput, 'createdAt' | 'updatedAt'>) =>
       operating.updateRevenue(entryId, patch),

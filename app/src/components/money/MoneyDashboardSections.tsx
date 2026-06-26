@@ -1,10 +1,15 @@
+import { useState, type FormEvent } from 'react'
 import { AlertTriangle, CheckCircle2, MinusCircle, ReceiptText } from 'lucide-react'
+import { expenseCategories } from '@/src/data/financeCategories'
 import { formatCurrency } from '@/src/services/operatingStore'
 import type {
   MoneyActivityItem,
+  MoneyBudgetProgress,
+  MoneyBudgetSummary,
   MoneyCategoryBreakdownItem,
   MoneyHealthSummary,
   MoneyMetrics,
+  RecurringCostItem,
 } from '@/src/core/money'
 
 export function CostOverview({ metrics }: { metrics: MoneyMetrics }) {
@@ -118,6 +123,137 @@ export function FinancialHealthCard({ health }: { health: MoneyHealthSummary }) 
       </p>
     </section>
   )
+}
+
+export function MonthlyFinancialSummary({ summary }: { summary: MoneyBudgetSummary }) {
+  return (
+    <section className="panel p-6">
+      <p className="eyebrow mb-2">Monthly Financial Summary</p>
+      <h3 className="m-0 text-xl font-semibold">Budget control</h3>
+      <div className="mt-5 grid grid-cols-4 gap-3">
+        <CostStat label="Total Monthly Budget" value={formatCurrency(summary.totalBudget)} tone="neutral" />
+        <CostStat label="Total Spent" value={formatCurrency(summary.totalSpent)} tone="rose" />
+        <CostStat label="Remaining Budget" value={formatCurrency(summary.remainingBudget)} tone={summary.remainingBudget > 0 ? 'mint' : 'rose'} />
+        <CostStat label="Recurring Monthly Cost" value={formatCurrency(summary.recurringMonthlyCostTotal)} tone="amber" />
+      </div>
+    </section>
+  )
+}
+
+export function BudgetManager({
+  budgets,
+  onSaveBudget,
+  onDeleteBudget,
+}: {
+  budgets: MoneyBudgetProgress[]
+  onSaveBudget: (category: string, amount: number) => void
+  onDeleteBudget: (category: string) => void
+}) {
+  const [category, setCategory] = useState<string>(expenseCategories[0])
+  const [amount, setAmount] = useState('')
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault()
+    const parsedAmount = Number(amount)
+    if (!Number.isFinite(parsedAmount) || parsedAmount < 0) return
+    onSaveBudget(category, parsedAmount)
+    setAmount('')
+  }
+
+  return (
+    <section className="panel overflow-hidden">
+      <div className="border-b border-line px-6 py-5">
+        <p className="eyebrow mb-2">Monthly Budgets</p>
+        <h3 className="m-0 text-xl font-semibold">Category budget progress</h3>
+      </div>
+      <form onSubmit={submit} className="grid grid-cols-[1fr_160px_auto] gap-3 border-b border-line px-6 py-4">
+        <label className="text-xs text-muted">
+          Category
+          <select className="field mt-2" value={category} onChange={(event) => setCategory(event.target.value)}>
+            {expenseCategories.map((item) => <option key={item} value={item}>{item}</option>)}
+          </select>
+        </label>
+        <label className="text-xs text-muted">
+          Budget
+          <input className="field mt-2" min="0" step="1" type="number" placeholder="0" value={amount} onChange={(event) => setAmount(event.target.value)} />
+        </label>
+        <div className="flex items-end">
+          <button type="submit" className="btn-primary">Save Budget</button>
+        </div>
+      </form>
+      {budgets.length === 0 ? (
+        <p className="m-0 px-6 py-8 text-sm text-muted">No category budgets yet. Set a monthly budget for Software, Marketing, AI Services, Office, or any expense category you track.</p>
+      ) : (
+        <div className="divide-y divide-line">
+          {budgets.map((budget) => (
+            <div key={budget.id} className="px-6 py-4">
+              <div className="mb-3 flex items-start justify-between gap-4">
+                <div>
+                  <p className="m-0 text-sm font-semibold text-white">{budget.category}</p>
+                  <p className="mb-0 mt-1 text-xs text-muted">
+                    {formatCurrency(budget.spent)} spent of {formatCurrency(budget.amount)} · {formatCurrency(budget.remaining)} remaining
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <BudgetStatusBadge status={budget.status} />
+                  <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
+                </div>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className={`h-full rounded-full ${budget.status === 'Over Budget' ? 'bg-[#ff9e8f]' : budget.status === 'Watch' ? 'bg-[#ffcc66]' : 'bg-mint'}`} style={{ width: `${Math.min(100, budget.percentageUsed)}%` }} />
+              </div>
+              <p className="mb-0 mt-2 text-[11px] text-muted">{budget.percentageUsed.toFixed(1)}% used</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+export function RecurringCostManager({
+  recurringCosts,
+  monthlyTotal,
+}: {
+  recurringCosts: RecurringCostItem[]
+  monthlyTotal: number
+}) {
+  return (
+    <section className="panel overflow-hidden">
+      <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5">
+        <div>
+          <p className="eyebrow mb-2">Recurring Cost Manager</p>
+          <h3 className="m-0 text-xl font-semibold">Monthly operating commitments</h3>
+        </div>
+        <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1.5 text-xs font-semibold text-[#ffcc66]">{formatCurrency(monthlyTotal)} / month</span>
+      </div>
+      {recurringCosts.length === 0 ? (
+        <p className="m-0 px-6 py-8 text-sm text-muted">No recurring monthly costs marked yet. Add or edit an expense and choose Monthly recurring cost.</p>
+      ) : (
+        <div className="divide-y divide-line">
+          {recurringCosts.map((cost) => (
+            <div key={cost.id} className="grid grid-cols-[1fr_auto] items-center gap-4 px-6 py-4">
+              <div>
+                <p className="m-0 text-sm font-semibold text-white">{cost.name}</p>
+                <p className="mb-0 mt-1 text-xs text-muted">{cost.category} · Next billing {cost.nextBillingDate ? new Date(`${cost.nextBillingDate}T12:00:00`).toLocaleDateString() : 'not available'}</p>
+              </div>
+              <p className="m-0 text-sm font-semibold text-[#ffcc66]">{formatCurrency(cost.amount)}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function BudgetStatusBadge({ status }: { status: MoneyBudgetProgress['status'] }) {
+  const className = status === 'Healthy'
+    ? 'bg-mint/10 text-mint border-mint/20'
+    : status === 'Watch'
+      ? 'bg-[#ffcc66]/10 text-[#ffcc66] border-[#ffcc66]/20'
+      : 'bg-[#ff9e8f]/10 text-[#ff9e8f] border-[#ff9e8f]/20'
+
+  return <span className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${className}`}>{status}</span>
 }
 
 function CostStat({ label, value, tone }: { label: string; value: string; tone: 'mint' | 'amber' | 'rose' | 'neutral' }) {

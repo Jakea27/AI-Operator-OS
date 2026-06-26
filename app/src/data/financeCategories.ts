@@ -11,11 +11,13 @@ export const revenueCategories = [
 export const expenseCategories = [
   'Software',
   'Marketing',
+  'AI Services',
   'Contractors',
   'Payroll',
   'Hosting',
   'Professional services',
   'Office',
+  'Miscellaneous',
   'Travel',
   'Taxes',
   'Other expense',

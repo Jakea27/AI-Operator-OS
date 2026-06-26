@@ -1,4 +1,4 @@
-import type { CostType, ExpenseEntry, RevenueEntry } from '@/src/services/operatingStore'
+import type { CostType, ExpenseEntry, MoneyBudget, RevenueEntry } from '@/src/services/operatingStore'
 
 export type MoneyRecordType = 'revenue' | 'cost'
 export type MoneyCostType = CostType
@@ -58,4 +58,25 @@ export type MoneyHealthSummary = {
   recurringCostTotal: number
   profitMargin: number
   status: MoneyHealthStatus
+}
+
+export type MoneyBudgetStatus = 'Healthy' | 'Watch' | 'Over Budget'
+
+export type MoneyBudgetProgress = MoneyBudget & {
+  spent: number
+  remaining: number
+  percentageUsed: number
+  status: MoneyBudgetStatus
+}
+
+export type MoneyBudgetSummary = {
+  totalBudget: number
+  totalSpent: number
+  remainingBudget: number
+  recurringMonthlyCostTotal: number
+}
+
+export type RecurringCostItem = MoneyCostItem & {
+  name: string
+  nextBillingDate?: string
 }

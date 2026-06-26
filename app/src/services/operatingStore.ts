@@ -26,6 +26,14 @@ export type ExpenseEntry = {
   updatedAt: string
 }
 
+export type MoneyBudget = {
+  id: string
+  category: string
+  amount: number
+  createdAt: string
+  updatedAt: string
+}
+
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected'
 
 export type ApprovalRecord = {
@@ -69,6 +77,7 @@ export type OperatingState = {
   version: 1
   revenueEntries: RevenueEntry[]
   expenseEntries: ExpenseEntry[]
+  moneyBudgets: MoneyBudget[]
   approvals: ApprovalRecord[]
   projects: ProjectRecord[]
   tasks: TaskRecord[]
@@ -95,6 +104,7 @@ const emptyState: OperatingState = {
   version: 1,
   revenueEntries: [],
   expenseEntries: [],
+  moneyBudgets: [],
   approvals: [],
   projects: [],
   tasks: [],
@@ -116,6 +126,7 @@ function readState(): OperatingState {
     if (!stored) return emptyState
     type LegacyRevenueEntry = Partial<RevenueEntry> & { description?: string }
     type LegacyExpenseEntry = Partial<ExpenseEntry> & { description?: string }
+    type LegacyMoneyBudget = Partial<MoneyBudget>
     const raw = JSON.parse(stored) as Record<string, unknown>
     const { memoryEntries: _legacyMemoryEntries, ...rawWithoutMemory } = raw
     const parsed = { ...emptyState, ...rawWithoutMemory } as OperatingState
@@ -124,6 +135,9 @@ function readState(): OperatingState {
       : []
     const legacyExpenseEntries = Array.isArray(raw.expenseEntries)
       ? (raw.expenseEntries as LegacyExpenseEntry[])
+      : []
+    const legacyMoneyBudgets = Array.isArray(raw.moneyBudgets)
+      ? (raw.moneyBudgets as LegacyMoneyBudget[])
       : []
     const now = new Date().toISOString()
     return {
@@ -149,6 +163,15 @@ function readState(): OperatingState {
         createdAt: entry.createdAt ?? now,
         updatedAt: entry.updatedAt ?? entry.createdAt ?? now,
       })),
+      moneyBudgets: legacyMoneyBudgets
+        .filter((budget) => budget.category && Number(budget.amount) >= 0)
+        .map((budget) => ({
+          id: budget.id ?? id('budget'),
+          category: budget.category ?? 'Miscellaneous',
+          amount: Number(budget.amount) || 0,
+          createdAt: budget.createdAt ?? now,
+          updatedAt: budget.updatedAt ?? budget.createdAt ?? now,
+        })),
     }
   } catch {
     return emptyState
@@ -290,6 +313,29 @@ export const operatingStore = {
       expenseEntries: state.expenseEntries.filter((entry) => entry.id !== entryId),
     })
   },
+  setMoneyBudget(category: string, amount: number) {
+    const now = new Date().toISOString()
+    const existing = state.moneyBudgets.find((budget) => budget.category === category)
+    persist({
+      ...state,
+      moneyBudgets: existing
+        ? state.moneyBudgets.map((budget) =>
+            budget.id === existing.id
+              ? { ...budget, amount: Math.max(0, amount), updatedAt: now }
+              : budget,
+          )
+        : [
+            { id: id('budget'), category, amount: Math.max(0, amount), createdAt: now, updatedAt: now },
+            ...state.moneyBudgets,
+          ],
+    })
+  },
+  deleteMoneyBudget(category: string) {
+    persist({
+      ...state,
+      moneyBudgets: state.moneyBudgets.filter((budget) => budget.category !== category),
+    })
+  },
   addApproval(entry: Omit<ApprovalRecord, 'id' | 'status' | 'createdAt'>) {
     persist({
       ...state,
@@ -345,6 +391,7 @@ export const operatingStore = {
     if (
       state.revenueEntries.length > 0 ||
       state.expenseEntries.length > 0 ||
+      state.moneyBudgets.length > 0 ||
       state.approvals.length > 0 ||
       state.projects.length > 0 ||
       state.tasks.length > 0
@@ -367,6 +414,11 @@ export const operatingStore = {
       expenseEntries: [
         { id: id('sample-exp'), amount: 320, date: date(2), business: 'Sample Studio', category: 'Software', costType: 'monthly-recurring', notes: 'Sample software expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
         { id: id('sample-exp'), amount: 600, date: date(8), business: 'Sample Studio', category: 'Marketing', costType: 'one-time', notes: 'Sample campaign expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      ],
+      moneyBudgets: [
+        { id: id('sample-budget'), category: 'Software', amount: 500, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-budget'), category: 'Marketing', amount: 1000, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-budget'), category: 'AI Services', amount: 100, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
       ],
       approvals: [
         { id: id('sample-approval'), title: 'Sample campaign approval', category: 'Marketing', amount: 600, status: 'pending', createdAt: new Date().toISOString() },
