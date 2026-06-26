@@ -14,13 +14,13 @@ export function hydrateOperator(operator: AIOperator, context: OperatorSharedCon
     ...operator.taskQueue,
   ]
   const currentTask = operator.currentTask ?? taskQueue.find((task) => task.status === 'active') ?? taskQueue.find((task) => task.status === 'queued') ?? null
-  const currentStatus = currentTask?.requiresApproval
-    ? 'Needs Approval'
-    : currentTask?.status === 'waiting'
+  const currentStatus = currentTask?.status === 'waiting'
       ? 'Waiting'
       : currentTask?.status === 'blocked'
         ? 'Blocked'
-        : operator.currentStatus
+        : currentTask
+          ? 'Working'
+          : operator.currentStatus
 
   return {
     ...operator,

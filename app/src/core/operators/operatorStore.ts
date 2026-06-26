@@ -38,10 +38,27 @@ function createId(prefix: string) {
 function normalizeState(raw: Partial<OperatorLocalState>): OperatorLocalState {
   return {
     version: 1,
-    tasks: Object.fromEntries(operatorIds.map((id) => [id, Array.isArray(raw.tasks?.[id]) ? raw.tasks[id] : []])) as OperatorLocalState['tasks'],
+    tasks: Object.fromEntries(operatorIds.map((id) => [
+      id,
+      Array.isArray(raw.tasks?.[id])
+        ? raw.tasks[id].map((task) => ({
+          ...task,
+          priority: task.priority ?? 'Medium',
+        }))
+        : [],
+    ])) as OperatorLocalState['tasks'],
     recommendations: Object.fromEntries(operatorIds.map((id) => [
       id,
-      Array.isArray(raw.recommendations?.[id]) ? raw.recommendations[id] : [],
+      Array.isArray(raw.recommendations?.[id])
+        ? raw.recommendations[id].map((recommendation) => ({
+          ...recommendation,
+          title: recommendation.title ?? recommendation.summary ?? 'Operator recommendation',
+          confidence: recommendation.confidence ?? 'Medium',
+          riskLevel: recommendation.riskLevel ?? 'Medium',
+          source: recommendation.source ?? 'Operator workspace',
+          status: recommendation.status ?? 'Draft',
+        }))
+        : [],
     ])) as OperatorLocalState['recommendations'],
   }
 }
@@ -119,7 +136,7 @@ export const operatorStore = {
       ...state,
       tasks: {
         ...state.tasks,
-        [operatorId]: state.tasks[operatorId].map((task) => task.id === taskId ? { ...task, status: 'done' } : task),
+        [operatorId]: state.tasks[operatorId].map((task) => task.id === taskId ? { ...task, status: 'done', completedAt: new Date().toISOString() } : task),
       },
     })
   },
@@ -138,6 +155,8 @@ export const operatorStore = {
     rationale: string
     source: string
     status: OperatorRecommendationStatus
+    confidence: 'Low' | 'Medium' | 'High'
+    riskLevel: 'Low' | 'Medium' | 'High'
     requiresApproval: boolean
   }) {
     const entry: OperatorRecommendation = {

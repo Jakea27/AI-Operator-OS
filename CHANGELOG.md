@@ -89,6 +89,13 @@
 - Added local persistent operator recommendation history with title, summary, source, created date, approval status, and deterministic generation
 - Added shared context panels for Business Memory, Money Department, CEO Briefing, Development tasks/projects, and Approval Queue counts
 - Added CTO-first deterministic architecture analysis plus save-to-memory support without external AI APIs
+- Completed AO-004.2.1 Operator Workspace polish
+- Added always-visible Mission and Current Objective cards to routed operator workspaces
+- Added standardized Working, Idle, Waiting, Analyzing, Needs Context, and Blocked status badges
+- Added permanent operator icons for CTO, CFO, CMO, COO, and Research on cards and workspace headers
+- Added executive statistics for open tasks, completed today, recommendations, memory links, and CEO approvals waiting
+- Upgraded recommendation history into structured detail cards with reasoning, confidence, risk level, status, and created date
+- Replaced basic operator history with a chronological activity timeline
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation

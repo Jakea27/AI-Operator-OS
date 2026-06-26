@@ -2,14 +2,18 @@ import { ArrowUpRight, ListChecks } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { AIOperator, getLastRecommendation } from '@/src/core/operators'
 import { OperatorStatus } from './OperatorStatus'
+import { operatorIcon } from './operatorPresentation'
 
 export function OperatorCard({ operator }: { operator: AIOperator }) {
   return (
     <article className="panel flex h-full flex-col p-5">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="eyebrow mb-2">{operator.role}</p>
-          <h2 className="m-0 text-xl font-semibold text-white">{operator.name}</h2>
+        <div className="flex items-start gap-3">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-line bg-ink/40 text-2xl">{operatorIcon(operator.id)}</span>
+          <div>
+            <p className="eyebrow mb-2">{operator.role}</p>
+            <h2 className="m-0 text-xl font-semibold text-white">{operator.name}</h2>
+          </div>
         </div>
         <OperatorStatus status={operator.currentStatus} />
       </div>

@@ -45,6 +45,8 @@ AO-004.2 expands Operators from summary cards into routed department-head worksp
 
 Operator workspace state is persisted locally in `app/src/core/operators/operatorStore.ts`. Tasks and recommendations are local drafts only; they do not execute automatically and do not call external AI APIs. The CTO workspace is the most complete example: it can run deterministic architecture analysis, generate a local architecture recommendation, add operator tasks, and save an important note into Business Memory.
 
+AO-004.2.1 polished the routed operator workspaces. Each operator now has a permanent icon, standardized status badge, always-visible Mission card, Current Objective card, executive statistics row, structured recommendation cards, and chronological activity timeline. Recommendation records now carry confidence and risk-level metadata while remaining deterministic local drafts.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.

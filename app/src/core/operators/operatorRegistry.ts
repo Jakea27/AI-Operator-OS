@@ -45,6 +45,8 @@ export const initialOperators: AIOperator[] = [
         createdAt,
         source: 'AO-004.1 framework design',
         status: 'Draft',
+        confidence: 'High',
+        riskLevel: 'Low',
         requiresApproval: false,
       },
     ],

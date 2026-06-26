@@ -5,12 +5,12 @@ import type { DailyBriefing } from '@/src/services/briefing/briefingEngine'
 export type OperatorId = 'cto' | 'cfo' | 'cmo' | 'coo' | 'research'
 
 export type OperatorStatus =
+  | 'Working'
   | 'Idle'
-  | 'Thinking'
   | 'Waiting'
+  | 'Analyzing'
+  | 'Needs Context'
   | 'Blocked'
-  | 'Needs Approval'
-  | 'Completed'
 
 export type OperatorApprovalLevel = 'None' | 'Low' | 'Medium' | 'High' | 'CEO Required'
 
@@ -33,6 +33,7 @@ export type OperatorTask = {
   priority: OperatorTaskPriority
   status: OperatorTaskStatus
   createdAt: string
+  completedAt?: string
   source: 'system' | 'operator' | 'ceo'
   requiresApproval: boolean
   relatedMemoryId?: string
@@ -49,6 +50,8 @@ export type OperatorRecommendation = {
   createdAt: string
   source: string
   status: OperatorRecommendationStatus
+  confidence: 'Low' | 'Medium' | 'High'
+  riskLevel: 'Low' | 'Medium' | 'High'
   requiresApproval: boolean
 }
 
@@ -64,6 +67,8 @@ export type OperatorEvent = {
   operatorId: OperatorId
   type: 'status' | 'task' | 'recommendation' | 'memory'
   message: string
+  source: string
+  status: string
   createdAt: string
 }
 

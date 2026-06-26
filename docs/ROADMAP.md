@@ -48,6 +48,8 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] Shared operator models, registry, task queues, memory access, status, recommendations, events, and Operators workspace
 - [x] AO-004.2 Operator Workspace
   - [x] Routed operator workspaces, persistent local task queues, recommendations, shared context panels, and CTO deterministic architecture actions
+- [x] AO-004.2.1 Operator Workspace Polish
+  - [x] Mission/current objective cards, standardized statuses, operator icons, executive stats, recommendation detail cards, and activity timeline
 - [ ] AO-005 Approval Queue
 - [ ] AO-006 Automation Engine
 

@@ -74,6 +74,8 @@ AI reasoning is intentionally deferred. AO-004.1 establishes the local framework
 
 AO-004.2 adds routed operator workspaces under `/operators/:operatorId`. The workspaces continue to use the same operator registry and shared context instead of creating a second operator system. Operator task queues and recommendation histories are local-first drafts persisted through `operatorStore.ts`. Workspace actions are deterministic placeholders: run local analysis, generate a local recommendation, add an operator task, and save a note to Business Memory. No action executes externally without CEO approval.
 
+AO-004.2.1 keeps the same architecture and upgrades presentation/state metadata only. Operator status display is standardized as Working, Idle, Waiting, Analyzing, Needs Context, and Blocked. Operator presentation metadata such as permanent icons and status colors lives in `app/src/features/operators/operatorPresentation.ts`. Recommendation records include confidence and risk level for future approval and reasoning workflows.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

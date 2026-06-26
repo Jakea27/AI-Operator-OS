@@ -15,17 +15,21 @@ import {
 } from 'lucide-react'
 import { memoryStore, useMemoryStore } from '@/src/core/memory'
 import {
+  AIOperator,
   getOperatorContextCounts,
   getOperatorDetail,
   OperatorId,
+  OperatorRecommendation,
   OperatorRecommendationStatus,
   OperatorSharedContext,
   OperatorTaskPriority,
+  OperatorWorkspaceContextCounts,
   useOperatorStore,
 } from '@/src/core/operators'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorTaskQueue } from './OperatorTaskQueue'
 import { OperatorStatus } from './OperatorStatus'
+import { operatorIcon } from './operatorPresentation'
 
 const operatorIds: OperatorId[] = ['cto', 'cfo', 'cmo', 'coo', 'research']
 
@@ -60,6 +64,8 @@ export function OperatorDetail() {
   const operator = snapshot.operator
   const counts = getOperatorContextCounts(context)
   const recommendations = operator.recommendationHistory
+  const currentObjective = getCurrentObjective(operator.id, metrics.sprintProgress)
+  const stats = getExecutiveStats(operator, counts)
 
   const addTask = (event: FormEvent) => {
     event.preventDefault()
@@ -93,7 +99,7 @@ export function OperatorDetail() {
       summary: content.slice(0, 220),
       details: content,
       author: operator.name,
-      relatedIssue: 'AO-004.2',
+      relatedIssue: 'AO-004.2.1',
       relatedSprint: 'Sprint 0.2',
       relatedMemoryIds: [],
       pinned: operator.id === 'cto',
@@ -111,10 +117,13 @@ export function OperatorDetail() {
 
       <section className="panel p-6">
         <div className="flex items-start justify-between gap-6">
-          <div>
-            <p className="eyebrow mb-2">{operator.role}</p>
-            <h1 className="m-0 font-display text-3xl font-semibold">{operator.name}</h1>
-            <p className="mb-0 mt-3 max-w-4xl text-sm leading-6 text-[#c3cbc7]">{operator.mission}</p>
+          <div className="flex items-start gap-4">
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-3xl border border-lime/20 bg-lime/10 text-4xl shadow-[0_0_30px_rgba(200,245,96,0.06)]">{operatorIcon(operator.id)}</span>
+            <div>
+              <p className="eyebrow mb-2">{operator.role}</p>
+              <h1 className="m-0 font-display text-3xl font-semibold">{operator.name}</h1>
+              <p className="mb-0 mt-3 max-w-4xl text-sm leading-6 text-[#c3cbc7]">Department-head workspace for local analysis, recommendations, and drafts.</p>
+            </div>
           </div>
           <div className="flex flex-col items-end gap-2">
             <OperatorStatus status={operator.currentStatus} />
@@ -122,18 +131,39 @@ export function OperatorDetail() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-4 gap-4">
-          <Metric label="Current task" value={operator.currentTask?.title ?? 'No active task'} />
-          <Metric label="Queued tasks" value={snapshot.openTasks.length.toString()} />
-          <Metric label="Recommendations" value={recommendations.length.toString()} />
-          <Metric label="Relevant memories" value={snapshot.relevantMemory.length.toString()} />
+        <section className="mt-6 rounded-2xl border border-lime/20 bg-lime/[0.045] p-5">
+          <p className="eyebrow mb-2 text-lime">Mission</p>
+          <h2 className="m-0 text-xl font-semibold text-white">Mission title: {operator.role}</h2>
+          <p className="mb-0 mt-3 text-sm leading-6 text-[#d5ddd9]">{operator.mission}</p>
+        </section>
+
+        <div className="mt-4 grid grid-cols-2 gap-4">
+          <section className="rounded-2xl border border-mint/20 bg-mint/[0.04] p-5">
+            <p className="eyebrow mb-2 text-mint">Current Objective</p>
+            <h2 className="m-0 text-lg font-semibold text-white">{currentObjective.objective}</h2>
+            <p className="mb-0 mt-2 text-xs leading-5 text-muted">Current issue: {currentObjective.issue}</p>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+              <span className="block h-full rounded-full bg-lime" style={{ width: `${currentObjective.progress}%` }} />
+            </div>
+            <p className="mb-0 mt-2 text-[10px] uppercase tracking-[0.12em] text-muted">{currentObjective.progress}% progress indicator</p>
+          </section>
+          <section className="rounded-2xl border border-line bg-ink/25 p-5">
+            <p className="eyebrow mb-3">Executive Statistics</p>
+            <div className="grid grid-cols-5 gap-2">
+              <Metric label="Open Tasks" value={stats.openTasks.toString()} />
+              <Metric label="Completed Today" value={stats.completedToday.toString()} />
+              <Metric label="Recommendations" value={stats.recommendations.toString()} />
+              <Metric label="Memory Links" value={stats.memoryLinks.toString()} />
+              <Metric label="CEO Approvals Waiting" value={stats.approvalsWaiting.toString()} />
+            </div>
+          </section>
         </div>
       </section>
 
       <div className="mt-5 grid grid-cols-12 gap-4">
         <main className="col-span-8 space-y-4">
           <section className="panel p-5">
-            <div className="mb-4 flex items-center gap-2 text-lime"><ClipboardCheck size={15} /><p className="eyebrow m-0">Task Queue</p></div>
+            <div className="mb-5 flex items-center gap-2 text-lime"><ClipboardCheck size={17} /><h2 className="m-0 text-lg font-semibold text-white">Task Queue</h2></div>
             <form onSubmit={addTask} className="mb-4 grid grid-cols-6 gap-3 rounded-2xl border border-line bg-ink/25 p-4">
               <input className="field col-span-3" placeholder="Task title" value={taskDraft.title} onChange={(event) => setTaskDraft({ ...taskDraft, title: event.target.value })} />
               <select className="field" value={taskDraft.priority} onChange={(event) => setTaskDraft({ ...taskDraft, priority: event.target.value as OperatorTaskPriority })}>
@@ -153,44 +183,44 @@ export function OperatorDetail() {
           </section>
 
           <section className="panel p-5">
-            <div className="mb-4 flex items-center gap-2 text-lime"><Lightbulb size={15} /><p className="eyebrow m-0">Recent Recommendations</p></div>
+            <div className="mb-5 flex items-center gap-2 text-lime"><Lightbulb size={17} /><h2 className="m-0 text-lg font-semibold text-white">Recent Recommendations</h2></div>
             {recommendations.length === 0 ? (
               <p className="rounded-xl border border-dashed border-line bg-ink/30 p-4 text-xs leading-5 text-muted">No recommendations yet. Generate a local draft from available context; nothing executes automatically.</p>
             ) : (
               <div className="space-y-3">
                 {recommendations.map((recommendation) => (
-                  <article key={recommendation.id} className="rounded-xl border border-line bg-ink/35 p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="m-0 text-sm font-semibold text-white">{recommendation.title}</h3>
-                        <p className="mb-0 mt-2 text-xs leading-5 text-muted">{recommendation.summary}</p>
-                      </div>
-                      <RecommendationStatus status={recommendation.status} />
-                    </div>
-                    <p className="mb-0 mt-3 text-[10px] uppercase tracking-[0.12em] text-muted">Source: {recommendation.source} • Created {new Date(recommendation.createdAt).toLocaleString()}</p>
-                  </article>
+                  <RecommendationCard key={recommendation.id} recommendation={recommendation} />
                 ))}
               </div>
             )}
           </section>
 
           <section className="panel p-5">
-            <div className="mb-4 flex items-center gap-2 text-lime"><History size={15} /><p className="eyebrow m-0">Operator History</p></div>
+            <div className="mb-5 flex items-center gap-2 text-lime"><History size={17} /><h2 className="m-0 text-lg font-semibold text-white">Activity Timeline</h2></div>
             {snapshot.events.length === 0 ? (
-              <p className="m-0 text-xs text-muted">No operator history yet.</p>
+              <p className="m-0 text-xs text-muted">No operator activity yet.</p>
             ) : snapshot.events.map((event) => (
-              <p key={event.id} className="mb-2 rounded-xl border border-line bg-white/[0.025] px-3 py-2 text-xs text-muted">{event.message}</p>
+              <article key={event.id} className="relative mb-3 border-l border-line pl-4 last:mb-0">
+                <span className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-lime" />
+                <div className="rounded-xl border border-line bg-white/[0.025] p-3">
+                  <div className="mb-1 flex items-center justify-between gap-3">
+                    <p className="m-0 text-sm font-semibold text-white">{event.message}</p>
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[9px] uppercase tracking-[0.12em] text-muted">{event.status}</span>
+                  </div>
+                  <p className="m-0 text-[10px] uppercase tracking-[0.12em] text-muted">{new Date(event.createdAt).toLocaleString()} • Source: {event.source}</p>
+                </div>
+              </article>
             ))}
           </section>
         </main>
 
         <aside className="col-span-4 space-y-4">
           <section className="panel p-5">
-            <div className="mb-4 flex items-center gap-2 text-lime"><Sparkles size={15} /><p className="eyebrow m-0">Actions Panel</p></div>
+            <div className="mb-5 flex items-center gap-2 text-lime"><Sparkles size={17} /><h2 className="m-0 text-lg font-semibold text-white">Actions Panel</h2></div>
             <div className="grid gap-3">
               <button onClick={runAnalysis} className="btn-secondary flex items-center justify-center gap-2"><PlayCircle size={14} /> Run analysis</button>
               <button onClick={generateRecommendation} className="btn-secondary flex items-center justify-center gap-2"><Lightbulb size={14} /> Generate recommendation</button>
-              <button onClick={() => setTaskDraft({ title: `${operator.name} follow-up`, description: buildLocalAnalysis(operator.id, context), priority: operator.id === 'cto' ? 'High' : 'Medium', relatedIssue: 'AO-004.2' })} className="btn-secondary">Draft task from context</button>
+              <button onClick={() => setTaskDraft({ title: `${operator.name} follow-up`, description: buildLocalAnalysis(operator.id, context), priority: operator.id === 'cto' ? 'High' : 'Medium', relatedIssue: 'AO-004.2.1' })} className="btn-secondary">Draft task from context</button>
               <button onClick={saveNoteToMemory} className="btn-secondary flex items-center justify-center gap-2"><FilePlus2 size={14} /> Save note to memory</button>
             </div>
             {analysis && <p className="mt-4 rounded-xl border border-lime/15 bg-lime/[0.04] p-3 text-xs leading-5 text-[#c3cbc7]">{analysis}</p>}
@@ -198,7 +228,7 @@ export function OperatorDetail() {
           </section>
 
           <section className="panel p-5">
-            <div className="mb-4 flex items-center gap-2 text-lime"><Brain size={15} /><p className="eyebrow m-0">Available Shared Context</p></div>
+            <div className="mb-5 flex items-center gap-2 text-lime"><Brain size={17} /><h2 className="m-0 text-lg font-semibold text-white">Available Shared Context</h2></div>
             <ContextRow label="Business Memory" value={counts.businessMemory} />
             <ContextRow label="Money Department" value={counts.moneyRecords} />
             <ContextRow label="CEO Briefing" value={counts.ceoBriefing} />
@@ -233,6 +263,8 @@ function buildLocalRecommendation(operatorId: OperatorId, context: OperatorShare
       rationale: buildLocalAnalysis(operatorId, context),
       source: 'CTO local architecture analysis',
       status: 'Draft' as OperatorRecommendationStatus,
+      confidence: 'High' as const,
+      riskLevel: 'Low' as const,
       requiresApproval: false,
     }
   }
@@ -242,16 +274,86 @@ function buildLocalRecommendation(operatorId: OperatorId, context: OperatorShare
     rationale: buildLocalAnalysis(operatorId, context),
     source: 'Operator local analysis',
     status: context.metrics.pendingApprovalCount > 0 ? 'Needs Approval' as OperatorRecommendationStatus : 'Draft' as OperatorRecommendationStatus,
+    confidence: 'Medium' as const,
+    riskLevel: context.metrics.pendingApprovalCount > 0 ? 'Medium' as const : 'Low' as const,
     requiresApproval: context.metrics.pendingApprovalCount > 0,
   }
 }
 
+function getCurrentObjective(operatorId: OperatorId, sprintProgress: number) {
+  if (operatorId === 'cto') {
+    return {
+      objective: 'Polish the Operator Workspace before AO-004.3.',
+      issue: 'AO-004.2.1',
+      progress: Math.max(sprintProgress, 65),
+    }
+  }
+  return {
+    objective: 'Use shared local context to prepare safe operator drafts.',
+    issue: 'AO-004.2.1',
+    progress: Math.max(sprintProgress, 35),
+  }
+}
+
+function getExecutiveStats(operator: AIOperator, counts: OperatorWorkspaceContextCounts) {
+  const today = new Date().toISOString().slice(0, 10)
+  return {
+    openTasks: operator.taskQueue.filter((task) => task.status !== 'done').length,
+    completedToday: operator.taskQueue.filter((task) => task.completedAt?.slice(0, 10) === today).length,
+    recommendations: operator.recommendationHistory.length,
+    memoryLinks: operator.taskQueue.filter((task) => task.relatedMemoryId).length + counts.businessMemory,
+    approvalsWaiting: counts.approvalQueue,
+  }
+}
+
+function RecommendationCard({ recommendation }: { recommendation: OperatorRecommendation }) {
+  return (
+    <article className="rounded-2xl border border-line bg-ink/35 p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow mb-2">Recommendation Title</p>
+          <h3 className="m-0 text-base font-semibold text-white">{recommendation.title}</h3>
+        </div>
+        <RecommendationStatus status={recommendation.status} />
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
+        <InfoTile label="Confidence" value={recommendation.confidence} />
+        <InfoTile label="Risk Level" value={recommendation.riskLevel} />
+        <InfoTile label="Created Date" value={new Date(recommendation.createdAt).toLocaleDateString()} />
+      </div>
+      <div className="mt-4 space-y-3">
+        <TextBlock label="Summary" value={recommendation.summary} />
+        <TextBlock label="Reasoning" value={recommendation.rationale || 'Deterministic local reasoning placeholder based on currently available operator context.'} />
+      </div>
+      <p className="mb-0 mt-3 text-[10px] uppercase tracking-[0.12em] text-muted">Source: {recommendation.source}</p>
+    </article>
+  )
+}
+
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <section className="rounded-2xl border border-line bg-ink/25 p-4">
-      <p className="eyebrow mb-2">{label}</p>
+    <section className="rounded-2xl border border-line bg-ink/25 p-3">
+      <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-muted">{label}</p>
       <p className="m-0 line-clamp-2 text-sm font-semibold text-white">{value}</p>
     </section>
+  )
+}
+
+function InfoTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-white/[0.025] p-3">
+      <p className="eyebrow mb-1">{label}</p>
+      <p className="m-0 font-semibold text-white">{value}</p>
+    </div>
+  )
+}
+
+function TextBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="eyebrow mb-1">{label}</p>
+      <p className="m-0 text-xs leading-5 text-muted">{value}</p>
+    </div>
   )
 }
 
