@@ -55,6 +55,10 @@ AO-004.4 transformed the CTO workspace into a structured executive advisor. The 
 
 The CTO workspace can generate structured recommendations from local context only. If the Executive Coordinator exists and there is no dedicated Approval Queue workspace, the deterministic engine recommends building AO-005 Approval Queue. CTO recommendation buttons function locally: approve, reject, add to roadmap backlog, convert to AO issue draft, and save to Business Memory. No chatbot or free-form conversation UI was added.
 
+AO-004.5 integrates CTO recommendations with the active Roadmap module. The Roadmap page keeps the existing strategic timeline and adds an Operator Backlog beneath it. Backlog items persist through `app/src/core/roadmap/roadmapStore.ts` and include title, description, source operator, priority, status, related issue, and created/updated timestamps. The CTO Recommendation Engine Add to Roadmap action now creates canonical roadmap backlog items rather than duplicating work in the development task store.
+
+The Operator Backlog supports search by title/description, filters by operator, priority, and status, sorting by newest/oldest/priority, status changes to planned/in-progress/complete, and archive. Dashboard reads the same roadmap store and shows the current active roadmap backlog count.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
@@ -77,6 +81,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Shared visualization components live under `app/src/components/charts`.
 - Core business memory logic lives under `app/src/core/memory`.
 - Core AI Operator framework logic lives under `app/src/core/operators`.
+- Core roadmap backlog logic lives under `app/src/core/roadmap`.
 - New work uses the AO issue naming format.
 
 ## Known Constraints

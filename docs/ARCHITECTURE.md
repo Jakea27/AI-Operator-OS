@@ -90,6 +90,13 @@ AO-004.4 adds the CTO Recommendation Engine under `app/src/core/operators/recomm
 
 The CTO engine is not a chatbot and does not accept free-form conversation. It produces structured executive recommendations and exposes local-only actions in the CTO workspace. Approval, rejection, roadmap backlog conversion, AO issue draft conversion, and save-to-memory actions mutate local stores only and preserve the CEO approval workflow.
 
+AO-004.5 adds the local Roadmap core under `app/src/core/roadmap`:
+
+- `roadmapTypes.ts` — executable roadmap item schema, operators, priorities, statuses, filters, and sort modes.
+- `roadmapStore.ts` — localStorage-backed operator backlog persistence, status updates, archive behavior, and search/filter helpers.
+
+The existing strategic Roadmap page remains the only Roadmap route. Operator backlog UI lives under `app/src/features/roadmap` and is rendered beneath the strategic timeline. CTO recommendations now create canonical roadmap items through the roadmap store instead of writing duplicate data into development tasks. Dashboard reads the same roadmap store for its backlog count.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

@@ -54,6 +54,8 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] Internal deterministic routing service, local routing history, operator task creation, approval-queue handoff, and Coordinator Activity UI
 - [x] AO-004.4 CTO Recommendation Engine
   - [x] Structured deterministic CTO recommendations, local persistence, history, detail view, and local action buttons
+- [x] AO-004.5 Roadmap Integration
+  - [x] CTO recommendation backlog conversion, local roadmap store, Operator Backlog UI, search, filters, status persistence, archive, and Dashboard backlog count
 - [ ] AO-005 Approval Queue
 - [ ] AO-006 Automation Engine
 

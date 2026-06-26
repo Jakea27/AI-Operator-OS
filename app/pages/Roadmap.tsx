@@ -1,5 +1,9 @@
 import { Check, Circle, Flag, Plus } from 'lucide-react'
 import { PageIntro } from '@/components/PageIntro'
+import { OperatorBacklog } from '@/src/features/roadmap/OperatorBacklog'
+import { RoadmapFilters } from '@/src/features/roadmap/RoadmapFilters'
+import { RoadmapFilters as RoadmapFilterState, useRoadmapStore } from '@/src/core/roadmap'
+import { useState } from 'react'
 
 const phases = [
   { quarter: 'Q2 2026', title: 'Foundation', status: 'Complete', progress: 100, items: ['Core architecture', 'Local-first data', 'Desktop command center'] },
@@ -9,6 +13,15 @@ const phases = [
 ]
 
 export function Roadmap() {
+  const roadmap = useRoadmapStore()
+  const [filters, setFilters] = useState<RoadmapFilterState>({
+    search: '',
+    operator: 'All',
+    priority: 'All',
+    status: 'All',
+    sort: 'newest',
+  })
+
   return (
     <>
       <PageIntro eyebrow="Product direction" title="Build toward the operating system." description="A clear sequence from local foundation to autonomous, accountable business operations." action={<button className="btn-secondary flex items-center gap-2"><Plus size={15} /> Add milestone</button>} />
@@ -21,6 +34,15 @@ export function Roadmap() {
             <div className="grid grid-cols-3 gap-3">{phase.items.map((item, itemIndex) => <div key={item} className="flex items-center gap-2 rounded-lg border border-line bg-ink/40 px-3 py-2.5 text-xs text-[#aeb8b3]">{index === 0 || (index === 1 && itemIndex === 0) ? <Check size={13} className="text-mint" /> : <Circle size={10} className="text-muted" />}{item}</div>)}</div>
           </section>
         ))}
+      </div>
+      <div className="mt-8">
+        <RoadmapFilters filters={filters} onChange={setFilters} />
+        <OperatorBacklog
+          items={roadmap.items}
+          filters={filters}
+          onStatusChange={roadmap.updateStatus}
+          onArchive={roadmap.archiveItem}
+        />
       </div>
     </>
   )

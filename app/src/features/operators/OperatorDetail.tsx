@@ -29,6 +29,7 @@ import {
   useCTORecommendationStore,
   useOperatorStore,
 } from '@/src/core/operators'
+import { roadmapStore } from '@/src/core/roadmap'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorTaskQueue } from './OperatorTaskQueue'
 import { OperatorStatus } from './OperatorStatus'
@@ -39,7 +40,7 @@ const operatorIds: OperatorId[] = ['cto', 'cfo', 'cmo', 'coo', 'research']
 export function OperatorDetail() {
   const { operatorId } = useParams()
   const id = operatorId as OperatorId
-  const { data, metrics, storageAvailable, addTask: addOperatingTask, addApproval } = useOperatingStore()
+  const { data, metrics, storageAvailable, addApproval } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
   const operatorStore = useOperatorStore()
   const ctoRecommendations = useCTORecommendationStore()
@@ -148,10 +149,13 @@ export function OperatorDetail() {
   }
 
   const addCTORecommendationToRoadmap = (recommendation: CTORecommendation) => {
-    addOperatingTask({
-      title: `Roadmap: ${recommendation.title}`,
+    roadmapStore.addItem({
+      title: recommendation.title,
+      description: `${recommendation.summary}\n\nBusiness value: ${recommendation.businessValue}\n\nNext action: ${recommendation.recommendedNextAction}`,
+      sourceOperator: 'CTO',
+      priority: recommendation.risk === 'High' ? 'High' : recommendation.risk === 'Medium' ? 'Medium' : 'Low',
       status: 'backlog',
-      sprint: false,
+      relatedIssue: 'AO-005',
     })
     ctoRecommendations.updateStatus(recommendation.id, 'Added to Roadmap', 'Recommendation added to local roadmap backlog')
   }

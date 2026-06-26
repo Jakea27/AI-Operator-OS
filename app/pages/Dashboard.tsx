@@ -23,6 +23,7 @@ import {
   getMemoryHealth,
   useMemoryStore,
 } from '@/src/core/memory'
+import { useRoadmapStore } from '@/src/core/roadmap'
 
 export function Dashboard() {
   const {
@@ -33,6 +34,7 @@ export function Dashboard() {
     saveDailyBriefing,
   } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
+  const roadmap = useRoadmapStore()
   const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
   const briefingIsCurrent =
     data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
@@ -143,7 +145,10 @@ export function Dashboard() {
             <Target size={32} className="text-line" />
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-white/[0.05]"><div className="h-full rounded-full bg-gradient-to-r from-mint to-lime" style={{ width: `${metrics.sprintProgress}%` }} /></div>
-          <div className="mt-4 flex items-center gap-2 text-xs text-muted"><Clock3 size={13} /> Updated when task status changes</div>
+          <div className="mt-4 flex items-center justify-between gap-2 text-xs text-muted">
+            <span className="flex items-center gap-2"><Clock3 size={13} /> Updated when task status changes</span>
+            <Link to="/roadmap" className="rounded-full border border-lime/20 bg-lime/10 px-3 py-1 font-semibold text-lime">{roadmap.backlogCount} roadmap backlog</Link>
+          </div>
         </section>
 
         <section className="panel col-span-12 overflow-hidden">

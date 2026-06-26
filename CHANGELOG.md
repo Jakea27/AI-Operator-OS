@@ -106,6 +106,11 @@
 - Added deterministic CTO analysis across Business Memory, Money, CEO Briefing, Development, Roadmap, and Operator Tasks
 - Added CTO workspace recommendation generation, recommendation detail cards, recommendation history, and local action buttons
 - Added local Approve, Reject, Add to Roadmap, Convert to AO Issue, and Save to Memory actions without chatbot UI or external AI APIs
+- Completed AO-004.5 Roadmap Integration
+- Added local roadmap core store and types under `app/src/core/roadmap`
+- Added Operator Backlog, Roadmap filters, and reusable Roadmap cards under the existing Roadmap page
+- Connected the CTO Recommendation Engine Add to Roadmap action to create persisted roadmap backlog items
+- Added roadmap search, operator/priority/status filters, priority sorting, status changes, archive action, and Dashboard backlog count
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation
