@@ -2,6 +2,7 @@ import {
   ApprovalFilters as ApprovalFilterState,
   approvalOperators,
   approvalPriorities,
+  ApprovalRisk,
   approvalStatuses,
 } from '../types/approvalTypes'
 
@@ -14,7 +15,7 @@ export function ApprovalFilters({
 }) {
   return (
     <section className="panel p-4">
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-6 gap-3">
         <input
           className="field"
           placeholder="Search approvals"
@@ -32,6 +33,12 @@ export function ApprovalFilters({
         <select className="field" value={filters.priority} onChange={(event) => onChange({ ...filters, priority: event.target.value as ApprovalFilterState['priority'] })}>
           <option>All</option>
           {approvalPriorities.map((priority) => <option key={priority}>{priority}</option>)}
+        </select>
+        <select className="field" value={filters.risk} onChange={(event) => onChange({ ...filters, risk: event.target.value as 'All' | ApprovalRisk })}>
+          <option>All</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
         </select>
         <select className="field" value={filters.sort} onChange={(event) => onChange({ ...filters, sort: event.target.value as ApprovalFilterState['sort'] })}>
           <option value="newest">Newest</option>

@@ -109,6 +109,10 @@ AO-005.1 establishes the Approval Queue framework under `app/src/features/approv
 
 The Approval Queue is routed at `/approval` and appears in the active sidebar between Operators and Settings. AO-005.1 is infrastructure only: it displays approval requests but intentionally does not add approval decision buttons or execution behavior. CTO recommendation submissions and risky Executive Coordinator routes can create pending approval records in the shared local queue.
 
+AO-005.2 turns the Approval Queue into a functional CEO decision workflow without adding automation execution. Approval records support Draft, Pending, Approved, Rejected, Changes Requested, Deferred, and Archived states. Decisions are recorded locally with actor, note, timestamp, and decision history. Approval cards expose CEO-only actions for approve, reject, request changes, defer, and archive; approved items explicitly remain non-executing until a later automation milestone.
+
+Linked CTO recommendations can be submitted for CEO approval from the CTO workspace. The shared approval queue stores the approval record and the CTO recommendation history records the submission. CEO decisions on linked approvals update the CTO recommendation status/history where possible.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

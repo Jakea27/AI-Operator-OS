@@ -63,6 +63,12 @@ AO-005.1 creates the Approval Queue framework as a dedicated department. The act
 
 The Approval Queue model includes title, description, submittedBy, operator, department, relatedIssue, recommendationId, priority, effort, risk, status, requiresCEOApproval, created, and updated. Statuses are Pending, Approved, Rejected, Deferred, and Archived. AO-005.1 intentionally does not add approval decision buttons or approval decision logic; it only creates the infrastructure and review UI. CTO recommendation approval submissions and risky Executive Coordinator routes now create pending approval records in the shared approval queue store.
 
+AO-005.2 upgrades the Approval Queue into the CEO Approval Workflow. Approval records now include submittedAt, decidedAt, decision, decisionNote, businessValue, supportingEvidence, recommendedNextAction, and decisionHistory. Supported statuses are Draft, Pending, Approved, Rejected, Changes Requested, Deferred, and Archived. Decision history items store action, actor, note, and createdAt.
+
+The Approval Queue page now supports CEO actions: Approve, Reject, Request Changes, Defer, and Archive. These actions update local status and decision history only; approved work does not execute automatically. The detail panel shows full recommendation context, business value, risk, effort, supporting evidence, recommended next action, linked recommendation, related issue, and full decision history. Archived approvals are hidden from the default view but remain available through filters.
+
+The CTO workspace now includes Submit for CEO Approval on structured recommendation cards. Submitting creates a Pending approval linked by recommendationId, records a CTO recommendation history item, and displays linked approval status plus last CEO decision. Dashboard and Operators summary cards now read approval counts from the shared approval queue store.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
@@ -100,6 +106,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Daily briefings are deterministic local summaries, not AI-generated analysis.
 - Business memory is local-only and currently has no encrypted backup.
 - Operators can analyze, recommend, draft, persist local tasks/recommendations, and save notes to Business Memory. External model/API calls and automatic execution are intentionally not implemented yet.
+- Approval decisions are local CEO decisions only. Approved items do not execute automatically until a later automation milestone.
 
 ## Next Priorities
 

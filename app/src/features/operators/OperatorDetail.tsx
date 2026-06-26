@@ -30,7 +30,7 @@ import {
   useOperatorStore,
 } from '@/src/core/operators'
 import { roadmapStore } from '@/src/core/roadmap'
-import { approvalStore } from '@/src/features/approval'
+import { approvalStore, useApprovalStore } from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorTaskQueue } from './OperatorTaskQueue'
 import { OperatorStatus } from './OperatorStatus'
@@ -45,6 +45,7 @@ export function OperatorDetail() {
   const { memoryEntries } = useMemoryStore()
   const operatorStore = useOperatorStore()
   const ctoRecommendations = useCTORecommendationStore()
+  const approvals = useApprovalStore()
   const [analysis, setAnalysis] = useState('')
   const [note, setNote] = useState('')
   const [taskDraft, setTaskDraft] = useState({
@@ -212,6 +213,37 @@ export function OperatorDetail() {
     ctoRecommendations.updateStatus(recommendation.id, 'Saved to Memory', 'Recommendation saved to Business Memory')
   }
 
+  const submitCTORecommendationForApproval = (recommendation: CTORecommendation) => {
+    const existingApproval = approvals.approvals.find((approval) => approval.recommendationId === recommendation.id && approval.status !== 'Archived')
+    if (!existingApproval) {
+      approvalStore.addApproval({
+        title: recommendation.title,
+        description: [
+          recommendation.summary,
+          '',
+          `Reasoning: ${recommendation.reasoning}`,
+          `Business value: ${recommendation.businessValue}`,
+          `Recommended next action: ${recommendation.recommendedNextAction}`,
+        ].join('\n'),
+        submittedBy: 'CTO Operator',
+        operator: 'CTO',
+        department: 'Technology',
+        relatedIssue: 'AO-004.4',
+        recommendationId: recommendation.id,
+        priority: recommendation.risk === 'High' ? 'High' : recommendation.risk === 'Medium' ? 'Medium' : 'Low',
+        effort: recommendation.estimatedEffort === 'Small' ? 'Low' : recommendation.estimatedEffort === 'Large' ? 'High' : 'Medium',
+        risk: recommendation.risk,
+        status: 'Pending',
+        requiresCEOApproval: true,
+        submittedAt: new Date().toISOString(),
+        businessValue: recommendation.businessValue,
+        supportingEvidence: recommendation.supportingEvidence,
+        recommendedNextAction: recommendation.recommendedNextAction,
+      })
+    }
+    ctoRecommendations.updateStatus(recommendation.id, 'Needs Approval', 'Submitted for CEO approval.')
+  }
+
   return (
     <>
       <div className="mb-5 flex items-center justify-between gap-4">
@@ -303,9 +335,12 @@ export function OperatorDetail() {
                       recommendation={recommendation}
                       onApprove={() => approveCTORecommendation(recommendation)}
                       onReject={() => rejectCTORecommendation(recommendation)}
+                      onSubmitForApproval={() => submitCTORecommendationForApproval(recommendation)}
                       onAddToRoadmap={() => addCTORecommendationToRoadmap(recommendation)}
                       onConvertToIssue={() => convertCTORecommendationToIssue(recommendation)}
                       onSaveToMemory={() => saveCTORecommendationToMemory(recommendation)}
+                      approvalStatus={approvals.approvals.find((approval) => approval.recommendationId === recommendation.id)?.status}
+                      lastDecision={approvals.approvals.find((approval) => approval.recommendationId === recommendation.id)?.decisionNote}
                     />
                   ))}
                 </div>
@@ -465,16 +500,22 @@ function CTORecommendationDetailCard({
   recommendation,
   onApprove,
   onReject,
+  onSubmitForApproval,
   onAddToRoadmap,
   onConvertToIssue,
   onSaveToMemory,
+  approvalStatus,
+  lastDecision,
 }: {
   recommendation: CTORecommendation
   onApprove: () => void
   onReject: () => void
+  onSubmitForApproval: () => void
   onAddToRoadmap: () => void
   onConvertToIssue: () => void
   onSaveToMemory: () => void
+  approvalStatus?: string
+  lastDecision?: string
 }) {
   return (
     <article className="rounded-2xl border border-lime/15 bg-gradient-to-br from-lime/[0.04] to-ink/40 p-5">
@@ -507,6 +548,10 @@ function CTORecommendationDetailCard({
         <InfoTile label="Created" value={new Date(recommendation.createdAt).toLocaleString()} />
         <InfoTile label="Updated" value={new Date(recommendation.updatedAt).toLocaleString()} />
       </div>
+      <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
+        <InfoTile label="Approval Status" value={approvalStatus ?? 'Not submitted'} />
+        <InfoTile label="Last CEO Decision" value={lastDecision ?? 'No CEO decision yet'} />
+      </div>
 
       <div className="mt-5 border-t border-line pt-4">
         <p className="eyebrow mb-3">Recommendation History</p>
@@ -523,6 +568,7 @@ function CTORecommendationDetailCard({
       <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
         <button onClick={onApprove} className="btn-secondary">Approve</button>
         <button onClick={onReject} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]/70">Reject</button>
+        <button onClick={onSubmitForApproval} className="btn-primary">Submit for CEO Approval</button>
         <button onClick={onAddToRoadmap} className="btn-secondary">Add to Roadmap</button>
         <button onClick={onConvertToIssue} className="btn-secondary">Convert to AO Issue</button>
         <button onClick={onSaveToMemory} className="btn-secondary">Save to Memory</button>

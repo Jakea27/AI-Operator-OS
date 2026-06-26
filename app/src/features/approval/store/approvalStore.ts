@@ -9,6 +9,10 @@ function createId() {
   return `approval-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
+function historyId() {
+  return `approval-history-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
 function normalizeApproval(raw: Partial<Approval>): Approval {
   const now = new Date().toISOString()
   return {
@@ -27,6 +31,14 @@ function normalizeApproval(raw: Partial<Approval>): Approval {
     requiresCEOApproval: raw.requiresCEOApproval ?? true,
     created: raw.created ?? now,
     updated: raw.updated ?? raw.created ?? now,
+    submittedAt: raw.submittedAt,
+    decidedAt: raw.decidedAt,
+    decision: raw.decision,
+    decisionNote: raw.decisionNote,
+    businessValue: raw.businessValue,
+    supportingEvidence: Array.isArray(raw.supportingEvidence) ? raw.supportingEvidence : [],
+    recommendedNextAction: raw.recommendedNextAction,
+    decisionHistory: Array.isArray(raw.decisionHistory) ? raw.decisionHistory : [],
   }
 }
 
@@ -79,14 +91,42 @@ export const approvalStore = {
       id: createId(),
       created: now,
       updated: now,
+      submittedAt: input.submittedAt ?? (input.status === 'Pending' ? now : undefined),
+      decisionHistory: [
+        {
+          id: historyId(),
+          action: input.status === 'Pending' ? 'Submitted' : input.status,
+          actor: input.submittedBy || 'AI Operator OS',
+          note: input.status === 'Pending' ? 'Submitted for CEO approval.' : 'Approval record created.',
+          createdAt: now,
+        },
+      ],
     }
     persist([approval, ...state])
     return approval
   },
-  updateStatus(approvalId: string, status: ApprovalStatus) {
+  updateStatus(approvalId: string, status: ApprovalStatus, note = '', actor = 'CEO') {
+    const now = new Date().toISOString()
     persist(state.map((approval) =>
       approval.id === approvalId
-        ? { ...approval, status, updated: new Date().toISOString() }
+        ? {
+            ...approval,
+            status,
+            updated: now,
+            decidedAt: ['Approved', 'Rejected', 'Changes Requested', 'Deferred'].includes(status) ? now : approval.decidedAt,
+            decision: status,
+            decisionNote: note || approval.decisionNote,
+            decisionHistory: [
+              {
+                id: historyId(),
+                action: status,
+                actor,
+                note: note || decisionNoteFor(status),
+                createdAt: now,
+              },
+              ...approval.decisionHistory,
+            ],
+          }
         : approval,
     ))
   },
@@ -103,7 +143,18 @@ export function useApprovalStore() {
     approved: approvals.filter((approval) => approval.status === 'Approved').length,
     rejected: approvals.filter((approval) => approval.status === 'Rejected').length,
     deferred: approvals.filter((approval) => approval.status === 'Deferred').length,
+    approvedToday: approvals.filter((approval) => approval.status === 'Approved' && approval.decidedAt?.slice(0, 10) === new Date().toISOString().slice(0, 10)).length,
+    rejectedToday: approvals.filter((approval) => approval.status === 'Rejected' && approval.decidedAt?.slice(0, 10) === new Date().toISOString().slice(0, 10)).length,
     addApproval: approvalStore.addApproval,
     updateStatus: approvalStore.updateStatus,
   }
+}
+
+function decisionNoteFor(status: ApprovalStatus) {
+  if (status === 'Approved') return 'Approved by CEO. Execution is not automated yet.'
+  if (status === 'Rejected') return 'Rejected by CEO.'
+  if (status === 'Changes Requested') return 'CEO requested changes before approval.'
+  if (status === 'Deferred') return 'Deferred by CEO for later review.'
+  if (status === 'Archived') return 'Archived by CEO.'
+  return 'Status updated.'
 }

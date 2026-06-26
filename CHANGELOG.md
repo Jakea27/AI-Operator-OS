@@ -116,6 +116,12 @@
 - Added local approval models, store, filters, summary cards, read-only approval cards, and executive empty state under `app/src/features/approval`
 - Connected CTO recommendation approval submissions and risky Executive Coordinator routes to the shared approval queue store
 - Preserved approval workflow boundaries by omitting decision buttons and approval decision logic from the new Approval Queue page
+- Completed AO-005.2 CEO Approval Workflow
+- Added Approval lifecycle statuses for Draft, Pending, Approved, Rejected, Changes Requested, Deferred, and Archived
+- Added CEO decision actions, optional decision notes, decided timestamps, and persistent decision history
+- Added Approval detail view with recommendation context, business value, supporting evidence, recommended next action, linked recommendation, related issue, and full decision history
+- Added CTO recommendation Submit for CEO Approval action with linked approval status and last CEO decision display
+- Updated Dashboard and Operators summaries to read pending, approved-today, rejected-today, and deferred counts from the shared approval store
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

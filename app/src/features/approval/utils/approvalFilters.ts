@@ -20,11 +20,15 @@ export function filterApprovals(approvals: Approval[], filters: ApprovalFilters)
         approval.relatedIssue,
         approval.recommendationId,
         approval.submittedBy,
+        approval.operator,
+        approval.decisionNote ?? '',
+        ...approval.decisionHistory.map((item) => item.note),
       ].join(' ').toLowerCase().includes(query)
     })
     .filter((approval) => filters.status === 'All' || approval.status === filters.status)
     .filter((approval) => filters.operator === 'All' || approval.operator === filters.operator)
     .filter((approval) => filters.priority === 'All' || approval.priority === filters.priority)
+    .filter((approval) => filters.risk === 'All' || approval.risk === filters.risk)
     .sort((a, b) => {
       const dateSort = filters.sort === 'oldest'
         ? a.created.localeCompare(b.created)

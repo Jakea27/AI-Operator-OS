@@ -1,5 +1,6 @@
-import { Eye } from 'lucide-react'
-import { Approval } from '../types/approvalTypes'
+import { useState } from 'react'
+import { Archive, Check, Clock3, Eye, RotateCcw, X } from 'lucide-react'
+import { Approval, ApprovalStatus } from '../types/approvalTypes'
 
 const priorityClass = {
   Critical: 'border-red-400/30 bg-red-400/10 text-red-300',
@@ -14,7 +15,21 @@ const riskClass = {
   Low: 'text-mint',
 }
 
-export function ApprovalCard({ approval }: { approval: Approval }) {
+export function ApprovalCard({
+  approval,
+  onDecision,
+  onViewDetails,
+}: {
+  approval: Approval
+  onDecision: (status: ApprovalStatus, note: string) => void
+  onViewDetails: () => void
+}) {
+  const [note, setNote] = useState('')
+  const submitDecision = (status: ApprovalStatus) => {
+    onDecision(status, note.trim())
+    setNote('')
+  }
+
   return (
     <article className="rounded-2xl border border-line bg-ink/35 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -27,15 +42,48 @@ export function ApprovalCard({ approval }: { approval: Approval }) {
           <h3 className="m-0 text-lg font-semibold text-white">{approval.title}</h3>
           <p className="mb-0 mt-2 text-sm leading-6 text-[#c3cbc7]">{approval.description}</p>
         </div>
-        <button className="btn-secondary flex shrink-0 items-center gap-2" type="button"><Eye size={14} /> View Details</button>
+        <button onClick={onViewDetails} className="btn-secondary flex shrink-0 items-center gap-2" type="button"><Eye size={14} /> View Details</button>
       </div>
 
-      <div className="mt-4 grid grid-cols-5 gap-3 text-xs">
+      <div className="mt-4 grid grid-cols-6 gap-3 text-xs">
         <Info label="Department" value={approval.department} />
         <Info label="Risk" value={approval.risk} className={riskClass[approval.risk]} />
+        <Info label="Effort" value={approval.effort} />
         <Info label="Created" value={new Date(approval.created).toLocaleDateString()} />
+        <Info label="Updated" value={new Date(approval.updated).toLocaleDateString()} />
         <Info label="Related Issue" value={approval.relatedIssue || 'None'} />
         <Info label="Submitted By" value={approval.submittedBy} />
+      </div>
+
+      <div className="mt-4 rounded-xl border border-line bg-white/[0.025] p-3">
+        <p className="eyebrow mb-2">Decision History Preview</p>
+        {approval.decisionHistory.length === 0 ? (
+          <p className="m-0 text-xs text-muted">No decisions recorded yet.</p>
+        ) : (
+          <p className="m-0 text-xs leading-5 text-muted">
+            {approval.decisionHistory[0].action} by {approval.decisionHistory[0].actor}
+            {approval.decisionHistory[0].note ? ` — ${approval.decisionHistory[0].note}` : ''}
+          </p>
+        )}
+      </div>
+
+      <div className="mt-4 border-t border-line pt-4">
+        <textarea
+          className="field min-h-20 resize-y"
+          placeholder="Optional CEO decision note"
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button onClick={() => submitDecision('Approved')} className="btn-secondary flex items-center gap-2" type="button"><Check size={14} /> Approve</button>
+          <button onClick={() => submitDecision('Rejected')} className="rounded-lg border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:border-red-400/70" type="button"><X size={14} className="mr-1 inline" /> Reject</button>
+          <button onClick={() => submitDecision('Changes Requested')} className="btn-secondary flex items-center gap-2" type="button"><RotateCcw size={14} /> Request Changes</button>
+          <button onClick={() => submitDecision('Deferred')} className="btn-secondary flex items-center gap-2" type="button"><Clock3 size={14} /> Defer</button>
+          <button onClick={() => submitDecision('Archived')} className="rounded-lg border border-line px-3 py-2 text-xs text-muted hover:border-red-400/40 hover:text-red-300" type="button"><Archive size={14} className="mr-1 inline" /> Archive</button>
+        </div>
+        {approval.status === 'Approved' && (
+          <p className="mb-0 mt-3 rounded-xl border border-lime/20 bg-lime/[0.04] p-3 text-xs leading-5 text-lime">Approved locally. Execution is not automated yet.</p>
+        )}
       </div>
     </article>
   )

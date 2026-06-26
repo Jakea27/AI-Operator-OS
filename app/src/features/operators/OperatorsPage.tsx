@@ -12,7 +12,7 @@ import {
   useExecutiveCoordinatorStore,
   useOperatorStore,
 } from '@/src/core/operators'
-import { approvalStore } from '@/src/features/approval'
+import { approvalStore, useApprovalStore } from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorCard } from './OperatorCard'
 
@@ -21,6 +21,7 @@ export function OperatorsPage() {
   const { memoryEntries } = useMemoryStore()
   const { data: operatorState } = useOperatorStore()
   const coordinator = useExecutiveCoordinatorStore()
+  const approvalQueue = useApprovalStore()
   const [requestDraft, setRequestDraft] = useState({
     title: '',
     details: '',
@@ -80,7 +81,7 @@ export function OperatorsPage() {
       <div className="mb-5 grid grid-cols-3 gap-4">
         <SummaryCard label="Operators online" value={operators.length.toString()} detail="CTO, CFO, CMO, COO, Research" />
         <SummaryCard label="Shared context" value={memoryEntries.length.toString()} detail="Business Memory records available locally" />
-        <SummaryCard label="Approval posture" value="CEO" detail="Consequential actions remain approval-gated" />
+        <SummaryCard label="Approval posture" value={approvalQueue.pending.toString()} detail="Pending CEO approvals in shared queue" />
       </div>
 
       <section className="panel mb-5 p-5">

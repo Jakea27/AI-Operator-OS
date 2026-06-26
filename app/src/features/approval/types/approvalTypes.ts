@@ -1,4 +1,4 @@
-export type ApprovalStatus = 'Pending' | 'Approved' | 'Rejected' | 'Deferred' | 'Archived'
+export type ApprovalStatus = 'Draft' | 'Pending' | 'Approved' | 'Rejected' | 'Changes Requested' | 'Deferred' | 'Archived'
 
 export type ApprovalPriority = 'Low' | 'Medium' | 'High' | 'Critical'
 
@@ -24,19 +24,36 @@ export type Approval = {
   requiresCEOApproval: boolean
   created: string
   updated: string
+  submittedAt?: string
+  decidedAt?: string
+  decision?: string
+  decisionNote?: string
+  businessValue?: string
+  supportingEvidence?: string[]
+  recommendedNextAction?: string
+  decisionHistory: ApprovalDecisionHistoryItem[]
 }
 
-export type ApprovalInput = Omit<Approval, 'id' | 'created' | 'updated'>
+export type ApprovalDecisionHistoryItem = {
+  id: string
+  action: ApprovalStatus | 'Submitted'
+  actor: string
+  note: string
+  createdAt: string
+}
+
+export type ApprovalInput = Omit<Approval, 'id' | 'created' | 'updated' | 'decisionHistory'>
 
 export type ApprovalFilters = {
   search: string
   status: 'All' | ApprovalStatus
   operator: 'All' | ApprovalOperator
   priority: 'All' | ApprovalPriority
+  risk: 'All' | ApprovalRisk
   sort: 'newest' | 'oldest'
 }
 
-export const approvalStatuses: ApprovalStatus[] = ['Pending', 'Approved', 'Rejected', 'Deferred', 'Archived']
+export const approvalStatuses: ApprovalStatus[] = ['Draft', 'Pending', 'Approved', 'Rejected', 'Changes Requested', 'Deferred', 'Archived']
 
 export const approvalPriorities: ApprovalPriority[] = ['Low', 'Medium', 'High', 'Critical']
 

@@ -24,6 +24,7 @@ import {
   useMemoryStore,
 } from '@/src/core/memory'
 import { useRoadmapStore } from '@/src/core/roadmap'
+import { useApprovalStore } from '@/src/features/approval'
 
 export function Dashboard() {
   const {
@@ -35,6 +36,7 @@ export function Dashboard() {
   } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
   const roadmap = useRoadmapStore()
+  const approvalQueue = useApprovalStore()
   const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
   const briefingIsCurrent =
     data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
@@ -154,7 +156,13 @@ export function Dashboard() {
         <section className="panel col-span-12 overflow-hidden">
           <div className="flex items-center justify-between border-b border-line px-6 py-5">
             <div><p className="eyebrow mb-1">Approval Queue</p><h3 className="m-0 font-display text-lg font-semibold">Decisions waiting for you</h3></div>
-            <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1 text-[11px] font-medium text-[#ffcc66]">{metrics.pendingApprovalCount} pending</span>
+            <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1 text-[11px] font-medium text-[#ffcc66]">{approvalQueue.pending} pending</span>
+          </div>
+          <div className="grid grid-cols-4 gap-3 border-b border-line px-6 py-4">
+            <ApprovalMetric label="Pending" value={approvalQueue.pending} />
+            <ApprovalMetric label="Approved Today" value={approvalQueue.approvedToday} />
+            <ApprovalMetric label="Rejected Today" value={approvalQueue.rejectedToday} />
+            <ApprovalMetric label="Deferred" value={approvalQueue.deferred} />
           </div>
           <ApprovalEntryForm />
           {pendingApprovals.length === 0 ? (
@@ -174,6 +182,15 @@ export function Dashboard() {
         </section>
       </div>
     </>
+  )
+}
+
+function ApprovalMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-xl border border-line bg-ink/35 p-3">
+      <p className="eyebrow mb-1">{label}</p>
+      <p className="m-0 text-xl font-semibold text-white">{value}</p>
+    </div>
   )
 }
 

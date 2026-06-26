@@ -58,7 +58,8 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] CTO recommendation backlog conversion, local roadmap store, Operator Backlog UI, search, filters, status persistence, archive, and Dashboard backlog count
 - [ ] AO-005 Approval Queue
   - [x] AO-005.1 Approval Queue Framework: dedicated route, sidebar entry, local store, summary cards, filters, read-only cards, and executive empty state
-  - [ ] Approval decision workflow
+  - [x] AO-005.2 CEO Approval Workflow: submit recommendation, approve, reject, request changes, defer, archive, detail view, and decision history
+  - [ ] Approval execution handoff
 - [ ] AO-006 Automation Engine
 - [ ] AO-090 UX & Visual Polish
   - [ ] Complete deferred visual, UX, desktop, and quality-of-life improvements tracked in `docs/POLISH_BACKLOG.md`
