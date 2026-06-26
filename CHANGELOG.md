@@ -82,6 +82,7 @@
 - Added initial CTO, CFO, CMO, COO, and Research operators with missions, tools, approval levels, task queues, status, and recommendation history
 - Added Operators workspace with operator cards, status badges, shared-context summaries, detail view, and task queue
 - Connected operators to existing Money metrics, Business Memory, Daily Briefing snapshots, tasks, projects, and approval context without external AI APIs
+- Fixed AO-004.1 desktop integration by confirming the active AppShell and router import OperatorsPage, placing Operators between Roadmap and Settings, and refreshing the installed desktop bundle so the running app exposes `/operators`
 - Project bootstrap generator
 - Core folder structure
 - Foundation documentation
