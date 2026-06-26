@@ -12,12 +12,15 @@ export type RevenueEntry = {
   updatedAt: string
 }
 
+export type CostType = 'monthly-recurring' | 'one-time'
+
 export type ExpenseEntry = {
   id: string
   amount: number
   date: string
   business: string
   category: string
+  costType?: CostType
   notes: string
   createdAt: string
   updatedAt: string
@@ -141,6 +144,7 @@ function readState(): OperatingState {
         date: entry.date ?? localDate(),
         business: entry.business || parsed.settings?.businessName || 'Unassigned',
         category: entry.category || 'Other expense',
+        costType: normalizeCostType(entry.costType),
         notes: entry.notes ?? entry.description ?? '',
         createdAt: entry.createdAt ?? now,
         updatedAt: entry.updatedAt ?? entry.createdAt ?? now,
@@ -191,6 +195,10 @@ function localDate(date = new Date()) {
 function sameMonth(date: string, reference: Date) {
   const parsed = new Date(`${date}T12:00:00`)
   return parsed.getFullYear() === reference.getFullYear() && parsed.getMonth() === reference.getMonth()
+}
+
+export function normalizeCostType(costType?: string): CostType {
+  return costType === 'monthly-recurring' ? 'monthly-recurring' : 'one-time'
 }
 
 export function calculateMetrics(source: OperatingState, now = new Date()): OperatingMetrics {
@@ -357,8 +365,8 @@ export const operatingStore = {
         { id: id('sample-rev'), amount: 950, date: date(12), business: 'Sample Advisory', category: 'Consulting', notes: 'Sample advisory session', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
       ],
       expenseEntries: [
-        { id: id('sample-exp'), amount: 320, date: date(2), business: 'Sample Studio', category: 'Software', notes: 'Sample software expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-        { id: id('sample-exp'), amount: 600, date: date(8), business: 'Sample Studio', category: 'Marketing', notes: 'Sample campaign expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-exp'), amount: 320, date: date(2), business: 'Sample Studio', category: 'Software', costType: 'monthly-recurring', notes: 'Sample software expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { id: id('sample-exp'), amount: 600, date: date(8), business: 'Sample Studio', category: 'Marketing', costType: 'one-time', notes: 'Sample campaign expense', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
       ],
       approvals: [
         { id: id('sample-approval'), title: 'Sample campaign approval', category: 'Marketing', amount: 600, status: 'pending', createdAt: new Date().toISOString() },

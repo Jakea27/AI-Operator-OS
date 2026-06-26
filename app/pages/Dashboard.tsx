@@ -15,6 +15,7 @@ import { MetricCard } from '@/components/MetricCard'
 import { PageIntro } from '@/components/PageIntro'
 import { ApprovalActivityChart, ChartShell, TrendLineChart } from '@/src/components/charts'
 import { getLatestMemoryByType, getMemoryHealth, useMemoryStore } from '@/src/core/memory'
+import { useMoneyStore } from '@/src/core/money'
 import { useRoadmapStore } from '@/src/core/roadmap'
 import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMetrics'
 import { getApprovalDecisionLabel, getApprovalStats, useApprovalStore } from '@/src/features/approval'
@@ -29,6 +30,7 @@ export function Dashboard() {
     saveDailyBriefing,
   } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
+  const money = useMoneyStore()
   const roadmap = useRoadmapStore()
   const approvalQueue = useApprovalStore()
   const approvalStats = getApprovalStats(approvalQueue.approvals)
@@ -93,10 +95,10 @@ export function Dashboard() {
       )}
 
       <div className="grid grid-cols-4 gap-4">
-        <MetricCard label="Revenue Today" value={formatCurrency(metrics.revenueToday)} change="From today’s entries" icon={CircleDollarSign} accent />
-        <MetricCard label="Monthly Revenue" value={formatCurrency(metrics.monthlyRevenue)} change="Current calendar month" icon={Banknote} />
-        <MetricCard label="Monthly Cost" value={formatCurrency(metrics.monthlyCost)} change="Current calendar month" icon={Coins} positive={metrics.monthlyCost === 0} />
-        <MetricCard label="Profit" value={formatCurrency(metrics.profit)} change={`${metrics.profitMargin.toFixed(1)}% margin`} icon={Gauge} positive={metrics.profit >= 0} />
+        <MetricCard label="Revenue Today" value={formatCurrency(money.metrics.revenueToday)} change="From today’s entries" icon={CircleDollarSign} accent />
+        <MetricCard label="Monthly Revenue" value={formatCurrency(money.metrics.currentMonthRevenue)} change="Current calendar month" icon={Banknote} />
+        <MetricCard label="Monthly Cost" value={formatCurrency(money.metrics.currentMonthCosts)} change="Current calendar month" icon={Coins} positive={money.metrics.currentMonthCosts === 0} />
+        <MetricCard label="Profit" value={formatCurrency(money.metrics.profit)} change={`${money.metrics.profitMargin.toFixed(1)}% margin`} icon={Gauge} positive={money.metrics.profit >= 0} />
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4">

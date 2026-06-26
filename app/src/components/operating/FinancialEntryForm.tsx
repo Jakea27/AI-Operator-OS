@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { CircleDollarSign, ReceiptText, X } from 'lucide-react'
 import { expenseCategories, revenueCategories } from '@/src/data/financeCategories'
 import {
+  CostType,
   ExpenseEntry,
   RevenueEntry,
   useOperatingStore,
@@ -53,12 +54,14 @@ export function FinancialEntryForm(props: FinancialEntryFormProps) {
     date: string
     business: string
     category: string
+    costType: CostType
     notes: string
   }>({
     amount: '',
     date: today(),
     business: data.settings.businessName || '',
     category: categories[0],
+    costType: 'one-time',
     notes: '',
   })
 
@@ -71,6 +74,7 @@ export function FinancialEntryForm(props: FinancialEntryFormProps) {
             date: entry.date,
             business: entry.business,
             category: entry.category,
+            costType: props.mode === 'expense' ? props.entry?.costType ?? 'one-time' : 'one-time',
             notes: entry.notes,
           }
         : {
@@ -78,6 +82,7 @@ export function FinancialEntryForm(props: FinancialEntryFormProps) {
             date: today(),
             business: data.settings.businessName || '',
             category: categories[0],
+            costType: 'one-time',
             notes: '',
           },
     )
@@ -103,10 +108,10 @@ export function FinancialEntryForm(props: FinancialEntryFormProps) {
         addRevenue({ ...record, createdAt: timestamp, updatedAt: timestamp })
       }
     } else if (props.entry) {
-      updateExpense(props.entry.id, record)
+      updateExpense(props.entry.id, { ...record, costType: form.costType })
     } else {
       const timestamp = new Date().toISOString()
-      addExpense({ ...record, createdAt: timestamp, updatedAt: timestamp })
+      addExpense({ ...record, costType: form.costType, createdAt: timestamp, updatedAt: timestamp })
     }
     props.onClose()
   }
@@ -154,6 +159,15 @@ export function FinancialEntryForm(props: FinancialEntryFormProps) {
               {businesses.map((business) => <option key={business} value={business} />)}
             </datalist>
           </label>
+          {!isRevenue && (
+            <label className="text-xs text-muted">
+              Cost Type
+              <select className="field mt-2" value={form.costType} onChange={(event) => setForm({ ...form, costType: event.target.value as CostType })}>
+                <option value="one-time">One-time cost</option>
+                <option value="monthly-recurring">Monthly recurring cost</option>
+              </select>
+            </label>
+          )}
           <label className="col-span-4 text-xs text-muted">
             Notes
             <textarea className="field mt-2 min-h-24 resize-y" placeholder={`Notes about this ${props.mode} entry`} value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />

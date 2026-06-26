@@ -29,9 +29,21 @@ The desktop application uses one Electron + React + Vite + TypeScript + Tailwind
 All persistence is localStorage-based and local-first.
 
 - Operating records use `app/src/services/operatingStore.ts`.
+- Money domain logic uses `app/src/core/money` as a reusable layer over the operating store.
 - Business memory uses `app/src/core/memory/memoryStore.ts`.
 - Daily briefing snapshots are stored in the operating store.
 - Business Memory has a dedicated store to prevent duplicate memory ownership.
+
+## Money Store Architecture
+
+AO-006.1 defines the shared Money foundation under `app/src/core/money`:
+
+- `moneyTypes.ts` — typed revenue items, cost items, cost schedule, and money metrics.
+- `moneyCalculations.ts` — reusable calculations for revenue today, current-month revenue, current-month costs, monthly recurring costs, one-time costs, profit, and profit margin.
+- `moneyStore.ts` — React-facing store adapter that reads and writes through `operatingStore.ts`.
+- `index.ts` — public Money API.
+
+The Money foundation intentionally does not create a second localStorage document. Revenue and expense records remain in the existing operating store so Dashboard, Money, Briefing, Operators, and Approval integrations keep one shared source of truth. Expense records now carry a cost type of one-time or monthly recurring; older records are migrated safely to one-time costs unless already marked recurring.
 
 ## Business Memory Architecture
 

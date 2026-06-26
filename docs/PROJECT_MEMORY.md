@@ -11,9 +11,9 @@ Dashboard, Money, CEO, Development, Settings, and the application shell share a 
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.
 
-AO-001 established the Money Department as the accounting source of truth. Revenue and expense records include amount, date, category, business, notes, and created/updated timestamps. Both record types support add, edit, and delete operations. Existing records using the earlier `description` schema are normalized to the current notes-based schema when loaded.
+AO-001 established the Money Department as the accounting source of truth. Revenue records include amount, date, category, business, notes, and created/updated timestamps. Expense records include those same fields plus a cost type for one-time or monthly recurring costs. Both record types support add, edit, and delete operations. Existing records using the earlier `description` schema are normalized to the current notes-based schema when loaded.
 
-Money calculates revenue today, current-month revenue, current-month expenses, profit, and profit margin. Its revenue, expense, profit, business, and category charts use the same records. Dashboard financial widgets call the same `calculateMetrics` function, so accounting edits immediately affect the command center.
+AO-006.1 adds the shared Money Store Foundation under `app/src/core/money`. It wraps the existing local operating store instead of creating a second persistence system, exposes typed revenue and cost items, normalizes monthly recurring vs one-time costs, and calculates revenue today, current-month revenue, current-month costs, recurring costs, one-time costs, profit, and profit margin. Dashboard and Money financial summaries now read through this shared money layer, so accounting edits immediately affect the command center.
 
 AO-002 added the local-first CEO Daily Briefing Engine at `app/src/services/briefing/briefingEngine.ts`. It produces a typed `DailyBriefing` from Money records, pending approvals, sprint tasks, important memory entries, workspace identity, and local storage health. The engine is deterministic and uses no external AI service.
 

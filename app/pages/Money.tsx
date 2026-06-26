@@ -22,6 +22,7 @@ import {
   buildMonthlyTrend,
   buildRevenueByBusiness,
 } from '@/src/data/operatingMetrics'
+import { useMoneyStore } from '@/src/core/money'
 import {
   ExpenseEntry,
   formatCurrency,
@@ -37,10 +38,10 @@ type EditorState =
 export function Money() {
   const {
     data,
-    metrics,
     deleteRevenue,
     deleteExpense,
   } = useOperatingStore()
+  const money = useMoneyStore()
   const [editor, setEditor] = useState<EditorState>(null)
   const trend = buildMonthlyTrend(data)
   const expenses = buildExpenseBreakdown(data)
@@ -73,11 +74,11 @@ export function Money() {
       />
 
       <div className="grid grid-cols-5 gap-4">
-        <MetricCard label="Revenue Today" value={formatCurrency(metrics.revenueToday)} change="Today's entries" icon={CircleDollarSign} accent />
-        <MetricCard label="Revenue This Month" value={formatCurrency(metrics.monthlyRevenue)} change="Current month" icon={DollarSign} />
-        <MetricCard label="Expenses This Month" value={formatCurrency(metrics.monthlyCost)} change="Current month" icon={CreditCard} positive={metrics.monthlyCost === 0} />
-        <MetricCard label="Profit" value={formatCurrency(metrics.profit)} change="Revenue minus expenses" icon={Wallet} positive={metrics.profit >= 0} />
-        <MetricCard label="Profit Margin" value={`${metrics.profitMargin.toFixed(1)}%`} change="Profit ÷ revenue" icon={Percent} positive={metrics.profitMargin >= 0} />
+        <MetricCard label="Revenue Today" value={formatCurrency(money.metrics.revenueToday)} change="Today's entries" icon={CircleDollarSign} accent />
+        <MetricCard label="Revenue This Month" value={formatCurrency(money.metrics.currentMonthRevenue)} change="Current month" icon={DollarSign} />
+        <MetricCard label="Expenses This Month" value={formatCurrency(money.metrics.currentMonthCosts)} change="Current month" icon={CreditCard} positive={money.metrics.currentMonthCosts === 0} />
+        <MetricCard label="Profit" value={formatCurrency(money.metrics.profit)} change="Revenue minus expenses" icon={Wallet} positive={money.metrics.profit >= 0} />
+        <MetricCard label="Profit Margin" value={`${money.metrics.profitMargin.toFixed(1)}%`} change="Profit ÷ revenue" icon={Percent} positive={money.metrics.profitMargin >= 0} />
       </div>
 
       <div className="mt-4 space-y-4">
@@ -107,19 +108,19 @@ export function Money() {
           <ChartShell eyebrow="Expense Trend" title="Six month expenses" meta="Local records" className="col-span-6">
             <TrendLineChart data={trend} dataKey="expense" label="Expenses" xKey="month" color="#ff9e8f" gradientId="moneyExpense" />
           </ChartShell>
-          <ChartShell eyebrow="Profit Trend" title="Six month profit" meta={`${metrics.profitMargin.toFixed(1)}% margin`} className="col-span-6">
+          <ChartShell eyebrow="Profit Trend" title="Six month profit" meta={`${money.metrics.profitMargin.toFixed(1)}% margin`} className="col-span-6">
             <TrendLineChart data={trend} dataKey="profit" label="Profit" xKey="month" color="#80e5bd" gradientId="moneyProfit" />
           </ChartShell>
-          <ChartShell eyebrow="Revenue by Business" title="Current month contribution" meta={formatCurrency(metrics.monthlyRevenue)} className="col-span-6">
+          <ChartShell eyebrow="Revenue by Business" title="Current month contribution" meta={formatCurrency(money.metrics.currentMonthRevenue)} className="col-span-6">
             <RevenueByBusinessChart data={revenueByBusiness} />
           </ChartShell>
-          <ChartShell eyebrow="Expense by Category" title="Current month allocation" meta={formatCurrency(metrics.monthlyCost)} className="col-span-6">
+          <ChartShell eyebrow="Expense by Category" title="Current month allocation" meta={formatCurrency(money.metrics.currentMonthCosts)} className="col-span-6">
             <ExpenseBreakdownChart data={expenses} />
           </ChartShell>
           <section className="panel col-span-6 flex flex-col justify-center p-6">
             <p className="eyebrow mb-2">Accounting Status</p>
             <h3 className="m-0 text-xl font-semibold">{data.revenueEntries.length + data.expenseEntries.length} total records</h3>
-            <p className="mb-0 mt-3 text-xs leading-6 text-muted">All financial data is stored locally. Editing or deleting a record recalculates Money and Dashboard metrics immediately.</p>
+            <p className="mb-0 mt-3 text-xs leading-6 text-muted">All financial data is stored locally. This month includes {formatCurrency(money.metrics.monthlyRecurringCosts)} recurring costs and {formatCurrency(money.metrics.oneTimeCosts)} one-time costs.</p>
           </section>
         </div>
 

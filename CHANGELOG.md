@@ -132,6 +132,11 @@
 - Added Approval Context sections to operator workspaces with operator-specific approval counts, latest decision, and approval history
 - Added linked approval ID and status-specific CEO approval messages to CTO recommendation cards
 - Added approval status, approved date, and source approval reference display to roadmap items created from recommendations
+- Completed AO-006.1 Money Store Foundation
+- Added reusable local-first Money core modules under `app/src/core/money`
+- Extended persisted expense records with one-time and monthly-recurring cost classification
+- Updated Money and Dashboard financial summaries to read from the shared Money foundation
+- Added visible cost-type entry and history display while preserving the existing local operating store
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

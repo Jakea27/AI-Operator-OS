@@ -46,6 +46,7 @@ export function FinancialHistoryTable(props: FinancialHistoryTableProps) {
                 <th className="px-6 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Business</th>
                 <th className="px-4 py-3 font-medium">Category</th>
+                {!isRevenue && <th className="px-4 py-3 font-medium">Cost Type</th>}
                 <th className="px-4 py-3 font-medium">Notes</th>
                 <th className="px-4 py-3 text-right font-medium">Amount</th>
                 <th className="px-6 py-3 text-right font-medium">Actions</th>
@@ -57,6 +58,13 @@ export function FinancialHistoryTable(props: FinancialHistoryTableProps) {
                   <td className="whitespace-nowrap px-6 py-4 text-xs text-muted">{new Date(`${entry.date}T12:00:00`).toLocaleDateString()}</td>
                   <td className="px-4 py-4 text-sm text-white">{entry.business}</td>
                   <td className="px-4 py-4"><span className="rounded-md bg-white/[0.05] px-2 py-1 text-[10px] text-[#aeb8b3]">{entry.category}</span></td>
+                  {!isRevenue && (
+                    <td className="px-4 py-4">
+                      <span className="rounded-md bg-[#ffcc66]/10 px-2 py-1 text-[10px] text-[#ffcc66]">
+                        {(entry as ExpenseEntry).costType === 'monthly-recurring' ? 'Monthly recurring' : 'One-time'}
+                      </span>
+                    </td>
+                  )}
                   <td className="max-w-64 truncate px-4 py-4 text-xs text-muted" title={entry.notes}>{entry.notes || '—'}</td>
                   <td className={`whitespace-nowrap px-4 py-4 text-right text-sm font-medium ${isRevenue ? 'text-mint' : 'text-[#ffb09f]'}`}>{isRevenue ? '+' : '-'}{formatCurrency(entry.amount)}</td>
                   <td className="px-6 py-4">

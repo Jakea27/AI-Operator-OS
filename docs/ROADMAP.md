@@ -62,6 +62,7 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] AO-005.3 Dashboard & Operator Approval Integration: Dashboard metrics, operator approval context, workspace approval history, coordinator context, and roadmap approval references
   - [ ] Approval execution handoff
 - [ ] AO-006 Automation Engine
+  - [x] AO-006.1 Money Store Foundation: shared local-first money types, store adapter, cost schedule tracking, reusable calculations, and Dashboard/Money integration
 - [ ] AO-090 UX & Visual Polish
   - [ ] Complete deferred visual, UX, desktop, and quality-of-life improvements tracked in `docs/POLISH_BACKLOG.md`
 
