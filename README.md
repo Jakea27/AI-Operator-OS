@@ -48,5 +48,7 @@ Maximize owner profit while minimizing owner time.
 1. Read `docs/VISION.md`
 2. Read `docs/ARCHITECTURE.md`
 3. Review `docs/ROADMAP.md`
-4. Review `docs/POLISH_BACKLOG.md` for deferred UI/UX polish work
-5. Continue development through issues and sprints
+4. Review `docs/FUTURE_IDEAS.md` for ideas intentionally kept off the active roadmap
+5. Review `docs/TECH_DEBT.md` for deferred refactoring and engineering debt
+6. Review `docs/POLISH_BACKLOG.md` for deferred UI/UX polish work
+7. Continue development through issues and sprints

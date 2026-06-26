@@ -92,3 +92,9 @@ Goal: Use AI Operator OS to help land the first paying client.
 Non-critical UI, UX, desktop, visual consistency, performance, and theme improvements are tracked in `docs/POLISH_BACKLOG.md`.
 
 Core architecture, functionality, and business value take priority until a dedicated polish milestone begins.
+
+## Planning Documents
+
+- `docs/FUTURE_IDEAS.md` tracks ideas that are intentionally not on the active roadmap.
+- `docs/TECH_DEBT.md` tracks intentional technical debt, future refactoring, and deferred engineering work.
+- `docs/POLISH_BACKLOG.md` tracks non-critical visual, UX, desktop, and quality-of-life improvements reserved for AO-090.

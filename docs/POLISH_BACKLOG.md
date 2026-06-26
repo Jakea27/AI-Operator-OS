@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This file tracks non-critical visual, UX, desktop, and quality-of-life improvements for AI Operator OS.
+Track cosmetic, UI, UX, and desktop improvements that should be completed after the core operating system is feature complete.
 
-These items matter, but they are intentionally separated from core operating-system development so feature work can stay focused on architecture, functionality, and business value.
+This document is intentionally separate from the active roadmap so non-critical polish does not interrupt architecture, functionality, or business-value work.
 
 ## Core Rule
 
@@ -12,70 +12,65 @@ Architecture, functionality, and business value always take priority over cosmet
 
 Polish work should be completed during dedicated polish milestones instead of interrupting feature development.
 
-## 1. UI / UX
+## UI / UX
 
 - Native confirmation dialogs
 - Toast notifications
-- Better empty states
 - Loading indicators
-- Button loading states
-- Improved hover effects
+- Better empty states
+- Hover improvements
 
-## 2. Dashboard
+## Dashboard
 
-- Live updating metrics
-- Animated counters
-- Richer widgets
+- Live counters
+- Animated widgets
+- Better metric cards
 
-## 3. Operators
+## Operators
 
 - Department icons
-- Accent colors
-- Better timelines
-- Recommendation cards
-- Improved status badges
+- Recommendation card polish
+- Timeline improvements
+- Status badge improvements
 
-## 4. Business Memory
+## Business Memory
 
-- Better tags
 - Search highlighting
+- Related memories
+- Better tags
 - Memory previews
-- Related memory suggestions
 
-## 5. Roadmap
+## Roadmap
 
 - Drag-and-drop backlog
-- Rich milestone cards
 - Priority colors
-- Better filtering
+- Rich milestone cards
 
-## 6. Desktop Experience
+## Desktop
 
 - Keyboard shortcuts
-- Right-click menus
-- Better window title updates
+- Context menus
+- Better scrollbars
 - Resizable panels
 
-## 7. Visual Consistency
+## Visual Consistency
 
-- Standard spacing
-- Standard shadows
-- Standard typography
-- Standard badge colors
-- Consistent icon sizing
+- Typography
+- Shadows
+- Icon sizing
+- Badge colors
+- Spacing
 
-## 8. Performance
+## Performance
 
 - Lazy loading
 - Faster filtering
-- Virtualized long lists
-- Local cache optimization
+- Cache optimization
 
-## 9. Themes
+## Themes
 
-- Additional themes
 - Light mode
-- Accent color picker
+- Accent colors
 - Compact mode
 
 ## Priority Levels
@@ -92,10 +87,8 @@ Polish work that improves comfort, scanning, visual quality, or consistency with
 
 Small refinements that are nice to have but should not interrupt milestone delivery.
 
-## Future Milestone
-
-Reserved milestone:
+## Reserved Milestone
 
 **AO-090 — UX & Visual Polish**
 
-AO-090 should be used to complete or organize this backlog after the core operating system milestones are finished.
+AO-090 is reserved for completing this backlog after the core operating system milestones are finished.
