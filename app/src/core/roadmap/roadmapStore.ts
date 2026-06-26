@@ -29,6 +29,10 @@ function normalizeItem(raw: Partial<RoadmapItem>): RoadmapItem {
     priority: raw.priority ?? 'Medium',
     status: raw.status ?? 'backlog',
     relatedIssue: raw.relatedIssue ?? '',
+    recommendationId: raw.recommendationId,
+    sourceApprovalId: raw.sourceApprovalId,
+    approvalStatus: raw.approvalStatus,
+    approvedAt: raw.approvedAt,
     created: raw.created ?? now,
     updated: raw.updated ?? raw.created ?? now,
   }

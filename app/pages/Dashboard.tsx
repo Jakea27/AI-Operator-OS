@@ -5,47 +5,39 @@ import {
   Clock3,
   Coins,
   Gauge,
+  ShieldAlert,
   Sparkles,
   Target,
-  X,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { EmptyState } from '@/components/EmptyState'
 import { MetricCard } from '@/components/MetricCard'
 import { PageIntro } from '@/components/PageIntro'
-import { EmptyState } from '@/components/EmptyState'
 import { ApprovalActivityChart, ChartShell, TrendLineChart } from '@/src/components/charts'
-import { ApprovalEntryForm } from '@/src/components/operating/ApprovalEntryForm'
-import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMetrics'
-import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
-import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
-import {
-  getLatestMemoryByType,
-  getMemoryHealth,
-  useMemoryStore,
-} from '@/src/core/memory'
+import { getLatestMemoryByType, getMemoryHealth, useMemoryStore } from '@/src/core/memory'
 import { useRoadmapStore } from '@/src/core/roadmap'
-import { useApprovalStore } from '@/src/features/approval'
+import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMetrics'
+import { getApprovalDecisionLabel, getApprovalStats, useApprovalStore } from '@/src/features/approval'
+import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
+import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
 
 export function Dashboard() {
   const {
     data,
     metrics,
     storageAvailable,
-    resolveApproval,
     saveDailyBriefing,
   } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
   const roadmap = useRoadmapStore()
   const approvalQueue = useApprovalStore()
+  const approvalStats = getApprovalStats(approvalQueue.approvals)
+  const pendingSharedApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Pending')
   const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
-  const briefingIsCurrent =
-    data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
-  const briefing = briefingIsCurrent && data.latestBriefing
-    ? data.latestBriefing
-    : liveBriefing
+  const briefingIsCurrent = data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
+  const briefing = briefingIsCurrent && data.latestBriefing ? data.latestBriefing : liveBriefing
   const trend = buildMonthlyTrend(data)
   const approvalActivity = buildApprovalActivity(data)
-  const pendingApprovals = data.approvals.filter((approval) => approval.status === 'pending')
   const activeProject = data.projects.find((project) => project.status === 'active')
   const hasOperatingData =
     data.revenueEntries.length > 0 ||
@@ -53,7 +45,8 @@ export function Dashboard() {
     data.approvals.length > 0 ||
     data.projects.length > 0 ||
     data.tasks.length > 0 ||
-    memoryEntries.length > 0
+    memoryEntries.length > 0 ||
+    approvalQueue.approvals.length > 0
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -106,13 +99,26 @@ export function Dashboard() {
         <ChartShell eyebrow="Revenue Trend" title="Six month operating history" meta="Local records" className="col-span-8">
           <TrendLineChart data={trend} dataKey="revenue" label="Revenue" xKey="month" gradientId="dashboardRevenue" />
         </ChartShell>
-        <ChartShell eyebrow="Approval Activity" title="Decisions this week" meta={`${pendingApprovals.length} pending`} className="col-span-4">
+        <ChartShell eyebrow="Approval Activity" title="Decisions this week" meta={`${approvalStats.pending} pending`} className="col-span-4">
           <ApprovalActivityChart data={approvalActivity} />
         </ChartShell>
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4">
+        <section className={`panel col-span-12 flex items-center justify-between gap-6 p-5 ${approvalStats.pending > 0 ? 'border-[#ffcc66]/25 bg-[#ffcc66]/[0.045]' : 'border-lime/20 bg-lime/[0.035]'}`}>
+          <div className="flex items-start gap-4">
+            <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${approvalStats.pending > 0 ? 'bg-[#ffcc66]/10 text-[#ffcc66]' : 'bg-lime/10 text-lime'}`}><ShieldAlert size={19} /></div>
+            <div>
+              <p className="eyebrow mb-1">{approvalStats.pending > 0 ? 'CEO decisions waiting' : 'Approval status'}</p>
+              <h3 className="m-0 text-lg font-semibold text-white">{approvalStats.pending > 0 ? `${approvalStats.pending} approval${approvalStats.pending === 1 ? '' : 's'} need CEO review` : 'No CEO decisions pending.'}</h3>
+              <p className="mb-0 mt-2 text-xs leading-5 text-muted">Latest decision: {getApprovalDecisionLabel(approvalStats.latestDecision)}</p>
+            </div>
+          </div>
+          <Link to="/approval" className={approvalStats.pending > 0 ? 'btn-primary' : 'btn-secondary'}>Open Approval Queue</Link>
+        </section>
+
         <BusinessMemoryWidget memories={memoryEntries} />
+
         <section className="panel col-span-7 p-6">
           <div className="flex items-center justify-between">
             <div><p className="eyebrow mb-2">CEO Daily Briefing</p><h3 className="m-0 font-display text-xl font-semibold">{briefing.greeting}</h3></div>
@@ -156,25 +162,28 @@ export function Dashboard() {
         <section className="panel col-span-12 overflow-hidden">
           <div className="flex items-center justify-between border-b border-line px-6 py-5">
             <div><p className="eyebrow mb-1">Approval Queue</p><h3 className="m-0 font-display text-lg font-semibold">Decisions waiting for you</h3></div>
-            <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1 text-[11px] font-medium text-[#ffcc66]">{approvalQueue.pending} pending</span>
+            <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1 text-[11px] font-medium text-[#ffcc66]">{approvalStats.pending} pending</span>
           </div>
-          <div className="grid grid-cols-4 gap-3 border-b border-line px-6 py-4">
-            <ApprovalMetric label="Pending" value={approvalQueue.pending} />
-            <ApprovalMetric label="Approved Today" value={approvalQueue.approvedToday} />
-            <ApprovalMetric label="Rejected Today" value={approvalQueue.rejectedToday} />
-            <ApprovalMetric label="Deferred" value={approvalQueue.deferred} />
+          <div className="grid grid-cols-6 gap-3 border-b border-line px-6 py-4">
+            <ApprovalMetric label="Pending Approvals" value={approvalStats.pending} />
+            <ApprovalMetric label="Approved Today" value={approvalStats.approvedToday} />
+            <ApprovalMetric label="Rejected Today" value={approvalStats.rejectedToday} />
+            <ApprovalMetric label="Deferred Approvals" value={approvalStats.deferred} />
+            <ApprovalMetric label="Waiting on CEO" value={approvalStats.waitingOnCEO} />
+            <div className="rounded-xl border border-line bg-ink/35 p-3">
+              <p className="eyebrow mb-1">Latest Approval Decision</p>
+              <p className="m-0 text-xs font-semibold leading-5 text-white">{getApprovalDecisionLabel(approvalStats.latestDecision)}</p>
+            </div>
           </div>
-          <ApprovalEntryForm />
-          {pendingApprovals.length === 0 ? (
-            <EmptyState icon={Check} title="Queue cleared" copy="No pending approvals. Add one above when a decision needs CEO review." />
+          {pendingSharedApprovals.length === 0 ? (
+            <EmptyState icon={Check} title="No CEO decisions pending" copy="Operator recommendations that need CEO review will appear in the Approval Queue." />
           ) : (
             <div>
-              {pendingApprovals.map((approval) => (
+              {pendingSharedApprovals.slice(0, 4).map((approval) => (
                 <div key={approval.id} className="flex items-center gap-4 border-b border-line px-6 py-4 last:border-0">
                   <div className="grid h-9 w-9 place-items-center rounded-xl bg-white/[0.04] text-muted"><CircleDollarSign size={17} /></div>
-                  <div className="min-w-0 flex-1"><p className="m-0 text-sm font-medium text-white">{approval.title}</p><p className="mb-0 mt-1 text-xs text-muted">{approval.category}{approval.amount ? ` · ${formatCurrency(approval.amount)}` : ''}</p></div>
-                  <button onClick={() => resolveApproval(approval.id, 'rejected')} className="rounded-lg border border-line p-2 text-muted transition hover:border-[#ff8b7b]/50 hover:text-[#ff8b7b]" aria-label="Reject"><X size={15} /></button>
-                  <button onClick={() => resolveApproval(approval.id, 'approved')} className="flex items-center gap-2 rounded-lg bg-lime px-3 py-2 text-xs font-semibold text-ink"><Check size={14} /> Approve</button>
+                  <div className="min-w-0 flex-1"><p className="m-0 text-sm font-medium text-white">{approval.title}</p><p className="mb-0 mt-1 text-xs text-muted">{approval.operator} · {approval.department} · {approval.risk} risk</p></div>
+                  <Link to="/approval" className="btn-secondary">Review</Link>
                 </div>
               ))}
             </div>

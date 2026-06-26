@@ -73,6 +73,12 @@ AO-005.2.1 cleans up recommendation approval state display. CTO recommendation c
 
 Submitted, pending, and terminal approval states hide duplicate Submit for CEO Approval, Approve, and Reject controls. Draft recommendations can still be submitted for CEO approval. Approval Queue decisions for Changes Requested, Deferred, and Archived now sync back into CTO recommendation status/history so the Approval Queue and CTO workspace remain aligned after reload.
 
+AO-005.3 integrates approval visibility across the command center. Dashboard now shows shared Approval Store metrics for pending approvals, approved today, rejected today, deferred approvals, latest approval decision, and waiting-on-CEO count. It also shows a CEO decisions waiting alert with an Open Approval Queue button when pending approvals exist.
+
+Operators page cards now show pending approvals, approved recommendations, rejected recommendations, last CEO decision, and whether the operator needs CEO attention. Operator workspaces include an Approval Context section with pending/approved/rejected/deferred counts, latest CEO decision, and approval history for that operator. CTO recommendation cards show approval status, last CEO decision, linked approval ID, and status-specific guidance.
+
+Roadmap items created from recommendations can now carry recommendationId, sourceApprovalId, approvalStatus, and approvedAt metadata. Roadmap cards display approval status, approved date, and source approval reference when those values are available.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
@@ -111,6 +117,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Business memory is local-only and currently has no encrypted backup.
 - Operators can analyze, recommend, draft, persist local tasks/recommendations, and save notes to Business Memory. External model/API calls and automatic execution are intentionally not implemented yet.
 - Approval decisions are local CEO decisions only. Approved items do not execute automatically until a later automation milestone.
+- Approval visibility surfaces read from the shared Approval Store; no duplicate approval stores exist.
 
 ## Next Priorities
 

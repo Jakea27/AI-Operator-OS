@@ -30,7 +30,14 @@ import {
   useOperatorStore,
 } from '@/src/core/operators'
 import { roadmapStore } from '@/src/core/roadmap'
-import { Approval, approvalStore, useApprovalStore } from '@/src/features/approval'
+import {
+  Approval,
+  approvalStore,
+  getApprovalDecisionLabel,
+  getApprovalStoreContext,
+  getOperatorApprovalStats,
+  useApprovalStore,
+} from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorTaskQueue } from './OperatorTaskQueue'
 import { OperatorStatus } from './OperatorStatus'
@@ -61,7 +68,8 @@ export function OperatorDetail() {
     memories: memoryEntries,
     briefing: data.latestBriefing,
     storageAvailable,
-  }), [data, metrics, memoryEntries, storageAvailable])
+    approvals: getApprovalStoreContext(approvals.approvals),
+  }), [data, metrics, memoryEntries, storageAvailable, approvals.approvals])
   const snapshot = operatorIds.includes(id)
     ? getOperatorDetail(id, context, operatorStore.data)
     : null
@@ -74,6 +82,7 @@ export function OperatorDetail() {
   const structuredCTORecommendations = ctoRecommendations.recommendations
   const currentObjective = getCurrentObjective(operator.id, metrics.sprintProgress)
   const stats = getExecutiveStats(operator, counts)
+  const operatorApprovalStats = getOperatorApprovalStats(approvals.approvals, operator.name as Approval['operator'])
 
   const addTask = (event: FormEvent) => {
     event.preventDefault()
@@ -161,6 +170,7 @@ export function OperatorDetail() {
   }
 
   const addCTORecommendationToRoadmap = (recommendation: CTORecommendation) => {
+    const linkedApproval = getLinkedApproval(approvals.approvals, recommendation.id)
     roadmapStore.addItem({
       title: recommendation.title,
       description: `${recommendation.summary}\n\nBusiness value: ${recommendation.businessValue}\n\nNext action: ${recommendation.recommendedNextAction}`,
@@ -168,6 +178,10 @@ export function OperatorDetail() {
       priority: recommendation.risk === 'High' ? 'High' : recommendation.risk === 'Medium' ? 'Medium' : 'Low',
       status: 'backlog',
       relatedIssue: 'AO-005',
+      recommendationId: recommendation.id,
+      sourceApprovalId: linkedApproval?.id,
+      approvalStatus: linkedApproval?.status,
+      approvedAt: linkedApproval?.status === 'Approved' ? linkedApproval.decidedAt : undefined,
     })
     ctoRecommendations.updateStatus(recommendation.id, 'Added to Roadmap', 'Recommendation added to local roadmap backlog')
   }
@@ -380,6 +394,35 @@ export function OperatorDetail() {
               </article>
             ))}
           </section>
+
+          <section className="panel p-5">
+            <div className="mb-5 flex items-center gap-2 text-lime"><ShieldCheck size={17} /><h2 className="m-0 text-lg font-semibold text-white">Approval Context</h2></div>
+            <div className="grid grid-cols-4 gap-3">
+              <Metric label="Pending approvals" value={operatorApprovalStats.pending.toString()} />
+              <Metric label="Approved approvals" value={operatorApprovalStats.approved.toString()} />
+              <Metric label="Rejected approvals" value={operatorApprovalStats.rejected.toString()} />
+              <Metric label="Deferred approvals" value={operatorApprovalStats.deferred.toString()} />
+            </div>
+            <div className="mt-4 rounded-xl border border-line bg-ink/30 p-4">
+              <p className="eyebrow mb-2">Last CEO decision</p>
+              <p className="m-0 text-sm font-semibold text-white">{getApprovalDecisionLabel(operatorApprovalStats.lastDecision)}</p>
+            </div>
+            <div className="mt-4 rounded-xl border border-line bg-ink/30 p-4">
+              <p className="eyebrow mb-3">Approval history</p>
+              {operatorApprovalStats.history.length === 0 ? (
+                <p className="m-0 text-xs text-muted">No approval history for this operator yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {operatorApprovalStats.history.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-white/[0.025] px-3 py-2 text-xs">
+                      <span className="text-[#c3cbc7]">{item.approvalTitle}: {item.action}</span>
+                      <span className="text-muted">{new Date(item.createdAt).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
         </main>
 
         <aside className="col-span-4 space-y-4">
@@ -564,9 +607,12 @@ function CTORecommendationDetailCard({
         <InfoTile label="Approval Status" value={effectiveApprovalStatus} />
         <InfoTile label="Last CEO Decision" value={approvalDecision} />
       </div>
+      <div className="mt-3 text-xs">
+        <InfoTile label="Linked Approval ID" value={linkedApproval?.id ?? 'None'} />
+      </div>
       {(waitingOnCEO || terminalApproval) && (
         <p className={`mt-4 rounded-xl border p-3 text-xs leading-5 ${terminalApproval ? 'border-lime/20 bg-lime/[0.04] text-lime' : 'border-orange-400/20 bg-orange-400/10 text-orange-300'}`}>
-          {terminalApproval ? 'CEO decision recorded. Execution is not automated.' : 'Waiting on CEO decision.'}
+          {getRecommendationApprovalMessage(effectiveApprovalStatus)}
         </p>
       )}
 
@@ -631,6 +677,15 @@ function getApprovalDecisionDisplayFixed(approval: Approval | undefined, recomme
   if (approval.status === 'Archived') return `Archived${suffix}`
   if (approval.status === 'Pending') return 'Waiting on CEO decision'
   return 'Not submitted'
+}
+
+function getRecommendationApprovalMessage(status: string) {
+  if (status === 'Approved') return 'CEO approved this recommendation. Execution is not automated.'
+  if (status === 'Rejected') return 'CEO rejected this recommendation.'
+  if (status === 'Changes Requested') return 'CEO requested changes for this recommendation.'
+  if (status === 'Deferred') return 'CEO deferred this recommendation.'
+  if (status === 'Archived') return 'This approval was archived.'
+  return 'Waiting on CEO decision.'
 }
 
 function getApprovalDecisionDisplay(approval?: Approval) {

@@ -126,6 +126,12 @@
 - Fixed CTO recommendation cards so linked approvals show accurate CEO decision text for Approved, Rejected, Changes Requested, Deferred, Archived, and Pending states
 - Hid duplicate Submit, Approve, and Reject actions once a recommendation has been submitted or received a CEO decision
 - Synced Changes Requested, Deferred, and Archived approval decisions back into CTO recommendation status and history
+- Completed AO-005.3 Dashboard & Operator Approval Integration
+- Added shared Approval Store visibility to Dashboard with pending approvals, approved today, rejected today, deferred approvals, latest decision, waiting-on-CEO count, and Approval Queue alert
+- Added per-operator approval counts, last CEO decision, and needs-attention indicators to Operators page cards
+- Added Approval Context sections to operator workspaces with operator-specific approval counts, latest decision, and approval history
+- Added linked approval ID and status-specific CEO approval messages to CTO recommendation cards
+- Added approval status, approved date, and source approval reference display to roadmap items created from recommendations
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

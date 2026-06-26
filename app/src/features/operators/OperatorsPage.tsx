@@ -13,6 +13,7 @@ import {
   useOperatorStore,
 } from '@/src/core/operators'
 import { approvalStore, useApprovalStore } from '@/src/features/approval'
+import { getApprovalStoreContext } from '@/src/features/approval'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { OperatorCard } from './OperatorCard'
 
@@ -35,7 +36,8 @@ export function OperatorsPage() {
     memories: memoryEntries,
     briefing: data.latestBriefing,
     storageAvailable,
-  }), [data, metrics, memoryEntries, storageAvailable])
+    approvals: getApprovalStoreContext(approvalQueue.approvals),
+  }), [data, metrics, memoryEntries, storageAvailable, approvalQueue.approvals])
   const operators = useMemo(() => buildOperators(context, operatorState), [context, operatorState])
 
   const submitRoute = (event: FormEvent) => {
@@ -119,7 +121,7 @@ export function OperatorsPage() {
 
       <div className="grid grid-cols-3 gap-4">
         {operators.map((operator: AIOperator) => (
-          <OperatorCard key={operator.id} operator={operator} />
+          <OperatorCard key={operator.id} operator={operator} approvals={approvalQueue.approvals} />
         ))}
       </div>
 

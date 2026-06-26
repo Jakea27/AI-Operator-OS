@@ -12,6 +12,10 @@ export type RoadmapItem = {
   priority: RoadmapPriority
   status: RoadmapStatus
   relatedIssue: string
+  recommendationId?: string
+  sourceApprovalId?: string
+  approvalStatus?: string
+  approvedAt?: string
   created: string
   updated: string
 }

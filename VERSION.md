@@ -8,7 +8,7 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: AO-005.2 CEO Approval Workflow
+Current Milestone: AO-005.3 Dashboard & Operator Approval Integration
 
 ## Version Rules
 

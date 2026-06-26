@@ -16,11 +16,13 @@ export function getLastRecommendation(operator: AIOperator) {
 }
 
 export function getOperatorContextCounts(context: OperatorSharedContext): OperatorWorkspaceContextCounts {
+  const pendingApprovals = context.approvals?.pending ?? context.operatingState.approvals.filter((approval) => approval.status === 'pending').length
   return {
     businessMemory: context.memories.filter((memory) => !memory.archived).length,
     moneyRecords: context.operatingState.revenueEntries.length + context.operatingState.expenseEntries.length,
     ceoBriefing: context.briefing ? 1 : 0,
     developmentItems: context.operatingState.projects.length + context.operatingState.tasks.length,
-    approvalQueue: context.operatingState.approvals.filter((approval) => approval.status === 'pending').length,
+    approvalQueue: pendingApprovals,
+    totalApprovals: context.approvals?.total ?? context.operatingState.approvals.length,
   }
 }

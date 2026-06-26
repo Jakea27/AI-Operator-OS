@@ -59,6 +59,7 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [ ] AO-005 Approval Queue
   - [x] AO-005.1 Approval Queue Framework: dedicated route, sidebar entry, local store, summary cards, filters, read-only cards, and executive empty state
   - [x] AO-005.2 CEO Approval Workflow: submit recommendation, approve, reject, request changes, defer, archive, detail view, and decision history
+  - [x] AO-005.3 Dashboard & Operator Approval Integration: Dashboard metrics, operator approval context, workspace approval history, coordinator context, and roadmap approval references
   - [ ] Approval execution handoff
 - [ ] AO-006 Automation Engine
 - [ ] AO-090 UX & Visual Polish

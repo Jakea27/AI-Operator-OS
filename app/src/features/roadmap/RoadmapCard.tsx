@@ -1,5 +1,6 @@
 import { Archive, Check, CircleDot, ExternalLink, Play, CalendarClock } from 'lucide-react'
 import { RoadmapItem, RoadmapStatus } from '@/src/core/roadmap'
+import { getApprovalDecisionLabel, useApprovalStore } from '@/src/features/approval'
 
 const priorityClass = {
   Critical: 'border-red-400/30 bg-red-400/10 text-red-300',
@@ -25,6 +26,15 @@ export function RoadmapCard({
   onStatusChange: (status: RoadmapStatus) => void
   onArchive: () => void
 }) {
+  const approvals = useApprovalStore()
+  const sourceApproval = item.sourceApprovalId
+    ? approvals.approvals.find((approval) => approval.id === item.sourceApprovalId)
+    : item.recommendationId
+      ? approvals.approvals.find((approval) => approval.recommendationId === item.recommendationId)
+      : undefined
+  const approvalStatus = sourceApproval?.status ?? item.approvalStatus
+  const approvedAt = sourceApproval?.status === 'Approved' ? sourceApproval.decidedAt : item.approvedAt
+
   return (
     <article className="rounded-2xl border border-line bg-ink/35 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -47,6 +57,14 @@ export function RoadmapCard({
         <Info label="Created" value={new Date(item.created).toLocaleDateString()} />
         <Info label="Updated" value={new Date(item.updated).toLocaleDateString()} />
       </div>
+      {(approvalStatus || item.sourceApprovalId || item.recommendationId) && (
+        <div className="mt-3 grid grid-cols-3 gap-3 text-xs">
+          <Info label="Approval Status" value={approvalStatus ?? 'Not submitted'} />
+          <Info label="Approved Date" value={approvedAt ? new Date(approvedAt).toLocaleString() : 'Not approved'} />
+          <Info label="Source Approval" value={sourceApproval?.id ?? item.sourceApprovalId ?? 'None'} />
+        </div>
+      )}
+      {sourceApproval && <p className="mb-0 mt-3 rounded-xl border border-lime/15 bg-lime/[0.035] p-3 text-xs leading-5 text-muted">Latest approval decision: {getApprovalDecisionLabel(sourceApproval)}</p>}
 
       <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
         <button onClick={() => onStatusChange('planned')} className="btn-secondary flex items-center gap-2"><CalendarClock size={13} /> Mark Planned</button>

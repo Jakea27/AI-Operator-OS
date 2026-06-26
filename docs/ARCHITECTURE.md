@@ -113,6 +113,10 @@ AO-005.2 turns the Approval Queue into a functional CEO decision workflow withou
 
 Linked CTO recommendations can be submitted for CEO approval from the CTO workspace. The shared approval queue stores the approval record and the CTO recommendation history records the submission. CEO decisions on linked approvals update the CTO recommendation status/history where possible.
 
+AO-005.3 expands Approval Queue visibility across the OS without adding new decision logic. Dashboard, Operators, operator workspaces, coordinator context, and roadmap cards read from the same Approval Store. Approval insights are centralized in `app/src/features/approval/utils/approvalInsights.ts` so counts and latest-decision labels stay consistent across surfaces.
+
+Operator shared context now accepts approval summary data for pending approvals, total approvals, and approvals by operator. Roadmap items can store optional recommendation and approval references so items created from approved recommendations can display approval status and source approval metadata without blocking roadmap execution.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

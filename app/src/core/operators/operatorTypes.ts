@@ -93,6 +93,11 @@ export type OperatorSharedContext = {
   memories: MemoryEntry[]
   briefing: DailyBriefing | null
   storageAvailable: boolean
+  approvals?: {
+    pending: number
+    total: number
+    byOperator: Record<'CTO' | 'CFO' | 'CMO' | 'COO' | 'Research' | 'System', number>
+  }
 }
 
 export type OperatorLocalState = {
@@ -107,4 +112,5 @@ export type OperatorWorkspaceContextCounts = {
   ceoBriefing: number
   developmentItems: number
   approvalQueue: number
+  totalApprovals: number
 }
