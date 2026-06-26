@@ -25,11 +25,12 @@ export function ApprovalCard({
   onViewDetails: () => void
 }) {
   const [note, setNote] = useState('')
-  const isPending = approval.status === 'Pending'
-  const isArchived = approval.status === 'Archived'
-  const hasCeoDecision = ['Approved', 'Rejected', 'Changes Requested', 'Deferred'].includes(approval.status)
+  const normalizedStatus = normalizeApprovalStatus(approval.status)
+  const isPending = normalizedStatus === 'Pending'
+  const isArchived = normalizedStatus === 'Archived'
+  const hasCeoDecision = ['Approved', 'Rejected', 'Changes Requested', 'Deferred'].includes(normalizedStatus)
   const submitDecision = (status: ApprovalStatus) => {
-    if (!isPending && status !== 'Archived') return
+    if (!isPending && normalizedStatus !== 'Draft' && status !== 'Archived') return
     if (isArchived) return
     onDecision(status, note.trim())
     setNote('')
@@ -42,7 +43,7 @@ export function ApprovalCard({
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <span className="rounded-full border border-lime/20 bg-lime/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-lime">{approval.operator}</span>
             <span className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${priorityClass[approval.priority]}`}>{approval.priority}</span>
-            <span className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">{approval.status}</span>
+            <span className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">{normalizedStatus}</span>
           </div>
           <h3 className="m-0 text-lg font-semibold text-white">{approval.title}</h3>
           <p className="mb-0 mt-2 text-sm leading-6 text-[#c3cbc7]">{approval.description}</p>
@@ -102,6 +103,17 @@ export function ApprovalCard({
       </div>
     </article>
   )
+}
+
+function normalizeApprovalStatus(status: ApprovalStatus | string): ApprovalStatus {
+  const normalized = status.trim().toLowerCase()
+  if (normalized === 'approved') return 'Approved'
+  if (normalized === 'rejected') return 'Rejected'
+  if (normalized === 'changes requested' || normalized === 'changes-requested') return 'Changes Requested'
+  if (normalized === 'deferred') return 'Deferred'
+  if (normalized === 'archived') return 'Archived'
+  if (normalized === 'draft') return 'Draft'
+  return 'Pending'
 }
 
 function Info({ label, value, className = 'text-white' }: { label: string; value: string; className?: string }) {
