@@ -8,7 +8,7 @@ Release Channel: Alpha
 
 Desktop Package: Windows x64 installer and portable executable
 
-Current Milestone: AO-004.3 Executive Coordinator
+Current Milestone: AO-004.4 CTO Recommendation Engine
 
 ## Version Rules
 

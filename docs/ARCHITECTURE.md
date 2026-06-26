@@ -82,6 +82,14 @@ AO-004.3 adds the internal Executive Coordinator service:
 
 The Executive Coordinator is not an operator and does not appear in navigation. It writes local coordinator history and creates ordinary operator tasks through the existing operator store. Risky routed requests are sent to the existing approval queue rather than executed. The coordinator uses rules only; no external AI APIs or autonomous execution are connected.
 
+AO-004.4 adds the CTO Recommendation Engine under `app/src/core/operators/recommendations`:
+
+- `recommendationTypes.ts` — structured CTO recommendation schema and supported recommendation types.
+- `recommendationEngine.ts` — deterministic CTO analysis from Business Memory, Money, CEO Briefing, Development, Roadmap, and Operator Tasks.
+- `recommendationStore.ts` — localStorage-backed CTO recommendation persistence and status history.
+
+The CTO engine is not a chatbot and does not accept free-form conversation. It produces structured executive recommendations and exposes local-only actions in the CTO workspace. Approval, rejection, roadmap backlog conversion, AO issue draft conversion, and save-to-memory actions mutate local stores only and preserve the CEO approval workflow.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:

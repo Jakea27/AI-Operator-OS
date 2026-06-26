@@ -16,14 +16,17 @@ import {
 import { memoryStore, useMemoryStore } from '@/src/core/memory'
 import {
   AIOperator,
+  CTORecommendation,
   getOperatorContextCounts,
   getOperatorDetail,
+  generateCTORecommendation,
   OperatorId,
   OperatorRecommendation,
   OperatorRecommendationStatus,
   OperatorSharedContext,
   OperatorTaskPriority,
   OperatorWorkspaceContextCounts,
+  useCTORecommendationStore,
   useOperatorStore,
 } from '@/src/core/operators'
 import { useOperatingStore } from '@/src/services/operatingStore'
@@ -36,9 +39,10 @@ const operatorIds: OperatorId[] = ['cto', 'cfo', 'cmo', 'coo', 'research']
 export function OperatorDetail() {
   const { operatorId } = useParams()
   const id = operatorId as OperatorId
-  const { data, metrics, storageAvailable } = useOperatingStore()
+  const { data, metrics, storageAvailable, addTask: addOperatingTask, addApproval } = useOperatingStore()
   const { memoryEntries } = useMemoryStore()
   const operatorStore = useOperatorStore()
+  const ctoRecommendations = useCTORecommendationStore()
   const [analysis, setAnalysis] = useState('')
   const [note, setNote] = useState('')
   const [taskDraft, setTaskDraft] = useState({
@@ -64,6 +68,7 @@ export function OperatorDetail() {
   const operator = snapshot.operator
   const counts = getOperatorContextCounts(context)
   const recommendations = operator.recommendationHistory
+  const structuredCTORecommendations = ctoRecommendations.recommendations
   const currentObjective = getCurrentObjective(operator.id, metrics.sprintProgress)
   const stats = getExecutiveStats(operator, counts)
 
@@ -84,6 +89,32 @@ export function OperatorDetail() {
   }
 
   const generateRecommendation = () => {
+    if (operator.id === 'cto') {
+      const recommendation = ctoRecommendations.add(generateCTORecommendation({
+        operatingState: data,
+        memories: memoryEntries,
+        briefing: data.latestBriefing,
+        operatorState: operatorStore.data,
+      }))
+      operatorStore.addRecommendation(operator.id, {
+        title: recommendation.title,
+        summary: recommendation.summary,
+        rationale: recommendation.reasoning,
+        source: 'CTO Recommendation Engine',
+        status: recommendation.requiresCEOApproval ? 'Needs Approval' : 'Draft',
+        confidence: recommendation.confidence,
+        riskLevel: recommendation.risk,
+        requiresApproval: recommendation.requiresCEOApproval,
+      })
+      if (recommendation.requiresCEOApproval) {
+        addApproval({
+          title: `CTO recommendation approval: ${recommendation.title}`,
+          category: 'CTO Recommendation',
+        })
+      }
+      setAnalysis(recommendation.summary)
+      return
+    }
     const recommendation = buildLocalRecommendation(operator.id, context)
     operatorStore.addRecommendation(operator.id, recommendation)
     setAnalysis(recommendation.summary)
@@ -106,6 +137,64 @@ export function OperatorDetail() {
       archived: false,
     })
     setNote(`Saved to Business Memory: ${entry.title}`)
+  }
+
+  const approveCTORecommendation = (recommendation: CTORecommendation) => {
+    ctoRecommendations.updateStatus(recommendation.id, 'Approved', 'Recommendation approved locally')
+  }
+
+  const rejectCTORecommendation = (recommendation: CTORecommendation) => {
+    ctoRecommendations.updateStatus(recommendation.id, 'Rejected', 'Recommendation rejected locally')
+  }
+
+  const addCTORecommendationToRoadmap = (recommendation: CTORecommendation) => {
+    addOperatingTask({
+      title: `Roadmap: ${recommendation.title}`,
+      status: 'backlog',
+      sprint: false,
+    })
+    ctoRecommendations.updateStatus(recommendation.id, 'Added to Roadmap', 'Recommendation added to local roadmap backlog')
+  }
+
+  const convertCTORecommendationToIssue = (recommendation: CTORecommendation) => {
+    operatorStore.addTask('cto', {
+      title: `AO issue draft: ${recommendation.title}`,
+      description: `${recommendation.summary}\n\nRecommended next action: ${recommendation.recommendedNextAction}`,
+      priority: recommendation.risk === 'High' ? 'High' : 'Medium',
+      relatedIssue: 'AO-DRAFT',
+      source: 'operator',
+      requiresApproval: recommendation.requiresCEOApproval,
+    })
+    ctoRecommendations.updateStatus(recommendation.id, 'Converted to AO Issue', 'Recommendation converted into a local AO issue draft task')
+  }
+
+  const saveCTORecommendationToMemory = (recommendation: CTORecommendation) => {
+    memoryStore.add({
+      title: recommendation.title,
+      type: 'Architecture',
+      category: 'Development',
+      tags: ['cto', 'recommendation', recommendation.type.toLowerCase()],
+      summary: recommendation.summary,
+      details: [
+        `# ${recommendation.title}`,
+        '',
+        `## Reasoning`,
+        recommendation.reasoning,
+        '',
+        `## Business Value`,
+        recommendation.businessValue,
+        '',
+        `## Recommended Next Action`,
+        recommendation.recommendedNextAction,
+      ].join('\n'),
+      author: 'CTO Operator',
+      relatedIssue: 'AO-004.4',
+      relatedSprint: 'Sprint 0.2',
+      relatedMemoryIds: [],
+      pinned: recommendation.requiresCEOApproval,
+      archived: false,
+    })
+    ctoRecommendations.updateStatus(recommendation.id, 'Saved to Memory', 'Recommendation saved to Business Memory')
   }
 
   return (
@@ -181,6 +270,33 @@ export function OperatorDetail() {
               onRemove={(taskId) => operatorStore.removeTask(operator.id, taskId)}
             />
           </section>
+
+          {operator.id === 'cto' && (
+            <section className="panel p-5">
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-lime"><Lightbulb size={17} /><h2 className="m-0 text-lg font-semibold text-white">CTO Recommendation Engine</h2></div>
+                <button onClick={generateRecommendation} className="btn-primary">Generate Recommendation</button>
+              </div>
+              {structuredCTORecommendations.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-line bg-ink/30 p-4 text-xs leading-5 text-muted">No structured CTO recommendations yet. Generate one from local Memory, Money, Briefing, Development, Roadmap, and Operator task context.</p>
+              ) : (
+                <div className="space-y-4">
+                  <p className="eyebrow mb-0">Recommendations</p>
+                  {structuredCTORecommendations.map((recommendation) => (
+                    <CTORecommendationDetailCard
+                      key={recommendation.id}
+                      recommendation={recommendation}
+                      onApprove={() => approveCTORecommendation(recommendation)}
+                      onReject={() => rejectCTORecommendation(recommendation)}
+                      onAddToRoadmap={() => addCTORecommendationToRoadmap(recommendation)}
+                      onConvertToIssue={() => convertCTORecommendationToIssue(recommendation)}
+                      onSaveToMemory={() => saveCTORecommendationToMemory(recommendation)}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           <section className="panel p-5">
             <div className="mb-5 flex items-center gap-2 text-lime"><Lightbulb size={17} /><h2 className="m-0 text-lg font-semibold text-white">Recent Recommendations</h2></div>
@@ -330,6 +446,76 @@ function RecommendationCard({ recommendation }: { recommendation: OperatorRecomm
   )
 }
 
+function CTORecommendationDetailCard({
+  recommendation,
+  onApprove,
+  onReject,
+  onAddToRoadmap,
+  onConvertToIssue,
+  onSaveToMemory,
+}: {
+  recommendation: CTORecommendation
+  onApprove: () => void
+  onReject: () => void
+  onAddToRoadmap: () => void
+  onConvertToIssue: () => void
+  onSaveToMemory: () => void
+}) {
+  return (
+    <article className="rounded-2xl border border-lime/15 bg-gradient-to-br from-lime/[0.04] to-ink/40 p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="eyebrow mb-2">Recommendation Detail</p>
+          <h3 className="m-0 text-xl font-semibold text-white">{recommendation.title}</h3>
+          <p className="mb-0 mt-2 text-sm leading-6 text-[#c3cbc7]">{recommendation.summary}</p>
+        </div>
+        <CTORecommendationStatusBadge status={recommendation.status} />
+      </div>
+
+      <div className="mt-5 grid grid-cols-4 gap-3">
+        <InfoTile label="Type" value={recommendation.type} />
+        <InfoTile label="Effort" value={recommendation.estimatedEffort} />
+        <InfoTile label="Risk" value={recommendation.risk} />
+        <InfoTile label="Confidence" value={recommendation.confidence} />
+      </div>
+
+      <div className="mt-5 grid gap-4">
+        <TextBlock label="Reasoning" value={recommendation.reasoning} />
+        <TextBlock label="Business Value" value={recommendation.businessValue} />
+        <TextBlock label="Dependencies" value={recommendation.dependencies.length ? recommendation.dependencies.join(', ') : 'No dependencies recorded.'} />
+        <TextBlock label="Supporting Evidence" value={recommendation.supportingEvidence.length ? recommendation.supportingEvidence.join(' • ') : 'No evidence recorded.'} />
+        <TextBlock label="Recommended Next Action" value={recommendation.recommendedNextAction} />
+      </div>
+
+      <div className="mt-5 grid grid-cols-3 gap-3 text-xs">
+        <InfoTile label="Requires CEO Approval" value={recommendation.requiresCEOApproval ? 'Yes' : 'No'} />
+        <InfoTile label="Created" value={new Date(recommendation.createdAt).toLocaleString()} />
+        <InfoTile label="Updated" value={new Date(recommendation.updatedAt).toLocaleString()} />
+      </div>
+
+      <div className="mt-5 border-t border-line pt-4">
+        <p className="eyebrow mb-3">Recommendation History</p>
+        <div className="space-y-2">
+          {recommendation.history.map((item) => (
+            <div key={item.id} className="flex items-center justify-between rounded-xl border border-line bg-ink/30 px-3 py-2 text-xs">
+              <span className="text-[#c3cbc7]">{item.event}</span>
+              <span className="text-muted">{item.status} • {new Date(item.createdAt).toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
+        <button onClick={onApprove} className="btn-secondary">Approve</button>
+        <button onClick={onReject} className="rounded-lg border border-[#ff9e8f]/30 px-3 py-2 text-xs text-[#ff9e8f] hover:border-[#ff9e8f]/70">Reject</button>
+        <button onClick={onAddToRoadmap} className="btn-secondary">Add to Roadmap</button>
+        <button onClick={onConvertToIssue} className="btn-secondary">Convert to AO Issue</button>
+        <button onClick={onSaveToMemory} className="btn-secondary">Save to Memory</button>
+      </div>
+    </article>
+  )
+}
+
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <section className="rounded-2xl border border-line bg-ink/25 p-3">
@@ -370,6 +556,17 @@ function RecommendationStatus({ status }: { status: OperatorRecommendationStatus
   const className = status === 'Needs Approval'
     ? 'border-orange-400/30 bg-orange-400/10 text-orange-300'
     : status === 'Accepted'
+      ? 'border-lime/30 bg-lime/10 text-lime'
+      : status === 'Rejected'
+        ? 'border-red-400/30 bg-red-400/10 text-red-300'
+        : 'border-white/10 bg-white/[0.05] text-muted'
+  return <span className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${className}`}>{status}</span>
+}
+
+function CTORecommendationStatusBadge({ status }: { status: CTORecommendation['status'] }) {
+  const className = status === 'Needs Approval'
+    ? 'border-orange-400/30 bg-orange-400/10 text-orange-300'
+    : status === 'Approved' || status === 'Added to Roadmap' || status === 'Converted to AO Issue' || status === 'Saved to Memory'
       ? 'border-lime/30 bg-lime/10 text-lime'
       : status === 'Rejected'
         ? 'border-red-400/30 bg-red-400/10 text-red-300'

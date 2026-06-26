@@ -51,6 +51,10 @@ AO-004.3 added the internal Executive Coordinator at `app/src/core/operators/exe
 
 The Operators page now includes a small Route to operator panel and Coordinator Activity feed. Routed requests persist locally, and coordinator-created tasks appear in the same operator workspaces as other local operator tasks. No external AI APIs are used.
 
+AO-004.4 transformed the CTO workspace into a structured executive advisor. The CTO Recommendation Engine lives under `app/src/core/operators/recommendations` with dedicated recommendation types, deterministic generation, and local persistence. CTO recommendations include title, summary, reasoning, business value, effort, dependencies, risk, confidence, supporting evidence, recommended next action, approval requirement, status, created/updated timestamps, and history.
+
+The CTO workspace can generate structured recommendations from local context only. If the Executive Coordinator exists and there is no dedicated Approval Queue workspace, the deterministic engine recommends building AO-005 Approval Queue. CTO recommendation buttons function locally: approve, reject, add to roadmap backlog, convert to AO issue draft, and save to Business Memory. No chatbot or free-form conversation UI was added.
+
 The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingStore` from `app/src/services/operatingStore.ts`. Their charts are calculated through `app/src/data/operatingMetrics.ts`. The router continues to use the existing pages under `app/pages`; there is only one `app/src` tree.
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
