@@ -210,7 +210,7 @@ export function BudgetManager({
       {budgets.length === 0 ? (
         <p className="m-0 px-6 py-8 text-sm text-muted">No category budgets yet. Set a monthly budget for Software, Marketing, AI Services, Office, or any expense category you track.</p>
       ) : (
-        <div className="grid gap-4 p-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+        <div className="grid grid-cols-1 gap-4 p-6 lg:grid-cols-2">
           {budgets.map((budget) => (
             <div key={budget.id} className="min-w-0 rounded-2xl border border-line bg-ink/35 p-4">
               <div className="mb-3 grid grid-cols-1 items-start gap-3 2xl:grid-cols-[1fr_180px]">
