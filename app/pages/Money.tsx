@@ -166,10 +166,10 @@ export function Money() {
             <div className="col-span-6">
               <MonthlyFinancialSummary summary={money.budgetSummary} />
             </div>
-            <div className="col-span-7">
+            <div className="col-span-12">
               <BudgetManager budgets={money.budgetProgress} onSaveBudget={money.setBudget} onDeleteBudget={money.deleteBudget} />
             </div>
-            <div className="col-span-5">
+            <div className="col-span-12">
               <RecurringCostManager recurringCosts={money.recurringCosts} monthlyTotal={money.metrics.monthlyRecurringCosts} />
             </div>
           </div>

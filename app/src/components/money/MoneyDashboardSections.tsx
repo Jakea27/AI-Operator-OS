@@ -211,7 +211,7 @@ export function BudgetManager({
         <p className="m-0 px-6 py-8 text-sm text-muted">No category budgets yet. Set a monthly budget for Software, Marketing, AI Services, Office, or any expense category you track.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px] border-collapse text-left">
+          <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
               <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
                 <th className="px-6 py-3 font-medium">Category</th>
