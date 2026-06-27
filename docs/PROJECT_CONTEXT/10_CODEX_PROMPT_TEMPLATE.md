@@ -8,9 +8,14 @@ You are the lead software engineer for AI Operator OS.
 Repository:
 LOCAL AI-Operator-OS
 
-Before editing:
+Before implementing:
 - Read docs/PROJECT_CONTEXT/00_START_HERE.md.
+- Read docs/PROJECT_CONTEXT/01_CURRENT_STATUS.md.
+- Read docs/PROJECT_CONTEXT/02_NEXT_MILESTONE.md.
 - Confirm the active route/component/store before changing code.
+- Search for existing implementation before adding anything new.
+- Verify packaged build before debugging missing UI.
+- Never assume. Verify.
 
 Architecture Rules:
 - Preserve one permanent codebase.
@@ -34,8 +39,18 @@ Verification:
 When finished:
 - Summarize files changed.
 - Summarize verification.
-- Stop and wait for review.
+- Stop after milestone completion.
+- Wait for CEO review.
 ```
+
+## Before Implementing Checklist
+
+- [ ] Active route verified in `app/src/App.tsx`.
+- [ ] Active component path confirmed.
+- [ ] Existing implementation searched with repository search.
+- [ ] Store/persistence pattern identified.
+- [ ] Scope confirmed as feature, debug, documentation, or polish.
+- [ ] Packaged-build verification need identified.
 
 ## Prompting Notes
 
@@ -50,4 +65,6 @@ State whether the task is:
 - Packaged app verification
 
 For debug-only tasks, explicitly say: "Do not modify code."
+
+For milestone work, explicitly say: "Stop after this milestone and wait for review."
 

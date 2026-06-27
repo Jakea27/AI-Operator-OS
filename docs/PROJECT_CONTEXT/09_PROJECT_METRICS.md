@@ -1,48 +1,77 @@
-# Project Metrics
+# Project Health Dashboard
 
 Last Updated: 2026-06-27
 
-## Product Metrics
+This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STATUS.md` as the source of detailed project information.
+
+## Snapshot
 
 - Version: 0.1.0-alpha
+- Project phase: Foundation complete; automation infrastructure next
+- Current milestone: AO-006 Automation Engine
 - Platform: Windows desktop
 - Architecture: Electron + React + Vite + TypeScript + Tailwind
 - Persistence: localStorage
 - Release output: installer, portable executable, unpacked Windows app
 
-## Active Workspaces
+## Milestone Health
 
-- Dashboard
-- CEO
-- Money
-- Development
-- Memory
-- Roadmap
-- Operators
-- Approval Queue
-- Settings
+- Completed milestone tracks: AO-001, AO-002, AO-003, AO-004
+- Approval track status: AO-005 implemented through AO-005.3; execution handoff remains future work
+- Money/automation track status: AO-006 implemented through AO-006.4 diagnostics; Automation Engine remains next
+- Reserved polish milestone: AO-090 UX & Visual Polish
 
-## Current Local Systems
+## Architecture Health
 
-- Money Store Foundation
+- One-codebase rule: Healthy
+- Local-first architecture: Healthy
+- CEO approval workflow: Healthy
+- External AI/API usage: Not connected
+- Duplicate store risk: Watch
+- Packaged-build drift risk: Watch
+
+## Shared Stores and Systems
+
+- Operating store
+- Money core/store adapter
 - Business Memory Engine
-- CEO Daily Briefing Engine
-- AI Operator Framework
-- Executive Coordinator
-- CTO Recommendation Engine
-- Roadmap Backlog Store
 - Approval Queue Store
+- Operator Store
+- Coordinator history
+- CTO Recommendation Store
+- Roadmap Backlog Store
 - Build Info diagnostics
 
-## Completed AO Tracks
+## Feature Modules
 
-- AO-001 through AO-004.5 are functionally complete.
-- AO-005 approval infrastructure and visibility are implemented through AO-005.3.
-- AO-006 money foundation and budgeting are implemented through AO-006.4 diagnostics.
+- Dashboard
+- CEO Daily Briefing
+- Money Department
+- Business Memory
+- Operators
+- Executive Coordinator
+- CTO Recommendation Engine
+- Roadmap Operator Backlog
+- Approval Queue
+- Settings and Build Info
 
-## Quality Gates
+## Backlog Counts
 
-- `npm run build` must pass before handoff.
-- `npm run dist` must pass before packaged-app verification.
-- Settings Build Info must match the latest packaged bundle when verifying desktop behavior.
+- Open bugs: 0 documented in PROJECT_CONTEXT
+- Technical debt count: tracked in `docs/TECH_DEBT.md`
+- Polish backlog count: tracked in `docs/POLISH_BACKLOG.md`
+- Future ideas count: tracked in `docs/FUTURE_IDEAS.md`
+
+## Build Health
+
+- Build status: `npm run build` required before handoff
+- Packaging status: `npm run dist` required before packaged-app verification
+- Packaged verification status: verify Settings → Build Info before assuming UI changes failed
+
+## Current Risk Flags
+
+- Stale packaged app can hide completed source changes.
+- Development and packaged Electron use separate localStorage origins.
+- Future automation work must not bypass CEO approval.
+- Cosmetic polish should not interrupt core milestone delivery.
 

@@ -1,20 +1,51 @@
 # Next Milestone
 
-## Current Track
+## Current Milestone
 
-AI Operator OS is moving from foundation departments toward automation infrastructure.
+AO-006 — Automation Engine
 
-## Likely Next Work
+AI Operator OS is moving from foundation departments toward safe local automation infrastructure. The next milestone should create the first reusable automation layer without executing consequential actions automatically.
 
-The next major milestone is AO-006 Automation Engine, unless the CEO reprioritizes.
+## Objective
 
-Recommended next slices:
+Build a local-first Automation Engine that can draft, queue, classify, and track automation work while preserving CEO approval as the execution boundary.
 
-1. Define local automation types and safety rules.
-2. Create an automation queue/store.
-3. Require CEO approval before consequential automation execution.
-4. Add deterministic local automation drafts only.
-5. Add execution history without external API calls.
+The Automation Engine should support future workflows from Money, Operators, Roadmap, Memory, and Approval Queue, but this milestone should remain deterministic and local-only.
+
+## Success Criteria
+
+- Automation concepts are modeled with clear TypeScript types.
+- Automation records persist locally.
+- Automation tasks can be queued or drafted without external APIs.
+- Consequential automation requires CEO approval before execution.
+- The system records automation history and status.
+- Existing Dashboard, Operators, Approval Queue, Roadmap, Money, and Memory behavior remains intact.
+- No chatbot or free-form assistant interface is introduced.
+
+## Expected Files or Modules to Modify
+
+Likely areas:
+
+- `app/src/core/automation/`
+- `app/src/features/automation/` if a visible workspace is approved
+- `app/src/core/operators/` for operator-created automation drafts
+- `app/src/features/approval/` for approval handoff if needed
+- `app/src/core/roadmap/` only if automation items become roadmap/backlog items
+- `docs/PROJECT_MEMORY.md`
+- `docs/ROADMAP.md`
+- `CHANGELOG.md`
+
+Exact files should be confirmed by searching the repository before coding.
+
+## Files That Should Not Change Without Explicit Need
+
+- Electron builder configuration
+- Existing Money store behavior
+- Existing Approval Queue decision logic
+- Existing Business Memory migration logic
+- Existing Roadmap store shape unless integration requires it
+- Packaged release artifacts unless the task explicitly requires `npm run dist`
+- Cosmetic-only UI files unless the milestone includes UI
 
 ## Guardrails
 
@@ -25,6 +56,7 @@ Recommended next slices:
 - All important actions must remain reviewable by the CEO.
 - Reuse Approval Queue for decision control.
 - Reuse Operators and Executive Coordinator for routing and recommendations.
+- Reuse existing local persistence patterns.
 
 ## Current Supporting Systems
 
@@ -35,6 +67,28 @@ Recommended next slices:
 - Executive Coordinator routes requests to operators.
 - Approval Queue records CEO decisions.
 - Roadmap accepts operator recommendations as backlog items.
+
+## Definition of Done
+
+- New automation logic exists in the expected active code path.
+- Automation data persists locally.
+- No duplicate stores, pages, or route systems are created.
+- CEO approval workflow remains preserved.
+- Empty states are clear if no automation data exists.
+- Documentation is updated for the milestone.
+- `npm run build` succeeds.
+- `npm run dist` succeeds if desktop packaging or packaged behavior changes.
+
+## Required Verification Steps
+
+From `app/`:
+
+1. Run `npm run build`.
+2. If the milestone changes desktop behavior, run `npm run dist`.
+3. Launch `app/release/win-unpacked/AI Operator OS.exe`.
+4. Open Settings and confirm Build Info shows the latest bundle hash.
+5. Verify the milestone in the packaged app when packaged behavior matters.
+6. Confirm no existing workspaces regressed.
 
 ## Definition of Ready for New Work
 

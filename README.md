@@ -56,4 +56,15 @@ Maximize owner profit while minimizing owner time.
 
 ## Project Context Handoff
 
-Future ChatGPT/Codex sessions should begin with `docs/PROJECT_CONTEXT/00_START_HERE.md`. The `docs/PROJECT_CONTEXT/` folder contains the current status, next milestone, build workflow, testing checklist, development playbook, common pitfalls, lessons learned, project metrics, and a reusable Codex prompt template.
+Future ChatGPT/Codex sessions should begin with `docs/PROJECT_CONTEXT/00_START_HERE.md`. The `docs/PROJECT_CONTEXT/` folder is the AI Development Operating Manual for the project. It exists so a new session can understand the product, current milestone, architecture rules, build workflow, testing expectations, and known pitfalls before modifying the repository.
+
+Recommended reading order:
+
+1. `docs/PROJECT_CONTEXT/00_START_HERE.md`
+2. `docs/PROJECT_CONTEXT/01_CURRENT_STATUS.md`
+3. `docs/PROJECT_CONTEXT/02_NEXT_MILESTONE.md`
+4. `docs/PROJECT_CONTEXT/05_DEVELOPMENT_PLAYBOOK.md`
+5. `docs/PROJECT_CONTEXT/06_COMMON_PITFALLS.md`
+6. `docs/PROJECT_CONTEXT/11_SESSION_CHECKLIST.md`
+
+Every new Codex/ChatGPT development session should read `00_START_HERE.md` first.
