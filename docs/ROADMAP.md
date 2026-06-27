@@ -1,7 +1,11 @@
 # Roadmap
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-26
+Last Updated: 2026-06-27
+
+## Start Here for Future Sessions
+
+Future ChatGPT/Codex sessions should read `docs/PROJECT_CONTEXT/00_START_HERE.md` before using this roadmap. The Project Context folder contains the active handoff system, build workflow, testing checklist, current status, and common pitfalls.
 
 ## Sprint 0.1 - Foundation
 
@@ -102,6 +106,7 @@ Core architecture, functionality, and business value take priority until a dedic
 
 ## Planning Documents
 
+- `docs/PROJECT_CONTEXT/00_START_HERE.md` is the first-read handoff for future ChatGPT/Codex sessions.
 - `docs/FUTURE_IDEAS.md` tracks ideas that are intentionally not on the active roadmap.
 - `docs/TECH_DEBT.md` tracks intentional technical debt, future refactoring, and deferred engineering work.
 - `docs/POLISH_BACKLOG.md` tracks non-critical visual, UX, desktop, and quality-of-life improvements reserved for AO-090.

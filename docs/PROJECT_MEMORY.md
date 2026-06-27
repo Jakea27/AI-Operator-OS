@@ -1,7 +1,7 @@
 # Project Memory
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-26
+Last Updated: 2026-06-27
 
 ## Current State
 
@@ -87,6 +87,8 @@ The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingSt
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
 
+Documentation handoff note: `docs/PROJECT_CONTEXT/` is now the permanent project context system for future ChatGPT/Codex sessions. New sessions should read `docs/PROJECT_CONTEXT/00_START_HERE.md` first, then use the current status, next milestone, build workflow, testing checklist, development playbook, common pitfalls, handoff template, lessons learned, project metrics, and Codex prompt template in that folder. This system records the one-codebase rule, local-first architecture, CEO approval workflow, GitHub Desktop review flow, Build Info verification requirement, and the rule that cosmetic polish belongs in `docs/POLISH_BACKLOG.md`.
+
 ## Active Sprint
 
 Sprint 0.1 - Foundation and Desktop Command Center
@@ -97,6 +99,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - ChatGPT Project is the office.
 - Codex is the developer.
 - Jake is the CEO.
+- Future sessions read `docs/PROJECT_CONTEXT/00_START_HERE.md` first.
 - One permanent codebase.
 - Manual approval first.
 - Keep fixed costs below $30/month until revenue.
