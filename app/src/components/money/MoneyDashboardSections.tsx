@@ -106,6 +106,12 @@ export function FinancialHealthCard({ health }: { health: MoneyHealthSummary }) 
       ? 'border-[#ffcc66]/25 bg-gradient-to-r from-[#ffcc66]/[0.08] to-panel'
       : 'border-[#ff9e8f]/25 bg-gradient-to-r from-[#ff9e8f]/[0.08] to-panel'
   const Icon = health.status === 'Healthy' ? CheckCircle2 : health.status === 'Stable' ? MinusCircle : AlertTriangle
+  const recommendation =
+    health.status === 'Healthy'
+      ? 'Financial health is strong. Keep recurring costs controlled while reinvesting carefully into the highest-return work.'
+      : health.status === 'Stable'
+        ? 'The business is profitable, but margin is under 30%. Review recurring costs before increasing spend.'
+        : 'Profit is zero or negative. Reduce recurring commitments or increase revenue before adding new costs.'
 
   return (
     <section className={`panel p-6 ${panelTone}`}>
@@ -129,6 +135,9 @@ export function FinancialHealthCard({ health }: { health: MoneyHealthSummary }) 
       <p className="mb-0 mt-4 text-xs leading-5 text-muted">
         Healthy means positive profit with at least 30% margin. Stable means profitable below 30%. Warning means profit is zero or negative.
       </p>
+      <div className={`mt-4 rounded-2xl border p-4 text-sm leading-6 ${tone}`}>
+        <span className="font-semibold">Recommendation: </span>{recommendation}
+      </div>
     </section>
   )
 }
@@ -159,6 +168,7 @@ export function BudgetManager({
 }) {
   const [category, setCategory] = useState<string>(expenseCategories[0])
   const [amount, setAmount] = useState('')
+  const [draftAmounts, setDraftAmounts] = useState<Record<string, string>>({})
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
@@ -168,11 +178,19 @@ export function BudgetManager({
     setAmount('')
   }
 
+  const saveExistingBudget = (budget: MoneyBudgetProgress) => {
+    const draft = draftAmounts[budget.category] ?? String(budget.amount)
+    const parsedAmount = Number(draft)
+    if (!Number.isFinite(parsedAmount) || parsedAmount < 0) return
+    onSaveBudget(budget.category, parsedAmount)
+  }
+
   return (
     <section className="panel overflow-hidden">
       <div className="border-b border-line px-6 py-5">
-        <p className="eyebrow mb-2">Monthly Budgets</p>
-        <h3 className="m-0 text-xl font-semibold">Category budget progress</h3>
+        <p className="eyebrow mb-2">Budget Management</p>
+        <h3 className="m-0 text-xl font-semibold">Monthly category budgets</h3>
+        <p className="mb-0 mt-2 text-xs text-muted">Edit budget amounts directly here. Changes save locally through the shared Money store.</p>
       </div>
       <form onSubmit={submit} className="grid grid-cols-[1fr_160px_auto] gap-3 border-b border-line px-6 py-4">
         <label className="text-xs text-muted">
@@ -195,22 +213,41 @@ export function BudgetManager({
         <div className="divide-y divide-line">
           {budgets.map((budget) => (
             <div key={budget.id} className="px-6 py-4">
-              <div className="mb-3 flex items-start justify-between gap-4">
+              <div className="mb-3 grid grid-cols-[1fr_210px_auto] items-start gap-4">
                 <div>
                   <p className="m-0 text-sm font-semibold text-white">{budget.category}</p>
                   <p className="mb-0 mt-1 text-xs text-muted">
                     {formatCurrency(budget.spent)} spent of {formatCurrency(budget.amount)} · {formatCurrency(budget.remaining)} remaining
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <label className="text-xs text-muted">
+                  Budget amount
+                  <input
+                    className="field mt-2"
+                    min="0"
+                    step="1"
+                    type="number"
+                    value={draftAmounts[budget.category] ?? String(budget.amount)}
+                    onBlur={() => saveExistingBudget(budget)}
+                    onChange={(event) => setDraftAmounts({ ...draftAmounts, [budget.category]: event.target.value })}
+                  />
+                </label>
+                <div className="flex items-center justify-end gap-2 pt-6">
                   <BudgetStatusBadge status={budget.status} />
+                  <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
                   <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
                 </div>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
                 <div className={`h-full rounded-full ${budget.status === 'Over Budget' ? 'bg-[#ff9e8f]' : budget.status === 'Watch' ? 'bg-[#ffcc66]' : 'bg-mint'}`} style={{ width: `${Math.min(100, budget.percentageUsed)}%` }} />
               </div>
-              <p className="mb-0 mt-2 text-[11px] text-muted">{budget.percentageUsed.toFixed(1)}% used</p>
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                <MiniStat label="Budget amount" value={formatCurrency(budget.amount)} />
+                <MiniStat label="Amount spent" value={formatCurrency(budget.spent)} />
+                <MiniStat label="Remaining" value={formatCurrency(budget.remaining)} />
+                <MiniStat label="Percent used" value={`${budget.percentageUsed.toFixed(1)}%`} />
+              </div>
+              <p className="mb-0 mt-2 text-[11px] text-muted">Percent used: {budget.percentageUsed.toFixed(1)}%</p>
             </div>
           ))}
         </div>
@@ -245,7 +282,10 @@ export function RecurringCostManager({
                 <p className="m-0 text-sm font-semibold text-white">{cost.name}</p>
                 <p className="mb-0 mt-1 text-xs text-muted">{cost.category} · Next billing {cost.nextBillingDate ? new Date(`${cost.nextBillingDate}T12:00:00`).toLocaleDateString() : 'not available'}</p>
               </div>
-              <p className="m-0 text-sm font-semibold text-[#ffcc66]">{formatCurrency(cost.amount)}</p>
+              <div className="text-right">
+                <p className="eyebrow mb-1">Monthly amount</p>
+                <p className="m-0 text-sm font-semibold text-[#ffcc66]">{formatCurrency(cost.amount)}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -262,6 +302,15 @@ function BudgetStatusBadge({ status }: { status: MoneyBudgetProgress['status'] }
       : 'bg-[#ff9e8f]/10 text-[#ff9e8f] border-[#ff9e8f]/20'
 
   return <span className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${className}`}>{status}</span>
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-ink/35 p-3">
+      <p className="eyebrow mb-1">{label}</p>
+      <p className="m-0 text-xs font-semibold text-white">{value}</p>
+    </div>
+  )
 }
 
 function CostStat({ label, value, tone }: { label: string; value: string; tone: 'mint' | 'amber' | 'rose' | 'neutral' }) {
