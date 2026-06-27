@@ -108,6 +108,8 @@ export function Money() {
           </section>
         )}
 
+        <FinancialHealthCard health={money.health} />
+
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12">
             <MonthlyFinancialSummary summary={money.budgetSummary} />
@@ -120,9 +122,6 @@ export function Money() {
           </div>
           <div className="col-span-7">
             <CostOverview metrics={money.metrics} />
-          </div>
-          <div className="col-span-5">
-            <FinancialHealthCard health={money.health} />
           </div>
           <div className="col-span-5">
             <CostBreakdown breakdown={money.categoryBreakdown} />

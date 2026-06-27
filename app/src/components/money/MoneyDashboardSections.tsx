@@ -96,24 +96,32 @@ export function RecentFinancialActivity({ activity }: { activity: MoneyActivityI
 
 export function FinancialHealthCard({ health }: { health: MoneyHealthSummary }) {
   const tone = health.status === 'Healthy'
-    ? 'text-mint bg-mint/10 border-mint/20'
+    ? 'text-mint bg-mint/10 border-mint/25'
     : health.status === 'Stable'
-      ? 'text-[#ffcc66] bg-[#ffcc66]/10 border-[#ffcc66]/20'
-      : 'text-[#ff9e8f] bg-[#ff9e8f]/10 border-[#ff9e8f]/20'
+      ? 'text-[#ffcc66] bg-[#ffcc66]/10 border-[#ffcc66]/25'
+      : 'text-[#ff9e8f] bg-[#ff9e8f]/10 border-[#ff9e8f]/25'
+  const panelTone = health.status === 'Healthy'
+    ? 'border-mint/25 bg-gradient-to-r from-mint/[0.08] to-panel'
+    : health.status === 'Stable'
+      ? 'border-[#ffcc66]/25 bg-gradient-to-r from-[#ffcc66]/[0.08] to-panel'
+      : 'border-[#ff9e8f]/25 bg-gradient-to-r from-[#ff9e8f]/[0.08] to-panel'
   const Icon = health.status === 'Healthy' ? CheckCircle2 : health.status === 'Stable' ? MinusCircle : AlertTriangle
 
   return (
-    <section className="panel p-6">
-      <div className="flex items-start justify-between gap-4">
+    <section className={`panel p-6 ${panelTone}`}>
+      <div className="flex items-center justify-between gap-6">
         <div>
           <p className="eyebrow mb-2">Financial Health</p>
-          <h3 className="m-0 text-xl font-semibold">Monthly operating signal</h3>
+          <h3 className="m-0 font-display text-2xl font-semibold">Current status: {health.status}</h3>
+          <p className="mb-0 mt-2 max-w-2xl text-xs leading-5 text-muted">
+            This status is calculated from net profit and profit margin using the shared local Money store.
+          </p>
         </div>
-        <span className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${tone}`}>
-          <Icon size={14} /> {health.status}
+        <span className={`flex shrink-0 items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold ${tone}`}>
+          <Icon size={18} /> {health.status}
         </span>
       </div>
-      <div className="mt-5 grid grid-cols-3 gap-3">
+      <div className="mt-6 grid grid-cols-3 gap-4">
         <CostStat label="Net Profit" value={formatCurrency(health.netProfit)} tone={health.netProfit > 0 ? 'mint' : 'rose'} />
         <CostStat label="Recurring Cost Total" value={formatCurrency(health.recurringCostTotal)} tone="amber" />
         <CostStat label="Profit Margin" value={`${health.profitMargin.toFixed(1)}%`} tone={health.profitMargin >= 30 ? 'mint' : health.profitMargin > 0 ? 'amber' : 'rose'} />

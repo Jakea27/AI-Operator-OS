@@ -146,6 +146,7 @@
 - Added shared budget progress, budget summary, and recurring cost selectors to the Money core
 - Added Money page budget manager with Healthy, Watch, and Over Budget status indicators
 - Added recurring monthly cost manager with monthly total and next billing dates
+- Fixed AO-006.3 Financial Health visibility by making the Money page health card full-width and clearly labeled with status, net profit, recurring cost total, and profit margin
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator
