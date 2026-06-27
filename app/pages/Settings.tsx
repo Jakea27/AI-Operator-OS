@@ -38,25 +38,6 @@ export function Settings() {
     <>
       <PageIntro eyebrow="Workspace control" title="Make the system yours." description="Configure your profile and manage the local operating dataset." action={<button className="btn-primary flex items-center gap-2"><Save size={15} /> Saved locally</button>} />
       <div className="grid grid-cols-12 gap-4">
-        <section className="panel col-span-12 border-lime/25 bg-lime/[0.035] p-6">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div>
-              <div>
-                <p className="eyebrow mb-2 text-lime">Running Build</p>
-                <h3 className="m-0 text-lg font-semibold">Build Info</h3>
-                <p className="mb-0 mt-1 text-xs text-muted">Confirm the desktop app is running the latest local frontend bundle.</p>
-              </div>
-            </div>
-            <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-xs font-semibold text-lime">v{buildInfo.version}</span>
-          </div>
-          <div className="grid grid-cols-4 gap-3">
-            <BuildInfoItem label="App version" value={buildInfo.version} />
-            <BuildInfoItem label="Build timestamp" value={formatBuildTimestamp(buildInfo.timestamp)} />
-            <BuildInfoItem label="Build mode" value={buildInfo.mode} />
-            <BuildInfoItem label="Frontend bundle" value={buildInfo.bundleFile} />
-          </div>
-        </section>
         <section className="panel col-span-8 p-6">
           <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div><div><h3 className="m-0 text-base font-semibold">Operator profile</h3><p className="mb-0 mt-1 text-xs text-muted">Used throughout your local workspace.</p></div></div>
           <div className="grid grid-cols-2 gap-4"><label className="text-xs text-muted">Business name<input className="field mt-2 text-white" value={data.settings.businessName} onChange={(event) => updateSettings({ businessName: event.target.value })} /></label><label className="text-xs text-muted">Owner name<input className="field mt-2 text-white" value={data.settings.ownerName} onChange={(event) => updateSettings({ ownerName: event.target.value })} /></label></div>
@@ -69,6 +50,26 @@ export function Settings() {
           <div className="border-b border-line px-6 py-5"><h3 className="m-0 text-base font-semibold">Preferences</h3></div>
           <div className="flex items-center gap-4 px-6 py-5"><div className="rounded-lg bg-white/[0.04] p-2.5 text-muted"><Bell size={17} /></div><div className="flex-1"><p className="m-0 text-sm font-medium">Daily executive briefing</p><p className="mb-0 mt-1 text-xs text-muted">Prepare a CEO summary from current local metrics.</p></div><button onClick={() => updateSettings({ dailyBriefing: !data.settings.dailyBriefing })} className={`relative h-6 w-11 rounded-full transition ${data.settings.dailyBriefing ? 'bg-lime' : 'bg-line'}`}><span className={`absolute top-1 h-4 w-4 rounded-full bg-ink transition ${data.settings.dailyBriefing ? 'left-6' : 'left-1'}`} /></button></div>
           <div className="flex items-center gap-4 border-t border-line px-6 py-5"><div className="rounded-lg bg-white/[0.04] p-2.5 text-muted"><Database size={17} /></div><div className="flex-1"><p className="m-0 text-sm font-medium">Operating records</p><p className="mb-0 mt-1 text-xs text-muted">{data.revenueEntries.length} revenue · {data.expenseEntries.length} expenses · {data.tasks.length} tasks · {data.approvals.length} approvals · {memoryEntries.length} memories</p></div><span className="text-xs font-medium text-mint">Local</span></div>
+        </section>
+        <section className="panel col-span-12 border-lime/25 bg-lime/[0.035] p-6">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div>
+              <div>
+                <p className="eyebrow mb-2 text-lime">Running Build</p>
+                <h3 className="m-0 text-lg font-semibold">Build Info</h3>
+                <p className="mb-0 mt-1 text-xs text-muted">Confirm the desktop app is running the latest local frontend bundle.</p>
+              </div>
+            </div>
+            <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-xs font-semibold text-lime">v{buildInfo.version}</span>
+          </div>
+          <div className="grid grid-cols-5 gap-3">
+            <BuildInfoItem label="App version" value={buildInfo.version} />
+            <BuildInfoItem label="Build timestamp" value={formatBuildTimestamp(buildInfo.timestamp)} />
+            <BuildInfoItem label="Build mode" value={buildInfo.mode} />
+            <BuildInfoItem label="Frontend bundle" value={buildInfo.bundleFile} />
+            <BuildInfoItem label="Bundle hash" value={buildInfo.bundleHash} />
+          </div>
         </section>
         <section className="panel col-span-4 p-6">
           <h3 className="m-0 text-base font-semibold">Data controls</h3>
