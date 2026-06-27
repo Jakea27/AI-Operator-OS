@@ -210,10 +210,10 @@ export function BudgetManager({
       {budgets.length === 0 ? (
         <p className="m-0 px-6 py-8 text-sm text-muted">No category budgets yet. Set a monthly budget for Software, Marketing, AI Services, Office, or any expense category you track.</p>
       ) : (
-        <div className="divide-y divide-line">
+        <div className="grid grid-cols-1 gap-4 p-6 xl:grid-cols-2">
           {budgets.map((budget) => (
-            <div key={budget.id} className="px-6 py-4">
-              <div className="mb-3 grid grid-cols-[1fr_210px_auto] items-start gap-4">
+            <div key={budget.id} className="rounded-2xl border border-line bg-ink/35 p-4">
+              <div className="mb-3 grid grid-cols-1 items-start gap-3 2xl:grid-cols-[1fr_180px]">
                 <div>
                   <p className="m-0 text-sm font-semibold text-white">{budget.category}</p>
                   <p className="mb-0 mt-1 text-xs text-muted">
@@ -232,16 +232,16 @@ export function BudgetManager({
                     onChange={(event) => setDraftAmounts({ ...draftAmounts, [budget.category]: event.target.value })}
                   />
                 </label>
-                <div className="flex items-center justify-end gap-2 pt-6">
-                  <BudgetStatusBadge status={budget.status} />
-                  <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
-                  <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
-                </div>
+              </div>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <BudgetStatusBadge status={budget.status} />
+                <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
+                <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
                 <div className={`h-full rounded-full ${budget.status === 'Over Budget' ? 'bg-[#ff9e8f]' : budget.status === 'Watch' ? 'bg-[#ffcc66]' : 'bg-mint'}`} style={{ width: `${Math.min(100, budget.percentageUsed)}%` }} />
               </div>
-              <div className="mt-3 grid grid-cols-4 gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-2 2xl:grid-cols-4">
                 <MiniStat label="Budget amount" value={formatCurrency(budget.amount)} />
                 <MiniStat label="Amount spent" value={formatCurrency(budget.spent)} />
                 <MiniStat label="Remaining" value={formatCurrency(budget.remaining)} />
