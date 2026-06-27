@@ -98,6 +98,11 @@ export function AppShell() {
             </div>
             <ChevronDown size={14} className="text-muted" />
           </div>
+          <div className="mt-3 rounded-xl border border-lime/20 bg-lime/[0.04] px-3 py-2">
+            <p className="m-0 text-[9px] font-semibold uppercase tracking-[0.16em] text-lime">Build Info</p>
+            <p className="m-0 mt-1 truncate text-[10px] text-[#dce7df]">v{buildInfo.version} · {buildInfo.bundleHash}</p>
+            <p className="m-0 truncate text-[10px] text-muted">{buildInfo.mode}</p>
+          </div>
         </div>
       </aside>
 

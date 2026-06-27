@@ -38,21 +38,17 @@ export function Settings() {
     <>
       <PageIntro eyebrow="Workspace control" title="Make the system yours." description="Configure your profile and manage the local operating dataset." action={<button className="btn-primary flex items-center gap-2"><Save size={15} /> Saved locally</button>} />
       <div className="grid grid-cols-12 gap-4">
-        <section className="panel col-span-8 p-6">
-          <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div><div><h3 className="m-0 text-base font-semibold">Operator profile</h3><p className="mb-0 mt-1 text-xs text-muted">Used throughout your local workspace.</p></div></div>
-          <div className="grid grid-cols-2 gap-4"><label className="text-xs text-muted">Business name<input className="field mt-2 text-white" value={data.settings.businessName} onChange={(event) => updateSettings({ businessName: event.target.value })} /></label><label className="text-xs text-muted">Owner name<input className="field mt-2 text-white" value={data.settings.ownerName} onChange={(event) => updateSettings({ ownerName: event.target.value })} /></label></div>
-        </section>
-        <section className="panel col-span-4 p-6">
-          <div className="flex items-center gap-3"><div className="rounded-xl bg-mint/10 p-2.5 text-mint"><ShieldCheck size={18} /></div><div><h3 className="m-0 text-sm font-semibold">Local-first</h3><p className="mb-0 mt-1 text-[11px] text-muted">Your data stays on this device.</p></div></div>
-          <div className="mt-6 rounded-xl border border-line bg-ink/40 p-4"><p className="m-0 text-xs text-muted">Storage health</p><p className={`mb-0 mt-2 text-sm font-medium ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}>{storageAvailable ? 'Available' : 'Unavailable'}</p></div>
-        </section>
-        <section className="panel col-span-12 p-6">
-          <div className="mb-5 flex items-center gap-3">
-            <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div>
-            <div>
-              <h3 className="m-0 text-base font-semibold">Build Info</h3>
-              <p className="mb-0 mt-1 text-xs text-muted">Use this to confirm the desktop app is running the latest local frontend build.</p>
+        <section className="panel col-span-12 border-lime/25 bg-lime/[0.035] p-6">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div>
+              <div>
+                <p className="eyebrow mb-2 text-lime">Running Build</p>
+                <h3 className="m-0 text-lg font-semibold">Build Info</h3>
+                <p className="mb-0 mt-1 text-xs text-muted">Confirm the desktop app is running the latest local frontend bundle.</p>
+              </div>
             </div>
+            <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-xs font-semibold text-lime">v{buildInfo.version}</span>
           </div>
           <div className="grid grid-cols-4 gap-3">
             <BuildInfoItem label="App version" value={buildInfo.version} />
@@ -60,6 +56,14 @@ export function Settings() {
             <BuildInfoItem label="Build mode" value={buildInfo.mode} />
             <BuildInfoItem label="Frontend bundle" value={buildInfo.bundleFile} />
           </div>
+        </section>
+        <section className="panel col-span-8 p-6">
+          <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div><div><h3 className="m-0 text-base font-semibold">Operator profile</h3><p className="mb-0 mt-1 text-xs text-muted">Used throughout your local workspace.</p></div></div>
+          <div className="grid grid-cols-2 gap-4"><label className="text-xs text-muted">Business name<input className="field mt-2 text-white" value={data.settings.businessName} onChange={(event) => updateSettings({ businessName: event.target.value })} /></label><label className="text-xs text-muted">Owner name<input className="field mt-2 text-white" value={data.settings.ownerName} onChange={(event) => updateSettings({ ownerName: event.target.value })} /></label></div>
+        </section>
+        <section className="panel col-span-4 p-6">
+          <div className="flex items-center gap-3"><div className="rounded-xl bg-mint/10 p-2.5 text-mint"><ShieldCheck size={18} /></div><div><h3 className="m-0 text-sm font-semibold">Local-first</h3><p className="mb-0 mt-1 text-[11px] text-muted">Your data stays on this device.</p></div></div>
+          <div className="mt-6 rounded-xl border border-line bg-ink/40 p-4"><p className="m-0 text-xs text-muted">Storage health</p><p className={`mb-0 mt-2 text-sm font-medium ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}>{storageAvailable ? 'Available' : 'Unavailable'}</p></div>
         </section>
         <section className="panel col-span-8 overflow-hidden">
           <div className="border-b border-line px-6 py-5"><h3 className="m-0 text-base font-semibold">Preferences</h3></div>
