@@ -125,9 +125,29 @@ export function Money() {
             <ExpenseBreakdownChart data={expenses} />
           </ChartShell>
           <section className="panel col-span-6 flex flex-col justify-center p-6">
-            <p className="eyebrow mb-2">Accounting Status</p>
-            <h3 className="m-0 text-xl font-semibold">{data.revenueEntries.length + data.expenseEntries.length} total records</h3>
-            <p className="mb-0 mt-3 text-xs leading-6 text-muted">All financial data is stored locally. This month includes {formatCurrency(money.metrics.monthlyRecurringCosts)} recurring costs and {formatCurrency(money.metrics.oneTimeCosts)} one-time costs.</p>
+            <p className="eyebrow mb-2">Financial Health</p>
+            <h3 className="m-0 text-xl font-semibold">Status: {money.health.status}</h3>
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <div className="rounded-2xl border border-line bg-ink/35 p-4">
+                <p className="eyebrow mb-2">Net Profit</p>
+                <p className={`m-0 text-lg font-semibold ${money.health.netProfit > 0 ? 'text-mint' : 'text-[#ffb09f]'}`}>{formatCurrency(money.health.netProfit)}</p>
+              </div>
+              <div className="rounded-2xl border border-line bg-ink/35 p-4">
+                <p className="eyebrow mb-2">Profit Margin</p>
+                <p className={`m-0 text-lg font-semibold ${money.health.profitMargin >= 30 ? 'text-mint' : money.health.profitMargin > 0 ? 'text-[#ffcc66]' : 'text-[#ffb09f]'}`}>{money.health.profitMargin.toFixed(1)}%</p>
+              </div>
+              <div className="rounded-2xl border border-line bg-ink/35 p-4">
+                <p className="eyebrow mb-2">Recurring Monthly Cost</p>
+                <p className="m-0 text-lg font-semibold text-[#ffcc66]">{formatCurrency(money.health.recurringCostTotal)}</p>
+              </div>
+            </div>
+            <p className="mb-0 mt-4 text-xs leading-6 text-muted">
+              {money.health.status === 'Healthy'
+                ? 'Recommendation: Financial health is strong. Keep recurring costs controlled while reinvesting carefully.'
+                : money.health.status === 'Stable'
+                  ? 'Recommendation: The business is profitable, but margin is below 30%. Review recurring costs before increasing spend.'
+                  : 'Recommendation: Profit is zero or negative. Reduce recurring commitments or increase revenue before adding new costs.'}
+            </p>
           </section>
         </div>
 
