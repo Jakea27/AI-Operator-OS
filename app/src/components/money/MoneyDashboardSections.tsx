@@ -210,52 +210,53 @@ export function BudgetManager({
       {budgets.length === 0 ? (
         <p className="m-0 px-6 py-8 text-sm text-muted">No category budgets yet. Set a monthly budget for Software, Marketing, AI Services, Office, or any expense category you track.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 p-6 lg:grid-cols-2">
-          {budgets.map((budget) => (
-            <div key={budget.id} className="min-w-0 rounded-2xl border border-line bg-ink/35 p-4">
-              <div className="mb-3 grid grid-cols-1 items-start gap-3 2xl:grid-cols-[1fr_180px]">
-                <div>
-                  <p className="m-0 text-sm font-semibold text-white">{budget.category}</p>
-                  <p className="mb-0 mt-1 text-xs text-muted">
-                    {formatCurrency(budget.spent)} spent of {formatCurrency(budget.amount)} · {formatCurrency(budget.remaining)} remaining
-                  </p>
-                </div>
-                <label className="text-xs text-muted">
-                  Budget amount
-                  <input
-                    className="field mt-2"
-                    min="0"
-                    step="1"
-                    type="number"
-                    value={draftAmounts[budget.category] ?? String(budget.amount)}
-                    onBlur={() => saveExistingBudget(budget)}
-                    onChange={(event) => setDraftAmounts({ ...draftAmounts, [budget.category]: event.target.value })}
-                  />
-                </label>
-              </div>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <BudgetStatusBadge status={budget.status} />
-                <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
-                <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
-                <div className={`h-full rounded-full ${budget.status === 'Over Budget' ? 'bg-[#ff9e8f]' : budget.status === 'Watch' ? 'bg-[#ffcc66]' : 'bg-mint'}`} style={{ width: `${Math.min(100, budget.percentageUsed)}%` }} />
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2 2xl:grid-cols-4">
-                <MiniStat label="Budget amount" value={formatCurrency(budget.amount)} />
-                <MiniStat label="Amount spent" value={formatCurrency(budget.spent)} />
-                <MiniStat label="Remaining" value={formatCurrency(budget.remaining)} />
-                <MiniStat label="Percent used" value={`${budget.percentageUsed.toFixed(1)}%`} />
-              </div>
-              <p className="mb-0 mt-2 text-[11px] text-muted">Percent used: {budget.percentageUsed.toFixed(1)}%</p>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[860px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
+                <th className="px-6 py-3 font-medium">Category</th>
+                <th className="px-3 py-3 font-medium">Budget input</th>
+                <th className="px-3 py-3 text-right font-medium">Spent</th>
+                <th className="px-3 py-3 text-right font-medium">Remaining</th>
+                <th className="px-3 py-3 text-right font-medium">Percent Used</th>
+                <th className="px-3 py-3 font-medium">Status</th>
+                <th className="px-6 py-3 text-right font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {budgets.map((budget) => (
+                <tr key={budget.id} className="border-b border-line last:border-0">
+                  <td className="whitespace-nowrap px-6 py-3 text-sm font-semibold text-white">{budget.category}</td>
+                  <td className="px-3 py-3">
+                    <input
+                      className="field h-9 min-w-28"
+                      min="0"
+                      step="1"
+                      type="number"
+                      value={draftAmounts[budget.category] ?? String(budget.amount)}
+                      onBlur={() => saveExistingBudget(budget)}
+                      onChange={(event) => setDraftAmounts({ ...draftAmounts, [budget.category]: event.target.value })}
+                    />
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-[#ffb09f]">{formatCurrency(budget.spent)}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-mint">{formatCurrency(budget.remaining)}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-white">{budget.percentageUsed.toFixed(1)}%</td>
+                  <td className="px-3 py-3"><BudgetStatusBadge status={budget.status} /></td>
+                  <td className="px-6 py-3">
+                    <div className="flex justify-end gap-2">
+                      <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
+                      <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </section>
   )
 }
-
 export function RecurringCostManager({
   recurringCosts,
   monthlyTotal,
