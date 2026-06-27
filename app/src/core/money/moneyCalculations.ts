@@ -1,5 +1,6 @@
 import { normalizeCostType } from '@/src/services/operatingStore'
 import type { ExpenseEntry, MoneyBudget, RevenueEntry } from '@/src/services/operatingStore'
+import { expenseCategories } from '@/src/data/financeCategories'
 import type {
   MoneyActivityItem,
   MoneyBudgetProgress,
@@ -144,18 +145,31 @@ export function buildBudgetProgress(
   costItems: ExpenseEntry[],
   now = new Date(),
 ): MoneyBudgetProgress[] {
-  return budgets
-    .map((budget) => {
+  const categories = [
+    ...expenseCategories,
+    ...budgets.map((budget) => budget.category),
+    ...costItems.filter((entry) => sameMonth(entry.date, now)).map((entry) => entry.category),
+  ]
+  const uniqueCategories = Array.from(new Set(categories.filter(Boolean)))
+
+  return uniqueCategories
+    .map((category) => {
+      const budget = budgets.find((item) => item.category === category)
+      const amount = budget?.amount ?? 0
       const spent = costItems
-        .filter((entry) => entry.category === budget.category && sameMonth(entry.date, now))
+        .filter((entry) => entry.category === category && sameMonth(entry.date, now))
         .reduce((sum, entry) => sum + entry.amount, 0)
-      const percentageUsed = budget.amount > 0 ? (spent / budget.amount) * 100 : spent > 0 ? 100 : 0
+      const percentageUsed = amount > 0 ? (spent / amount) * 100 : spent > 0 ? 100 : 0
       const status: MoneyBudgetStatus = percentageUsed >= 100 ? 'Over Budget' : percentageUsed >= 75 ? 'Watch' : 'Healthy'
 
       return {
-        ...budget,
+        id: budget?.id ?? `budget-${category}`,
+        category,
+        amount,
+        createdAt: budget?.createdAt ?? '',
+        updatedAt: budget?.updatedAt ?? '',
         spent,
-        remaining: Math.max(0, budget.amount - spent),
+        remaining: Math.max(0, amount - spent),
         percentageUsed,
         status,
       }

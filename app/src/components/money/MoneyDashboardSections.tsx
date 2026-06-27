@@ -129,8 +129,8 @@ export function FinancialHealthCard({ health }: { health: MoneyHealthSummary }) 
       </div>
       <div className="mt-6 grid grid-cols-3 gap-4">
         <CostStat label="Net Profit" value={formatCurrency(health.netProfit)} tone={health.netProfit > 0 ? 'mint' : 'rose'} />
-        <CostStat label="Recurring Cost Total" value={formatCurrency(health.recurringCostTotal)} tone="amber" />
         <CostStat label="Profit Margin" value={`${health.profitMargin.toFixed(1)}%`} tone={health.profitMargin >= 30 ? 'mint' : health.profitMargin > 0 ? 'amber' : 'rose'} />
+        <CostStat label="Recurring Monthly Cost" value={formatCurrency(health.recurringCostTotal)} tone="amber" />
       </div>
       <p className="mb-0 mt-4 text-xs leading-5 text-muted">
         Healthy means positive profit with at least 30% margin. Stable means profitable below 30%. Warning means profit is zero or negative.
@@ -145,13 +145,13 @@ export function FinancialHealthCard({ health }: { health: MoneyHealthSummary }) 
 export function MonthlyFinancialSummary({ summary }: { summary: MoneyBudgetSummary }) {
   return (
     <section className="panel p-6">
-      <p className="eyebrow mb-2">Monthly Financial Summary</p>
+      <p className="eyebrow mb-2">Monthly Summary</p>
       <h3 className="m-0 text-xl font-semibold">Budget control</h3>
       <div className="mt-5 grid grid-cols-4 gap-3">
         <CostStat label="Total Monthly Budget" value={formatCurrency(summary.totalBudget)} tone="neutral" />
-        <CostStat label="Total Spent" value={formatCurrency(summary.totalSpent)} tone="rose" />
+        <CostStat label="Total Spent This Month" value={formatCurrency(summary.totalSpent)} tone="rose" />
         <CostStat label="Remaining Budget" value={formatCurrency(summary.remainingBudget)} tone={summary.remainingBudget > 0 ? 'mint' : 'rose'} />
-        <CostStat label="Recurring Monthly Cost" value={formatCurrency(summary.recurringMonthlyCostTotal)} tone="amber" />
+        <CostStat label="Recurring Monthly Cost Total" value={formatCurrency(summary.recurringMonthlyCostTotal)} tone="amber" />
       </div>
     </section>
   )
@@ -267,13 +267,13 @@ export function RecurringCostManager({
     <section className="panel overflow-hidden">
       <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-5">
         <div>
-          <p className="eyebrow mb-2">Recurring Cost Manager</p>
+          <p className="eyebrow mb-2">Recurring Costs</p>
           <h3 className="m-0 text-xl font-semibold">Monthly operating commitments</h3>
         </div>
         <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1.5 text-xs font-semibold text-[#ffcc66]">{formatCurrency(monthlyTotal)} / month</span>
       </div>
       {recurringCosts.length === 0 ? (
-        <p className="m-0 px-6 py-8 text-sm text-muted">No recurring monthly costs marked yet. Add or edit an expense and choose Monthly recurring cost.</p>
+        <p className="m-0 px-6 py-8 text-sm text-muted">No recurring costs recorded yet.</p>
       ) : (
         <div className="divide-y divide-line">
           {recurringCosts.map((cost) => (

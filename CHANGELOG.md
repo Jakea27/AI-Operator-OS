@@ -149,6 +149,9 @@
 - Fixed AO-006.3 Financial Health visibility by making the Money page health card full-width and clearly labeled with status, net profit, recurring cost total, and profit margin
 - Completed AO-006.3b Money Department UI completion
 - Added Financial Health recommendation text, clearer Budget Management labels, inline budget amount editing, explicit budget stat rows, and clearer recurring monthly amount labels
+- Completed AO-006.3c visible Money Management placement fix
+- Moved Financial Health, Monthly Summary, Budget Management, and Recurring Costs into a clearly titled Financial Management section below charts and above history tables
+- Made Budget Management render default expense categories even before budgets are saved, while preserving local persistence for edited budget amounts
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

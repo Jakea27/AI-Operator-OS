@@ -108,29 +108,6 @@ export function Money() {
           </section>
         )}
 
-        <FinancialHealthCard health={money.health} />
-
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12">
-            <MonthlyFinancialSummary summary={money.budgetSummary} />
-          </div>
-          <div className="col-span-7">
-            <BudgetManager budgets={money.budgetProgress} onSaveBudget={money.setBudget} onDeleteBudget={money.deleteBudget} />
-          </div>
-          <div className="col-span-5">
-            <RecurringCostManager recurringCosts={money.recurringCosts} monthlyTotal={money.metrics.monthlyRecurringCosts} />
-          </div>
-          <div className="col-span-7">
-            <CostOverview metrics={money.metrics} />
-          </div>
-          <div className="col-span-5">
-            <CostBreakdown breakdown={money.categoryBreakdown} />
-          </div>
-          <div className="col-span-7">
-            <RecentFinancialActivity activity={money.recentActivity} />
-          </div>
-        </div>
-
         <div className="grid grid-cols-12 gap-4">
           <ChartShell eyebrow="Revenue Trend" title="Six month revenue" meta="Local records" className="col-span-6">
             <TrendLineChart data={trend} dataKey="revenue" label="Revenue" xKey="month" gradientId="moneyRevenue" />
@@ -152,6 +129,42 @@ export function Money() {
             <h3 className="m-0 text-xl font-semibold">{data.revenueEntries.length + data.expenseEntries.length} total records</h3>
             <p className="mb-0 mt-3 text-xs leading-6 text-muted">All financial data is stored locally. This month includes {formatCurrency(money.metrics.monthlyRecurringCosts)} recurring costs and {formatCurrency(money.metrics.oneTimeCosts)} one-time costs.</p>
           </section>
+        </div>
+
+        <section className="rounded-[28px] border border-lime/20 bg-lime/[0.025] p-5">
+          <div className="mb-5 flex items-start justify-between gap-4">
+            <div>
+              <p className="eyebrow mb-2 text-lime">Financial Management</p>
+              <h2 className="m-0 font-display text-2xl font-semibold">Budgets, recurring costs, and operating health</h2>
+              <p className="mb-0 mt-2 text-xs leading-5 text-muted">These panels use the shared local Money store. Budget edits persist locally and do not affect approval behavior.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-6">
+              <FinancialHealthCard health={money.health} />
+            </div>
+            <div className="col-span-6">
+              <MonthlyFinancialSummary summary={money.budgetSummary} />
+            </div>
+            <div className="col-span-7">
+              <BudgetManager budgets={money.budgetProgress} onSaveBudget={money.setBudget} onDeleteBudget={money.deleteBudget} />
+            </div>
+            <div className="col-span-5">
+              <RecurringCostManager recurringCosts={money.recurringCosts} monthlyTotal={money.metrics.monthlyRecurringCosts} />
+            </div>
+          </div>
+        </section>
+
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-7">
+            <CostOverview metrics={money.metrics} />
+          </div>
+          <div className="col-span-5">
+            <CostBreakdown breakdown={money.categoryBreakdown} />
+          </div>
+          <div className="col-span-12">
+            <RecentFinancialActivity activity={money.recentActivity} />
+          </div>
         </div>
 
         <FinancialHistoryTable
