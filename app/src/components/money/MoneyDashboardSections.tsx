@@ -211,14 +211,23 @@ export function BudgetManager({
         <p className="m-0 px-6 py-8 text-sm text-muted">No category budgets yet. Set a monthly budget for Software, Marketing, AI Services, Office, or any expense category you track.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] border-collapse text-left">
+          <table className="w-full min-w-[900px] table-fixed border-collapse text-left">
+            <colgroup>
+              <col className="w-[22%]" />
+              <col className="w-[19%]" />
+              <col className="w-[12%]" />
+              <col className="w-[12%]" />
+              <col className="w-[12%]" />
+              <col className="w-[11%]" />
+              <col className="w-[12%]" />
+            </colgroup>
             <thead>
               <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
                 <th className="px-6 py-3 font-medium">Category</th>
-                <th className="px-3 py-3 font-medium">Budget input</th>
-                <th className="px-3 py-3 text-right font-medium">Spent</th>
-                <th className="px-3 py-3 text-right font-medium">Remaining</th>
-                <th className="px-3 py-3 text-right font-medium">Percent Used</th>
+                <th className="px-4 py-3 font-medium">Budget input</th>
+                <th className="px-4 py-3 text-right font-medium">Spent</th>
+                <th className="px-4 py-3 text-right font-medium">Remaining</th>
+                <th className="px-4 py-3 text-right font-medium">Percent Used</th>
                 <th className="px-3 py-3 font-medium">Status</th>
                 <th className="px-6 py-3 text-right font-medium">Actions</th>
               </tr>
@@ -226,10 +235,10 @@ export function BudgetManager({
             <tbody>
               {budgets.map((budget) => (
                 <tr key={budget.id} className="border-b border-line last:border-0">
-                  <td className="whitespace-nowrap px-6 py-3 text-sm font-semibold text-white">{budget.category}</td>
-                  <td className="px-3 py-3">
+                  <td className="px-6 py-3 text-sm font-semibold text-white">{budget.category}</td>
+                  <td className="px-4 py-3">
                     <input
-                      className="field h-9 min-w-28"
+                      className="field h-9 w-full min-w-36"
                       min="0"
                       step="1"
                       type="number"
@@ -238,14 +247,14 @@ export function BudgetManager({
                       onChange={(event) => setDraftAmounts({ ...draftAmounts, [budget.category]: event.target.value })}
                     />
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-[#ffb09f]">{formatCurrency(budget.spent)}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-mint">{formatCurrency(budget.remaining)}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-white">{budget.percentageUsed.toFixed(1)}%</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-[#ffb09f]">{formatCurrency(budget.spent)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-mint">{formatCurrency(budget.remaining)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-white">{budget.percentageUsed.toFixed(1)}%</td>
                   <td className="px-3 py-3"><BudgetStatusBadge status={budget.status} /></td>
                   <td className="px-6 py-3">
-                    <div className="flex justify-end gap-2">
-                      <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
-                      <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
+                    <div className="flex justify-end gap-2 whitespace-nowrap">
+                      <button type="button" onClick={() => saveExistingBudget(budget)} className="rounded-lg border border-line px-3.5 py-1.5 text-xs text-muted transition hover:text-white">Save</button>
+                      <button type="button" onClick={() => onDeleteBudget(budget.category)} className="rounded-lg border border-line px-3.5 py-1.5 text-xs text-muted transition hover:border-[#ff9e8f]/50 hover:text-[#ff9e8f]">Remove</button>
                     </div>
                   </td>
                 </tr>
