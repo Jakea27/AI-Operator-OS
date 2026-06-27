@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useOperatingStore } from '@/src/services/operatingStore'
+import { getBuildInfo } from '@/src/services/buildInfo'
 
 const navigation = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
@@ -41,6 +42,7 @@ export function AppShell() {
   const location = useLocation()
   const { data, storageAvailable } = useOperatingStore()
   const workspaceName = data.settings.businessName || 'Local workspace'
+  const buildInfo = getBuildInfo()
 
   return (
     <div className="flex min-h-screen">
@@ -92,6 +94,7 @@ export function AppShell() {
             <div className="min-w-0 flex-1">
               <p className="m-0 truncate text-xs font-medium text-white">{workspaceName}</p>
               <p className="m-0 text-[10px] text-muted">Local workspace</p>
+              <p className="m-0 truncate text-[10px] text-muted">v{buildInfo.version} · {buildInfo.bundleHash}</p>
             </div>
             <ChevronDown size={14} className="text-muted" />
           </div>

@@ -2,8 +2,10 @@ import { Bell, Database, Eraser, FlaskConical, Monitor, Save, ShieldCheck } from
 import { PageIntro } from '@/components/PageIntro'
 import { useOperatingStore } from '@/src/services/operatingStore'
 import { useMemoryStore } from '@/src/core/memory'
+import { formatBuildTimestamp, getBuildInfo } from '@/src/services/buildInfo'
 
 export function Settings() {
+  const buildInfo = getBuildInfo()
   const {
     data,
     storageAvailable,
@@ -44,6 +46,21 @@ export function Settings() {
           <div className="flex items-center gap-3"><div className="rounded-xl bg-mint/10 p-2.5 text-mint"><ShieldCheck size={18} /></div><div><h3 className="m-0 text-sm font-semibold">Local-first</h3><p className="mb-0 mt-1 text-[11px] text-muted">Your data stays on this device.</p></div></div>
           <div className="mt-6 rounded-xl border border-line bg-ink/40 p-4"><p className="m-0 text-xs text-muted">Storage health</p><p className={`mb-0 mt-2 text-sm font-medium ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}>{storageAvailable ? 'Available' : 'Unavailable'}</p></div>
         </section>
+        <section className="panel col-span-12 p-6">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Monitor size={18} /></div>
+            <div>
+              <h3 className="m-0 text-base font-semibold">Build Info</h3>
+              <p className="mb-0 mt-1 text-xs text-muted">Use this to confirm the desktop app is running the latest local frontend build.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            <BuildInfoItem label="App version" value={buildInfo.version} />
+            <BuildInfoItem label="Build timestamp" value={formatBuildTimestamp(buildInfo.timestamp)} />
+            <BuildInfoItem label="Build mode" value={buildInfo.mode} />
+            <BuildInfoItem label="Frontend bundle" value={buildInfo.bundleFile} />
+          </div>
+        </section>
         <section className="panel col-span-8 overflow-hidden">
           <div className="border-b border-line px-6 py-5"><h3 className="m-0 text-base font-semibold">Preferences</h3></div>
           <div className="flex items-center gap-4 px-6 py-5"><div className="rounded-lg bg-white/[0.04] p-2.5 text-muted"><Bell size={17} /></div><div className="flex-1"><p className="m-0 text-sm font-medium">Daily executive briefing</p><p className="mb-0 mt-1 text-xs text-muted">Prepare a CEO summary from current local metrics.</p></div><button onClick={() => updateSettings({ dailyBriefing: !data.settings.dailyBriefing })} className={`relative h-6 w-11 rounded-full transition ${data.settings.dailyBriefing ? 'bg-lime' : 'bg-line'}`}><span className={`absolute top-1 h-4 w-4 rounded-full bg-ink transition ${data.settings.dailyBriefing ? 'left-6' : 'left-1'}`} /></button></div>
@@ -59,5 +76,14 @@ export function Settings() {
         </section>
       </div>
     </>
+  )
+}
+
+function BuildInfoItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-ink/40 p-4">
+      <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">{label}</p>
+      <p className="mb-0 mt-2 break-words text-sm font-medium text-white">{value}</p>
+    </div>
   )
 }
