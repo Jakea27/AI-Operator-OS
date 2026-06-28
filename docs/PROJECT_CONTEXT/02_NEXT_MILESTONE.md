@@ -2,13 +2,13 @@
 
 ## Current Milestone
 
-AO-006 — Automation Engine
+AO-007.1 — Automation Core Foundation
 
-AI Operator OS is moving from foundation departments toward safe local automation infrastructure. The next milestone should create the first reusable automation layer without executing consequential actions automatically.
+AI Operator OS is moving from foundation departments toward safe local automation infrastructure. AO-007.1 creates the first reusable automation layer without executing consequential actions automatically.
 
 ## Objective
 
-Build a local-first Automation Engine that can draft, queue, classify, and track automation work while preserving CEO approval as the execution boundary.
+Build a local-first Automation Core that can draft, queue, classify, and track automation work while preserving CEO approval as the execution boundary.
 
 The Automation Engine should support future workflows from Money, Operators, Roadmap, Memory, and Approval Queue, but this milestone should remain deterministic and local-only.
 
@@ -79,6 +79,10 @@ Exact files should be confirmed by searching the repository before coding.
 - `npm run build` succeeds.
 - `npm run dist` succeeds if desktop packaging or packaged behavior changes.
 
+## Next Likely Slice After AO-007.1
+
+AO-007.2 can add a small verification UI or coordinator/operator integration if the CEO approves. Full dropshipping, YouTube/TikTok, content, store, scheduling, and external workflow execution remain future milestones.
+
 ## Required Verification Steps
 
 From `app/`:
@@ -99,4 +103,3 @@ Before coding:
 - Read `docs/PROJECT_CONTEXT/05_DEVELOPMENT_PLAYBOOK.md`.
 - Check `docs/ROADMAP.md` for milestone wording.
 - Check `docs/POLISH_BACKLOG.md` before doing cosmetic-only changes.
-

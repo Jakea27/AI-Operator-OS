@@ -1,7 +1,7 @@
 # Roadmap
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-27
+Last Updated: 2026-06-28
 
 ## Start Here for Future Sessions
 
@@ -69,6 +69,10 @@ Goal: Build the foundation of the OS before building revenue automation.
   - [x] AO-006.1 Money Store Foundation: shared local-first money types, store adapter, cost schedule tracking, reusable calculations, and Dashboard/Money integration
   - [x] AO-006.2 Money Department Dashboard: monthly summary cards, cost overview, expense category breakdown, recent activity, and financial health status
   - [x] AO-006.3 Budgeting & Recurring Cost Management: persisted category budgets, progress/status tracking, recurring cost manager, and monthly budget summary
+- [ ] AO-007 Automation Core
+  - [x] AO-007.1 Automation Core Foundation: local automation model, store, lifecycle, history, safety rules, deterministic engine helpers, and no-execution boundary
+  - [ ] Future automation UI and approval handoff
+  - [ ] Future workflow drafts for dropshipping, YouTube/TikTok, content operations, product research, store operations, and business operations
 - [ ] AO-090 UX & Visual Polish
   - [ ] Complete deferred visual, UX, desktop, and quality-of-life improvements tracked in `docs/POLISH_BACKLOG.md`
 

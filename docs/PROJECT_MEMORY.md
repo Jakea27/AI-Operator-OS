@@ -1,7 +1,7 @@
 # Project Memory
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-27
+Last Updated: 2026-06-28
 
 ## Current State
 
@@ -87,6 +87,12 @@ The Dashboard route (`/`) and Money route (`/money`) both import `useOperatingSt
 
 Important release note: source and `app/dist` can be newer than an installed Windows build. After operating-store changes, `npm run dist` must be run before testing the installer or portable executable. Development (`http://localhost`) and packaged Electron (`file://`) also have separate localStorage origins, so records entered in one environment do not automatically appear in the other.
 
+AO-007.1 creates the local-first Automation Core Foundation under `app/src/core/automation`. This is a headless reusable foundation only: no Automation page, route, external execution, scheduling, chatbot, autonomous agent, or paid/external API was added.
+
+The Automation Core defines `AutomationRecord`, lifecycle statuses, priority/risk values, source ownership, related approval and roadmap references, local history, filtering, stats, safety helpers, and deterministic engine functions. Automation records persist in localStorage through `automationStore.ts` using the same `useSyncExternalStore` pattern as other local stores. `canAutoExecute` defaults to false and all AO-007.1 automation actions remain local drafts or status transitions.
+
+Automation safety rules mark consequential work as requiring CEO approval when it involves spending money, publishing public content, contacting customers or leads, changing prices, connecting external services, deleting data, launching stores/products, sending client deliverables, or running external workflows. Long term, AI Operator OS should support low-input business workflows such as dropshipping, YouTube/TikTok automation, product research, content operations, store creation, and business operations, but AO-007.1 intentionally only builds the safe local foundation.
+
 Documentation handoff note: `docs/PROJECT_CONTEXT/` is now the permanent project context system for future ChatGPT/Codex sessions. New sessions should read `docs/PROJECT_CONTEXT/00_START_HERE.md` first, then use the current status, next milestone, build workflow, testing checklist, development playbook, common pitfalls, handoff template, lessons learned, project metrics, and Codex prompt template in that folder. This system records the one-codebase rule, local-first architecture, CEO approval workflow, GitHub Desktop review flow, Build Info verification requirement, and the rule that cosmetic polish belongs in `docs/POLISH_BACKLOG.md`.
 
 ## Active Sprint
@@ -110,6 +116,7 @@ Sprint 0.1 - Foundation and Desktop Command Center
 - Core AI Operator framework logic lives under `app/src/core/operators`.
 - Core roadmap backlog logic lives under `app/src/core/roadmap`.
 - Core approval queue feature logic lives under `app/src/features/approval`.
+- Core automation foundation logic lives under `app/src/core/automation`.
 - New work uses the AO issue naming format.
 
 ## Known Constraints

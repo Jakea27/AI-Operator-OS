@@ -1,6 +1,6 @@
 # Current Status
 
-Last Updated: 2026-06-27
+Last Updated: 2026-06-28
 
 ## Version
 
@@ -45,6 +45,7 @@ The app uses React, Vite, TypeScript, Tailwind CSS, Electron, and Electron Build
 - AO-006.2 Money Department Dashboard
 - AO-006.3 Budgeting and Recurring Cost Management
 - AO-006.4 Build Info visibility and packaged-app verification
+- AO-007.1 Automation Core Foundation
 
 ## Current Architecture
 
@@ -54,11 +55,15 @@ The app uses React, Vite, TypeScript, Tailwind CSS, Electron, and Electron Build
 - Memory data is managed through the Business Memory Engine.
 - Operator data is managed through the AI Operator framework stores.
 - Roadmap backlog data uses the existing roadmap store.
+- Automation records use the local-first Automation Core store.
 - Dashboard, CEO briefing, Money, Operators, Coordinator, Roadmap, and Approval Queue share local context.
+
+## Automation Status
+
+AO-007.1 adds a headless Automation Core under `app/src/core/automation`. It defines local automation records, lifecycle statuses, safety rules, history, persistence, filters, summaries, and stats. It does not add UI, scheduling, external APIs, chatbot behavior, autonomous agents, or automatic execution.
 
 ## Current Verification Standard
 
 A source change is not considered missing until the packaged Electron app has been rebuilt and checked through Settings → Build Info.
 
 Development preview, Vite preview, packaged Electron, and installed Electron can each show different build and localStorage state if they were not rebuilt or relaunched.
-

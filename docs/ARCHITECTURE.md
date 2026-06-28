@@ -1,7 +1,7 @@
 # Architecture
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-26
+Last Updated: 2026-06-28
 
 ## Operating Model
 
@@ -33,6 +33,7 @@ All persistence is localStorage-based and local-first.
 - Business memory uses `app/src/core/memory/memoryStore.ts`.
 - Daily briefing snapshots are stored in the operating store.
 - Business Memory has a dedicated store to prevent duplicate memory ownership.
+- Automation records use `app/src/core/automation/automationStore.ts`.
 
 ## Money Store Architecture
 
@@ -133,6 +134,21 @@ AO-005.3 expands Approval Queue visibility across the OS without adding new deci
 
 Operator shared context now accepts approval summary data for pending approvals, total approvals, and approvals by operator. Roadmap items can store optional recommendation and approval references so items created from approved recommendations can display approval status and source approval metadata without blocking roadmap execution.
 
+## Automation Core Architecture
+
+AO-007.1 establishes the local-first Automation Core under `app/src/core/automation`:
+
+- `automationTypes.ts` — automation record, lifecycle, type, category, source, priority, risk, filter, history, and stats models.
+- `automationStore.ts` — localStorage-backed automation persistence and lifecycle mutations.
+- `automationEngine.ts` — deterministic local helpers for drafts, queueing, risk classification, approval requirements, summaries, and stats.
+- `automationSafety.ts` — CEO approval requirement rules and the default no-auto-execution boundary.
+- `automationHistory.ts` — history IDs, history item creation, and lifecycle notes.
+- `index.ts` — public Automation Core API.
+
+The Automation Core is headless in AO-007.1. It does not add an Automation page, route, sidebar item, scheduler, external API, chatbot, autonomous agent, or external execution. It exists so future Dashboard, Operators, Executive Coordinator, Approval Queue, Roadmap, Money, and Memory workflows can share one automation model.
+
+Important/consequential automations require CEO approval before execution. `canAutoExecute` defaults to false and remains false in the current foundation.
+
 ## AO Issue Naming
 
 All new implementation issues use the `AO-###` format:
@@ -143,6 +159,7 @@ All new implementation issues use the `AO-###` format:
 - AO-004 AI Operator Framework
 - AO-005 Approval Queue
 - AO-006 Automation Engine
+- AO-007 Automation Core
 
 ## Main Departments
 

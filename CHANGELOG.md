@@ -152,6 +152,11 @@
 - Completed AO-006.3c visible Money Management placement fix
 - Moved Financial Health, Monthly Summary, Budget Management, and Recurring Costs into a clearly titled Financial Management section below charts and above history tables
 - Made Budget Management render default expense categories even before budgets are saved, while preserving local persistence for edited budget amounts
+- Completed AO-007.1 Automation Core Foundation
+- Added reusable local-first Automation Core modules under `app/src/core/automation`
+- Added automation records, lifecycle statuses, local persistence, filtering, history, safety rules, deterministic engine helpers, and stats
+- Added safety boundaries so consequential automations require CEO approval and `canAutoExecute` defaults to false
+- Clarified the long-term automation vision for dropshipping, YouTube/TikTok, product research, content operations, store creation, and business operations without adding external execution
 - Added `docs/POLISH_BACKLOG.md` to track deferred non-critical UI, UX, desktop, performance, theme, and visual polish work
 - Linked the polish backlog from README and the Roadmap while reserving AO-090 for a future UX & Visual Polish milestone
 - Project bootstrap generator

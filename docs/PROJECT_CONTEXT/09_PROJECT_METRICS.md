@@ -1,6 +1,6 @@
 # Project Health Dashboard
 
-Last Updated: 2026-06-27
+Last Updated: 2026-06-28
 
 This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STATUS.md` as the source of detailed project information.
 
@@ -8,7 +8,7 @@ This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STA
 
 - Version: 0.1.0-alpha
 - Project phase: Foundation complete; automation infrastructure next
-- Current milestone: AO-006 Automation Engine
+- Current milestone: AO-007.1 Automation Core Foundation
 - Platform: Windows desktop
 - Architecture: Electron + React + Vite + TypeScript + Tailwind
 - Persistence: localStorage
@@ -19,6 +19,7 @@ This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STA
 - Completed milestone tracks: AO-001, AO-002, AO-003, AO-004
 - Approval track status: AO-005 implemented through AO-005.3; execution handoff remains future work
 - Money/automation track status: AO-006 implemented through AO-006.4 diagnostics; Automation Engine remains next
+- Automation core status: AO-007.1 headless local foundation implemented; UI and external execution deferred
 - Reserved polish milestone: AO-090 UX & Visual Polish
 
 ## Architecture Health
@@ -41,6 +42,7 @@ This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STA
 - CTO Recommendation Store
 - Roadmap Backlog Store
 - Build Info diagnostics
+- Automation Core Store
 
 ## Feature Modules
 
@@ -54,6 +56,7 @@ This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STA
 - Roadmap Operator Backlog
 - Approval Queue
 - Settings and Build Info
+- Automation Core
 
 ## Backlog Counts
 
@@ -74,4 +77,3 @@ This file is a quick health dashboard. Keep `docs/PROJECT_CONTEXT/01_CURRENT_STA
 - Development and packaged Electron use separate localStorage origins.
 - Future automation work must not bypass CEO approval.
 - Cosmetic polish should not interrupt core milestone delivery.
-
