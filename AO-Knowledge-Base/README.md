@@ -38,7 +38,46 @@ Long term, it should replace dependence on employment income and support financi
 - `06 - Development` — development standards and implementation context
 - `07 - Research` — research notes and evidence
 - `08 - Decisions` — durable decision records
+- `09 - Knowledge Growth` — lessons, experiments, insights, and operational learning
+- `10 - Standards` — standards for UI, code, documentation, business, automation, departments, and workflows
 - `99 - Parking Lot` — ideas not yet ready for structured placement
+
+## Documentation Philosophy
+
+The AO Knowledge Base is the permanent source of truth for AI Operator OS.
+
+Major architectural decisions should be documented before implementation whenever practical.
+
+The codebase should reflect the knowledge contained within this documentation.
+
+If documentation and implementation ever disagree, the documentation should be reviewed before continuing development.
+
+## Knowledge Categories
+
+The Knowledge Base is divided into two categories: Immutable Knowledge and Living Knowledge.
+
+### Immutable Knowledge
+
+Immutable Knowledge should change very rarely.
+
+- Vision
+- Constitution
+- Core Principles
+- Identity
+
+### Living Knowledge
+
+Living Knowledge evolves as AI Operator OS grows.
+
+- Architecture
+- Businesses
+- Operations
+- Finance
+- Development
+- Research
+- Knowledge Growth
+- Standards
+- Decisions
 
 ## Core Principles
 
@@ -86,4 +125,3 @@ The right business at the wrong time is the wrong business.
 AI Operator OS is not one automation platform.
 
 AI Operator OS manages multiple automation platforms and business blueprints. It should be able to house future AI-powered businesses that do not exist yet and expand without requiring a redesign.
-
