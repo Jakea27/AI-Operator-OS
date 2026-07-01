@@ -1,6 +1,7 @@
 import {
   Banknote,
   Brain,
+  BriefcaseBusiness,
   ChevronDown,
   ClipboardCheck,
   Code2,
@@ -19,6 +20,7 @@ import { getBuildInfo } from '@/src/services/buildInfo'
 const navigation = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'Opportunities', to: '/opportunities', icon: Lightbulb },
+  { label: 'Businesses', to: '/businesses', icon: BriefcaseBusiness },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
   { label: 'Development', to: '/development', icon: Code2 },
@@ -33,6 +35,7 @@ const titles: Record<string, string> = {
   '/ceo': 'CEO office',
   '/money': 'Financial cockpit',
   '/opportunities': 'Opportunity Pipeline',
+  '/businesses': 'Business Manager',
   '/development': 'Development',
   '/memory': 'Operator memory',
   '/operators': 'AI operators',
@@ -43,6 +46,7 @@ const titles: Record<string, string> = {
 
 function getWorkspaceTitle(pathname: string) {
   if (pathname.startsWith('/opportunities')) return 'Opportunity Pipeline'
+  if (pathname.startsWith('/businesses')) return 'Business Manager'
   if (pathname.startsWith('/operators')) return 'AI operators'
   return titles[pathname] ?? 'Workspace'
 }
