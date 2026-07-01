@@ -1,5 +1,13 @@
 # AO Knowledge Base Changelog
 
+## Sprint 001 - Opportunity Pipeline - 2026-07-01
+
+### Completed
+
+- Recorded Sprint 001 as completed.
+- Documented Opportunity Pipeline as the major Sprint 001 capability.
+- Captured executive opportunity dashboard, lifecycle, OP IDs, scorecards, search, filtering, tags, timeline, local persistence, launcher standardization, QA acceptance, and navigation integration.
+
 ## 0.1.1 - 2026-06-30
 
 ### Added

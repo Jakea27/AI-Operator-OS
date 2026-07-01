@@ -1,5 +1,21 @@
 # Changelog
 
+# Sprint 001 – Opportunity Pipeline
+
+Completed:
+- Created Opportunity Pipeline module.
+- Added executive opportunity management.
+- Added lifecycle tracking.
+- Added opportunity IDs.
+- Added executive scorecards.
+- Added search and filtering.
+- Added timeline and activity history.
+- Added Opportunity detail page.
+- Added local persistence.
+- Fixed development launcher.
+- Fixed sidebar integration.
+- Completed QA acceptance.
+
 ## 0.1.0-alpha - 2026-06-24
 
 ### Added
