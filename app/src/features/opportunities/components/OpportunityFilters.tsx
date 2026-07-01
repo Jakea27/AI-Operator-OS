@@ -12,18 +12,30 @@ const statuses: OpportunityDecisionStatus[] = ['Active', 'Approved', 'Changes Re
 export function OpportunityFilters({
   filters,
   onChange,
+  categories,
+  tags,
 }: {
   filters: OpportunityFilterState
   onChange: (filters: OpportunityFilterState) => void
+  categories: string[]
+  tags: string[]
 }) {
   return (
-    <div className="panel mb-5 grid gap-3 p-4 md:grid-cols-6">
+    <div className="panel mb-5 grid gap-3 p-4 md:grid-cols-4 xl:grid-cols-7">
       <input
         value={filters.search}
         onChange={(event) => onChange({ ...filters, search: event.target.value })}
-        placeholder="Search opportunities..."
+        placeholder="Search by name or OP ID..."
         className="field md:col-span-2"
       />
+      <select
+        value={filters.businessCategory}
+        onChange={(event) => onChange({ ...filters, businessCategory: event.target.value })}
+        className="field"
+      >
+        <option value="All">All categories</option>
+        {categories.map((category) => <option key={category} value={category}>{category}</option>)}
+      </select>
       <select
         value={filters.stage}
         onChange={(event) => onChange({ ...filters, stage: event.target.value as 'All' | OpportunityStage })}
@@ -39,6 +51,14 @@ export function OpportunityFilters({
       >
         <option value="All">All priorities</option>
         {opportunityPriorities.map((priority) => <option key={priority} value={priority}>{priority}</option>)}
+      </select>
+      <select
+        value={filters.tag}
+        onChange={(event) => onChange({ ...filters, tag: event.target.value })}
+        className="field"
+      >
+        <option value="All">All tags</option>
+        {tags.map((tag) => <option key={tag} value={tag}>{tag}</option>)}
       </select>
       <select
         value={filters.status}
@@ -61,4 +81,3 @@ export function OpportunityFilters({
     </div>
   )
 }
-

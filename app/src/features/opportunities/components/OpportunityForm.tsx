@@ -1,11 +1,12 @@
 import { FormEvent, useState } from 'react'
-import { OpportunityInput, OpportunityPriority, opportunityPriorities } from '@/src/core/opportunities'
+import { OpportunityInput, OpportunityPriority, opportunityPriorities, opportunityTagSuggestions } from '@/src/core/opportunities'
 
 const initialForm: OpportunityInput = {
   name: '',
   description: '',
   businessCategory: '',
   notes: '',
+  tags: [],
   priority: 'Medium',
 }
 
@@ -22,6 +23,16 @@ export function OpportunityForm({
     event.preventDefault()
     onCreate(form)
     setForm(initialForm)
+  }
+
+  function setTags(value: string) {
+    setForm({
+      ...form,
+      tags: value
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    })
   }
 
   return (
@@ -72,6 +83,15 @@ export function OpportunityForm({
           />
         </label>
         <label className="space-y-2 md:col-span-3">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Tags</span>
+          <input
+            value={form.tags?.join(', ') ?? ''}
+            onChange={(event) => setTags(event.target.value)}
+            className="field"
+            placeholder={opportunityTagSuggestions.join(', ')}
+          />
+        </label>
+        <label className="space-y-2 md:col-span-3">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Notes</span>
           <textarea
             value={form.notes}
@@ -88,4 +108,3 @@ export function OpportunityForm({
     </form>
   )
 }
-

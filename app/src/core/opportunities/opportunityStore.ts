@@ -9,6 +9,7 @@ import {
   OpportunityPriority,
   OpportunityRecord,
   OpportunityStage,
+  defaultOpportunityScore,
 } from './opportunityTypes'
 
 const STORAGE_KEY = 'ai-operator-os-opportunities-v1'
@@ -32,14 +33,39 @@ function createActivity(type: OpportunityActivityType, message: string, createdA
   }
 }
 
-function normalizeOpportunity(raw: Partial<OpportunityRecord>): OpportunityRecord {
+function generateOpportunityCode(existing: OpportunityRecord[]) {
+  const max = existing.reduce((highest, opportunity) => {
+    const match = opportunity.opportunityId?.match(/^OP-(\d+)$/)
+    if (!match) return highest
+    return Math.max(highest, Number(match[1]))
+  }, 0)
+
+  return `OP-${String(max + 1).padStart(4, '0')}`
+}
+
+function fallbackOpportunityCode(index: number) {
+  return `OP-${String(index + 1).padStart(4, '0')}`
+}
+
+function normalizeTags(tags: unknown): string[] {
+  if (!Array.isArray(tags)) return []
+  return tags
+    .map((tag) => String(tag).trim())
+    .filter(Boolean)
+    .filter((tag, index, list) => list.findIndex((item) => item.toLowerCase() === tag.toLowerCase()) === index)
+}
+
+function normalizeOpportunity(raw: Partial<OpportunityRecord>, index = 0): OpportunityRecord {
   const timestamp = raw.createdAt ?? now()
   return {
     id: raw.id ?? id('opportunity'),
+    opportunityId: raw.opportunityId ?? fallbackOpportunityCode(index),
     name: raw.name?.trim() || 'Untitled Opportunity',
     description: raw.description?.trim() || 'No description recorded yet.',
     businessCategory: raw.businessCategory?.trim() || 'Uncategorized',
     notes: raw.notes ?? '',
+    tags: normalizeTags(raw.tags),
+    score: { ...defaultOpportunityScore, ...raw.score },
     priority: raw.priority ?? 'Medium',
     stage: raw.stage ?? 'Idea',
     decisionStatus: raw.decisionStatus ?? 'Active',
@@ -59,7 +85,7 @@ function readState(): OpportunityRecord[] {
     if (!stored) return []
     const parsed = JSON.parse(stored)
     if (!Array.isArray(parsed)) return []
-    return parsed.map((item) => normalizeOpportunity(item))
+    return parsed.map((item, index) => normalizeOpportunity(item, index))
   } catch {
     return []
   }
@@ -121,12 +147,14 @@ export function filterOpportunities(opportunities: OpportunityRecord[], filters:
   return opportunities
     .filter((opportunity) =>
       !query ||
-      `${opportunity.name} ${opportunity.description} ${opportunity.businessCategory} ${opportunity.notes}`
+      `${opportunity.opportunityId} ${opportunity.name} ${opportunity.description} ${opportunity.businessCategory} ${opportunity.notes} ${opportunity.tags.join(' ')}`
         .toLowerCase()
         .includes(query),
     )
+    .filter((opportunity) => filters.businessCategory === 'All' || opportunity.businessCategory === filters.businessCategory)
     .filter((opportunity) => filters.stage === 'All' || opportunity.stage === filters.stage)
     .filter((opportunity) => filters.priority === 'All' || opportunity.priority === filters.priority)
+    .filter((opportunity) => filters.tag === 'All' || opportunity.tags.includes(filters.tag))
     .filter((opportunity) => filters.status === 'All' || opportunity.decisionStatus === filters.status)
     .sort((a, b) => {
       if (filters.sort === 'oldest') return a.createdAt.localeCompare(b.createdAt)
@@ -143,10 +171,13 @@ export const opportunityStore = {
     const timestamp = now()
     const opportunity: OpportunityRecord = {
       id: id('opportunity'),
+      opportunityId: generateOpportunityCode(state),
       name: input.name.trim() || 'Untitled Opportunity',
       description: input.description.trim(),
       businessCategory: input.businessCategory.trim() || 'Uncategorized',
       notes: input.notes.trim(),
+      tags: normalizeTags(input.tags),
+      score: defaultOpportunityScore,
       priority: input.priority ?? 'Medium',
       stage: 'Idea',
       decisionStatus: 'Active',
@@ -242,4 +273,3 @@ export function useOpportunityStore() {
     setDecision: opportunityStore.setDecision,
   }
 }
-

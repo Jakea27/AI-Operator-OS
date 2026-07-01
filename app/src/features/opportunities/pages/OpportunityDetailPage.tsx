@@ -1,7 +1,8 @@
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, FileText, X } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { OpportunityStage, opportunityStages, useOpportunityStore } from '@/src/core/opportunities'
+import { getStageIndex, OpportunityRecord, OpportunityStage, opportunityStages, useOpportunityStore } from '@/src/core/opportunities'
 import { OpportunityLifecycle } from '../components/OpportunityLifecycle'
+import { OpportunityScoreCard } from '../components/OpportunityScoreCard'
 import { OpportunitySection } from '../components/OpportunitySection'
 
 function formatDate(value: string) {
@@ -22,6 +23,56 @@ const decisionClass = {
   Archived: 'border-white/10 bg-white/[0.04] text-muted',
 }
 
+function buildTimeline(opportunity: OpportunityRecord) {
+  const currentIndex = getStageIndex(opportunity.stage)
+  const stageEvents = opportunityStages.slice(0, currentIndex + 1).map((stage, index) => ({
+    id: `${opportunity.id}-${stage}`,
+    title: index === 0 ? 'Opportunity Created' : `Moved to ${stage}`,
+    message:
+      stage === 'Phase 1 Research'
+        ? 'Opportunity entered broad, low-cost validation.'
+        : stage === 'CEO Review'
+          ? 'Opportunity is ready for CEO review before deeper blueprint work.'
+          : stage === 'Phase 2 Blueprint'
+            ? 'Opportunity moved into blueprint preparation after CEO approval.'
+            : stage === 'Ready to Build'
+              ? 'Opportunity is ready to become an executable build plan.'
+              : stage === 'Idea'
+                ? 'Opportunity entered the pipeline as a structured business record.'
+                : `Opportunity reached ${stage}.`,
+    createdAt: opportunity.activity.find((activity) => activity.message.includes(stage))?.createdAt ?? opportunity.createdAt,
+    status: stage === opportunity.stage ? 'Current' : 'Completed',
+  }))
+
+  const decisionEvents = opportunity.decisionStatus === 'Approved'
+    ? [{
+      id: `${opportunity.id}-ceo-approved`,
+      title: 'CEO Approved',
+      message: 'CEO approved this opportunity for the next appropriate step.',
+      createdAt: opportunity.updatedAt,
+      status: 'Decision',
+    }]
+    : opportunity.decisionStatus === 'Changes Requested'
+      ? [{
+        id: `${opportunity.id}-changes-requested`,
+        title: 'CEO Requested Changes',
+        message: 'CEO requested changes before this opportunity can continue.',
+        createdAt: opportunity.updatedAt,
+        status: 'Decision',
+      }]
+      : opportunity.decisionStatus === 'Rejected'
+        ? [{
+          id: `${opportunity.id}-rejected`,
+          title: 'CEO Rejected',
+          message: 'CEO rejected this opportunity.',
+          createdAt: opportunity.updatedAt,
+          status: 'Decision',
+        }]
+        : []
+
+  return [...decisionEvents, ...stageEvents].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+}
+
 export function OpportunityDetailPage() {
   const { opportunityId } = useParams()
   const opportunityStore = useOpportunityStore()
@@ -38,7 +89,7 @@ export function OpportunityDetailPage() {
           <Link to="/opportunities" className="mb-4 inline-flex items-center gap-2 text-sm text-muted hover:text-white">
             <ArrowLeft size={15} /> Back to Opportunity Pipeline
           </Link>
-          <p className="eyebrow mb-2">Opportunity Detail</p>
+          <p className="eyebrow mb-2">Opportunity Detail · {opportunity.opportunityId}</p>
           <h2 className="m-0 font-display text-3xl font-semibold tracking-tight text-white">{opportunity.name}</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[#8f9b95]">{opportunity.description}</p>
         </div>
@@ -52,12 +103,34 @@ export function OpportunityDetailPage() {
         </div>
       </div>
 
+      <section className="panel border-lime/20 bg-gradient-to-br from-lime/[0.07] to-white/[0.025] p-5">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="eyebrow mb-1">Executive Summary</p>
+            <h3 className="m-0 font-display text-xl font-semibold text-white">Opportunity command view</h3>
+          </div>
+          <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${decisionClass[opportunity.decisionStatus]}`}>
+            {opportunity.decisionStatus}
+          </span>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
+          <Info label="Current Stage" value={opportunity.stage} />
+          <Info label="Priority" value={opportunity.priority} />
+          <Info label="Created" value={formatDate(opportunity.createdAt)} />
+          <Info label="Updated" value={formatDate(opportunity.updatedAt)} />
+          <Info label="Business Category" value={opportunity.businessCategory} />
+          <Info label="Overall Opportunity Status" value={opportunity.decisionStatus} />
+          <Info label="Opportunity ID" value={opportunity.opportunityId} />
+        </div>
+      </section>
+
       <OpportunityLifecycle stage={opportunity.stage} />
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-6">
           <OpportunitySection title="Overview" eyebrow="Business record">
             <div className="grid gap-3 md:grid-cols-2">
+              <Info label="Opportunity ID" value={opportunity.opportunityId} />
               <Info label="Business Type" value={opportunity.businessCategory} />
               <Info label="Priority" value={opportunity.priority} />
               <Info label="Current Stage" value={opportunity.stage} />
@@ -70,6 +143,18 @@ export function OpportunityDetailPage() {
               <Info label="Date Created" value={formatDate(opportunity.createdAt)} />
               <Info label="Last Updated" value={formatDate(opportunity.updatedAt)} />
             </div>
+            {opportunity.tags.length > 0 ? (
+              <div className="mt-4 rounded-xl border border-line bg-ink/35 p-4">
+                <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Tags</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {opportunity.tags.map((tag) => (
+                    <span key={tag} className="rounded-full border border-line bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-[#c7d2cc]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
             {opportunity.notes ? (
               <div className="mt-4 rounded-xl border border-line bg-ink/35 p-4">
                 <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Notes</p>
@@ -90,19 +175,29 @@ export function OpportunityDetailPage() {
             </div>
           </OpportunitySection>
 
+          <OpportunitySection title="Opportunity Score" eyebrow="Placeholder scoring">
+            <OpportunityScoreCard score={opportunity.score} />
+            <p className="m-0 mt-3 text-xs leading-5 text-muted">
+              These are placeholder executive metrics. Future scoring will evaluate ROI, CEO time, automation potential,
+              startup cost, risk, and fit with the current company stage.
+            </p>
+          </OpportunitySection>
+
           <OpportunitySection title="Timeline" eyebrow="Lifecycle progress">
             <div className="space-y-3">
-              {opportunityStages.map((stage, index) => {
-                const isCurrent = stage === opportunity.stage
-                const isComplete = opportunityStages.indexOf(opportunity.stage) > index
+              {buildTimeline(opportunity).map((event) => {
+                const isCurrent = event.status === 'Current'
                 return (
-                  <div key={stage} className={`flex items-center gap-3 rounded-xl border p-3 ${isCurrent ? 'border-lime/40 bg-lime/[0.07]' : 'border-line bg-ink/30'}`}>
-                    <div className={`grid h-7 w-7 place-items-center rounded-full ${isComplete ? 'bg-mint text-ink' : isCurrent ? 'bg-lime text-ink' : 'bg-white/[0.06] text-muted'}`}>
-                      {isComplete ? <Check size={14} /> : <span className="text-xs font-semibold">{index + 1}</span>}
+                  <div key={event.id} className={`flex items-start gap-3 rounded-xl border p-3 ${isCurrent ? 'border-lime/40 bg-lime/[0.07]' : 'border-line bg-ink/30'}`}>
+                    <div className={`mt-0.5 grid h-7 w-7 place-items-center rounded-full ${isCurrent ? 'bg-lime text-ink' : 'bg-mint text-ink'}`}>
+                      <Check size={14} />
                     </div>
-                    <div>
-                      <p className="m-0 text-sm font-semibold text-white">{stage}</p>
-                      <p className="m-0 text-xs text-muted">{isCurrent ? 'Current stage' : isComplete ? 'Completed stage' : 'Upcoming stage'}</p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="m-0 text-sm font-semibold text-white">{event.title}</p>
+                        <span className="text-[11px] text-muted">{formatDate(event.createdAt)}</span>
+                      </div>
+                      <p className="m-0 mt-1 text-xs leading-5 text-muted">{event.message}</p>
                     </div>
                   </div>
                 )
@@ -186,4 +281,3 @@ function Recommendation({ title, text }: { title: string; text: string }) {
     </div>
   )
 }
-

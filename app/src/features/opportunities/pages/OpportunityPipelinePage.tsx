@@ -15,8 +15,10 @@ export function OpportunityPipelinePage() {
   const [showForm, setShowForm] = useState(false)
   const [filters, setFilters] = useState<OpportunityFilterState>({
     search: '',
+    businessCategory: 'All',
     stage: 'All',
     priority: 'All',
+    tag: 'All',
     status: 'All',
     sort: 'newest',
   })
@@ -34,6 +36,12 @@ export function OpportunityPipelinePage() {
       review: opportunities.filter((opportunity) => opportunity.stage === 'CEO Review').length,
       buildReady: opportunities.filter((opportunity) => ['Ready to Build', 'Building'].includes(opportunity.stage)).length,
     }
+  }, [opportunityStore.opportunities])
+
+  const filterOptions = useMemo(() => {
+    const categories = Array.from(new Set(opportunityStore.opportunities.map((opportunity) => opportunity.businessCategory))).sort()
+    const tags = Array.from(new Set(opportunityStore.opportunities.flatMap((opportunity) => opportunity.tags))).sort()
+    return { categories, tags }
   }, [opportunityStore.opportunities])
 
   return (
@@ -82,7 +90,12 @@ export function OpportunityPipelinePage() {
         </div>
       </div>
 
-      <OpportunityFilters filters={filters} onChange={setFilters} />
+      <OpportunityFilters
+        filters={filters}
+        onChange={setFilters}
+        categories={filterOptions.categories}
+        tags={filterOptions.tags}
+      />
 
       {filteredOpportunities.length > 0 ? (
         <div className="grid gap-5 xl:grid-cols-2">
@@ -106,4 +119,3 @@ export function OpportunityPipelinePage() {
     </>
   )
 }
-

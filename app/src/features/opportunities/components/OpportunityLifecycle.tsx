@@ -28,10 +28,10 @@ export function OpportunityLifecycle({ stage }: { stage: OpportunityStage }) {
               key={item}
               className={`rounded-xl border p-3 ${
                 isCurrent
-                  ? 'border-lime/50 bg-lime/[0.08] text-white shadow-[0_0_0_1px_rgba(200,245,96,0.05)]'
+                  ? 'border-lime/60 bg-lime/[0.12] text-white shadow-[0_0_24px_rgba(200,245,96,0.08)]'
                   : isComplete
-                    ? 'border-mint/25 bg-mint/[0.05] text-[#dce7df]'
-                    : 'border-line bg-white/[0.025] text-muted'
+                    ? 'border-mint/30 bg-mint/[0.07] text-[#dce7df]'
+                    : 'border-line bg-white/[0.02] text-muted opacity-75'
               }`}
             >
               <div className="mb-2 flex items-center justify-between">
@@ -39,6 +39,7 @@ export function OpportunityLifecycle({ stage }: { stage: OpportunityStage }) {
                 {isComplete ? <Check size={13} className="text-mint" /> : <Circle size={10} className={isCurrent ? 'text-lime' : 'text-muted'} />}
               </div>
               <p className="m-0 text-xs font-medium leading-5">{item}</p>
+              {isCurrent ? <p className="m-0 mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-lime">Current</p> : null}
             </div>
           )
         })}
@@ -46,4 +47,3 @@ export function OpportunityLifecycle({ stage }: { stage: OpportunityStage }) {
     </section>
   )
 }
-

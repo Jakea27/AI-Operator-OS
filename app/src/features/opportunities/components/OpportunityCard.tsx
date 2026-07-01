@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getLifecycleProgress, OpportunityRecord } from '@/src/core/opportunities'
+import { OpportunityScoreCard } from './OpportunityScoreCard'
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value))
@@ -26,7 +27,7 @@ export function OpportunityCard({ opportunity }: { opportunity: OpportunityRecor
     <article className="panel p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="eyebrow mb-2">{opportunity.businessCategory}</p>
+          <p className="eyebrow mb-2">{opportunity.opportunityId} · {opportunity.businessCategory}</p>
           <h3 className="m-0 font-display text-xl font-semibold text-white">{opportunity.name}</h3>
           <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#95a09b]">{opportunity.description}</p>
         </div>
@@ -49,6 +50,18 @@ export function OpportunityCard({ opportunity }: { opportunity: OpportunityRecor
       <div className="mt-4 h-1.5 rounded-full bg-white/[0.05]">
         <div className="h-full rounded-full bg-gradient-to-r from-mint to-lime" style={{ width: `${getLifecycleProgress(opportunity.stage)}%` }} />
       </div>
+      {opportunity.tags.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {opportunity.tags.map((tag) => (
+            <span key={tag} className="rounded-full border border-line bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-[#c7d2cc]">
+              {tag}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      <div className="mt-4">
+        <OpportunityScoreCard score={opportunity.score} compact />
+      </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
         <span>Created {formatDate(opportunity.createdAt)}</span>
         <span>Updated {formatDate(opportunity.updatedAt)}</span>
@@ -59,4 +72,3 @@ export function OpportunityCard({ opportunity }: { opportunity: OpportunityRecor
     </article>
   )
 }
-
