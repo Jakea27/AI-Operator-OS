@@ -1,5 +1,13 @@
 # AO Knowledge Base Changelog
 
+## Sprint 002 - Business Manager - 2026-07-01
+
+### Completed
+
+- Recorded Sprint 002 as completed.
+- Documented Business Manager and Opportunity to Business Conversion as the major Sprint 002 capability.
+- Captured business dashboard, sidebar navigation, local business persistence, lifecycle, detail pages, conversion workflow, source opportunity references, cross-links, and QA acceptance.
+
 ## Sprint 001 - Opportunity Pipeline - 2026-07-01
 
 ### Completed

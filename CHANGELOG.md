@@ -1,5 +1,19 @@
 # Changelog
 
+# Sprint 002 – Business Manager
+
+Completed:
+- Created Business Manager module.
+- Added business dashboard and business cards.
+- Added business lifecycle tracking.
+- Added business IDs using BIZ-0001 format.
+- Added business detail page.
+- Added local persistence for businesses.
+- Added Opportunity to Business conversion.
+- Added source opportunity traceability.
+- Added cross-links between Opportunities and Businesses.
+- Completed QA acceptance.
+
 # Sprint 001 – Opportunity Pipeline
 
 Completed:
