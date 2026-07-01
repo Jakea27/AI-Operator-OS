@@ -36,6 +36,9 @@ export type BusinessRecord = {
   priority: BusinessPriority
   notes: string
   metrics: BusinessMetrics
+  sourceOpportunityId?: string
+  sourceOpportunityCode?: string
+  sourceOpportunityName?: string
   createdAt: string
   updatedAt: string
   activity: BusinessActivity[]
@@ -49,6 +52,9 @@ export type BusinessInput = {
   status: BusinessStatus
   notes: string
   priority: BusinessPriority
+  sourceOpportunityId?: string
+  sourceOpportunityCode?: string
+  sourceOpportunityName?: string
 }
 
 export const defaultBusinessMetrics: BusinessMetrics = {
@@ -57,4 +63,3 @@ export const defaultBusinessMetrics: BusinessMetrics = {
   ceoTimeRequired: 'TBD',
   automationLevel: 'TBD',
 }
-

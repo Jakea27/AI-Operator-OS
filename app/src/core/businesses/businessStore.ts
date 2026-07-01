@@ -56,6 +56,9 @@ function normalizeBusiness(raw: Partial<BusinessRecord>, index = 0): BusinessRec
     priority: raw.priority ?? 'Medium',
     notes: raw.notes ?? '',
     metrics: { ...defaultBusinessMetrics, ...raw.metrics },
+    sourceOpportunityId: raw.sourceOpportunityId,
+    sourceOpportunityCode: raw.sourceOpportunityCode,
+    sourceOpportunityName: raw.sourceOpportunityName,
     createdAt: timestamp,
     updatedAt: raw.updatedAt ?? timestamp,
     activity: Array.isArray(raw.activity) && raw.activity.length > 0
@@ -121,9 +124,19 @@ export const businessStore = {
       priority: input.priority,
       notes: input.notes.trim(),
       metrics: defaultBusinessMetrics,
+      sourceOpportunityId: input.sourceOpportunityId,
+      sourceOpportunityCode: input.sourceOpportunityCode,
+      sourceOpportunityName: input.sourceOpportunityName,
       createdAt: timestamp,
       updatedAt: timestamp,
-      activity: [createActivity('Business entered the manager.', timestamp)],
+      activity: [
+        createActivity(
+          input.sourceOpportunityCode
+            ? `Business created from opportunity ${input.sourceOpportunityCode}.`
+            : 'Business entered the manager.',
+          timestamp,
+        ),
+      ],
     }
     persist([business, ...state])
     return business
@@ -162,4 +175,3 @@ export function useBusinessStore() {
 }
 
 export const businessPriorities: BusinessPriority[] = ['Low', 'Medium', 'High', 'Critical']
-

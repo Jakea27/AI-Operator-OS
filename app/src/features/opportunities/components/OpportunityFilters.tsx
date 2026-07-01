@@ -7,7 +7,7 @@ import {
   opportunityStages,
 } from '@/src/core/opportunities'
 
-const statuses: OpportunityDecisionStatus[] = ['Active', 'Approved', 'Changes Requested', 'Rejected', 'Archived']
+const statuses: OpportunityDecisionStatus[] = ['Active', 'Approved', 'Converted', 'Changes Requested', 'Rejected', 'Archived']
 
 export function OpportunityFilters({
   filters,

@@ -1,5 +1,6 @@
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, FileText, X } from 'lucide-react'
+import { ArrowLeft, BriefcaseBusiness, Check, ChevronLeft, ChevronRight, FileText, X } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { useBusinessStore } from '@/src/core/businesses'
 import { getStageIndex, OpportunityRecord, OpportunityStage, opportunityStages, useOpportunityStore } from '@/src/core/opportunities'
 import { OpportunityLifecycle } from '../components/OpportunityLifecycle'
 import { OpportunityScoreCard } from '../components/OpportunityScoreCard'
@@ -18,6 +19,7 @@ function formatDate(value: string) {
 const decisionClass = {
   Active: 'border-lime/20 bg-lime/[0.08] text-lime',
   Approved: 'border-blue-300/20 bg-blue-400/[0.08] text-blue-200',
+  Converted: 'border-mint/20 bg-mint/[0.08] text-mint',
   'Changes Requested': 'border-amber-300/20 bg-amber-300/[0.08] text-amber-200',
   Rejected: 'border-red-300/20 bg-red-400/[0.08] text-red-200',
   Archived: 'border-white/10 bg-white/[0.04] text-muted',
@@ -76,10 +78,34 @@ function buildTimeline(opportunity: OpportunityRecord) {
 export function OpportunityDetailPage() {
   const { opportunityId } = useParams()
   const opportunityStore = useOpportunityStore()
+  const businessStore = useBusinessStore()
   const opportunity = opportunityStore.opportunities.find((item) => item.id === opportunityId)
 
   if (!opportunity) {
     return <Navigate to="/opportunities" replace />
+  }
+
+  const linkedBusiness = opportunity.convertedBusinessId
+    ? businessStore.businesses.find((business) => business.id === opportunity.convertedBusinessId)
+    : undefined
+
+  function convertToBusiness() {
+    if (!opportunity || opportunity.convertedBusinessId) return
+
+    const business = businessStore.createBusiness({
+      name: opportunity.name,
+      description: opportunity.description,
+      portfolioType: opportunity.businessCategory,
+      businessModel: 'Pending blueprint',
+      status: 'Building',
+      notes: opportunity.notes,
+      priority: opportunity.priority,
+      sourceOpportunityId: opportunity.id,
+      sourceOpportunityCode: opportunity.opportunityId,
+      sourceOpportunityName: opportunity.name,
+    })
+
+    opportunityStore.markConverted(opportunity.id, business.id, business.businessId)
   }
 
   return (
@@ -142,6 +168,19 @@ export function OpportunityDetailPage() {
               </div>
               <Info label="Date Created" value={formatDate(opportunity.createdAt)} />
               <Info label="Last Updated" value={formatDate(opportunity.updatedAt)} />
+            </div>
+            <div className="mt-4 rounded-xl border border-line bg-ink/35 p-4">
+              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Business Status</p>
+              {opportunity.convertedBusinessId ? (
+                <div className="mt-2 flex flex-wrap items-center gap-3">
+                  <span className="text-sm font-semibold text-white">Converted to {opportunity.convertedBusinessCode ?? linkedBusiness?.businessId ?? 'Business'}</span>
+                  <Link to={`/businesses/${opportunity.convertedBusinessId}`} className="btn-secondary inline-flex items-center gap-2">
+                    Open Business <BriefcaseBusiness size={14} />
+                  </Link>
+                </div>
+              ) : (
+                <p className="m-0 mt-2 text-sm text-muted">Not converted to a business yet.</p>
+              )}
             </div>
             {opportunity.tags.length > 0 ? (
               <div className="mt-4 rounded-xl border border-line bg-ink/35 p-4">
@@ -221,6 +260,19 @@ export function OpportunityDetailPage() {
               <button onClick={() => opportunityStore.setDecision(opportunity.id, 'Changes Requested')} className="btn-secondary">Request Changes</button>
               <button onClick={() => opportunityStore.setDecision(opportunity.id, 'Rejected')} className="btn-secondary inline-flex items-center justify-center gap-2"><X size={14} /> Reject</button>
               <button onClick={() => opportunityStore.setDecision(opportunity.id, 'Archived')} className="btn-secondary">Archive</button>
+              {opportunity.convertedBusinessId ? (
+                <Link to={`/businesses/${opportunity.convertedBusinessId}`} className="btn-secondary inline-flex items-center justify-center gap-2">
+                  Open Converted Business <BriefcaseBusiness size={14} />
+                </Link>
+              ) : (
+                <button
+                  onClick={convertToBusiness}
+                  disabled={opportunity.decisionStatus === 'Rejected' || opportunity.decisionStatus === 'Archived'}
+                  className="btn-primary inline-flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <BriefcaseBusiness size={14} /> Convert to Business
+                </button>
+              )}
             </div>
             <p className="m-0 mt-4 text-xs leading-5 text-muted">
               These actions only update the opportunity record. No automation, spending, or execution is triggered.

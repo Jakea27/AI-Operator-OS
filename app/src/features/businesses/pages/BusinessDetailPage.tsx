@@ -54,6 +54,19 @@ export function BusinessDetailPage() {
           <Info label="Created" value={formatDate(business.createdAt)} />
           <Info label="Updated" value={formatDate(business.updatedAt)} />
         </div>
+        {business.sourceOpportunityId ? (
+          <div className="mt-4 rounded-xl border border-line bg-ink/35 p-4">
+            <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Source Opportunity</p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <span className="text-sm font-semibold text-white">
+                {business.sourceOpportunityCode ?? 'Opportunity'} · {business.sourceOpportunityName ?? 'Source record'}
+              </span>
+              <Link to={`/opportunities/${business.sourceOpportunityId}`} className="btn-secondary">
+                Open Opportunity
+              </Link>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       <BusinessLifecycle status={business.status} />
@@ -137,4 +150,3 @@ function Placeholder({ text }: { text: string }) {
     </div>
   )
 }
-

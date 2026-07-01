@@ -17,6 +17,7 @@ const priorityClass: Record<OpportunityRecord['priority'], string> = {
 const statusClass: Record<OpportunityRecord['decisionStatus'], string> = {
   Active: 'border-lime/20 bg-lime/[0.08] text-lime',
   Approved: 'border-blue-300/20 bg-blue-400/[0.08] text-blue-200',
+  Converted: 'border-mint/20 bg-mint/[0.08] text-mint',
   'Changes Requested': 'border-amber-300/20 bg-amber-300/[0.08] text-amber-200',
   Rejected: 'border-red-300/20 bg-red-400/[0.08] text-red-200',
   Archived: 'border-white/10 bg-white/[0.04] text-muted',

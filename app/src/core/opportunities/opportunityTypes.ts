@@ -14,6 +14,7 @@ export type OpportunityPriority = 'Low' | 'Medium' | 'High' | 'Critical'
 export type OpportunityDecisionStatus =
   | 'Active'
   | 'Approved'
+  | 'Converted'
   | 'Changes Requested'
   | 'Rejected'
   | 'Archived'
@@ -23,6 +24,7 @@ export type OpportunityActivityType =
   | 'Updated'
   | 'Stage Changed'
   | 'Approved'
+  | 'Converted'
   | 'Changes Requested'
   | 'Rejected'
   | 'Archived'
@@ -55,6 +57,9 @@ export type OpportunityRecord = {
   priority: OpportunityPriority
   stage: OpportunityStage
   decisionStatus: OpportunityDecisionStatus
+  convertedBusinessId?: string
+  convertedBusinessCode?: string
+  convertedAt?: string
   createdAt: string
   updatedAt: string
   activity: OpportunityActivity[]

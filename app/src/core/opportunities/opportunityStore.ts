@@ -69,6 +69,9 @@ function normalizeOpportunity(raw: Partial<OpportunityRecord>, index = 0): Oppor
     priority: raw.priority ?? 'Medium',
     stage: raw.stage ?? 'Idea',
     decisionStatus: raw.decisionStatus ?? 'Active',
+    convertedBusinessId: raw.convertedBusinessId,
+    convertedBusinessCode: raw.convertedBusinessCode,
+    convertedAt: raw.convertedAt,
     createdAt: timestamp,
     updatedAt: raw.updatedAt ?? timestamp,
     activity: Array.isArray(raw.activity) && raw.activity.length > 0
@@ -223,6 +226,8 @@ export const opportunityStore = {
     const activityType: OpportunityActivityType =
       decisionStatus === 'Approved'
         ? 'Approved'
+        : decisionStatus === 'Converted'
+          ? 'Converted'
         : decisionStatus === 'Changes Requested'
           ? 'Changes Requested'
           : decisionStatus === 'Rejected'
@@ -234,6 +239,8 @@ export const opportunityStore = {
     const message =
       decisionStatus === 'Approved'
         ? 'CEO approved this opportunity for the next appropriate step.'
+        : decisionStatus === 'Converted'
+          ? 'Opportunity converted into an active business record.'
         : decisionStatus === 'Changes Requested'
           ? 'CEO requested changes before this opportunity can continue.'
           : decisionStatus === 'Rejected'
@@ -248,6 +255,27 @@ export const opportunityStore = {
         ? 'Phase 2 Blueprint'
         : opportunity.stage
       return withActivity(opportunity, activityType, message, { decisionStatus, stage })
+    }))
+  },
+
+  markConverted(opportunityId: string, businessId: string, businessCode: string) {
+    const timestamp = now()
+    persist(state.map((opportunity) => {
+      if (opportunity.id !== opportunityId) return opportunity
+      if (opportunity.convertedBusinessId) return opportunity
+
+      return {
+        ...opportunity,
+        decisionStatus: 'Converted',
+        convertedBusinessId: businessId,
+        convertedBusinessCode: businessCode,
+        convertedAt: timestamp,
+        updatedAt: timestamp,
+        activity: [
+          createActivity('Converted', `Opportunity converted to business ${businessCode}.`, timestamp),
+          ...opportunity.activity,
+        ],
+      }
     }))
   },
 
@@ -271,5 +299,6 @@ export function useOpportunityStore() {
     advanceStage: opportunityStore.advanceStage.bind(opportunityStore),
     moveBackStage: opportunityStore.moveBackStage.bind(opportunityStore),
     setDecision: opportunityStore.setDecision,
+    markConverted: opportunityStore.markConverted,
   }
 }
