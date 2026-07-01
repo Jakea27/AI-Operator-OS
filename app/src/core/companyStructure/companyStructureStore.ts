@@ -72,6 +72,10 @@ function generateManagerCode(existing: DepartmentRecord[]) {
   return `MGR-${String(max + 1).padStart(4, '0')}`
 }
 
+function fallbackManagerCode(index: number) {
+  return `MGR-${String(index + 1).padStart(4, '0')}`
+}
+
 function createDefaultManager(departmentName: DepartmentName, existing: DepartmentRecord[]): DepartmentManager {
   return {
     managerId: generateManagerCode(existing),
@@ -85,13 +89,13 @@ function createDefaultManager(departmentName: DepartmentName, existing: Departme
   }
 }
 
-function normalizeManager(raw: Partial<DepartmentRecord>, departmentName: DepartmentName, existing: DepartmentRecord[]): DepartmentManager | undefined {
+function normalizeManager(raw: Partial<DepartmentRecord>, departmentName: DepartmentName, index = 0): DepartmentManager | undefined {
   const rawManager = (raw as { manager?: unknown }).manager
 
   if (rawManager && typeof rawManager === 'object') {
     const manager = rawManager as Partial<DepartmentManager>
     return {
-      managerId: manager.managerId ?? generateManagerCode(existing),
+      managerId: manager.managerId ?? fallbackManagerCode(index),
       name: manager.name?.trim() || fallbackManagerName(departmentName),
       role: manager.role?.trim() || `${departmentName} Department Manager`,
       status: manager.status ?? 'Planning',
@@ -104,7 +108,13 @@ function normalizeManager(raw: Partial<DepartmentRecord>, departmentName: Depart
 
   if (typeof rawManager === 'string' && rawManager.trim() && rawManager !== 'Unassigned') {
     return {
-      ...createDefaultManager(departmentName, existing),
+      managerId: fallbackManagerCode(index),
+      role: `${departmentName} Department Manager`,
+      status: 'Planning',
+      health: 'Unknown',
+      focusArea: 'Define department ownership and operating rhythm.',
+      currentPriority: 'Establish department responsibilities.',
+      notes: '',
       name: rawManager.trim(),
     }
   }
@@ -122,7 +132,7 @@ function normalizeDepartment(raw: Partial<DepartmentRecord>, index = 0): Departm
     businessCode: raw.businessCode ?? 'BIZ-0000',
     businessName: raw.businessName ?? 'Unknown Business',
     departmentName,
-    manager: normalizeManager(raw, departmentName, state),
+    manager: normalizeManager(raw, departmentName, index),
     status: raw.status ?? 'Planning',
     health: raw.health ?? 'Unrated',
     projects: raw.projects ?? 'No projects connected yet.',
@@ -154,6 +164,14 @@ function readState(): DepartmentRecord[] {
 }
 
 let state = readState()
+
+if (typeof window !== 'undefined' && state.length > 0) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch {
+    // Keep in-memory normalized data even if localStorage is temporarily unavailable.
+  }
+}
 
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (event) => {
