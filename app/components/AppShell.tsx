@@ -18,7 +18,7 @@ import { getBuildInfo } from '@/src/services/buildInfo'
 
 const navigation = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
-  { label: 'Opportunity Pipeline', to: '/opportunities', icon: Lightbulb },
+  { label: 'Opportunities', to: '/opportunities', icon: Lightbulb },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
   { label: 'Development', to: '/development', icon: Code2 },
