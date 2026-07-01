@@ -6,6 +6,7 @@ import { Money } from '@/pages/Money'
 import { Development } from '@/pages/Development'
 import { ApprovalQueuePage } from '@/src/features/approval'
 import { BusinessDetailPage, BusinessesPage } from '@/src/features/businesses'
+import { CompanyStructurePage, DepartmentDetailPage } from '@/src/features/companyStructure'
 import { MemoryPage } from '@/src/features/memory/MemoryPage'
 import { OperatorDetail } from '@/src/features/operators/OperatorDetail'
 import { OperatorsPage } from '@/src/features/operators/OperatorsPage'
@@ -24,6 +25,8 @@ export default function App() {
         <Route path="opportunities/:opportunityId" element={<OpportunityDetailPage />} />
         <Route path="businesses" element={<BusinessesPage />} />
         <Route path="businesses/:businessId" element={<BusinessDetailPage />} />
+        <Route path="company-structure" element={<CompanyStructurePage />} />
+        <Route path="company-structure/departments/:departmentId" element={<DepartmentDetailPage />} />
         <Route path="development" element={<Development />} />
         <Route path="memory" element={<MemoryPage />} />
         <Route path="operators" element={<OperatorsPage />} />

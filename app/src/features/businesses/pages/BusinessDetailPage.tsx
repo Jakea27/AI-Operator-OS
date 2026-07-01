@@ -1,6 +1,8 @@
 import { ArrowLeft, BriefcaseBusiness, Check } from 'lucide-react'
+import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { BusinessStatus, businessStatuses, useBusinessStore } from '@/src/core/businesses'
+import { CompanyStructureTemplate, DepartmentName, companyStructureTemplates, departmentNames, useCompanyStructureStore } from '@/src/core/companyStructure'
 import { BusinessLifecycle } from '../components/BusinessLifecycle'
 import { BusinessMetrics } from '../components/BusinessMetrics'
 import { BusinessSection } from '../components/BusinessSection'
@@ -18,11 +20,20 @@ function formatDate(value: string) {
 export function BusinessDetailPage() {
   const { businessId } = useParams()
   const businessStore = useBusinessStore()
+  const companyStructure = useCompanyStructureStore()
+  const [selectedTemplate, setSelectedTemplate] = useState('general-business')
   const business = businessStore.businesses.find((item) => item.id === businessId)
 
   if (!business) {
     return <Navigate to="/businesses" replace />
   }
+
+  const departmentOwner = {
+    businessId: business.id,
+    businessCode: business.businessId,
+    businessName: business.name,
+  }
+  const businessDepartments = companyStructure.departments.filter((department) => department.businessId === business.id)
 
   return (
     <div className="space-y-6">
@@ -77,8 +88,48 @@ export function BusinessDetailPage() {
             <BusinessMetrics metrics={business.metrics} />
           </BusinessSection>
 
-          <BusinessSection title="Departments" eyebrow="Operating structure">
-            <Placeholder text="Department ownership will appear here as the business grows. Future sections can connect Money, Marketing, Operations, Development, and Approval workflows." />
+          <BusinessSection title="Company Structure" eyebrow="Departments owned by this business">
+            <div className="mb-4 grid gap-3 md:grid-cols-[1fr_auto]">
+              <select value={selectedTemplate} onChange={(event) => setSelectedTemplate(event.target.value)} className="field">
+                {companyStructureTemplates.map((template: CompanyStructureTemplate) => (
+                  <option key={template.id} value={template.id}>{template.name}</option>
+                ))}
+              </select>
+              <button onClick={() => companyStructure.applyTemplate(departmentOwner, selectedTemplate)} className="btn-primary">
+                Apply Template
+              </button>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {departmentNames.map((departmentName) => {
+                const department = businessDepartments.find((item) => item.departmentName === departmentName)
+                const enabled = Boolean(department?.enabled && department.status !== 'Archived')
+                return (
+                  <div key={departmentName} className="rounded-xl border border-line bg-ink/35 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="m-0 text-sm font-semibold text-white">{departmentName}</p>
+                        <p className="m-0 mt-1 text-xs text-muted">
+                          {department ? `${department.departmentId} · ${department.status}` : 'Not assigned'}
+                        </p>
+                      </div>
+                      <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${enabled ? 'border-lime/20 bg-lime/[0.08] text-lime' : 'border-white/10 bg-white/[0.04] text-muted'}`}>
+                        {enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {enabled && department ? (
+                        <button onClick={() => companyStructure.disableDepartment(department.id)} className="btn-secondary">Disable</button>
+                      ) : (
+                        <button onClick={() => companyStructure.enableDepartment(departmentOwner, departmentName as DepartmentName)} className="btn-secondary">Enable</button>
+                      )}
+                      {department ? (
+                        <Link to={`/company-structure/departments/${department.id}`} className="btn-secondary">Open</Link>
+                      ) : null}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </BusinessSection>
 
           <BusinessSection title="Financials" eyebrow="Local-first finance">
