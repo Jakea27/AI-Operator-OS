@@ -3,7 +3,7 @@ setlocal
 
 set "REPO_DIR=%~dp0"
 set "APP_DIR=%REPO_DIR%app"
-set "COMMAND=npm run dev"
+set "COMMAND=npm run dev:desktop"
 
 echo AI Operator OS Development Launcher
 echo Launching current source build...
@@ -36,4 +36,3 @@ if errorlevel 1 (
 )
 
 endlocal
-
