@@ -8,6 +8,7 @@ import { ApprovalQueuePage } from '@/src/features/approval'
 import { MemoryPage } from '@/src/features/memory/MemoryPage'
 import { OperatorDetail } from '@/src/features/operators/OperatorDetail'
 import { OperatorsPage } from '@/src/features/operators/OperatorsPage'
+import { OpportunityDetailPage, OpportunityPipelinePage } from '@/src/features/opportunities'
 import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
 
@@ -18,6 +19,8 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="ceo" element={<CEO />} />
         <Route path="money" element={<Money />} />
+        <Route path="opportunities" element={<OpportunityPipelinePage />} />
+        <Route path="opportunities/:opportunityId" element={<OpportunityDetailPage />} />
         <Route path="development" element={<Development />} />
         <Route path="memory" element={<MemoryPage />} />
         <Route path="operators" element={<OperatorsPage />} />

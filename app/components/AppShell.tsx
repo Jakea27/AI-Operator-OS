@@ -5,6 +5,7 @@ import {
   ClipboardCheck,
   Code2,
   LayoutDashboard,
+  Lightbulb,
   Map,
   Network,
   Settings,
@@ -19,6 +20,7 @@ const navigation = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
+  { label: 'Opportunities', to: '/opportunities', icon: Lightbulb },
   { label: 'Development', to: '/development', icon: Code2 },
   { label: 'Memory', to: '/memory', icon: Brain },
   { label: 'Roadmap', to: '/roadmap', icon: Map },
@@ -30,12 +32,19 @@ const titles: Record<string, string> = {
   '/': 'Command center',
   '/ceo': 'CEO office',
   '/money': 'Financial cockpit',
+  '/opportunities': 'Opportunity Pipeline',
   '/development': 'Development',
   '/memory': 'Operator memory',
   '/operators': 'AI operators',
   '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
   '/settings': 'Settings',
+}
+
+function getWorkspaceTitle(pathname: string) {
+  if (pathname.startsWith('/opportunities')) return 'Opportunity Pipeline'
+  if (pathname.startsWith('/operators')) return 'AI operators'
+  return titles[pathname] ?? 'Workspace'
 }
 
 export function AppShell() {
@@ -111,7 +120,7 @@ export function AppShell() {
           <div>
             <p className="eyebrow mb-1">AI Operator OS</p>
             <h1 className="m-0 font-display text-xl font-semibold text-white">
-              {titles[location.pathname] ?? 'Workspace'}
+              {getWorkspaceTitle(location.pathname)}
             </h1>
           </div>
           <div className="flex items-center gap-3">
