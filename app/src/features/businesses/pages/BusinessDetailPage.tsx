@@ -111,6 +111,14 @@ export function BusinessDetailPage() {
                         <p className="m-0 mt-1 text-xs text-muted">
                           {department ? `${department.departmentId} · ${department.status}` : 'Not assigned'}
                         </p>
+                        <p className="m-0 mt-2 text-xs text-[#c7d2cc]">
+                          Manager: {department?.manager?.name ?? 'Not assigned'}
+                        </p>
+                        {department?.manager ? (
+                          <p className="m-0 mt-1 text-xs text-muted">
+                            {department.manager.health} · {department.manager.currentPriority}
+                          </p>
+                        ) : null}
                       </div>
                       <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${enabled ? 'border-lime/20 bg-lime/[0.08] text-lime' : 'border-white/10 bg-white/[0.04] text-muted'}`}>
                         {enabled ? 'Enabled' : 'Disabled'}

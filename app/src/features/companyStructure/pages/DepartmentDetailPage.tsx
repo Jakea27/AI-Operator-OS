@@ -1,6 +1,15 @@
 import { ArrowLeft, Check, Network } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { DepartmentStatus, departmentNames, useCompanyStructureStore } from '@/src/core/companyStructure'
+import {
+  DepartmentManager,
+  DepartmentManagerHealth,
+  DepartmentManagerStatus,
+  DepartmentStatus,
+  departmentManagerHealthOptions,
+  departmentManagerStatuses,
+  useCompanyStructureStore,
+} from '@/src/core/companyStructure'
 import { CompanyStructureSection } from '../components/CompanyStructureSection'
 
 function formatDate(value: string) {
@@ -17,6 +26,11 @@ export function DepartmentDetailPage() {
   const { departmentId } = useParams()
   const companyStructure = useCompanyStructureStore()
   const department = companyStructure.departments.find((item) => item.id === departmentId)
+  const [managerDraft, setManagerDraft] = useState<DepartmentManager | undefined>(department?.manager)
+
+  useEffect(() => {
+    setManagerDraft(department?.manager)
+  }, [department?.manager])
 
   if (!department) {
     return <Navigate to="/company-structure" replace />
@@ -48,15 +62,68 @@ export function DepartmentDetailPage() {
           <Info label="Business" value={department.businessCode} />
           <Info label="Status" value={department.status} />
           <Info label="Health" value={department.health} />
+          <Info label="Manager" value={department.manager?.name ?? 'Not assigned'} />
           <Info label="Enabled" value={department.enabled ? 'Yes' : 'No'} />
-          <Info label="Updated" value={formatDate(department.updatedAt)} />
         </div>
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-6">
-          <CompanyStructureSection title="Manager" eyebrow="Placeholder owner">
-            <Placeholder text={department.manager} />
+          <CompanyStructureSection title="Department Manager" eyebrow="Placeholder leadership layer">
+            {managerDraft ? (
+              <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Manager ID</span>
+                    <input value={managerDraft.managerId} readOnly className="field opacity-75" />
+                  </label>
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Manager Name</span>
+                    <input value={managerDraft.name} onChange={(event) => setManagerDraft({ ...managerDraft, name: event.target.value })} className="field" />
+                  </label>
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Manager Role</span>
+                    <input value={managerDraft.role} onChange={(event) => setManagerDraft({ ...managerDraft, role: event.target.value })} className="field" />
+                  </label>
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Status</span>
+                    <select value={managerDraft.status} onChange={(event) => setManagerDraft({ ...managerDraft, status: event.target.value as DepartmentManagerStatus })} className="field">
+                      {departmentManagerStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Health</span>
+                    <select value={managerDraft.health} onChange={(event) => setManagerDraft({ ...managerDraft, health: event.target.value as DepartmentManagerHealth })} className="field">
+                      {departmentManagerHealthOptions.map((health) => <option key={health} value={health}>{health}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Current Priority</span>
+                    <input value={managerDraft.currentPriority} onChange={(event) => setManagerDraft({ ...managerDraft, currentPriority: event.target.value })} className="field" />
+                  </label>
+                  <label className="space-y-2 md:col-span-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Focus Area</span>
+                    <input value={managerDraft.focusArea} onChange={(event) => setManagerDraft({ ...managerDraft, focusArea: event.target.value })} className="field" />
+                  </label>
+                  <label className="space-y-2 md:col-span-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Notes</span>
+                    <textarea value={managerDraft.notes} onChange={(event) => setManagerDraft({ ...managerDraft, notes: event.target.value })} className="field min-h-[110px]" />
+                  </label>
+                </div>
+                <button onClick={() => companyStructure.updateDepartmentManager(department.id, managerDraft)} className="btn-primary">
+                  Save Manager
+                </button>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-line bg-white/[0.02] p-4">
+                <p className="m-0 text-sm leading-6 text-muted">
+                  No manager assigned yet. Assign a placeholder manager to establish department ownership.
+                </p>
+                <button onClick={() => companyStructure.assignDefaultManager(department.id)} className="btn-primary mt-4">
+                  Assign Manager
+                </button>
+              </div>
+            )}
           </CompanyStructureSection>
 
           <CompanyStructureSection title="Metrics" eyebrow="Future measurement">
@@ -130,4 +197,3 @@ function Placeholder({ text }: { text: string }) {
     </div>
   )
 }
-

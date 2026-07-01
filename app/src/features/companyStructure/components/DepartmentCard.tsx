@@ -28,9 +28,14 @@ export function DepartmentCard({ department }: { department: DepartmentRecord })
         </span>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <Info label="Manager" value={department.manager} />
-        <Info label="Health" value={department.health} />
-        <Info label="Enabled" value={department.enabled ? 'Yes' : 'No'} />
+        <Info label="Manager" value={department.manager?.name ?? 'No manager assigned'} />
+        <Info label="Manager Health" value={department.manager?.health ?? 'Unknown'} />
+        <Info label="Priority" value={department.manager?.currentPriority ?? 'No priority set'} />
+      </div>
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <Info label="Projects" value="0" />
+        <Info label="Operators" value="0" />
+        <Info label="Queue Items" value="0" />
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
         <span>Updated {formatDate(department.updatedAt)}</span>
@@ -50,4 +55,3 @@ function Info({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
-

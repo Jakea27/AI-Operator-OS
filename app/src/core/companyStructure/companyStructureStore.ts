@@ -1,6 +1,9 @@
 import { useSyncExternalStore } from 'react'
 import { getCompanyStructureTemplate } from './companyStructureTemplates'
 import {
+  DepartmentManager,
+  DepartmentManagerHealth,
+  DepartmentManagerStatus,
   DepartmentName,
   DepartmentOwnerInput,
   DepartmentRecord,
@@ -42,16 +45,84 @@ function generateDepartmentCode(existing: DepartmentRecord[]) {
   return `DEP-${String(max + 1).padStart(4, '0')}`
 }
 
+function fallbackManagerName(departmentName: DepartmentName) {
+  const names: Record<DepartmentName, string> = {
+    CEO: 'CEO Coordinator',
+    Research: 'Research Manager',
+    Development: 'Development Manager',
+    Marketing: 'Marketing Manager',
+    Sales: 'Sales Manager',
+    Finance: 'Finance Manager',
+    Operations: 'Operations Manager',
+    'Customer Success': 'Customer Success Manager',
+    Administration: 'Administration Manager',
+    Content: 'Content Manager',
+  }
+
+  return names[departmentName]
+}
+
+function generateManagerCode(existing: DepartmentRecord[]) {
+  const max = existing.reduce((highest, department) => {
+    const match = department.manager?.managerId?.match(/^MGR-(\d+)$/)
+    if (!match) return highest
+    return Math.max(highest, Number(match[1]))
+  }, 0)
+
+  return `MGR-${String(max + 1).padStart(4, '0')}`
+}
+
+function createDefaultManager(departmentName: DepartmentName, existing: DepartmentRecord[]): DepartmentManager {
+  return {
+    managerId: generateManagerCode(existing),
+    name: fallbackManagerName(departmentName),
+    role: `${departmentName} Department Manager`,
+    status: 'Planning',
+    health: 'Unknown',
+    focusArea: 'Define department ownership and operating rhythm.',
+    currentPriority: 'Establish department responsibilities.',
+    notes: '',
+  }
+}
+
+function normalizeManager(raw: Partial<DepartmentRecord>, departmentName: DepartmentName, existing: DepartmentRecord[]): DepartmentManager | undefined {
+  const rawManager = (raw as { manager?: unknown }).manager
+
+  if (rawManager && typeof rawManager === 'object') {
+    const manager = rawManager as Partial<DepartmentManager>
+    return {
+      managerId: manager.managerId ?? generateManagerCode(existing),
+      name: manager.name?.trim() || fallbackManagerName(departmentName),
+      role: manager.role?.trim() || `${departmentName} Department Manager`,
+      status: manager.status ?? 'Planning',
+      health: manager.health ?? 'Unknown',
+      focusArea: manager.focusArea ?? 'Define department ownership and operating rhythm.',
+      currentPriority: manager.currentPriority ?? 'Establish department responsibilities.',
+      notes: manager.notes ?? '',
+    }
+  }
+
+  if (typeof rawManager === 'string' && rawManager.trim() && rawManager !== 'Unassigned') {
+    return {
+      ...createDefaultManager(departmentName, existing),
+      name: rawManager.trim(),
+    }
+  }
+
+  return undefined
+}
+
 function normalizeDepartment(raw: Partial<DepartmentRecord>, index = 0): DepartmentRecord {
   const timestamp = raw.createdAt ?? now()
+  const departmentName = raw.departmentName ?? 'Operations'
   return {
     id: raw.id ?? id('department'),
     departmentId: raw.departmentId ?? fallbackDepartmentCode(index),
     businessId: raw.businessId ?? '',
     businessCode: raw.businessCode ?? 'BIZ-0000',
     businessName: raw.businessName ?? 'Unknown Business',
-    departmentName: raw.departmentName ?? 'Operations',
-    manager: raw.manager ?? 'Unassigned',
+    departmentName,
+    manager: normalizeManager(raw, departmentName, state),
     status: raw.status ?? 'Planning',
     health: raw.health ?? 'Unrated',
     projects: raw.projects ?? 'No projects connected yet.',
@@ -119,7 +190,7 @@ function createDepartment(owner: DepartmentOwnerInput, departmentName: Departmen
     businessCode: owner.businessCode,
     businessName: owner.businessName,
     departmentName,
-    manager: 'Unassigned',
+    manager: undefined,
     status: 'Ready',
     health: 'Unrated',
     projects: 'No projects connected yet.',
@@ -159,6 +230,41 @@ export const companyStructureStore = {
     const department = createDepartment(owner, departmentName, state)
     persist([department, ...state])
     return department
+  },
+
+  assignDefaultManager(departmentId: string) {
+    const timestamp = now()
+    persist(state.map((department) =>
+      department.id === departmentId
+        ? {
+          ...department,
+          manager: department.manager ?? createDefaultManager(department.departmentName, state),
+          updatedAt: timestamp,
+          timeline: [timeline(`Manager assigned to ${department.departmentName}.`, timestamp), ...department.timeline],
+        }
+        : department,
+    ))
+  },
+
+  updateDepartmentManager(departmentId: string, manager: DepartmentManager) {
+    const timestamp = now()
+    persist(state.map((department) =>
+      department.id === departmentId
+        ? {
+          ...department,
+          manager: {
+            ...manager,
+            name: manager.name.trim() || fallbackManagerName(department.departmentName),
+            role: manager.role.trim() || `${department.departmentName} Department Manager`,
+            focusArea: manager.focusArea.trim(),
+            currentPriority: manager.currentPriority.trim(),
+            notes: manager.notes,
+          },
+          updatedAt: timestamp,
+          timeline: [timeline(`Manager record updated for ${department.departmentName}.`, timestamp), ...department.timeline],
+        }
+        : department,
+    ))
   },
 
   disableDepartment(departmentId: string) {
@@ -239,7 +345,12 @@ export function useCompanyStructureStore() {
     enableDepartment: companyStructureStore.enableDepartment,
     disableDepartment: companyStructureStore.disableDepartment,
     setDepartmentStatus: companyStructureStore.setDepartmentStatus,
+    assignDefaultManager: companyStructureStore.assignDefaultManager,
+    updateDepartmentManager: companyStructureStore.updateDepartmentManager,
     applyTemplate: companyStructureStore.applyTemplate,
   }
 }
 
+export const departmentManagerStatuses: DepartmentManagerStatus[] = ['Planning', 'Ready', 'Operating', 'Paused']
+
+export const departmentManagerHealthOptions: DepartmentManagerHealth[] = ['Excellent', 'Healthy', 'Watch', 'At Risk', 'Unknown']

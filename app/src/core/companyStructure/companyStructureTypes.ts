@@ -14,6 +14,21 @@ export type DepartmentStatus = 'Planning' | 'Ready' | 'Operating' | 'Paused' | '
 
 export type DepartmentHealth = 'Healthy' | 'Stable' | 'Watch' | 'At Risk' | 'Unrated'
 
+export type DepartmentManagerStatus = 'Planning' | 'Ready' | 'Operating' | 'Paused'
+
+export type DepartmentManagerHealth = 'Excellent' | 'Healthy' | 'Watch' | 'At Risk' | 'Unknown'
+
+export type DepartmentManager = {
+  managerId: string
+  name: string
+  role: string
+  status: DepartmentManagerStatus
+  health: DepartmentManagerHealth
+  focusArea: string
+  currentPriority: string
+  notes: string
+}
+
 export type DepartmentTimelineItem = {
   id: string
   message: string
@@ -27,7 +42,7 @@ export type DepartmentRecord = {
   businessCode: string
   businessName: string
   departmentName: DepartmentName
-  manager: string
+  manager?: DepartmentManager
   status: DepartmentStatus
   health: DepartmentHealth
   projects: string
@@ -53,4 +68,3 @@ export type CompanyStructureTemplate = {
   description: string
   departments: DepartmentName[]
 }
-
