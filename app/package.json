@@ -12,7 +12,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run build && concurrently -k \"vite build --watch --configLoader runner\" \"vite preview --configLoader runner --port 5173 --strictPort\" \"wait-on http://localhost:5173 && electron .\"",
-    "dev:desktop": "npm run build && concurrently -k -n BUILD,WEB,ELECTRON -c green,cyan,magenta \"vite build --watch --configLoader runner\" \"vite preview --configLoader runner --host 127.0.0.1 --port 5173 --strictPort\" \"wait-on tcp:127.0.0.1:5173 && electron .\"",
+    "dev:desktop": "npm run build && concurrently -k -n BUILD,WEB,ELECTRON -c green,cyan,magenta \"vite build --watch --configLoader runner\" \"vite preview --configLoader runner --host 127.0.0.1 --port 5173 --strictPort\" \"wait-on http-get://127.0.0.1:5173/ && electron .\"",
     "build": "tsc --noEmit && vite build --configLoader runner",
     "preview": "vite preview --configLoader runner",
     "dist": "npm run build && electron-builder --win nsis portable --config electron-builder.json",
