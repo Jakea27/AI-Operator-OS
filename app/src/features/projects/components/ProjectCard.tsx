@@ -46,7 +46,7 @@ export function ProjectCard({ project }: { project: ProjectRecord }) {
 
       <div className="mt-5 flex flex-wrap gap-2">
         <Link to={`/projects/${project.id}`} className="btn-primary">Open Project</Link>
-        <Link to={`/businesses/${project.businessId}`} className="btn-secondary">Open Business</Link>
+        <Link to={`/businesses/${project.businessCode || project.businessId}`} className="btn-secondary">Open Business</Link>
       </div>
     </article>
   )

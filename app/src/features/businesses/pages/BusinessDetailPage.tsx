@@ -32,16 +32,16 @@ export function BusinessDetailPage() {
     return <Navigate to="/businesses" replace />
   }
 
+  const businessKeys = new Set([business.id, business.businessId])
   const departmentOwner = {
     businessId: business.id,
     businessCode: business.businessId,
     businessName: business.name,
   }
-  const businessDepartments = companyStructure.departments.filter((department) => department.businessId === business.id)
-  const businessProjectKeys = new Set([business.id, business.businessId])
+  const businessDepartments = companyStructure.departments.filter((department) => businessKeys.has(department.businessId))
   const businessProjects = projectStore.projects.filter((project) =>
-    businessProjectKeys.has(project.businessId) ||
-    businessProjectKeys.has(project.businessCode),
+    businessKeys.has(project.businessId) ||
+    businessKeys.has(project.businessCode),
   )
 
   return (

@@ -39,7 +39,7 @@ export function BusinessCard({ business }: { business: BusinessRecord }) {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
         <span>Updated {formatDate(business.updatedAt)}</span>
       </div>
-      <Link to={`/businesses/${business.id}`} className="btn-secondary mt-5 inline-flex items-center gap-2">
+      <Link to={`/businesses/${business.businessId}`} className="btn-secondary mt-5 inline-flex items-center gap-2">
         Open Business <ArrowRight size={14} />
       </Link>
     </article>
@@ -54,4 +54,3 @@ function Info({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
-
