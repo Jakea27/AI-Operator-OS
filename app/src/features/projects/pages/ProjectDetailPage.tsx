@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, FolderKanban } from 'lucide-react'
+import { ArrowLeft, Check, FolderKanban, Plus } from 'lucide-react'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useBusinessStore } from '@/src/core/businesses'
@@ -11,6 +11,9 @@ import {
   projectStatuses,
   useProjectStore,
 } from '@/src/core/projects'
+import { useWorkItemStore } from '@/src/core/workItems'
+import { WorkItemCard } from '@/src/features/workItems/WorkItemCard'
+import { WorkItemForm } from '@/src/features/workItems/WorkItemForm'
 import { ProjectLifecycle } from '../components/ProjectLifecycle'
 
 function formatDate(value: string) {
@@ -27,10 +30,12 @@ function formatDate(value: string) {
 export function ProjectDetailPage() {
   const { projectId } = useParams()
   const projectStore = useProjectStore()
+  const workItemStore = useWorkItemStore()
   const businessStore = useBusinessStore()
   const companyStructure = useCompanyStructureStore()
   const project = projectStore.projects.find((item) => item.id === projectId)
   const [draft, setDraft] = useState<ProjectRecord | undefined>(project)
+  const [showWorkItemForm, setShowWorkItemForm] = useState(false)
 
   useEffect(() => {
     setDraft(project)
@@ -44,6 +49,11 @@ export function ProjectDetailPage() {
   if (!project || !draft) {
     return <Navigate to="/projects" replace />
   }
+
+  const projectWorkItems = workItemStore.workItems.filter((workItem) =>
+    workItem.projectId === project.id ||
+    workItem.projectCode === project.projectId,
+  )
 
   function selectBusiness(nextBusinessId: string) {
     const business = businessStore.businesses.find((item) => item.id === nextBusinessId)
@@ -207,8 +217,36 @@ export function ProjectDetailPage() {
         </div>
 
         <div className="space-y-6">
-          <Section title="Placeholder Work Items" eyebrow="Future execution units">
-            <Placeholder text={project.placeholderWorkItems} />
+          <Section title="Work Items" eyebrow="Project-owned executable units">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="m-0 text-sm leading-6 text-muted">
+                Work Items belong to this Project. They are records only and do not execute automatically.
+              </p>
+              <button onClick={() => setShowWorkItemForm(true)} className="btn-primary inline-flex items-center gap-2">
+                <Plus size={15} /> New Work Item
+              </button>
+            </div>
+
+            {showWorkItemForm ? (
+              <WorkItemForm
+                fixedProject={project}
+                onCancel={() => setShowWorkItemForm(false)}
+                onCreate={(input) => {
+                  workItemStore.createWorkItem(input)
+                  setShowWorkItemForm(false)
+                }}
+              />
+            ) : null}
+
+            {projectWorkItems.length > 0 ? (
+              <div className="grid gap-4">
+                {projectWorkItems.map((workItem) => (
+                  <WorkItemCard key={workItem.id} workItem={workItem} />
+                ))}
+              </div>
+            ) : (
+              <Placeholder text={project.placeholderWorkItems} />
+            )}
           </Section>
 
           <Section title="Timeline" eyebrow="Local history">

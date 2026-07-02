@@ -7,6 +7,7 @@ import {
   ClipboardCheck,
   Code2,
   LayoutDashboard,
+  ListChecks,
   Lightbulb,
   Map,
   Network,
@@ -26,6 +27,7 @@ const navigation = [
   { label: 'Company Structure', to: '/company-structure', icon: Building2 },
   { label: 'Operators', to: '/operators', icon: Network },
   { label: 'Projects', to: '/projects', icon: FolderKanban },
+  { label: 'Work Items', to: '/work-items', icon: ListChecks },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
   { label: 'Development', to: '/development', icon: Code2 },
@@ -45,6 +47,7 @@ const titles: Record<string, string> = {
   '/memory': 'Operator memory',
   '/operators': 'Operators',
   '/projects': 'Projects',
+  '/work-items': 'Work Items',
   '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
   '/settings': 'Settings',
@@ -56,6 +59,7 @@ function getWorkspaceTitle(pathname: string) {
   if (pathname.startsWith('/company-structure')) return 'Company Structure'
   if (pathname.startsWith('/operators')) return 'Operators'
   if (pathname.startsWith('/projects')) return 'Projects'
+  if (pathname.startsWith('/work-items')) return 'Work Items'
   return titles[pathname] ?? 'Workspace'
 }
 

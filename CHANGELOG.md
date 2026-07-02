@@ -1,5 +1,20 @@
 # Changelog
 
+# Sprint 006 - Work Item Layer
+
+Completed:
+- Created the Work Item Layer as local-first organizational records.
+- Added Work Items to the active application navigation below Projects.
+- Added Work Item IDs using WI-0001 format.
+- Added Work Item dashboard summary cards for total, ready, in progress, blocked, review, and completed records.
+- Added Work Item creation, editing, detail pages, timeline/history, placeholder metrics, and placeholder notes.
+- Connected Work Items to Projects and Businesses through the Business -> Project -> Work Item relationship.
+- Added Project Detail Work Items section with project-scoped Work Item creation.
+- Added Department, Manager, and Operator assignment context.
+- Reused the existing useSyncExternalStore and localStorage persistence architecture.
+- Verified navigation, persistence, and relationship integrity.
+- Completed QA acceptance with 7/7 checks passed.
+
 # Sprint 005 - Project Layer
 
 Completed:

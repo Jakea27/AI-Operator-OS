@@ -1,5 +1,17 @@
 # AO Knowledge Base Changelog
 
+## Sprint 006 - Work Item Layer - 2026-07-02
+
+### Completed
+
+- Recorded Sprint 006 as completed.
+- Documented the Work Item Layer as local-first records owned by Projects.
+- Captured the Business -> Project -> Work Item root relationship.
+- Documented Work Item dashboard, detail page, form, cards, Project Detail integration, Department context, Manager context, Operator assignment context, timeline/history, placeholder metrics, and placeholder notes.
+- Confirmed the existing `useSyncExternalStore` and localStorage persistence pattern was reused.
+- Recorded QA summary: 7/7 checks passed.
+- Captured navigation verification, persistence verification, and relationship integrity verification.
+
 ## Sprint 005 - Project Layer - 2026-07-01
 
 ### Completed

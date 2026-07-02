@@ -14,6 +14,8 @@ import { OpportunityDetailPage, OpportunityPipelinePage } from '@/src/features/o
 import { ProjectDetailPage, ProjectsPage } from '@/src/features/projects'
 import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
+import { WorkItemDetailPage } from '@/src/features/workItems/WorkItemDetailPage'
+import { WorkItemsPage } from '@/src/features/workItems/WorkItemsPage'
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
         <Route path="operators/:operatorId" element={<OperatorDetail />} />
         <Route path="projects" element={<ProjectsPage />} />
         <Route path="projects/:projectId" element={<ProjectDetailPage />} />
+        <Route path="work-items" element={<WorkItemsPage />} />
+        <Route path="work-items/:workItemId" element={<WorkItemDetailPage />} />
         <Route path="approval" element={<ApprovalQueuePage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />
