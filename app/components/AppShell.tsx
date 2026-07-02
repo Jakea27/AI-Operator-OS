@@ -23,12 +23,12 @@ const navigation = [
   { label: 'Opportunities', to: '/opportunities', icon: Lightbulb },
   { label: 'Businesses', to: '/businesses', icon: BriefcaseBusiness },
   { label: 'Company Structure', to: '/company-structure', icon: Building2 },
+  { label: 'Operators', to: '/operators', icon: Network },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
   { label: 'Development', to: '/development', icon: Code2 },
   { label: 'Memory', to: '/memory', icon: Brain },
   { label: 'Roadmap', to: '/roadmap', icon: Map },
-  { label: 'Operators', to: '/operators', icon: Network },
   { label: 'Approval Queue', to: '/approval', icon: ClipboardCheck },
 ]
 

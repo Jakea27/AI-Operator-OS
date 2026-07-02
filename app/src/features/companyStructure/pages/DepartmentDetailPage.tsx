@@ -10,6 +10,9 @@ import {
   departmentManagerStatuses,
   useCompanyStructureStore,
 } from '@/src/core/companyStructure'
+import { useWorkforceOperatorStore } from '@/src/core/operators'
+import { WorkforceOperatorCard } from '@/src/features/operators/WorkforceOperatorCard'
+import { WorkforceOperatorForm } from '@/src/features/operators/WorkforceOperatorForm'
 import { CompanyStructureSection } from '../components/CompanyStructureSection'
 
 function formatDate(value: string) {
@@ -25,6 +28,7 @@ function formatDate(value: string) {
 export function DepartmentDetailPage() {
   const { departmentId } = useParams()
   const companyStructure = useCompanyStructureStore()
+  const operatorStore = useWorkforceOperatorStore()
   const department = companyStructure.departments.find((item) => item.id === departmentId)
   const [managerDraft, setManagerDraft] = useState<DepartmentManager | undefined>(department?.manager)
 
@@ -35,6 +39,8 @@ export function DepartmentDetailPage() {
   if (!department) {
     return <Navigate to="/company-structure" replace />
   }
+
+  const departmentOperators = operatorStore.operators.filter((operator) => operator.departmentId === department.id)
 
   return (
     <div className="space-y-6">
@@ -135,7 +141,24 @@ export function DepartmentDetailPage() {
           </CompanyStructureSection>
 
           <CompanyStructureSection title="Operators" eyebrow="Future operators">
-            <Placeholder text={department.operators} />
+            <div className="space-y-4">
+              <div className="rounded-xl border border-line bg-ink/35 p-4">
+                <p className="eyebrow mb-3">Add Operator</p>
+                <WorkforceOperatorForm
+                  fixedDepartment={department}
+                  onCreate={(input) => operatorStore.createOperator(input)}
+                />
+              </div>
+              {departmentOperators.length > 0 ? (
+                <div className="grid gap-4">
+                  {departmentOperators.map((operator) => (
+                    <WorkforceOperatorCard key={operator.id} operator={operator} />
+                  ))}
+                </div>
+              ) : (
+                <Placeholder text="No operators assigned to this department yet." />
+              )}
+            </div>
           </CompanyStructureSection>
 
           <CompanyStructureSection title="Queue" eyebrow="Future work queue">
