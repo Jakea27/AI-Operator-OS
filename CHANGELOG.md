@@ -1,5 +1,20 @@
 # Changelog
 
+# Sprint 005 - Project Layer
+
+Completed:
+- Created the Project Layer as organizational containers for business initiatives.
+- Added Projects to the active application navigation below Operators.
+- Added project IDs using PROJ-0001 format.
+- Added project dashboard summary cards for totals, active, completed, archived, average completion, and open Work Items.
+- Added project creation, editing, detail pages, lifecycle, timeline/history, notes, and placeholder Work Item context.
+- Connected Projects to Businesses and Department Owners.
+- Added manager assignment from the selected Department Manager.
+- Added Business Detail Projects integration with linked project cards and current-business project creation.
+- Fixed Business Detail routing/state consistency so Projects appear whether opened from Businesses or Projects.
+- Added local-first Project persistence.
+- Completed QA acceptance.
+
 # Sprint 004 - Workforce Operators
 
 Completed:

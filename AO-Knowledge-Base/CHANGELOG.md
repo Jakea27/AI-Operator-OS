@@ -1,5 +1,16 @@
 # AO Knowledge Base Changelog
 
+## Sprint 005 - Project Layer - 2026-07-01
+
+### Completed
+
+- Recorded Sprint 005 as completed.
+- Documented the Project Layer as organizational containers for business initiatives, not execution engines.
+- Captured the CEO -> Business -> Projects -> Work Items -> Operators architecture direction.
+- Documented project dashboard, project detail page, project lifecycle, local-first persistence, Business Detail integration, Department Owner assignment, Manager assignment, and placeholder Work Item context.
+- Recorded QA fixes for Business Detail project visibility and route/state consistency across Businesses and Projects navigation paths.
+- Captured Sprint 005 verification results and future dependencies.
+
 ## Sprint 004 - Workforce Operators - 2026-07-01
 
 ### Completed
