@@ -1,5 +1,20 @@
 # Changelog
 
+# Sprint 004 - Workforce Operators
+
+Completed:
+- Created the Operator Layer as organizational workforce records.
+- Added the Operators dashboard to the active application navigation.
+- Added workforce operator IDs using OPR-0001 format.
+- Added operator creation, editing, detail pages, timeline/history, placeholder metrics, and placeholder queue context.
+- Connected operators to the Business -> Department -> Operator hierarchy.
+- Added department-level operator viewing and creation.
+- Added manager-to-operator assignment from department manager records.
+- Added local-first operator persistence.
+- Verified restart persistence for operator records.
+- Fixed Department Manager persistence so manager edits survive application restart.
+- Completed QA acceptance.
+
 # Sprint 002 – Business Manager
 
 Completed:

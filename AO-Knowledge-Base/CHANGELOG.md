@@ -1,5 +1,15 @@
 # AO Knowledge Base Changelog
 
+## Sprint 004 - Workforce Operators - 2026-07-01
+
+### Completed
+
+- Recorded Sprint 004 as completed.
+- Documented the Operator Layer as organizational workforce records, not AI or autonomous agents.
+- Captured the Business -> Department -> Operator hierarchy and Manager -> Operator supervision relationship.
+- Documented operator dashboard, operator detail page, department-level operator management, timeline/history support, local-first persistence, restart persistence verification, and QA acceptance.
+- Recorded the Department Manager persistence bug, root cause, resolution, and QA verification.
+
 ## Sprint 002 - Business Manager - 2026-07-01
 
 ### Completed
