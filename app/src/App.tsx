@@ -11,6 +11,7 @@ import { MemoryPage } from '@/src/features/memory/MemoryPage'
 import { OperatorDetail } from '@/src/features/operators/OperatorDetail'
 import { OperatorsPage } from '@/src/features/operators/OperatorsPage'
 import { OpportunityDetailPage, OpportunityPipelinePage } from '@/src/features/opportunities'
+import { ProjectDetailPage, ProjectsPage } from '@/src/features/projects'
 import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
 
@@ -31,6 +32,8 @@ export default function App() {
         <Route path="memory" element={<MemoryPage />} />
         <Route path="operators" element={<OperatorsPage />} />
         <Route path="operators/:operatorId" element={<OperatorDetail />} />
+        <Route path="projects" element={<ProjectsPage />} />
+        <Route path="projects/:projectId" element={<ProjectDetailPage />} />
         <Route path="approval" element={<ApprovalQueuePage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />

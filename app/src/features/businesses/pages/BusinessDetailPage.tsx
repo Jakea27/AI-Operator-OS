@@ -1,8 +1,10 @@
-import { ArrowLeft, BriefcaseBusiness, Check } from 'lucide-react'
+import { ArrowLeft, BriefcaseBusiness, Check, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { BusinessStatus, businessStatuses, useBusinessStore } from '@/src/core/businesses'
 import { CompanyStructureTemplate, DepartmentName, companyStructureTemplates, departmentNames, useCompanyStructureStore } from '@/src/core/companyStructure'
+import { ProjectRecord, useProjectStore } from '@/src/core/projects'
+import { ProjectForm } from '@/src/features/projects/components/ProjectForm'
 import { BusinessLifecycle } from '../components/BusinessLifecycle'
 import { BusinessMetrics } from '../components/BusinessMetrics'
 import { BusinessSection } from '../components/BusinessSection'
@@ -21,8 +23,10 @@ export function BusinessDetailPage() {
   const { businessId } = useParams()
   const businessStore = useBusinessStore()
   const companyStructure = useCompanyStructureStore()
+  const projectStore = useProjectStore()
   const [selectedTemplate, setSelectedTemplate] = useState('general-business')
-  const business = businessStore.businesses.find((item) => item.id === businessId)
+  const [showProjectForm, setShowProjectForm] = useState(false)
+  const business = businessStore.businesses.find((item) => item.id === businessId || item.businessId === businessId)
 
   if (!business) {
     return <Navigate to="/businesses" replace />
@@ -34,6 +38,11 @@ export function BusinessDetailPage() {
     businessName: business.name,
   }
   const businessDepartments = companyStructure.departments.filter((department) => department.businessId === business.id)
+  const businessProjectKeys = new Set([business.id, business.businessId])
+  const businessProjects = projectStore.projects.filter((project) =>
+    businessProjectKeys.has(project.businessId) ||
+    businessProjectKeys.has(project.businessCode),
+  )
 
   return (
     <div className="space-y-6">
@@ -81,6 +90,40 @@ export function BusinessDetailPage() {
       </section>
 
       <BusinessLifecycle status={business.status} />
+
+      <BusinessSection title="Projects" eyebrow="Business initiatives">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="m-0 text-sm leading-6 text-muted">
+            Projects connected to {business.businessId}. Projects organize initiatives; Work Items are added later.
+          </p>
+          <button onClick={() => setShowProjectForm(true)} className="btn-primary inline-flex items-center gap-2">
+            <Plus size={15} /> New Project
+          </button>
+        </div>
+
+        {showProjectForm ? (
+          <ProjectForm
+            fixedBusiness={business}
+            onCancel={() => setShowProjectForm(false)}
+            onCreate={(input) => {
+              projectStore.createProject(input)
+              setShowProjectForm(false)
+            }}
+          />
+        ) : null}
+
+        {businessProjects.length > 0 ? (
+          <div className="grid gap-4 xl:grid-cols-2">
+            {businessProjects.map((project) => (
+              <BusinessProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-line bg-white/[0.02] p-4">
+            <p className="m-0 text-sm leading-6 text-muted">No projects have been created for this business yet.</p>
+          </div>
+        )}
+      </BusinessSection>
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-6">
@@ -199,6 +242,34 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
       <p className="m-0 mt-2 text-sm font-semibold text-white">{value}</p>
     </div>
+  )
+}
+
+function BusinessProjectCard({ project }: { project: ProjectRecord }) {
+  return (
+    <article className="rounded-xl border border-line bg-ink/35 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="eyebrow mb-2">{project.projectId}</p>
+          <h3 className="m-0 font-display text-lg font-semibold text-white">{project.name}</h3>
+        </div>
+        <Link to={`/projects/${project.id}`} className="btn-primary">Open Project</Link>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <Info label="Project ID" value={project.projectId} />
+        <Info label="Status" value={project.status} />
+        <Info label="Progress" value={`${project.progress}%`} />
+        <Info label="Priority" value={project.priority} />
+        <Info label="Department Owner" value={project.departmentName} />
+        <Info label="Manager" value={project.managerName} />
+        <Info label="Updated" value={formatDate(project.updatedAt)} />
+      </div>
+
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/[0.06]">
+        <div className="h-full rounded-full bg-lime" style={{ width: `${project.progress}%` }} />
+      </div>
+    </article>
   )
 }
 

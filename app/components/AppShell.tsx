@@ -10,6 +10,7 @@ import {
   Lightbulb,
   Map,
   Network,
+  FolderKanban,
   Settings,
   Sparkles,
   UserRound,
@@ -24,6 +25,7 @@ const navigation = [
   { label: 'Businesses', to: '/businesses', icon: BriefcaseBusiness },
   { label: 'Company Structure', to: '/company-structure', icon: Building2 },
   { label: 'Operators', to: '/operators', icon: Network },
+  { label: 'Projects', to: '/projects', icon: FolderKanban },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
   { label: 'Development', to: '/development', icon: Code2 },
@@ -41,7 +43,8 @@ const titles: Record<string, string> = {
   '/company-structure': 'Company Structure',
   '/development': 'Development',
   '/memory': 'Operator memory',
-  '/operators': 'AI operators',
+  '/operators': 'Operators',
+  '/projects': 'Projects',
   '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
   '/settings': 'Settings',
@@ -51,7 +54,8 @@ function getWorkspaceTitle(pathname: string) {
   if (pathname.startsWith('/opportunities')) return 'Opportunity Pipeline'
   if (pathname.startsWith('/businesses')) return 'Business Manager'
   if (pathname.startsWith('/company-structure')) return 'Company Structure'
-  if (pathname.startsWith('/operators')) return 'AI operators'
+  if (pathname.startsWith('/operators')) return 'Operators'
+  if (pathname.startsWith('/projects')) return 'Projects'
   return titles[pathname] ?? 'Workspace'
 }
 
