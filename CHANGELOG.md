@@ -1,5 +1,20 @@
 # Changelog
 
+# Sprint 007 - Execution Queue
+
+Completed:
+- Created the Execution Queue layer as local-first queue records created from Work Items.
+- Added Execution Queue to the active application navigation directly below Work Items.
+- Added queue IDs using EQ-0001 format.
+- Added Execution Queue dashboard summary cards for total, queued, waiting approval, ready, blocked, and completed records.
+- Added queue item detail pages, editable queue status, priority, execution type, approval flag, notes, timeline/history, and placeholder result context.
+- Connected queue records to the Business -> Project -> Work Item -> Execution Queue relationship.
+- Added Work Item Detail integration with + Add to Execution Queue.
+- Prevented duplicate queue records for the same Work Item.
+- Added navigation from Work Item to Queue Item and Queue Item back to Work Item.
+- Reused the existing useSyncExternalStore and localStorage persistence architecture.
+- Completed QA acceptance.
+
 # Sprint 006 - Work Item Layer
 
 Completed:

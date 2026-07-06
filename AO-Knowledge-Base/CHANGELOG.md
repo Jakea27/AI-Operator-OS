@@ -1,5 +1,17 @@
 # AO Knowledge Base Changelog
 
+## Sprint 007 - Execution Queue - 2026-07-06
+
+### Completed
+
+- Recorded Sprint 007 as completed.
+- Documented the Execution Queue as local-first queue records created from Work Items.
+- Captured the Business -> Project -> Work Item -> Execution Queue relationship.
+- Documented Execution Queue dashboard, detail page, form, cards, Work Item Detail integration, duplicate prevention, timeline/history, and placeholder result context.
+- Confirmed the existing `useSyncExternalStore` and localStorage persistence pattern was reused.
+- Recorded QA acceptance and verification results.
+- Captured future recommendations for approval integration and eventual execution-layer work.
+
 ## Sprint 006 - Work Item Layer - 2026-07-02
 
 ### Completed
