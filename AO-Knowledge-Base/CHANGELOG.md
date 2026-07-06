@@ -1,5 +1,18 @@
 # AO Knowledge Base Changelog
 
+## Sprint 008 - Approval Queue Integration - 2026-07-06
+
+### Completed
+
+- Recorded Sprint 008 as completed.
+- Documented the integration between the existing Approval Queue and the existing Execution Queue.
+- Confirmed Approval Queue was extended, not rebuilt.
+- Captured automatic surfacing of Execution Queue records where `requiresApproval === true`.
+- Documented duplicate prevention by Execution Queue source record.
+- Captured added source references for Queue Item, Work Item, Project, and Business context.
+- Confirmed existing Approval Queue decision workflow and local persistence were preserved.
+- Recorded QA acceptance and verification results.
+
 ## Sprint 007 - Execution Queue - 2026-07-06
 
 ### Completed

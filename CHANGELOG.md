@@ -1,5 +1,18 @@
 # Changelog
 
+# Sprint 008 - Approval Queue Integration
+
+Completed:
+- Integrated the existing Approval Queue with the existing Execution Queue.
+- Preserved the existing Approval Queue store, types, page, cards, detail panel, filters, summary cards, decision workflow, search, local persistence, sidebar navigation, and routes.
+- Added optional approval source references for Execution Queue, Work Item, Project, and Business context.
+- Automatically surfaced Execution Queue records requiring approval inside Approval Queue.
+- Prevented duplicate approval records for the same Execution Queue item.
+- Displayed Execution Queue context inside Approval cards and Approval detail.
+- Preserved existing Approve, Reject, Request Changes, Defer, and Archive actions.
+- Preserved existing localStorage keys.
+- Completed QA acceptance.
+
 # Sprint 007 - Execution Queue
 
 Completed:
