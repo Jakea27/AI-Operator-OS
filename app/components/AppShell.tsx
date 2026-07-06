@@ -5,6 +5,7 @@ import {
   BriefcaseBusiness,
   ChevronDown,
   ClipboardCheck,
+  ClipboardList,
   Code2,
   LayoutDashboard,
   ListChecks,
@@ -28,6 +29,7 @@ const navigation = [
   { label: 'Operators', to: '/operators', icon: Network },
   { label: 'Projects', to: '/projects', icon: FolderKanban },
   { label: 'Work Items', to: '/work-items', icon: ListChecks },
+  { label: 'Execution Queue', to: '/execution-queue', icon: ClipboardList },
   { label: 'CEO', to: '/ceo', icon: UserRound },
   { label: 'Money', to: '/money', icon: Banknote },
   { label: 'Development', to: '/development', icon: Code2 },
@@ -48,6 +50,7 @@ const titles: Record<string, string> = {
   '/operators': 'Operators',
   '/projects': 'Projects',
   '/work-items': 'Work Items',
+  '/execution-queue': 'Execution Queue',
   '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
   '/settings': 'Settings',
@@ -60,6 +63,7 @@ function getWorkspaceTitle(pathname: string) {
   if (pathname.startsWith('/operators')) return 'Operators'
   if (pathname.startsWith('/projects')) return 'Projects'
   if (pathname.startsWith('/work-items')) return 'Work Items'
+  if (pathname.startsWith('/execution-queue')) return 'Execution Queue'
   return titles[pathname] ?? 'Workspace'
 }
 

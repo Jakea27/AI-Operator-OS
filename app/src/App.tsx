@@ -16,6 +16,8 @@ import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
 import { WorkItemDetailPage } from '@/src/features/workItems/WorkItemDetailPage'
 import { WorkItemsPage } from '@/src/features/workItems/WorkItemsPage'
+import { ExecutionQueueDetailPage } from '@/src/features/executionQueue/ExecutionQueueDetailPage'
+import { ExecutionQueuePage } from '@/src/features/executionQueue/ExecutionQueuePage'
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="projects/:projectId" element={<ProjectDetailPage />} />
         <Route path="work-items" element={<WorkItemsPage />} />
         <Route path="work-items/:workItemId" element={<WorkItemDetailPage />} />
+        <Route path="execution-queue" element={<ExecutionQueuePage />} />
+        <Route path="execution-queue/:queueItemId" element={<ExecutionQueueDetailPage />} />
         <Route path="approval" element={<ApprovalQueuePage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />

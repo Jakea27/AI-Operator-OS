@@ -2,6 +2,8 @@ import { ArrowLeft, Check, ListChecks } from 'lucide-react'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useWorkforceOperatorStore } from '@/src/core/operators'
+import { useExecutionQueueStore } from '@/src/core/executionQueue'
+import { ExecutionQueueForm } from '@/src/features/executionQueue/ExecutionQueueForm'
 import {
   WorkItemPriority,
   WorkItemRecord,
@@ -25,9 +27,11 @@ function formatDate(value: string) {
 export function WorkItemDetailPage() {
   const { workItemId } = useParams()
   const workItemStore = useWorkItemStore()
+  const executionQueue = useExecutionQueueStore()
   const operatorStore = useWorkforceOperatorStore()
   const workItem = workItemStore.workItems.find((item) => item.id === workItemId || item.workItemId === workItemId)
   const [draft, setDraft] = useState<WorkItemRecord | undefined>(workItem)
+  const [showQueueForm, setShowQueueForm] = useState(false)
 
   useEffect(() => {
     setDraft(workItem)
@@ -41,6 +45,8 @@ export function WorkItemDetailPage() {
   if (!workItem || !draft) {
     return <Navigate to="/work-items" replace />
   }
+
+  const existingQueueItem = executionQueue.queueItems.find((queueItem) => queueItem.sourceWorkItemRecordId === workItem.id)
 
   function selectOperator(operatorRecordId: string) {
     const operator = eligibleOperators.find((item) => item.id === operatorRecordId)
@@ -148,6 +154,39 @@ export function WorkItemDetailPage() {
           <Section title="Notes" eyebrow="Placeholder Notes">
             <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} className="field min-h-[120px]" />
             <button onClick={() => save(workItem, draft)} className="btn-primary mt-4">Save Work Item</button>
+          </Section>
+
+          <Section title="Execution Queue" eyebrow="Future execution preparation">
+            {existingQueueItem ? (
+              <div className="rounded-xl border border-line bg-ink/35 p-4">
+                <p className="eyebrow mb-2">{existingQueueItem.queueId} · {existingQueueItem.queueStatus}</p>
+                <h3 className="m-0 font-display text-lg font-semibold text-white">{existingQueueItem.workItemTitle}</h3>
+                <p className="m-0 mt-2 text-sm leading-6 text-muted">
+                  This Work Item is already queued. Duplicate queue records are prevented.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link to={`/execution-queue/${existingQueueItem.id}`} className="btn-primary">Open Queue Item</Link>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="m-0 text-sm leading-6 text-muted">
+                  Add this Work Item to the Execution Queue to prepare future approval and execution workflows. Nothing runs automatically.
+                </p>
+                {showQueueForm ? (
+                  <ExecutionQueueForm
+                    workItem={workItem}
+                    onCancel={() => setShowQueueForm(false)}
+                    onCreate={(input) => {
+                      executionQueue.createQueueItem(input)
+                      setShowQueueForm(false)
+                    }}
+                  />
+                ) : (
+                  <button onClick={() => setShowQueueForm(true)} className="btn-primary">+ Add to Execution Queue</button>
+                )}
+              </div>
+            )}
           </Section>
         </div>
 
