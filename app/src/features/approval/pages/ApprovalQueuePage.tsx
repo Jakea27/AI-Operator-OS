@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { PageIntro } from '@/components/PageIntro'
+import { ExecutionQueueRecord, useExecutionQueueStore } from '@/src/core/executionQueue'
 import { useCTORecommendationStore } from '@/src/core/operators'
 import { ApprovalCard } from '../components/ApprovalCard'
 import { ApprovalDetailPanel } from '../components/ApprovalDetailPanel'
@@ -12,6 +13,7 @@ import { filterApprovals } from '../utils/approvalFilters'
 
 export function ApprovalQueuePage() {
   const approvalStore = useApprovalStore()
+  const executionQueue = useExecutionQueueStore()
   const ctoRecommendations = useCTORecommendationStore()
   const [filters, setFilters] = useState<ApprovalFilterState>({
     search: '',
@@ -27,6 +29,19 @@ export function ApprovalQueuePage() {
     () => filterApprovals(approvalStore.approvals, filters),
     [approvalStore.approvals, filters],
   )
+
+  const queueItemsRequiringApproval = useMemo(
+    () => executionQueue.queueItems.filter((queueItem) => queueItem.requiresApproval),
+    [executionQueue.queueItems],
+  )
+
+  useEffect(() => {
+    queueItemsRequiringApproval.forEach((queueItem) => {
+      const existingApproval = approvalStore.approvals.find((approval) => approval.sourceQueueItemId === queueItem.id)
+      if (existingApproval) return
+      approvalStore.addApproval(buildApprovalFromQueueItem(queueItem))
+    })
+  }, [approvalStore, queueItemsRequiringApproval])
 
   const recordDecision = (approval: Approval, status: ApprovalStatus, note: string) => {
     approvalStore.updateStatus(approval.id, status, note)
@@ -80,4 +95,47 @@ export function ApprovalQueuePage() {
       </div>
     </>
   )
+}
+
+function buildApprovalFromQueueItem(queueItem: ExecutionQueueRecord): Omit<Approval, 'id' | 'created' | 'updated' | 'decisionHistory'> {
+  return {
+    title: `Approve execution queue item ${queueItem.queueId}`,
+    description: [
+      `Execution Queue item ${queueItem.queueId} requires CEO approval before future execution.`,
+      '',
+      `Source Work Item: ${queueItem.sourceWorkItemId} · ${queueItem.workItemTitle}`,
+      `Business: ${queueItem.businessCode} · ${queueItem.businessName}`,
+      `Project: ${queueItem.projectCode} · ${queueItem.projectName}`,
+      `Department: ${queueItem.departmentCode} · ${queueItem.departmentName}`,
+      `Manager: ${queueItem.managerName}`,
+      `Operator: ${queueItem.operatorName}`,
+      `Execution Type: ${queueItem.executionType}`,
+      queueItem.notes ? `Queue Notes: ${queueItem.notes}` : '',
+    ].filter(Boolean).join('\n'),
+    submittedBy: 'Execution Queue',
+    operator: 'System',
+    department: queueItem.departmentName,
+    relatedIssue: queueItem.sourceWorkItemId,
+    recommendationId: '',
+    priority: queueItem.priority,
+    effort: 'Medium',
+    risk: queueItem.executionType === 'Future Automation' || queueItem.executionType === 'Future AI' ? 'High' : 'Medium',
+    status: 'Pending',
+    requiresCEOApproval: true,
+    submittedAt: new Date().toISOString(),
+    businessValue: `Prepare ${queueItem.workItemTitle} for controlled future execution with CEO visibility.`,
+    supportingEvidence: [
+      `Queue Item: ${queueItem.queueId}`,
+      `Source Work Item: ${queueItem.sourceWorkItemId}`,
+      `Project: ${queueItem.projectCode}`,
+      `Business: ${queueItem.businessCode}`,
+      `Requires Approval: ${queueItem.requiresApproval ? 'Yes' : 'No'}`,
+    ],
+    recommendedNextAction: 'CEO should approve, reject, request changes, or defer this queue item before any future execution layer can act on it.',
+    sourceQueueItemId: queueItem.id,
+    sourceQueueCode: queueItem.queueId,
+    sourceWorkItemId: queueItem.sourceWorkItemRecordId,
+    sourceProjectId: queueItem.projectId,
+    sourceBusinessId: queueItem.businessId,
+  }
 }

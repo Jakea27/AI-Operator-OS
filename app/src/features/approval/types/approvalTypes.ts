@@ -31,6 +31,11 @@ export type Approval = {
   businessValue?: string
   supportingEvidence?: string[]
   recommendedNextAction?: string
+  sourceQueueItemId?: string
+  sourceQueueCode?: string
+  sourceWorkItemId?: string
+  sourceProjectId?: string
+  sourceBusinessId?: string
   decisionHistory: ApprovalDecisionHistoryItem[]
 }
 

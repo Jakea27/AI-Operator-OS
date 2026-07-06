@@ -22,6 +22,11 @@ export function filterApprovals(approvals: Approval[], filters: ApprovalFilters)
         approval.submittedBy,
         approval.operator,
         approval.decisionNote ?? '',
+        approval.sourceQueueCode ?? '',
+        approval.sourceQueueItemId ?? '',
+        approval.sourceWorkItemId ?? '',
+        approval.sourceProjectId ?? '',
+        approval.sourceBusinessId ?? '',
         ...approval.decisionHistory.map((item) => item.note),
       ].join(' ').toLowerCase().includes(query)
     })

@@ -52,6 +52,8 @@ export function ApprovalCard({
       </div>
 
       <div className="mt-4 grid grid-cols-6 gap-3 text-xs">
+        {approval.sourceQueueCode ? <Info label="Queue Item" value={approval.sourceQueueCode} /> : null}
+        {approval.sourceWorkItemId ? <Info label="Work Item" value={approval.relatedIssue || approval.sourceWorkItemId} /> : null}
         <Info label="Department" value={approval.department} />
         <Info label="Risk" value={approval.risk} className={riskClass[approval.risk]} />
         <Info label="Effort" value={approval.effort} />

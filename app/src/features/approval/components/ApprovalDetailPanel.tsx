@@ -20,6 +20,10 @@ export function ApprovalDetailPanel({
       </div>
 
       <div className="grid grid-cols-4 gap-3">
+        {approval.sourceQueueCode ? <Info label="Queue Item" value={approval.sourceQueueCode} /> : null}
+        {approval.sourceWorkItemId ? <Info label="Source Work Item" value={approval.relatedIssue || approval.sourceWorkItemId} /> : null}
+        {approval.sourceProjectId ? <Info label="Source Project" value={approval.sourceProjectId} /> : null}
+        {approval.sourceBusinessId ? <Info label="Source Business" value={approval.sourceBusinessId} /> : null}
         <Info label="Operator" value={approval.operator} />
         <Info label="Department" value={approval.department} />
         <Info label="Risk" value={approval.risk} />

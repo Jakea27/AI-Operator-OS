@@ -38,6 +38,11 @@ function normalizeApproval(raw: Partial<Approval>): Approval {
     businessValue: raw.businessValue,
     supportingEvidence: Array.isArray(raw.supportingEvidence) ? raw.supportingEvidence : [],
     recommendedNextAction: raw.recommendedNextAction,
+    sourceQueueItemId: raw.sourceQueueItemId,
+    sourceQueueCode: raw.sourceQueueCode,
+    sourceWorkItemId: raw.sourceWorkItemId,
+    sourceProjectId: raw.sourceProjectId,
+    sourceBusinessId: raw.sourceBusinessId,
     decisionHistory: Array.isArray(raw.decisionHistory) ? raw.decisionHistory : [],
   }
 }
