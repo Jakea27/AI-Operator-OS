@@ -1,5 +1,11 @@
 # AO Knowledge Base Changelog
 
+## Architecture v2 - Operating System Foundation - 2026-07-06
+
+### Added
+
+- Architecture v2 created after Sprint 008 to document the completed operating system foundation and guide Sprint 009+ execution-layer development.
+
 ## Sprint 008 - Approval Queue Integration - 2026-07-06
 
 ### Completed
