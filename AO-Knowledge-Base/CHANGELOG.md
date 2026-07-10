@@ -1,5 +1,11 @@
 # AO Knowledge Base Changelog
 
+## Architecture Constitution Update - 2026-07-09
+
+### Updated
+
+- Strengthened the Architecture v2 Constitution after Sprint 008 with principles for earned automation, infrastructure approval, replaceable AI providers, centralized capability management, absolute human authority, separation of architecture from user experience, and foundation-first intelligence.
+
 ## Architecture v2 - Operating System Foundation - 2026-07-06
 
 ### Added

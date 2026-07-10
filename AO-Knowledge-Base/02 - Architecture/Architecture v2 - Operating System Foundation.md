@@ -3,7 +3,7 @@
 Status: Active  
 Version: 2.0  
 Owner: Jake Allen  
-Last Updated: 2026-07-06  
+Last Updated: 2026-07-09  
 Scope: Post Sprint 008
 
 ## 1. Overview
@@ -270,3 +270,10 @@ The next architecture layer should strengthen human control before increasing au
 18. No AI execution may be introduced before approval architecture is stable.
 19. The Execution Engine must not be built before Sprint 009 planning is complete.
 20. The system must stay organized, understandable, and scalable as it grows.
+21. Automation is earned. Automation is never assumed. Every workflow must mature through Manual, Assisted, Semi-Automatic, and Fully Automatic stages, and each stage must be validated before advancing to the next. The system must always support manual operation even after automation exists.
+22. Infrastructure comes before execution. Before any Operator can perform work, the OS must identify required AI providers, external tools, permissions, integrations, and estimated operating cost. The CEO must explicitly approve this infrastructure before it becomes available.
+23. AI providers are replaceable. AI providers are implementation details, not architecture. The operating system owns the workflow, and Operators may use OpenAI today, Claude tomorrow, Gemini next year, or local models later without changing business architecture. The OS must never depend on a single AI vendor.
+24. Operators request capabilities. Operators do not permanently own tools. They request capabilities from the platform, such as browser access, search APIs, email, CRM, GitHub, or hosting. Capabilities are approved, installed, and managed centrally.
+25. Human authority is absolute. The CEO always retains final authority. The OS may recommend, prepare, and automate approved workflows, but it may never redefine business intent without human approval.
+26. Architecture and user experience are separate concerns. Internal architecture may be complex, but user experience must remain simple. Developer interfaces may expose every module, while CEO interfaces should expose business workflows rather than implementation details. Complexity should exist internally, not in daily operation.
+27. Build foundations before intelligence. Execution architecture must exist before AI execution. Approval workflows must exist before autonomous work. Data ownership must exist before memory. Business structure must exist before operators begin autonomous work. The OS is built from stable foundations upward.
