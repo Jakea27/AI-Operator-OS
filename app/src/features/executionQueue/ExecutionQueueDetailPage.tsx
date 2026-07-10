@@ -1,6 +1,7 @@
-import { ArrowLeft, Check, ClipboardList } from 'lucide-react'
+import { ArrowLeft, Check, ClipboardList, Cpu } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { useCapabilityPlanningStore } from '@/src/core/capabilityPlanning'
 import {
   ExecutionQueuePriority,
   ExecutionQueueRecord,
@@ -11,6 +12,7 @@ import {
   executionTypes,
   useExecutionQueueStore,
 } from '@/src/core/executionQueue'
+import { CapabilityPlanForm } from '@/src/features/capabilityPlanning/components/CapabilityPlanForm'
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat(undefined, {
@@ -25,8 +27,11 @@ function formatDate(value: string) {
 export function ExecutionQueueDetailPage() {
   const { queueItemId } = useParams()
   const executionQueue = useExecutionQueueStore()
+  const capabilityPlanning = useCapabilityPlanningStore()
   const queueItem = executionQueue.queueItems.find((item) => item.id === queueItemId || item.queueId === queueItemId)
+  const capabilityPlan = queueItem ? capabilityPlanning.capabilityPlans.find((plan) => plan.sourceQueueItemId === queueItem.id) : undefined
   const [draft, setDraft] = useState<ExecutionQueueRecord | undefined>(queueItem)
+  const [showCapabilityPlanForm, setShowCapabilityPlanForm] = useState(false)
 
   useEffect(() => {
     setDraft(queueItem)
@@ -44,6 +49,12 @@ export function ExecutionQueueDetailPage() {
       requiresApproval: draftRecord.requiresApproval,
       notes: draftRecord.notes,
     })
+  }
+
+  function createCapabilityPlan(queueRecord: ExecutionQueueRecord) {
+    const plan = capabilityPlanning.createCapabilityPlanFromQueueItem(queueRecord)
+    setShowCapabilityPlanForm(false)
+    return plan
   }
 
   return (
@@ -112,6 +123,40 @@ export function ExecutionQueueDetailPage() {
           <Section title="Notes" eyebrow="Queue context">
             <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} className="field min-h-[120px]" />
             <button onClick={() => save(queueItem, draft)} className="btn-primary mt-4">Save Queue Item</button>
+          </Section>
+
+          <Section title="Capability Requirements" eyebrow="Sprint 009 infrastructure planning">
+            {capabilityPlan ? (
+              <div className="space-y-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Info label="Readiness" value={capabilityPlan.readinessStatus} />
+                  <Info label="Estimated Cost" value={new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(capabilityPlan.estimatedCost)} />
+                  <Info label="Runtime" value={`${capabilityPlan.estimatedRuntimeMinutes} min`} />
+                  <Info label="Missing" value={String(capabilityPlan.missingRequirements.length)} />
+                </div>
+                <p className="m-0 text-sm leading-6 text-muted">
+                  Capability planning identifies required providers, tools, permissions, operators, cost, and runtime. It does not execute work.
+                </p>
+                <Link to={`/capability-planning/${capabilityPlan.id}`} className="btn-primary inline-flex items-center gap-2">
+                  <Cpu size={14} /> Open Capability Plan
+                </Link>
+              </div>
+            ) : showCapabilityPlanForm ? (
+              <CapabilityPlanForm
+                queueItem={queueItem}
+                onCancel={() => setShowCapabilityPlanForm(false)}
+                onCreate={() => createCapabilityPlan(queueItem)}
+              />
+            ) : (
+              <div className="rounded-xl border border-dashed border-line bg-white/[0.02] p-4">
+                <p className="m-0 text-sm leading-6 text-[#aeb8b3]">
+                  No Capability Plan exists for this queue item yet. Create one to plan infrastructure requirements before any future execution is considered.
+                </p>
+                <button onClick={() => setShowCapabilityPlanForm(true)} className="btn-primary mt-4 inline-flex items-center gap-2">
+                  <Cpu size={14} /> Create Capability Plan
+                </button>
+              </div>
+            )}
           </Section>
 
           <Section title="Placeholder Result" eyebrow="No execution yet">

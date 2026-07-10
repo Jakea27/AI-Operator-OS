@@ -1,5 +1,11 @@
 # AO Knowledge Base Changelog
 
+## AI Operator OS Philosophy - 2026-07-10
+
+### Added
+
+- Created the AI Operator OS Philosophy document to define the beliefs, values, and long-term vision behind the operating system, including human authority, earned automation, local-first ownership, AI provider independence, and simplicity above complexity.
+
 ## Architecture Constitution Update - 2026-07-09
 
 ### Updated

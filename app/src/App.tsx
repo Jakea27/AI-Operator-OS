@@ -6,6 +6,7 @@ import { Money } from '@/pages/Money'
 import { Development } from '@/pages/Development'
 import { ApprovalQueuePage } from '@/src/features/approval'
 import { BusinessDetailPage, BusinessesPage } from '@/src/features/businesses'
+import { CapabilityPlanDetailPage, CapabilityPlanningPage } from '@/src/features/capabilityPlanning'
 import { CompanyStructurePage, DepartmentDetailPage } from '@/src/features/companyStructure'
 import { MemoryPage } from '@/src/features/memory/MemoryPage'
 import { OperatorDetail } from '@/src/features/operators/OperatorDetail'
@@ -42,6 +43,8 @@ export default function App() {
         <Route path="work-items/:workItemId" element={<WorkItemDetailPage />} />
         <Route path="execution-queue" element={<ExecutionQueuePage />} />
         <Route path="execution-queue/:queueItemId" element={<ExecutionQueueDetailPage />} />
+        <Route path="capability-planning" element={<CapabilityPlanningPage />} />
+        <Route path="capability-planning/:capabilityPlanId" element={<CapabilityPlanDetailPage />} />
         <Route path="approval" element={<ApprovalQueuePage />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="settings" element={<Settings />} />
