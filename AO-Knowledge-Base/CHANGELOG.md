@@ -1,5 +1,11 @@
 # AO Knowledge Base Changelog
 
+## Command Center Principle - 2026-07-10
+
+### Updated
+
+- Updated the AI Operator OS Philosophy with the Command Center Principle, clarifying that the Command Center exists to reduce executive cognitive load, surface CEO-required actions, and help the CEO determine what requires attention right now.
+
 ## Design Philosophy Navigation Rule - 2026-07-10
 
 ### Updated

@@ -149,7 +149,86 @@ Developer tools may expose technical structure. CEO workflows should hide unnece
 
 Complexity belongs inside the operating system, not in the daily experience of running the company.
 
-## 10. Navigation Through Summary Cards
+## 10. The Command Center Principle
+
+AI Operator OS exists to reduce executive cognitive load.
+
+The CEO's most valuable resource is attention.
+
+The operating system should minimize the amount of thinking required to determine what needs attention.
+
+The CEO should never need to search multiple modules to discover required actions. Instead, the operating system identifies, prioritizes, and presents the actions that require human judgment.
+
+The Command Center exists to answer one question:
+
+What requires my attention right now?
+
+### The Five Responsibilities of the CEO
+
+The CEO's responsibilities are:
+
+1. Set Direction
+
+   Create businesses. Create projects. Define goals. Provide strategic direction.
+
+2. Approve
+
+   Approve spending. Approve infrastructure. Approve capability plans. Approve important business decisions.
+
+3. Review
+
+   Read the Daily Briefing. Review revenue. Monitor performance. Understand business health.
+
+4. Resolve Exceptions
+
+   Handle blocked workflows. Resolve failures. Provide missing decisions. Remove roadblocks.
+
+5. Improve
+
+   Improve prompts. Improve operators. Improve workflows. Improve the operating system over time.
+
+### Responsibilities of the Operating System
+
+The operating system is responsible for:
+
+- Finding work
+- Tracking approvals
+- Remembering unfinished tasks
+- Monitoring every module
+- Prioritizing actions
+- Surfacing business risks
+- Determining what requires attention
+
+The operating system manages information.
+
+The CEO manages decisions.
+
+### Reduce Thinking, Not Clicks
+
+Traditional software focuses on reducing clicks.
+
+AI Operator OS focuses on reducing executive thinking.
+
+Success should be measured by how little effort is required for the CEO to determine what action should be taken next.
+
+### CEO Required Actions
+
+The Command Center should eventually present a prioritized list of actions that require human judgment.
+
+Each action should explain:
+
+- Why it matters
+- What is blocked
+- Estimated time required
+- A direct path to complete the task
+
+The CEO should never need to guess what must be done next.
+
+The purpose of AI Operator OS is not to automate the CEO.
+
+Its purpose is to eliminate the overhead around being the CEO.
+
+## 11. Navigation Through Summary Cards
 
 Dashboard summary cards represent modules or workflows.
 
@@ -201,7 +280,7 @@ It should provide concise summaries and direct navigation into detailed modules.
 
 Dashboard tells the CEO what matters. Modules let the CEO work on it.
 
-## 11. Long-Term Vision
+## 12. Long-Term Vision
 
 The long-term vision is one operating system for building, operating, optimizing, and scaling a portfolio of businesses.
 
