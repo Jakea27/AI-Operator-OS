@@ -1,5 +1,16 @@
 # AO Knowledge Base Changelog
 
+## Sprint 009 - Capability Planning - 2026-07-10
+
+### Completed
+
+- Recorded Sprint 009 as completed.
+- Documented Capability Planning as the infrastructure planning layer between Execution Queue and Approval Queue.
+- Captured Capability Plans as local-first planning records owned by Execution Queue items.
+- Documented required capabilities, preferred providers, required tools, permissions, operator roles, estimated cost, estimated runtime, planning notes, timeline/history, source queue context, and duplicate protection.
+- Confirmed Capability Planning performs no execution, connects no APIs, stores no credentials, and installs no AI providers.
+- Recorded QA acceptance and CEO review summary.
+
 ## AI Operator OS Philosophy - 2026-07-10
 
 ### Added

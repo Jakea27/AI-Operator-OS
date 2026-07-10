@@ -1,5 +1,25 @@
 # Changelog
 
+# Sprint 009 - Capability Planning
+
+Completed:
+- Created the Capability Planning module.
+- Added Capability Planning list page.
+- Added Capability Plan detail page.
+- Added local-first Capability Plan persistence.
+- Added Capability Plan creation from Execution Queue items.
+- Added duplicate protection so each Queue Item has only one Capability Plan.
+- Added capability readiness review.
+- Added Required Capabilities planning.
+- Added Preferred Providers planning.
+- Added Required Tools planning.
+- Added Required Permissions planning.
+- Added Required Operator Roles planning.
+- Added Estimated Cost and Runtime planning.
+- Added planning notes, timeline/history, and source queue context.
+- Confirmed no AI execution, APIs, provider credentials, automation, or external services were added.
+- Completed QA acceptance.
+
 # Sprint 008 - Approval Queue Integration
 
 Completed:
