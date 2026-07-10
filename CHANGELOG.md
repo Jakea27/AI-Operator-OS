@@ -1,5 +1,19 @@
 # Changelog
 
+# Sprint 010 - CEO Experience and UI/UX Redesign
+
+Completed:
+- Implemented grouped, collapsible sidebar navigation.
+- Organized navigation into HOME, BUSINESS, OPERATIONS, AI WORKFORCE, INTELLIGENCE, and SYSTEM.
+- Preserved existing routes while renaming the user-facing Dashboard label to Command Center.
+- Rebuilt the Dashboard as a desktop-first CEO Command Center.
+- Added CEO Required Actions, CEO Snapshot, Daily Briefing, Awaiting AI/System Work, Quick Actions, Operations Health, Recent Activity, and Alerts/Upcoming Work sections.
+- Added clickable navigation summary cards and reserved buttons for data-changing actions.
+- Added shared presentation components for summary cards, section headers, and status badges.
+- Standardized page headers, summary cards, record card shells, buttons, form controls, focus states, and empty-state support.
+- Preserved existing local-first stores, routes, workflows, Approval Queue behavior, Capability Planning behavior, and Execution Queue behavior.
+- Completed QA acceptance.
+
 # Sprint 009 - Capability Planning
 
 Completed:
