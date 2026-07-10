@@ -45,7 +45,7 @@ const navigationGroups: NavigationGroup[] = [
     label: 'Home',
     collapsible: false,
     items: [
-      { label: 'Dashboard', to: '/', icon: LayoutDashboard },
+      { label: 'Command Center', to: '/', icon: LayoutDashboard },
     ],
   },
   {
@@ -106,7 +106,7 @@ const defaultGroupState = navigationGroups.reduce<Record<string, boolean>>((stat
 }, {})
 
 const titles: Record<string, string> = {
-  '/': 'Command center',
+  '/': 'Command Center',
   '/ceo': 'CEO office',
   '/money': 'Financial cockpit',
   '/opportunities': 'Opportunity Pipeline',

@@ -1,262 +1,591 @@
 import {
+  AlertTriangle,
   Banknote,
+  BriefcaseBusiness,
   Check,
-  CircleDollarSign,
   Clock3,
-  Coins,
-  Gauge,
+  Cpu,
+  DollarSign,
+  FileText,
+  Lightbulb,
+  ListChecks,
+  Map,
+  Network,
+  Plus,
   ShieldAlert,
   Sparkles,
-  Target,
 } from 'lucide-react'
+import { KeyboardEvent, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { EmptyState } from '@/components/EmptyState'
-import { MetricCard } from '@/components/MetricCard'
-import { PageIntro } from '@/components/PageIntro'
-import { ApprovalActivityChart, ChartShell, TrendLineChart } from '@/src/components/charts'
-import { getLatestMemoryByType, getMemoryHealth, useMemoryStore } from '@/src/core/memory'
+import { useBusinessStore } from '@/src/core/businesses'
+import { useCapabilityPlanningStore } from '@/src/core/capabilityPlanning'
+import { useMemoryStore } from '@/src/core/memory'
 import { useMoneyStore } from '@/src/core/money'
+import { getRegisteredOperators, useOperatorStore } from '@/src/core/operators'
+import { useProjectStore } from '@/src/core/projects'
 import { useRoadmapStore } from '@/src/core/roadmap'
-import { buildApprovalActivity, buildMonthlyTrend } from '@/src/data/operatingMetrics'
-import { getApprovalDecisionLabel, getApprovalStats, useApprovalStore } from '@/src/features/approval'
+import { useWorkItemStore } from '@/src/core/workItems'
+import { useExecutionQueueStore } from '@/src/core/executionQueue'
+import { Approval, getApprovalDecisionLabel, getApprovalStats, useApprovalStore } from '@/src/features/approval'
 import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
 import { formatCurrency, useOperatingStore } from '@/src/services/operatingStore'
+
+type Severity = 'Critical' | 'High' | 'Medium' | 'Low'
+
+type AttentionAction = {
+  id: string
+  severity: Severity
+  title: string
+  why: string
+  blocked: string
+  to: string
+}
+
+type ActivityItem = {
+  id: string
+  title: string
+  meta: string
+  createdAt: string
+  to: string
+}
+
+function todayLabel() {
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date())
+}
+
+function greeting(ownerName: string) {
+  const hour = new Date().getHours()
+  const period = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening'
+  return `${period}${ownerName ? `, ${ownerName}` : ''}`
+}
+
+function severityWeight(severity: Severity) {
+  return {
+    Critical: 4,
+    High: 3,
+    Medium: 2,
+    Low: 1,
+  }[severity]
+}
 
 export function Dashboard() {
   const {
     data,
-    metrics,
     storageAvailable,
     saveDailyBriefing,
   } = useOperatingStore()
-  const { memoryEntries } = useMemoryStore()
   const money = useMoneyStore()
-  const roadmap = useRoadmapStore()
   const approvalQueue = useApprovalStore()
+  const executionQueue = useExecutionQueueStore()
+  const capabilityPlanning = useCapabilityPlanningStore()
+  const businessStore = useBusinessStore()
+  const projectStore = useProjectStore()
+  const workItemStore = useWorkItemStore()
+  const memoryStore = useMemoryStore()
+  const roadmap = useRoadmapStore()
+  const operatorStore = useOperatorStore()
+
   const approvalStats = getApprovalStats(approvalQueue.approvals)
-  const approvalWidgetTitle = approvalStats.pending > 0
-    ? `${approvalStats.pending} pending CEO decision${approvalStats.pending === 1 ? '' : 's'}`
-    : 'No pending CEO decisions'
-  const approvalWidgetSubtitle = getDashboardApprovalSubtitle(approvalQueue.approvals.length, approvalStats.latestDecision)
-  const pendingSharedApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Pending')
-  const liveBriefing = generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable })
-  const briefingIsCurrent = data.latestBriefing?.sourceFingerprint === liveBriefing.sourceFingerprint
-  const briefing = briefingIsCurrent && data.latestBriefing ? data.latestBriefing : liveBriefing
-  const trend = buildMonthlyTrend(data)
-  const approvalActivity = buildApprovalActivity(data)
-  const activeProject = data.projects.find((project) => project.status === 'active')
-  const hasOperatingData =
-    data.revenueEntries.length > 0 ||
-    data.expenseEntries.length > 0 ||
-    data.approvals.length > 0 ||
-    data.projects.length > 0 ||
-    data.tasks.length > 0 ||
-    memoryEntries.length > 0 ||
-    approvalQueue.approvals.length > 0
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
+  const pendingApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Pending')
+  const deferredApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Deferred')
+  const activeQueueItems = executionQueue.queueItems.filter((item) => !['Completed', 'Archived'].includes(item.queueStatus))
+  const blockedQueueItems = executionQueue.queueItems.filter((item) => item.queueStatus === 'Blocked')
+  const readyQueueItems = executionQueue.queueItems.filter((item) => item.queueStatus === 'Ready')
+  const incompletePlans = capabilityPlanning.capabilityPlans.filter((plan) =>
+    ['Draft', 'Incomplete', 'Blocked'].includes(plan.readinessStatus) || plan.missingRequirements.length > 0
+  )
+  const blockedPlans = capabilityPlanning.capabilityPlans.filter((plan) => plan.readinessStatus === 'Blocked')
+  const activeBusinesses = businessStore.businesses.filter((business) => business.status !== 'Archived')
+  const activeProjects = projectStore.projects.filter((project) => ['Planning', 'Active', 'On Hold'].includes(project.status))
+  const blockedWorkItems = workItemStore.workItems.filter((item) => item.status === 'Blocked')
+  const waitingWorkItems = workItemStore.workItems.filter((item) => ['Planning', 'Ready', 'In Progress', 'Review'].includes(item.status))
+  const dueWorkItems = workItemStore.workItems
+    .filter((item) => item.dueDate && !['Completed', 'Archived'].includes(item.status))
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+    .slice(0, 4)
+  const operatorTasks = Object.values(operatorStore.data.tasks).flat()
+  const registeredOperators = getRegisteredOperators()
+  const nonIdleOperators = registeredOperators.filter((operator) => operator.currentStatus !== 'Idle').length
+
+  const briefingIsCurrent = data.latestBriefing?.sourceFingerprint === generateDailyBriefing({
+    state: data,
+    memories: memoryStore.memoryEntries,
+    storageAvailable,
+  }).sourceFingerprint
+
+  const actions = buildAttentionActions({
+    pendingApprovals,
+    blockedQueueItems,
+    blockedPlans,
+    incompletePlans,
+    blockedWorkItems,
   })
-  const runBriefing = () => {
-    saveDailyBriefing(generateDailyBriefing({ state: data, memories: memoryEntries, storageAvailable, now: new Date() }))
+
+  const recentActivity = buildRecentActivity({
+    approvals: approvalQueue.approvals,
+    capabilityPlans: capabilityPlanning.capabilityPlans,
+    queueItems: executionQueue.queueItems,
+    workItems: workItemStore.workItems,
+    projects: projectStore.projects,
+    businesses: businessStore.businesses,
+    memories: memoryStore.memoryEntries,
+  })
+
+  const alerts = buildAlerts({
+    deferredApprovals,
+    incompletePlans,
+    blockedQueueItems,
+    dueWorkItems,
+  })
+
+  function runBriefing() {
+    saveDailyBriefing(generateDailyBriefing({
+      state: data,
+      memories: memoryStore.memoryEntries,
+      storageAvailable,
+      now: new Date(),
+    }))
   }
 
   return (
-    <>
-      <PageIntro
-        eyebrow={currentDate}
-        title={`Good morning${data.settings.ownerName ? `, ${data.settings.ownerName}` : ''}.`}
-        description={
-          storageAvailable
-            ? 'Your command center is calculated from operating records stored locally on this device.'
-            : 'Local storage is unavailable. Changes may not persist after this session.'
-        }
-        action={
-          <div className="flex items-center gap-2">
-            <div className={`flex items-center gap-2 rounded-full border border-line px-3 py-2 text-xs ${storageAvailable ? 'text-mint' : 'text-[#ff9e8f]'}`}><span className={`h-2 w-2 rounded-full ${storageAvailable ? 'bg-mint' : 'bg-[#ff9e8f]'}`} />{storageAvailable ? 'Local data healthy' : 'Storage unavailable'}</div>
-            <button onClick={runBriefing} className="btn-primary flex items-center gap-2"><Sparkles size={15} /> Run daily briefing</button>
-          </div>
-        }
-      />
-
-      {!hasOperatingData && (
-        <section className="panel mb-4 flex items-center justify-between gap-6 border-lime/25 bg-gradient-to-r from-lime/[0.08] to-panel p-5">
+    <div className="space-y-6">
+      <section className="panel overflow-hidden border-lime/20 bg-gradient-to-br from-lime/[0.08] via-panel to-ink p-6">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="eyebrow mb-1 text-lime">Empty local workspace</p>
-            <h3 className="m-0 text-base font-semibold">Add your first operating record</h3>
-            <p className="mb-0 mt-1 text-xs text-muted">The dashboard intentionally starts at $0. Revenue and expense entries immediately update these metrics and the Money charts.</p>
+            <p className="eyebrow mb-2">Command Center · {todayLabel()}</p>
+            <h2 className="m-0 font-display text-3xl font-semibold tracking-tight text-white">
+              {greeting(data.settings.ownerName || 'Jake')}
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[#aeb8b3]">
+              What requires your attention right now? The Command Center summarizes local operating records and routes you to the module that owns the work.
+            </p>
           </div>
-          <div className="flex shrink-0 gap-2">
-            <Link to="/money#manual-entry" className="btn-primary">Add revenue</Link>
-            <Link to="/money#manual-entry" className="btn-secondary">Add expense</Link>
+          <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[420px]">
+            <StatusPill label="System Status" value={storageAvailable ? 'Local systems operational' : 'Storage unavailable'} tone={storageAvailable ? 'good' : 'warning'} />
+            <StatusPill
+              label="Daily Briefing"
+              value={data.latestBriefing ? (briefingIsCurrent ? 'Current' : 'Refresh recommended') : 'Not generated yet'}
+              tone={briefingIsCurrent ? 'good' : 'neutral'}
+            />
+            <button onClick={runBriefing} className="btn-primary flex items-center justify-center gap-2 sm:col-span-2">
+              <Sparkles size={15} /> Run Daily Briefing
+            </button>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      <div className="grid grid-cols-4 gap-4">
-        <MetricCard label="Revenue Today" value={formatCurrency(money.metrics.revenueToday)} change="From today’s entries" icon={CircleDollarSign} accent />
-        <MetricCard label="Monthly Revenue" value={formatCurrency(money.metrics.currentMonthRevenue)} change="Current calendar month" icon={Banknote} />
-        <MetricCard label="Monthly Cost" value={formatCurrency(money.metrics.currentMonthCosts)} change="Current calendar month" icon={Coins} positive={money.metrics.currentMonthCosts === 0} />
-        <MetricCard label="Profit" value={formatCurrency(money.metrics.profit)} change={`${money.metrics.profitMargin.toFixed(1)}% margin`} icon={Gauge} positive={money.metrics.profit >= 0} />
-      </div>
-
-      <div className="mt-4 grid grid-cols-12 gap-4">
-        <ChartShell eyebrow="Revenue Trend" title="Six month operating history" meta="Local records" className="col-span-8">
-          <TrendLineChart data={trend} dataKey="revenue" label="Revenue" xKey="month" gradientId="dashboardRevenue" />
-        </ChartShell>
-        <ChartShell eyebrow="Approval Activity" title="Decisions this week" meta={`${approvalStats.pending} pending`} className="col-span-4">
-          <ApprovalActivityChart data={approvalActivity} />
-        </ChartShell>
-      </div>
-
-      <div className="mt-4 grid grid-cols-12 gap-4">
-        <section className={`panel col-span-12 flex items-center justify-between gap-6 p-5 ${approvalStats.pending > 0 ? 'border-[#ffcc66]/25 bg-[#ffcc66]/[0.045]' : 'border-lime/20 bg-lime/[0.035]'}`}>
-          <div className="flex items-start gap-4">
-            <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${approvalStats.pending > 0 ? 'bg-[#ffcc66]/10 text-[#ffcc66]' : 'bg-lime/10 text-lime'}`}><ShieldAlert size={19} /></div>
-            <div>
-              <p className="eyebrow mb-1">{approvalStats.pending > 0 ? 'CEO decisions waiting' : 'Approval status'}</p>
-              <h3 className="m-0 text-lg font-semibold text-white">{approvalWidgetTitle}</h3>
-              <p className="mb-0 mt-2 text-xs leading-5 text-muted">{approvalWidgetSubtitle}</p>
-            </div>
-          </div>
-          <Link to="/approval" className={approvalStats.pending > 0 ? 'btn-primary' : 'btn-secondary'}>Open Approval Queue</Link>
-        </section>
-
-        <BusinessMemoryWidget memories={memoryEntries} />
-
-        <section className="panel col-span-7 p-6">
-          <div className="flex items-center justify-between">
-            <div><p className="eyebrow mb-2">CEO Daily Briefing</p><h3 className="m-0 font-display text-xl font-semibold">{briefing.greeting}</h3></div>
-            <div className="rounded-xl bg-lime/10 p-2.5 text-lime"><Sparkles size={18} /></div>
-          </div>
-          <p className="my-5 text-[15px] leading-7 text-[#c3cbc7]">{briefing.executiveSignal}</p>
-          <div className="grid grid-cols-2 gap-4 border-t border-line pt-4">
-            <div>
-              <p className="eyebrow mb-2">Top priorities</p>
-              <ul className="m-0 space-y-1.5 pl-4 text-xs leading-5 text-[#aeb8b3]">
-                {briefing.topPriorities.slice(0, 3).map((priority) => <li key={priority}>{priority}</li>)}
-              </ul>
-            </div>
-            <div>
-              <p className="eyebrow mb-2">Recommendation</p>
-              <p className="m-0 text-xs leading-5 text-[#aeb8b3]">{briefing.recommendations[0]}</p>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center justify-between border-t border-line pt-4 text-[11px] text-muted">
-            <span>{data.latestBriefing ? `Last generated ${new Date(data.latestBriefing.generatedAt).toLocaleString()}` : 'Not yet saved'}</span>
-            {!briefingIsCurrent && data.latestBriefing && <span className="font-medium text-[#ffcc66]">Operating data changed — refresh recommended</span>}
-          </div>
-        </section>
-
-        <section className="panel col-span-5 p-6">
-          <div className="flex items-center justify-between">
-            <div><p className="eyebrow mb-2">Current Sprint</p><h3 className="m-0 font-display text-xl font-semibold">{activeProject?.name ?? 'No active project'}</h3></div>
-            <span className="rounded-full bg-mint/10 px-3 py-1 text-[11px] font-medium text-mint">{metrics.sprintTotal > 0 ? 'Tracking' : 'Empty'}</span>
-          </div>
-          <div className="my-7 flex items-end justify-between">
-            <div><p className="m-0 font-display text-4xl font-semibold">{metrics.sprintProgress}%</p><p className="mb-0 mt-1 text-xs text-muted">{metrics.sprintCompleted} of {metrics.sprintTotal} sprint tasks complete</p></div>
-            <Target size={32} className="text-line" />
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-white/[0.05]"><div className="h-full rounded-full bg-gradient-to-r from-mint to-lime" style={{ width: `${metrics.sprintProgress}%` }} /></div>
-          <div className="mt-4 flex items-center justify-between gap-2 text-xs text-muted">
-            <span className="flex items-center gap-2"><Clock3 size={13} /> Updated when task status changes</span>
-            <Link to="/roadmap" className="rounded-full border border-lime/20 bg-lime/10 px-3 py-1 font-semibold text-lime">{roadmap.backlogCount} roadmap backlog</Link>
-          </div>
-        </section>
-
-        <section className="panel col-span-12 overflow-hidden">
-          <div className="flex items-center justify-between border-b border-line px-6 py-5">
-            <div><p className="eyebrow mb-1">Approval Queue</p><h3 className="m-0 font-display text-lg font-semibold">Decisions waiting for you</h3></div>
-            <span className="rounded-full bg-[#ffcc66]/10 px-3 py-1 text-[11px] font-medium text-[#ffcc66]">{approvalStats.pending} pending</span>
-          </div>
-          <div className="grid grid-cols-6 gap-3 border-b border-line px-6 py-4">
-            <ApprovalMetric label="Pending Approvals" value={approvalStats.pending} />
-            <ApprovalMetric label="Approved Today" value={approvalStats.approvedToday} />
-            <ApprovalMetric label="Rejected Today" value={approvalStats.rejectedToday} />
-            <ApprovalMetric label="Deferred Approvals" value={approvalStats.deferred} />
-            <ApprovalMetric label="Waiting on CEO" value={approvalStats.waitingOnCEO} />
-            <div className="rounded-xl border border-line bg-ink/35 p-3">
-              <p className="eyebrow mb-1">Latest Approval Decision</p>
-              <p className="m-0 text-xs font-semibold leading-5 text-white">{getApprovalDecisionLabel(approvalStats.latestDecision)}</p>
-            </div>
-          </div>
-          {pendingSharedApprovals.length === 0 ? (
-            <EmptyState icon={Check} title="No CEO decisions pending" copy="Operator recommendations that need CEO review will appear in the Approval Queue." />
-          ) : (
-            <div>
-              {pendingSharedApprovals.slice(0, 4).map((approval) => (
-                <div key={approval.id} className="flex items-center gap-4 border-b border-line px-6 py-4 last:border-0">
-                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-white/[0.04] text-muted"><CircleDollarSign size={17} /></div>
-                  <div className="min-w-0 flex-1"><p className="m-0 text-sm font-medium text-white">{approval.title}</p><p className="mb-0 mt-1 text-xs text-muted">{approval.operator} · {approval.department} · {approval.risk} risk</p></div>
-                  <Link to="/approval" className="btn-secondary">Review</Link>
-                </div>
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <Section title="CEO Required Actions" eyebrow="Human judgment needed">
+          {actions.length > 0 ? (
+            <div className="space-y-3">
+              {actions.slice(0, 6).map((action) => (
+                <NavigationCard key={action.id} to={action.to} ariaLabel={`Review ${action.title}`}>
+                  <div className="flex items-start gap-3">
+                    <SeverityBadge severity={action.severity} />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="m-0 text-sm font-semibold text-white">{action.title}</h4>
+                      <p className="m-0 mt-2 text-xs leading-5 text-[#aeb8b3]">{action.why}</p>
+                      <p className="m-0 mt-2 text-[11px] font-medium text-muted">Waiting on: {action.blocked}</p>
+                    </div>
+                  </div>
+                </NavigationCard>
               ))}
             </div>
+          ) : (
+            <EmptyPanel title="No CEO action is required right now." copy="This does not mean all business work is complete. It means no tracked local record currently requires human judgment." />
           )}
-        </section>
-      </div>
-    </>
-  )
-}
+        </Section>
 
-function ApprovalMetric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-xl border border-line bg-ink/35 p-3">
-      <p className="eyebrow mb-1">{label}</p>
-      <p className="m-0 text-xl font-semibold text-white">{value}</p>
+        <Section title="CEO Snapshot" eyebrow="Executive summary">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-2">
+            <SummaryNavCard label="Pending Approvals" value={String(approvalStats.pending)} detail="Waiting on CEO decision" to="/approval" icon={<ShieldAlert size={18} />} />
+            <SummaryNavCard label="Revenue" value={formatCurrency(money.metrics.currentMonthRevenue)} detail="Current month" to="/money" icon={<Banknote size={18} />} />
+            <SummaryNavCard label="Profit" value={formatCurrency(money.metrics.profit)} detail={`${money.metrics.profitMargin.toFixed(1)}% margin`} to="/money" icon={<DollarSign size={18} />} />
+            <SummaryNavCard label="Execution Queue" value={String(activeQueueItems.length)} detail="Active queue records" to="/execution-queue" icon={<ListChecks size={18} />} />
+            <SummaryNavCard label="Capability Plans" value={String(capabilityPlanning.capabilityPlans.length)} detail={`${incompletePlans.length} need readiness work`} to="/capability-planning" icon={<Cpu size={18} />} />
+            <SummaryNavCard label="Businesses" value={String(activeBusinesses.length)} detail="Active business records" to="/businesses" icon={<BriefcaseBusiness size={18} />} />
+          </div>
+        </Section>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Section title="Daily Briefing" eyebrow="Data-driven summary">
+          <div className="space-y-3 text-sm leading-6 text-[#c3cbc7]">
+            <p className="m-0">{approvalStats.pending} approval{approvalStats.pending === 1 ? '' : 's'} currently require CEO review.</p>
+            <p className="m-0">{activeQueueItems.length} execution queue item{activeQueueItems.length === 1 ? '' : 's'} remain active; {blockedQueueItems.length} are blocked.</p>
+            <p className="m-0">{incompletePlans.length} capability plan{incompletePlans.length === 1 ? '' : 's'} need infrastructure readiness work.</p>
+            <p className="m-0">{activeBusinesses.length} active business record{activeBusinesses.length === 1 ? '' : 's'} are tracked locally.</p>
+            <p className="m-0">Revenue is {formatCurrency(money.metrics.currentMonthRevenue)} and profit is {formatCurrency(money.metrics.profit)} for the current month.</p>
+          </div>
+          <div className="mt-4 border-t border-line pt-4 text-xs text-muted">
+            {data.latestBriefing
+              ? `Last generated ${new Date(data.latestBriefing.generatedAt).toLocaleString()}`
+              : 'No saved briefing yet. Use Run Daily Briefing to save a local briefing snapshot.'}
+          </div>
+        </Section>
+
+        <Section title="Awaiting AI / System Work" eyebrow="No autonomous execution yet">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <SystemWorkItem label="Ready for future execution" value={readyQueueItems.length} copy="Queue items marked Ready." />
+            <SystemWorkItem label="Waiting on infrastructure" value={incompletePlans.length} copy="Capability plans still missing requirements." />
+            <SystemWorkItem label="Waiting on approval" value={approvalStats.pending} copy="Approval Queue records awaiting CEO decision." />
+            <SystemWorkItem label="Autonomous AI running" value={0} copy="No autonomous AI work is running yet." />
+          </div>
+        </Section>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
+        <Section title="Quick Actions" eyebrow="Start a workflow">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <ActionButton to="/opportunities" icon={<Lightbulb size={16} />} label="New Opportunity" helper="Open the Opportunity Pipeline creation workflow." />
+            <ActionButton to="/businesses" icon={<BriefcaseBusiness size={16} />} label="New Business" helper="Open the Business Manager creation workflow." />
+            <ActionButton to="/work-items" icon={<ListChecks size={16} />} label="New Work Item" helper="Open the Work Items creation workflow." />
+            <button onClick={runBriefing} className="rounded-xl border border-lime/30 bg-lime/10 p-4 text-left transition hover:border-lime/60 hover:bg-lime/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime/70">
+              <span className="flex items-center gap-2 text-sm font-semibold text-lime"><Sparkles size={16} /> Run Daily Briefing</span>
+              <span className="mt-2 block text-xs leading-5 text-[#aeb8b3]">Save a fresh local briefing snapshot.</span>
+            </button>
+          </div>
+        </Section>
+
+        <Section title="Operations Health" eyebrow="System modules">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <SummaryNavCard label="Operators" value={String(registeredOperators.length)} detail={`${nonIdleOperators} active/waiting states`} to="/operators" icon={<Network size={18} />} />
+            <SummaryNavCard label="Projects" value={String(activeProjects.length)} detail="Planning, active, or on hold" to="/projects" icon={<FileText size={18} />} />
+            <SummaryNavCard label="Memory" value={String(memoryStore.memoryEntries.filter((entry) => !entry.archived).length)} detail="Active memory entries" to="/memory" icon={<Sparkles size={18} />} />
+            <SummaryNavCard label="Roadmap" value={String(roadmap.backlogCount)} detail="Open roadmap backlog" to="/roadmap" icon={<Map size={18} />} />
+          </div>
+        </Section>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <Section title="Recent Activity" eyebrow="Latest local changes">
+          {recentActivity.length > 0 ? (
+            <div className="space-y-2">
+              {recentActivity.map((item) => (
+                <NavigationCard key={item.id} to={item.to} ariaLabel={`Open ${item.title}`}>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="m-0 truncate text-sm font-semibold text-white">{item.title}</p>
+                      <p className="m-0 mt-1 text-xs text-muted">{item.meta}</p>
+                    </div>
+                    <span className="shrink-0 text-[11px] text-muted">{formatShortDate(item.createdAt)}</span>
+                  </div>
+                </NavigationCard>
+              ))}
+            </div>
+          ) : (
+            <EmptyPanel title="No recent activity yet." copy="Local record updates will appear here as the operating system is used." />
+          )}
+        </Section>
+
+        <Section title="Alerts / Upcoming Work" eyebrow="Exceptions and time-sensitive records">
+          {alerts.length > 0 ? (
+            <div className="space-y-3">
+              {alerts.map((alert) => (
+                <NavigationCard key={alert.id} to={alert.to} ariaLabel={`Open alert ${alert.title}`}>
+                  <div className="flex gap-3">
+                    <AlertTriangle size={16} className="mt-0.5 shrink-0 text-[#ffcc66]" />
+                    <div>
+                      <p className="m-0 text-sm font-semibold text-white">{alert.title}</p>
+                      <p className="m-0 mt-1 text-xs leading-5 text-muted">{alert.why}</p>
+                    </div>
+                  </div>
+                </NavigationCard>
+              ))}
+            </div>
+          ) : (
+            <EmptyPanel title="No urgent alerts." copy="No tracked local records currently indicate an urgent exception." />
+          )}
+        </Section>
+      </div>
     </div>
   )
 }
 
-function getDashboardApprovalSubtitle(totalApprovals: number, latestDecision?: Parameters<typeof getApprovalDecisionLabel>[0]) {
-  if (latestDecision) return `Last completed decision: ${getApprovalDecisionLabel(latestDecision)}`
-  if (totalApprovals > 0) return 'Awaiting CEO review.'
-  return 'No CEO decisions recorded yet.'
+function buildAttentionActions({
+  pendingApprovals,
+  blockedQueueItems,
+  blockedPlans,
+  incompletePlans,
+  blockedWorkItems,
+}: {
+  pendingApprovals: Approval[]
+  blockedQueueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
+  blockedPlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
+  incompletePlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
+  blockedWorkItems: ReturnType<typeof useWorkItemStore>['workItems']
+}): AttentionAction[] {
+  return [
+    ...pendingApprovals.map((approval) => ({
+      id: `approval-${approval.id}`,
+      severity: approval.priority === 'Critical' ? 'Critical' as const : approval.priority === 'High' ? 'High' as const : 'Medium' as const,
+      title: approval.title,
+      why: 'This approval requires a human CEO decision before the related work should proceed.',
+      blocked: approval.sourceQueueCode ? `${approval.sourceQueueCode} or related approval workflow` : 'Approval Queue decision',
+      to: '/approval',
+    })),
+    ...blockedQueueItems.map((item) => ({
+      id: `queue-${item.id}`,
+      severity: 'High' as const,
+      title: `${item.queueId}: ${item.workItemTitle}`,
+      why: 'This queue item is blocked and cannot progress toward future execution.',
+      blocked: 'Execution Queue',
+      to: `/execution-queue/${item.id}`,
+    })),
+    ...blockedPlans.map((plan) => ({
+      id: `blocked-plan-${plan.id}`,
+      severity: 'High' as const,
+      title: `${plan.capabilityPlanId}: capability plan blocked`,
+      why: 'Infrastructure planning is blocked before future execution can be considered.',
+      blocked: plan.sourceQueueCode,
+      to: `/capability-planning/${plan.id}`,
+    })),
+    ...incompletePlans
+      .filter((plan) => plan.readinessStatus !== 'Blocked')
+      .map((plan) => ({
+        id: `plan-${plan.id}`,
+        severity: plan.missingRequirements.length >= 4 ? 'Medium' as const : 'Low' as const,
+        title: `${plan.capabilityPlanId}: ${plan.missingRequirements.length} readiness item${plan.missingRequirements.length === 1 ? '' : 's'} missing`,
+        why: 'Capability requirements must be clear before future infrastructure approval.',
+        blocked: plan.sourceQueueCode,
+        to: `/capability-planning/${plan.id}`,
+      })),
+    ...blockedWorkItems.map((item) => ({
+      id: `work-${item.id}`,
+      severity: item.priority === 'Critical' ? 'Critical' as const : item.priority === 'High' ? 'High' as const : 'Medium' as const,
+      title: `${item.workItemId}: ${item.title}`,
+      why: 'This Work Item is marked blocked and needs a decision or missing context.',
+      blocked: item.projectCode,
+      to: `/work-items/${item.id}`,
+    })),
+  ].sort((a, b) => severityWeight(b.severity) - severityWeight(a.severity))
 }
 
-function BusinessMemoryWidget({ memories }: { memories: import('@/src/core/memory').MemoryEntry[] }) {
-  const pinnedBusinessRules = memories
-    .filter((entry) => entry.type === 'Business Rule' && entry.pinned && !entry.archived)
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 3)
-  const latestDecision = getLatestMemoryByType(memories, 'Decision')
-  const latestArchitecture = getLatestMemoryByType(memories, 'Architecture')
-  const latestSprint = getLatestMemoryByType(memories, 'Sprint')
-  const latestIdea = getLatestMemoryByType(memories, 'Idea')
-  const health = getMemoryHealth(memories)
-  const groups = [
-    ['Pinned Rules', pinnedBusinessRules],
-    ['Latest Decision', latestDecision ? [latestDecision] : []],
-    ['Latest Architecture', latestArchitecture ? [latestArchitecture] : []],
-    ['Latest Sprint', latestSprint ? [latestSprint] : []],
-    ['Latest Idea', latestIdea ? [latestIdea] : []],
-  ] as const
+function buildRecentActivity({
+  approvals,
+  capabilityPlans,
+  queueItems,
+  workItems,
+  projects,
+  businesses,
+  memories,
+}: {
+  approvals: Approval[]
+  capabilityPlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
+  queueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
+  workItems: ReturnType<typeof useWorkItemStore>['workItems']
+  projects: ReturnType<typeof useProjectStore>['projects']
+  businesses: ReturnType<typeof useBusinessStore>['businesses']
+  memories: ReturnType<typeof useMemoryStore>['memoryEntries']
+}): ActivityItem[] {
+  return [
+    ...approvals.map((approval) => ({
+      id: `approval-${approval.id}`,
+      title: approval.title,
+      meta: `Approval · ${approval.status} · ${getApprovalDecisionLabel(approval)}`,
+      createdAt: approval.updated,
+      to: '/approval',
+    })),
+    ...capabilityPlans.map((plan) => ({
+      id: `capability-${plan.id}`,
+      title: `${plan.capabilityPlanId}: ${plan.workItemTitle}`,
+      meta: `Capability Planning · ${plan.readinessStatus}`,
+      createdAt: plan.updatedAt,
+      to: `/capability-planning/${plan.id}`,
+    })),
+    ...queueItems.map((item) => ({
+      id: `queue-${item.id}`,
+      title: `${item.queueId}: ${item.workItemTitle}`,
+      meta: `Execution Queue · ${item.queueStatus}`,
+      createdAt: item.updatedAt,
+      to: `/execution-queue/${item.id}`,
+    })),
+    ...workItems.map((item) => ({
+      id: `work-${item.id}`,
+      title: `${item.workItemId}: ${item.title}`,
+      meta: `Work Item · ${item.status}`,
+      createdAt: item.updatedAt,
+      to: `/work-items/${item.id}`,
+    })),
+    ...projects.map((project) => ({
+      id: `project-${project.id}`,
+      title: `${project.projectId}: ${project.name}`,
+      meta: `Project · ${project.status}`,
+      createdAt: project.updatedAt,
+      to: `/projects/${project.id}`,
+    })),
+    ...businesses.map((business) => ({
+      id: `business-${business.id}`,
+      title: `${business.businessId}: ${business.name}`,
+      meta: `Business · ${business.status}`,
+      createdAt: business.updatedAt,
+      to: `/businesses/${business.id}`,
+    })),
+    ...memories.map((memory) => ({
+      id: `memory-${memory.id}`,
+      title: memory.title,
+      meta: `Memory · ${memory.type}`,
+      createdAt: memory.updatedAt,
+      to: '/memory',
+    })),
+  ].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 8)
+}
+
+function buildAlerts({
+  deferredApprovals,
+  incompletePlans,
+  blockedQueueItems,
+  dueWorkItems,
+}: {
+  deferredApprovals: Approval[]
+  incompletePlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
+  blockedQueueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
+  dueWorkItems: ReturnType<typeof useWorkItemStore>['workItems']
+}): AttentionAction[] {
+  return [
+    ...blockedQueueItems.map((item) => ({
+      id: `alert-queue-${item.id}`,
+      severity: 'High' as const,
+      title: `${item.queueId} is blocked`,
+      why: item.workItemTitle,
+      blocked: 'Execution Queue',
+      to: `/execution-queue/${item.id}`,
+    })),
+    ...deferredApprovals.map((approval) => ({
+      id: `alert-approval-${approval.id}`,
+      severity: 'Medium' as const,
+      title: `Deferred approval: ${approval.title}`,
+      why: 'Deferred decisions may need future CEO review.',
+      blocked: 'Approval Queue',
+      to: '/approval',
+    })),
+    ...incompletePlans.slice(0, 4).map((plan) => ({
+      id: `alert-plan-${plan.id}`,
+      severity: 'Medium' as const,
+      title: `${plan.capabilityPlanId} is not ready`,
+      why: `${plan.missingRequirements.length} infrastructure requirement${plan.missingRequirements.length === 1 ? '' : 's'} missing.`,
+      blocked: plan.sourceQueueCode,
+      to: `/capability-planning/${plan.id}`,
+    })),
+    ...dueWorkItems.map((item) => ({
+      id: `alert-due-${item.id}`,
+      severity: 'Low' as const,
+      title: `${item.workItemId} due ${item.dueDate}`,
+      why: item.title,
+      blocked: item.projectCode,
+      to: `/work-items/${item.id}`,
+    })),
+  ].slice(0, 6)
+}
+
+function Section({ title, eyebrow, children }: { title: string; eyebrow: string; children: ReactNode }) {
   return (
-    <section className="panel col-span-12 p-6">
-      <div className="mb-5 flex items-center justify-between">
-        <div><p className="eyebrow mb-1">Business Memory</p><h3 className="m-0 text-lg font-semibold">What the operating system remembers</h3></div>
-        <Link to="/memory" className="btn-secondary">Open memory</Link>
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        {groups.map(([label, entries]) => (
-          <div key={label} className="rounded-xl border border-line bg-ink/40 p-4">
-            <p className="eyebrow mb-3">{label}</p>
-            {entries.length === 0 ? <p className="m-0 text-xs text-muted">No entries yet.</p> : entries.map((entry) => <p key={entry.id} className="mb-2 text-xs leading-5 text-[#aeb8b3] last:mb-0">{entry.relatedIssue && <span className="mr-1 text-mint">{entry.relatedIssue}</span>}{entry.title}</p>)}
-          </div>
-        ))}
-        <div className="rounded-xl border border-lime/20 bg-lime/[0.04] p-4">
-          <p className="eyebrow mb-3 text-lime">Memory Health</p>
-          <div className="grid grid-cols-5 gap-2">
-            {Object.entries(health).map(([label, value]) => (
-              <div key={label} className="rounded-lg bg-ink/45 p-2 text-center">
-                <p className="m-0 text-lg font-semibold text-white">{value}</p>
-                <p className="mb-0 mt-1 text-[9px] capitalize text-muted">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+    <section className="panel p-5">
+      <p className="eyebrow mb-2">{eyebrow}</p>
+      <h3 className="m-0 font-display text-xl font-semibold text-white">{title}</h3>
+      <div className="mt-4">{children}</div>
     </section>
   )
+}
+
+function NavigationCard({ to, ariaLabel, children }: { to: string; ariaLabel: string; children: ReactNode }) {
+  return (
+    <Link
+      to={to}
+      aria-label={ariaLabel}
+      onKeyDown={(event: KeyboardEvent<HTMLAnchorElement>) => {
+        if (event.key === ' ') {
+          event.preventDefault()
+          event.currentTarget.click()
+        }
+      }}
+      className="block cursor-pointer rounded-xl border border-line bg-ink/35 p-4 transition hover:border-lime/35 hover:bg-white/[0.045] focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime/70"
+    >
+      {children}
+    </Link>
+  )
+}
+
+function SummaryNavCard({ label, value, detail, to, icon }: { label: string; value: string; detail: string; to: string; icon: ReactNode }) {
+  return (
+    <NavigationCard to={to} ariaLabel={`Open ${label} in ${destinationName(to)}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow mb-2">{label}</p>
+          <p className="m-0 font-display text-2xl font-semibold text-white">{value}</p>
+          <p className="m-0 mt-1 text-xs leading-5 text-muted">{detail}</p>
+        </div>
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-lime/10 text-lime">{icon}</div>
+      </div>
+    </NavigationCard>
+  )
+}
+
+function ActionButton({ to, icon, label, helper }: { to: string; icon: ReactNode; label: string; helper: string }) {
+  return (
+    <Link to={to} className="rounded-xl border border-lime/30 bg-lime/10 p-4 transition hover:border-lime/60 hover:bg-lime/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime/70">
+      <span className="flex items-center gap-2 text-sm font-semibold text-lime">{icon}{label}</span>
+      <span className="mt-2 block text-xs leading-5 text-[#aeb8b3]">{helper}</span>
+    </Link>
+  )
+}
+
+function SeverityBadge({ severity }: { severity: Severity }) {
+  const styles = {
+    Critical: 'border-red-400/30 bg-red-400/10 text-red-200',
+    High: 'border-[#ff9e8f]/30 bg-[#ff9e8f]/10 text-[#ffb8ad]',
+    Medium: 'border-[#ffcc66]/30 bg-[#ffcc66]/10 text-[#ffdc8f]',
+    Low: 'border-lime/30 bg-lime/10 text-lime',
+  }[severity]
+  return <span className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${styles}`}>{severity}</span>
+}
+
+function StatusPill({ label, value, tone }: { label: string; value: string; tone: 'good' | 'warning' | 'neutral' }) {
+  const dot = tone === 'good' ? 'bg-lime shadow-[0_0_10px_#c8f560]' : tone === 'warning' ? 'bg-[#ff9e8f]' : 'bg-[#ffcc66]'
+  return (
+    <div className="rounded-xl border border-line bg-ink/45 p-3">
+      <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
+      <p className="m-0 mt-2 flex items-center gap-2 text-sm font-semibold text-white"><span className={`h-2 w-2 rounded-full ${dot}`} />{value}</p>
+    </div>
+  )
+}
+
+function SystemWorkItem({ label, value, copy }: { label: string; value: number; copy: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-ink/35 p-4">
+      <p className="eyebrow mb-2">{label}</p>
+      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
+      <p className="m-0 mt-2 text-xs leading-5 text-muted">{copy}</p>
+    </div>
+  )
+}
+
+function EmptyPanel({ title, copy }: { title: string; copy: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-line bg-white/[0.02] p-5">
+      <div className="mb-3 grid h-9 w-9 place-items-center rounded-xl bg-lime/10 text-lime">
+        <Check size={16} />
+      </div>
+      <h4 className="m-0 text-sm font-semibold text-white">{title}</h4>
+      <p className="m-0 mt-2 text-xs leading-5 text-muted">{copy}</p>
+    </div>
+  )
+}
+
+function formatShortDate(value: string) {
+  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(value))
+}
+
+function destinationName(to: string) {
+  if (to === '/approval') return 'Approval Queue'
+  if (to === '/money') return 'Money'
+  if (to === '/execution-queue') return 'Execution Queue'
+  if (to === '/capability-planning') return 'Capability Planning'
+  if (to === '/businesses') return 'Businesses'
+  return 'module'
 }
