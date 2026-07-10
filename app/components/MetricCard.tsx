@@ -22,7 +22,7 @@ export function MetricCard({
   return (
     <section className={`panel p-5 ${accent ? 'bg-gradient-to-br from-lime/[0.12] to-panel' : ''}`}>
       <div className="flex items-start justify-between">
-        <p className="m-0 text-xs font-medium text-[#9aa59f]">{label}</p>
+        <p className="eyebrow m-0">{label}</p>
         <div className={`rounded-lg p-2 ${accent ? 'bg-lime text-ink' : 'bg-white/[0.04] text-muted'}`}>
           <Icon size={15} />
         </div>

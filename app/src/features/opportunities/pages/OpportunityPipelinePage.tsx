@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import {
   filterOpportunities,
   OpportunityFilters as OpportunityFilterState,
@@ -68,26 +69,10 @@ export function OpportunityPipelinePage() {
       ) : null}
 
       <div className="mb-6 grid gap-4 md:grid-cols-4">
-        <div className="panel p-4">
-          <p className="eyebrow mb-2">Total</p>
-          <p className="m-0 font-display text-3xl font-semibold text-white">{stats.total}</p>
-          <p className="m-0 mt-1 text-xs text-muted">Opportunities captured</p>
-        </div>
-        <div className="panel p-4">
-          <p className="eyebrow mb-2">Validation</p>
-          <p className="m-0 font-display text-3xl font-semibold text-white">{stats.research}</p>
-          <p className="m-0 mt-1 text-xs text-muted">In Phase 1 Research</p>
-        </div>
-        <div className="panel p-4">
-          <p className="eyebrow mb-2">CEO Review</p>
-          <p className="m-0 font-display text-3xl font-semibold text-white">{stats.review}</p>
-          <p className="m-0 mt-1 text-xs text-muted">Waiting for direction</p>
-        </div>
-        <div className="panel p-4">
-          <p className="eyebrow mb-2">Build Queue</p>
-          <p className="m-0 font-display text-3xl font-semibold text-white">{stats.buildReady}</p>
-          <p className="m-0 mt-1 text-xs text-muted">Ready or actively building</p>
-        </div>
+        <SummaryCard label="Total" value={stats.total} helper="Opportunities captured" />
+        <SummaryCard label="Validation" value={stats.research} helper="In Phase 1 Research" />
+        <SummaryCard label="CEO Review" value={stats.review} helper="Waiting for direction" />
+        <SummaryCard label="Build Queue" value={stats.buildReady} helper="Ready or actively building" />
       </div>
 
       <OpportunityFilters

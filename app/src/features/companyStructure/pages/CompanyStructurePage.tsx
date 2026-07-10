@@ -1,5 +1,6 @@
 import { Building2 } from 'lucide-react'
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { useBusinessStore } from '@/src/core/businesses'
 import { companyStructureTemplates, useCompanyStructureStore } from '@/src/core/companyStructure'
 import { DepartmentCard } from '../components/DepartmentCard'
@@ -18,11 +19,11 @@ export function CompanyStructurePage() {
       />
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-5">
-        <SummaryCard label="Total Departments" value={companyStructure.departments.length} />
-        <SummaryCard label="Active Departments" value={companyStructure.activeDepartments.length} />
-        <SummaryCard label="Inactive Departments" value={companyStructure.inactiveDepartments.length} />
-        <SummaryCard label="Total Businesses" value={businessStore.businesses.length} />
-        <SummaryCard label="Department Templates" value={companyStructureTemplates.length} />
+        <SummaryCard label="Total Departments" value={companyStructure.departments.length} helper="Local structure records" />
+        <SummaryCard label="Active Departments" value={companyStructure.activeDepartments.length} helper="Enabled departments" />
+        <SummaryCard label="Inactive Departments" value={companyStructure.inactiveDepartments.length} helper="Disabled or archived" />
+        <SummaryCard label="Total Businesses" value={businessStore.businesses.length} helper="Business records" />
+        <SummaryCard label="Department Templates" value={companyStructureTemplates.length} helper="Available templates" />
       </div>
 
       <section className="panel mb-6 p-5">
@@ -67,14 +68,3 @@ export function CompanyStructurePage() {
     </>
   )
 }
-
-function SummaryCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">Local structure records</p>
-    </div>
-  )
-}
-

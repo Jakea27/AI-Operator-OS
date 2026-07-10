@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { ProjectRecord, useProjectStore } from '@/src/core/projects'
 import { ProjectCard } from '../components/ProjectCard'
 import { ProjectForm } from '../components/ProjectForm'
@@ -49,12 +50,12 @@ export function ProjectsPage() {
       ) : null}
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <SummaryCard label="Total Projects" value={stats.total} detail="Project records" />
-        <SummaryCard label="Active Projects" value={stats.active} detail="Currently active" />
-        <SummaryCard label="Completed Projects" value={stats.completed} detail="Finished records" />
-        <SummaryCard label="Archived Projects" value={stats.archived} detail="Archived records" />
-        <SummaryCard label="Average Completion" value={`${stats.averageCompletion}%`} detail="Across all projects" />
-        <SummaryCard label="Open Work Items" value={stats.openWorkItems} detail="Placeholder until Work Items exist" />
+        <SummaryCard label="Total Projects" value={stats.total} helper="Project records" />
+        <SummaryCard label="Active Projects" value={stats.active} helper="Currently active" />
+        <SummaryCard label="Completed Projects" value={stats.completed} helper="Finished records" />
+        <SummaryCard label="Archived Projects" value={stats.archived} helper="Archived records" />
+        <SummaryCard label="Average Completion" value={`${stats.averageCompletion}%`} helper="Across all projects" />
+        <SummaryCard label="Open Work Items" value={stats.openWorkItems} helper="Linked work items" />
       </div>
 
       {projectStore.projects.length > 0 ? (
@@ -81,14 +82,4 @@ export function ProjectsPage() {
 
 function countStatus(projects: ProjectRecord[], status: ProjectRecord['status']) {
   return projects.filter((project) => project.status === status).length
-}
-
-function SummaryCard({ label, value, detail }: { label: string; value: number | string; detail: string }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">{detail}</p>
-    </div>
-  )
 }

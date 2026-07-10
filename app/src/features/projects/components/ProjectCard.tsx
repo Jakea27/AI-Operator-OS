@@ -13,7 +13,7 @@ function formatDate(value: string) {
 
 export function ProjectCard({ project }: { project: ProjectRecord }) {
   return (
-    <article className="panel p-5">
+    <article className="record-card p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="eyebrow mb-2">{project.projectId} · {project.businessCode}</p>

@@ -12,7 +12,7 @@ function formatDate(value: string) {
 
 export function ExecutionQueueCard({ queueItem }: { queueItem: ExecutionQueueRecord }) {
   return (
-    <article className="rounded-xl border border-line bg-ink/35 p-4">
+    <article className="record-card">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="eyebrow mb-2">{queueItem.queueId} · {queueItem.sourceWorkItemId}</p>

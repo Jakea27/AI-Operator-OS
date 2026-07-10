@@ -17,7 +17,7 @@ const healthClass: Record<BusinessRecord['health'], string> = {
 
 export function BusinessCard({ business }: { business: BusinessRecord }) {
   return (
-    <article className="panel p-5">
+    <article className="record-card p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="eyebrow mb-2">{business.businessId} · {business.portfolioType}</p>

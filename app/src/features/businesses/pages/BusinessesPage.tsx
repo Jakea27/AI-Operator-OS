@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { BusinessRecord, useBusinessStore } from '@/src/core/businesses'
 import { BusinessCard } from '../components/BusinessCard'
 import { BusinessForm } from '../components/BusinessForm'
@@ -45,12 +46,12 @@ export function BusinessesPage() {
       ) : null}
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <SummaryCard label="Total Businesses" value={stats.total} />
-        <SummaryCard label="Building" value={stats.building} />
-        <SummaryCard label="Launching" value={stats.launching} />
-        <SummaryCard label="Operating" value={stats.operating} />
-        <SummaryCard label="Optimizing" value={stats.optimizing} />
-        <SummaryCard label="Paused / Archived" value={stats.pausedArchived} />
+        <SummaryCard label="Total Businesses" value={stats.total} helper="Local business records" />
+        <SummaryCard label="Building" value={stats.building} helper="In build stage" />
+        <SummaryCard label="Launching" value={stats.launching} helper="Preparing to launch" />
+        <SummaryCard label="Operating" value={stats.operating} helper="Currently operating" />
+        <SummaryCard label="Optimizing" value={stats.optimizing} helper="Improvement stage" />
+        <SummaryCard label="Paused / Archived" value={stats.pausedArchived} helper="Inactive records" />
       </div>
 
       {businessStore.businesses.length > 0 ? (
@@ -79,14 +80,3 @@ export function BusinessesPage() {
 function countStatus(businesses: BusinessRecord[], status: BusinessRecord['status']) {
   return businesses.filter((business) => business.status === status).length
 }
-
-function SummaryCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">Local business records</p>
-    </div>
-  )
-}
-

@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { WorkItemRecord, useWorkItemStore } from '@/src/core/workItems'
 import { WorkItemCard } from './WorkItemCard'
 import { WorkItemForm } from './WorkItemForm'
@@ -45,12 +46,12 @@ export function WorkItemsPage() {
       ) : null}
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <SummaryCard label="Total Work Items" value={stats.total} />
-        <SummaryCard label="Ready" value={stats.ready} />
-        <SummaryCard label="In Progress" value={stats.inProgress} />
-        <SummaryCard label="Blocked" value={stats.blocked} />
-        <SummaryCard label="Review" value={stats.review} />
-        <SummaryCard label="Completed" value={stats.completed} />
+        <SummaryCard label="Total Work Items" value={stats.total} helper="Local Work Item records" />
+        <SummaryCard label="Ready" value={stats.ready} helper="Ready to queue" />
+        <SummaryCard label="In Progress" value={stats.inProgress} helper="Currently active" />
+        <SummaryCard label="Blocked" value={stats.blocked} helper="Needs attention" />
+        <SummaryCard label="Review" value={stats.review} helper="Awaiting review" />
+        <SummaryCard label="Completed" value={stats.completed} helper="Finished records" />
       </div>
 
       {workItemStore.workItems.length > 0 ? (
@@ -77,14 +78,4 @@ export function WorkItemsPage() {
 
 function countStatus(workItems: WorkItemRecord[], status: WorkItemRecord['status']) {
   return workItems.filter((workItem) => workItem.status === status).length
-}
-
-function SummaryCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">Local Work Item records</p>
-    </div>
-  )
 }

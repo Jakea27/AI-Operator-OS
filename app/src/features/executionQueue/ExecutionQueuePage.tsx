@@ -1,4 +1,5 @@
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { ExecutionQueueRecord, useExecutionQueueStore } from '@/src/core/executionQueue'
 import { ExecutionQueueCard } from './ExecutionQueueCard'
 
@@ -22,12 +23,12 @@ export function ExecutionQueuePage() {
       />
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <SummaryCard label="Total Queue Items" value={stats.total} />
-        <SummaryCard label="Queued" value={stats.queued} />
-        <SummaryCard label="Waiting Approval" value={stats.waitingApproval} />
-        <SummaryCard label="Ready" value={stats.ready} />
-        <SummaryCard label="Blocked" value={stats.blocked} />
-        <SummaryCard label="Completed" value={stats.completed} />
+        <SummaryCard label="Total Queue Items" value={stats.total} helper="Local queue records" />
+        <SummaryCard label="Queued" value={stats.queued} helper="Waiting in queue" />
+        <SummaryCard label="Waiting Approval" value={stats.waitingApproval} helper="Approval required" />
+        <SummaryCard label="Ready" value={stats.ready} helper="Ready for future execution" />
+        <SummaryCard label="Blocked" value={stats.blocked} helper="Needs attention" />
+        <SummaryCard label="Completed" value={stats.completed} helper="Finished queue records" />
       </div>
 
       {executionQueue.queueItems.length > 0 ? (
@@ -51,14 +52,4 @@ export function ExecutionQueuePage() {
 
 function countStatus(queueItems: ExecutionQueueRecord[], status: ExecutionQueueRecord['queueStatus']) {
   return queueItems.filter((queueItem) => queueItem.queueStatus === status).length
-}
-
-function SummaryCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">Local queue records</p>
-    </div>
-  )
 }

@@ -4,7 +4,7 @@ import { WorkItemRecord } from '@/src/core/workItems'
 
 export function WorkItemCard({ workItem }: { workItem: WorkItemRecord }) {
   return (
-    <article className="rounded-xl border border-line bg-ink/35 p-4">
+    <article className="record-card">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="eyebrow mb-2">{workItem.workItemId} · {workItem.projectCode}</p>

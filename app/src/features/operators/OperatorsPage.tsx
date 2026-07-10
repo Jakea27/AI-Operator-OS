@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { useCompanyStructureStore } from '@/src/core/companyStructure'
 import { useWorkforceOperatorStore } from '@/src/core/operators'
 import { WorkforceOperatorCard } from './WorkforceOperatorCard'
@@ -46,11 +47,11 @@ export function OperatorsPage() {
       ) : null}
 
       <div className="mb-6 grid gap-4 md:grid-cols-5">
-        <SummaryCard label="Total Operators" value={stats.total} />
-        <SummaryCard label="Operating" value={stats.operating} />
-        <SummaryCard label="Ready" value={stats.ready} />
-        <SummaryCard label="Paused" value={stats.paused} />
-        <SummaryCard label="Active Departments" value={stats.departments} />
+        <SummaryCard label="Total Operators" value={stats.total} helper="Local workforce records" />
+        <SummaryCard label="Operating" value={stats.operating} helper="Currently operating" />
+        <SummaryCard label="Ready" value={stats.ready} helper="Ready to assign" />
+        <SummaryCard label="Paused" value={stats.paused} helper="Temporarily inactive" />
+        <SummaryCard label="Active Departments" value={stats.departments} helper="Ownership context" />
       </div>
 
       {operatorStore.operators.length > 0 ? (
@@ -71,14 +72,3 @@ export function OperatorsPage() {
     </>
   )
 }
-
-function SummaryCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">Local workforce records</p>
-    </div>
-  )
-}
-

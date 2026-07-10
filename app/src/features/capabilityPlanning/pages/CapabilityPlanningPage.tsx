@@ -1,4 +1,5 @@
 import { PageIntro } from '@/components/PageIntro'
+import { SummaryCard } from '@/components/SummaryCard'
 import { CapabilityPlanRecord, useCapabilityPlanningStore } from '@/src/core/capabilityPlanning'
 import { CapabilityPlanCard } from '../components/CapabilityPlanCard'
 
@@ -15,12 +16,12 @@ export function CapabilityPlanningPage() {
       />
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <SummaryCard label="Total Plans" value={plans.length} />
-        <SummaryCard label="Draft" value={countStatus(plans, 'Draft')} />
-        <SummaryCard label="Incomplete" value={countStatus(plans, 'Incomplete')} />
-        <SummaryCard label="Ready for Review" value={countStatus(plans, 'Ready for Review')} />
-        <SummaryCard label="Approved" value={countStatus(plans, 'Approved')} />
-        <SummaryCard label="Blocked" value={countStatus(plans, 'Blocked')} />
+        <SummaryCard label="Total Plans" value={plans.length} helper="Infrastructure planning" />
+        <SummaryCard label="Draft" value={countStatus(plans, 'Draft')} helper="Early plans" />
+        <SummaryCard label="Incomplete" value={countStatus(plans, 'Incomplete')} helper="Missing requirements" />
+        <SummaryCard label="Ready for Review" value={countStatus(plans, 'Ready for Review')} helper="Prepared for CEO" />
+        <SummaryCard label="Approved" value={countStatus(plans, 'Approved')} helper="Infrastructure approved" />
+        <SummaryCard label="Blocked" value={countStatus(plans, 'Blocked')} helper="Needs attention" />
       </div>
 
       {plans.length > 0 ? (
@@ -42,14 +43,4 @@ export function CapabilityPlanningPage() {
 
 function countStatus(plans: CapabilityPlanRecord[], status: CapabilityPlanRecord['readinessStatus']) {
   return plans.filter((plan) => plan.readinessStatus === status).length
-}
-
-function SummaryCard({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="panel p-4">
-      <p className="eyebrow mb-2">{label}</p>
-      <p className="m-0 font-display text-3xl font-semibold text-white">{value}</p>
-      <p className="m-0 mt-1 text-xs text-muted">Infrastructure planning</p>
-    </div>
-  )
 }
