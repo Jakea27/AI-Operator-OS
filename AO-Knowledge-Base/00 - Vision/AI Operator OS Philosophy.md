@@ -149,7 +149,59 @@ Developer tools may expose technical structure. CEO workflows should hide unnece
 
 Complexity belongs inside the operating system, not in the daily experience of running the company.
 
-## 10. Long-Term Vision
+## 10. Navigation Through Summary Cards
+
+Dashboard summary cards represent modules or workflows.
+
+When a card summarizes another module, the entire card should be clickable and navigate to that module.
+
+Examples:
+
+- Revenue card -> Money
+- Pending Approvals card -> Approval Queue
+- Execution card -> Execution Queue
+- Capability Planning card -> Capability Planning
+- Memory card -> Memory
+- Operator Health card -> Operators
+- Business card -> Businesses
+- Roadmap card -> Roadmap
+
+Do not place unnecessary "Open Module" buttons inside summary cards when the card itself can provide the navigation.
+
+Buttons should be reserved for actions that create or change data.
+
+Examples:
+
+- Create
+- Save
+- Approve
+- Reject
+- Archive
+- Delete
+- Add
+- Submit
+
+Navigation and actions must remain visually distinct.
+
+- Clicking a summary card navigates.
+- Clicking an action button changes data or starts a workflow.
+
+Clickable cards must remain understandable and accessible. They should include appropriate:
+
+- Hover feedback
+- Focus states
+- Pointer behavior
+- Keyboard activation
+- Accessible labels
+- Visible destination cues where needed
+
+The Dashboard remains the Command Center.
+
+It should provide concise summaries and direct navigation into detailed modules. Detailed work remains inside the module that owns it.
+
+Dashboard tells the CEO what matters. Modules let the CEO work on it.
+
+## 11. Long-Term Vision
 
 The long-term vision is one operating system for building, operating, optimizing, and scaling a portfolio of businesses.
 

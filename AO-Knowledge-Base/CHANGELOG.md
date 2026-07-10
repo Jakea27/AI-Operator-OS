@@ -1,5 +1,11 @@
 # AO Knowledge Base Changelog
 
+## Design Philosophy Navigation Rule - 2026-07-10
+
+### Updated
+
+- Updated the AI Operator OS Philosophy with a Navigation Through Summary Cards principle that reserves dashboard cards for navigation summaries and buttons for data-changing actions.
+
 ## Sprint 009 - Capability Planning - 2026-07-10
 
 ### Completed
