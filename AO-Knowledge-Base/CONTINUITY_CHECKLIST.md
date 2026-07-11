@@ -6,6 +6,10 @@ This is the mandatory checklist before closing every sprint.
 
 A sprint is NOT complete until every checklist item has been completed.
 
+## Continuity System Version
+
+1.1
+
 ## Sprint Closeout Checklist
 
 □ Sprint Summary updated
@@ -21,6 +25,16 @@ A sprint is NOT complete until every checklist item has been completed.
 □ QA recorded
 
 □ Build verified
+
+□ Repository branch verified
+
+□ Last commit recorded
+
+□ Operator Startup Report completed
+
+□ Documentation consistency verified
+
+□ Continuity verification result recorded
 
 □ Commit created
 

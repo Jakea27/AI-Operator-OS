@@ -6,6 +6,10 @@ This document defines the required reading order for every AI operator before be
 
 The Knowledge Base is the continuity layer. It exists so each operator starts from documented project truth instead of relying on conversation memory.
 
+## Continuity System Version
+
+1.1
+
 ## Required Reading Order
 
 1. Vision
@@ -37,7 +41,36 @@ The Knowledge Base is the continuity layer. It exists so each operator starts fr
 5. Verify no sprint is currently awaiting QA or closeout.
 6. Only then begin implementation.
 
+## Operator Verification Gate
+
+Every AI operator must verify the following before making recommendations, writing code, planning work, or beginning implementation.
+
+### Project State
+
+- Current Version
+- Current Milestone
+- Current Sprint
+- Sprint Status
+- Current Objective
+- Next Required Action
+- Blocking Issues
+- Recent Philosophy Additions
+- Documentation Consistency
+
+### Previous Sprint
+
+- Implementation completed
+- QA completed
+- Documentation completed
+- Git commit created
+- Repository pushed
+- Working tree clean
+- Sprint closeout completed
+
+## Verification Rule
+
+If any required item cannot be verified from documentation, the operator must stop and report exactly what is missing or inconsistent.
+
 ## Rule
 
 If the current conversation conflicts with the documented project state, pause and resolve the documentation discrepancy before implementation.
-
