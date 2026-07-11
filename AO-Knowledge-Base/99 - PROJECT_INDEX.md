@@ -29,7 +29,7 @@ Every AI operator must read the following source documents in this exact order.
 13. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
 14. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 15. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-16. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+16. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - Planning.md`
 17. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
 ## Startup Source Priority

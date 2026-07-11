@@ -16,11 +16,15 @@ Command used:
 
 ## Current Status
 
-Sprint 011 documentation finalization.
+Sprint 012 Planning.
 
 ## Next Phase
 
-Git Commit.
+Sprint 012 Planning.
+
+## Previous Sprint
+
+Sprint 011 COMPLETE.
 
 ## Current Electron Status
 
