@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -92,103 +91,6 @@ function extractPointer(activeProjectStateContent, label) {
   return relativePath;
 }
 
-function findGitExecutable() {
-  const directCandidates = [
-    "git",
-    process.env.GIT_EXECUTABLE,
-    process.env.ProgramFiles ? path.join(process.env.ProgramFiles, "Git", "cmd", "git.exe") : undefined,
-    process.env["ProgramFiles(x86)"] ? path.join(process.env["ProgramFiles(x86)"], "Git", "cmd", "git.exe") : undefined,
-  ].filter(Boolean);
-
-  for (const candidate of directCandidates) {
-    try {
-      execFileSync(candidate, ["--version"], {
-        cwd: repoRoot,
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"],
-      });
-      return candidate;
-    } catch {
-      // Try the next candidate.
-    }
-  }
-
-  const githubDesktopDir = process.env.LOCALAPPDATA
-    ? path.join(process.env.LOCALAPPDATA, "GitHubDesktop")
-    : undefined;
-
-  if (!githubDesktopDir || !existsSync(githubDesktopDir)) {
-    return undefined;
-  }
-
-  const stack = [githubDesktopDir];
-  while (stack.length > 0) {
-    const currentDir = stack.pop();
-    let entries = [];
-
-    try {
-      entries = readdirSync(currentDir);
-    } catch {
-      continue;
-    }
-
-    for (const entry of entries) {
-      const entryPath = path.join(currentDir, entry);
-      let stats;
-
-      try {
-        stats = statSync(entryPath);
-      } catch {
-        continue;
-      }
-
-      if (stats.isDirectory()) {
-        stack.push(entryPath);
-        continue;
-      }
-
-      if (entry.toLowerCase() !== "git.exe") {
-        continue;
-      }
-
-      const normalized = entryPath.replaceAll("\\", "/").toLowerCase();
-      if (!normalized.includes("/resources/app/git/cmd/git.exe")) {
-        continue;
-      }
-
-      try {
-        execFileSync(entryPath, ["--version"], {
-          cwd: repoRoot,
-          encoding: "utf8",
-          stdio: ["ignore", "pipe", "ignore"],
-        });
-        return entryPath;
-      } catch {
-        // Keep searching.
-      }
-    }
-  }
-
-  return undefined;
-}
-
-function getGitCommit() {
-  const gitExecutable = findGitExecutable();
-  if (!gitExecutable) {
-    return "REQUIRES VERIFICATION - git executable could not be found";
-  }
-
-  try {
-    return execFileSync(gitExecutable, ["rev-parse", "HEAD"], {
-      cwd: repoRoot,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-  } catch {
-    return "REQUIRES VERIFICATION - git commit could not be retrieved";
-  }
-}
-
 function renderDocument(document) {
   return [
     "---",
@@ -200,6 +102,33 @@ function renderDocument(document) {
   ].join("\n");
 }
 
+function extractRepositoryState(activeProjectStateContent) {
+  const section = extractSection(activeProjectStateContent, "Repository State");
+  const requiredLabels = [
+    "Current HEAD",
+    "Last Verified Commit",
+    "Working Tree Status",
+    "Repository Push Status",
+    "Repository Verification Status",
+    "Last Verified Date",
+  ];
+
+  const repositoryState = {
+    source: activeProjectStatePath,
+  };
+
+  for (const label of requiredLabels) {
+    const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const match = section.match(new RegExp(`^- ${escapedLabel}:\\s*(.+?)\\s*$`, "m"));
+    if (!match || !match[1]?.trim()) {
+      fail(`Repository metadata missing from Active Project State: ${label}`);
+    }
+    repositoryState[label] = match[1].trim();
+  }
+
+  return repositoryState;
+}
+
 const projectIndex = readRequired(projectIndexPath);
 const activeProjectState = readRequired(activeProjectStatePath);
 
@@ -208,6 +137,7 @@ const projectVersion = extractSingleLineField(activeProjectState.content, "Curre
 const currentSprint = extractSingleLineField(activeProjectState.content, "Current Sprint");
 const lastCompletedSprint = extractSingleLineField(activeProjectState.content, "Last Completed Sprint");
 const currentSprintSummaryPath = extractPointer(activeProjectState.content, "Current Sprint Summary");
+const repositoryState = extractRepositoryState(activeProjectState.content);
 
 const requiredReadingPaths = extractRequiredReadingPaths(projectIndex.content);
 if (!requiredReadingPaths.includes(currentSprintSummaryPath)) {
@@ -220,8 +150,7 @@ for (const requiredPath of requiredReadingPaths) {
 
 const sourceDocuments = requiredReadingPaths.map((requiredPath) => readRequired(requiredPath));
 const generationDate = new Date().toISOString().slice(0, 10);
-const currentGitCommit = getGitCommit();
-const validationStatus = "VALID";
+const validation = "VALID";
 
 const bundle = [
   "# AI Operator Startup Bundle",
@@ -236,9 +165,15 @@ const bundle = [
   `- Current Sprint: ${currentSprint}`,
   `- Last Completed Sprint: ${lastCompletedSprint}`,
   `- Current Sprint Summary path: ${currentSprintSummaryPath}`,
-  `- Git commit: ${currentGitCommit}`,
+  `- Repository metadata source: ${repositoryState.source}`,
+  `- Current HEAD: ${repositoryState["Current HEAD"]}`,
+  `- Last Verified Commit: ${repositoryState["Last Verified Commit"]}`,
+  `- Working Tree Status: ${repositoryState["Working Tree Status"]}`,
+  `- Repository Push Status: ${repositoryState["Repository Push Status"]}`,
+  `- Repository Verification Status: ${repositoryState["Repository Verification Status"]}`,
+  `- Last Verified Date: ${repositoryState["Last Verified Date"]}`,
   `- Number of included documents: ${sourceDocuments.length}`,
-  `- Bundle Validation Status: ${validationStatus}`,
+  `- Bundle Validation: ${validation}`,
   "",
   "## Included Documents",
   "",
@@ -252,4 +187,5 @@ writeFileSync(outputPath, `${bundle.trimEnd()}\n`, "utf8");
 console.log(`Generated ${displayPath(outputPath)}`);
 console.log(`Included ${sourceDocuments.length} documents.`);
 console.log(`Current Sprint Summary: ${currentSprintSummaryPath}`);
-console.log(`Bundle Validation Status: ${validationStatus}`);
+console.log(`Repository metadata source: ${repositoryState.source}`);
+console.log(`Bundle Validation: ${validation}`);

@@ -7,7 +7,7 @@
 - Began Sprint 011 as a documentation-only continuity sprint.
 - Added Continuity System version 1.1.
 - Updated Active Project State with explicit previous sprint closeout verification fields.
-- Added repository state fields for branch, verified commit, push status, working tree status, and verification date.
+- Added repository state fields for Current HEAD, Last Verified Commit, Working Tree Status, Repository Push Status, Repository Verification Status, and Last Verified Date.
 - Updated Project Index with a mandatory Operator Verification Gate.
 - Expanded the Continuity Checklist with branch, commit, startup report, documentation consistency, and continuity verification requirements.
 - Created the Operator Startup Report template.
@@ -30,6 +30,10 @@
 - Updated the startup bundle generator to use the exact Project Index order and the Current Sprint Summary pointer from Active Project State.
 - Regenerated the Startup Bundle with validation metadata and `Bundle Validation Status: VALID`.
 - Documented why Sprint 011 was inserted before Sprint 012 feature development.
+- Recorded Sprint 011 Task 5 - Repository State Normalization.
+- Established Active Project State as the single authoritative repository-state source.
+- Removed duplicated repository metadata from Sprint 011 summary documentation.
+- Updated the startup bundle generator to source repository metadata only from Active Project State.
 
 ## Project Continuity System - 2026-07-10
 

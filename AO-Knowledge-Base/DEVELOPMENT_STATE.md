@@ -83,6 +83,7 @@ None recorded in the continuity system at this time.
 - `scripts/generate-ai-operator-startup-bundle.mjs` regenerates the AI Operator Startup Bundle from exact Knowledge Base source paths.
 - `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md` is a generated fallback transport artifact for environments that cannot directly access the private repository.
 - Individual AO Knowledge Base source documents remain authoritative.
+- Repository metadata is authoritative only in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
 
 ## Pending Refactors
 

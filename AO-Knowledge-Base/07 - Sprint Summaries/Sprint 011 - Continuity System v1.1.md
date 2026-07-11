@@ -6,7 +6,7 @@ Active.
 
 ## Phase
 
-Task 3 - Documentation Determinism.
+Task 5 - Repository State Normalization.
 
 ## Objective
 
@@ -21,6 +21,8 @@ Sprint 011 Task 1 updates continuity documents only. It does not modify applicat
 Sprint 011 Task 2A creates a generated AI Operator startup bundle so future ChatGPT operators can receive the complete required continuity context as a single markdown file when private repository access is unavailable.
 
 Sprint 011 Task 3 removes ambiguous documentation references and makes the startup reading order fully deterministic using exact repository paths.
+
+Sprint 011 Task 5 normalizes repository-state documentation so Active Project State is the only authoritative source for repository metadata.
 
 ## Files Being Changed
 
@@ -49,11 +51,15 @@ Sprint 011 Task 3 removes ambiguous documentation references and makes the start
 
 ## Verification Notes
 
-- Sprint 010 closeout commit was retrieved from Git history: `87c21a4`.
-- Current repository HEAD was retrieved from Git: `d3214ca54addc53d7026094f33fe9be33baa42f6`.
-- Current branch was verified as `main`.
-- Local HEAD was verified to match `origin/main`.
-- Working tree was verified clean before Sprint 011 Task 1 documentation edits.
+Repository State
+
+Authoritative Source:
+
+`AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+
+Current repository verification is maintained only in the Active Project State.
+
+This document intentionally does not duplicate repository metadata.
 
 ## Task 2A - AI Operator Knowledge Delivery
 
@@ -108,3 +114,33 @@ Remove ambiguous documentation references and make startup reading fully determi
 ### Next Required Action
 
 CEO review followed by clean-room startup validation.
+
+## Task 5 - Repository State Normalization
+
+### Objective
+
+Resolve the repository-state documentation inconsistency discovered during clean-room startup validation.
+
+### Results
+
+- Established `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md` as the single authoritative repository-state source.
+- Removed duplicated repository metadata from the Sprint 011 summary.
+- Normalized repository-state terminology across continuity documents.
+- Updated the startup bundle generator so repository metadata is sourced only from Active Project State.
+- Regenerated the startup bundle with repository metadata source clearly identified.
+
+### Clean-Room Validation Finding
+
+Clean-room startup validation failed because Active Project State and the Sprint 011 summary recorded different repository commit information.
+
+The startup operator correctly stopped instead of choosing between conflicting continuity documents.
+
+### Repository State
+
+Authoritative Source:
+
+`AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+
+Current repository verification is maintained only in the Active Project State.
+
+This document intentionally does not duplicate repository metadata.
