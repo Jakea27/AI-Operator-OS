@@ -14,6 +14,14 @@ Command used:
 
 `npm run build`
 
+## Current Status
+
+Sprint 011 documentation finalization.
+
+## Next Phase
+
+Git Commit.
+
 ## Current Electron Status
 
 Electron development launch is standardized through:

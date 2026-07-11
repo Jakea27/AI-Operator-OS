@@ -7,6 +7,12 @@ Last Updated: 2026-06-28
 
 AI Operator OS has a production-capable Electron desktop shell built with React, Vite, TypeScript, and Tailwind. The application includes Dashboard, CEO, Money, Development, Memory, Operators, Roadmap, and Settings workspaces.
 
+Sprint 011 establishes the Documentation-First Continuity System v1.1 as the required startup layer for future AI operators. New work must begin from exact Knowledge Base source documents, not conversation memory. The Project Index defines deterministic reading order, the Operator Verification Gate requires verification before implementation, and the Operator Startup Report standardizes handoff validation.
+
+GitHub remains the primary startup source. The generated `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md` is a fallback transport artifact for environments that cannot reliably read the private repository. Source documents remain authoritative, and any conflict between the bundle and source documents must stop work until resolved.
+
+Repository metadata now has one authoritative source: `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`. Sprint summaries and generated bundles must point to Active Project State instead of duplicating HEAD, commit, working-tree, push, or verification timestamps. Verification before implementation is now a permanent operating rule.
+
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.
