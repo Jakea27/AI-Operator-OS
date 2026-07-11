@@ -1,5 +1,14 @@
 # AO Knowledge Base Changelog
 
+## Master Plan - 2026-07-11
+
+### Added
+
+- Created `AO-Knowledge-Base/MASTER_PLAN.md` as the authoritative strategic planning document.
+- Added the Master Plan to the deterministic Project Index reading order.
+- Updated continuity documents to treat the Master Plan as the source of truth for long-term strategy, roadmap evolution, and CEO-level planning decisions.
+- Regenerated the AI Operator Startup Bundle with the Master Plan included.
+
 ## Sprint 011 - Continuity System v1.1 - 2026-07-11
 
 ### Closed

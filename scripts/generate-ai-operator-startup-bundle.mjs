@@ -140,6 +140,10 @@ const currentSprintSummaryPath = extractPointer(activeProjectState.content, "Cur
 const repositoryState = extractRepositoryState(activeProjectState.content);
 
 const requiredReadingPaths = extractRequiredReadingPaths(projectIndex.content);
+if (!requiredReadingPaths.includes("AO-Knowledge-Base/MASTER_PLAN.md")) {
+  fail("Project Index Required Reading Order must include AO-Knowledge-Base/MASTER_PLAN.md.");
+}
+
 if (!requiredReadingPaths.includes(currentSprintSummaryPath)) {
   fail("Project Index Required Reading Order does not include the Current Sprint Summary pointer from Active Project State.");
 }

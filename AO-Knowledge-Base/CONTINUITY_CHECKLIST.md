@@ -16,6 +16,8 @@ A sprint is NOT complete until every checklist item has been completed.
 
 □ CHANGELOG updated
 
+□ Master Plan reviewed when strategy or roadmap direction changes
+
 □ Active Project State updated
 
 □ Development State updated
@@ -47,4 +49,3 @@ A sprint is NOT complete until every checklist item has been completed.
 ## Rule
 
 If any item is incomplete, the sprint remains open.
-

@@ -31,6 +31,7 @@ Sprint 011 - Continuity System v1.1.
 - Active Project State is the single authoritative repository metadata source.
 - Verification must happen before implementation.
 - Sprint 011 was closed after implementation COMPLETE, QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push COMPLETE.
+- The Master Plan is now the authoritative strategic planning document.
 
 ## Current Development Priorities
 
@@ -41,6 +42,7 @@ Sprint 011 - Continuity System v1.1.
 - Remove ambiguous continuity references so every future AI operator can complete startup from exact source paths.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository metadata only in Active Project State.
+- Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
 - Await Sprint 012 planning.
 
 ## Known Risks
@@ -67,6 +69,7 @@ Sprint 011 - Continuity System v1.1.
 - Repository state is normalized.
 - GitHub startup was validated.
 - Startup Bundle was validated.
+- Master Plan was added to the required startup reading order.
 - The project is awaiting Sprint 012 planning.
 
 ## User Workflow Preferences

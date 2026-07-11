@@ -16,21 +16,22 @@ Every AI operator must read the following source documents in this exact order.
 
 1. `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
 2. `AO-Knowledge-Base/README.md`
-3. `AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md`
-4. `AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md`
-5. `AO-Knowledge-Base/10 - Standards/README.md`
-6. `AO-Knowledge-Base/10 - Standards/Automation Standards.md`
-7. `AO-Knowledge-Base/10 - Standards/Business Standards.md`
-8. `AO-Knowledge-Base/10 - Standards/Coding Standards.md`
-9. `AO-Knowledge-Base/10 - Standards/Department Standards.md`
-10. `AO-Knowledge-Base/10 - Standards/Documentation Standards.md`
-11. `AO-Knowledge-Base/10 - Standards/UI Standards.md`
-12. `AO-Knowledge-Base/10 - Standards/Workflow Standards.md`
-13. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-14. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-15. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-16. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - Planning.md`
-17. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+3. `AO-Knowledge-Base/MASTER_PLAN.md`
+4. `AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md`
+5. `AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md`
+6. `AO-Knowledge-Base/10 - Standards/README.md`
+7. `AO-Knowledge-Base/10 - Standards/Automation Standards.md`
+8. `AO-Knowledge-Base/10 - Standards/Business Standards.md`
+9. `AO-Knowledge-Base/10 - Standards/Coding Standards.md`
+10. `AO-Knowledge-Base/10 - Standards/Department Standards.md`
+11. `AO-Knowledge-Base/10 - Standards/Documentation Standards.md`
+12. `AO-Knowledge-Base/10 - Standards/UI Standards.md`
+13. `AO-Knowledge-Base/10 - Standards/Workflow Standards.md`
+14. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+15. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+16. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - Planning.md`
+18. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
 ## Startup Source Priority
 

@@ -82,6 +82,7 @@ Sprint 011 QA passed.
 
 - Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - Planning.md`
 - Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+- Master Plan: `AO-Knowledge-Base/MASTER_PLAN.md`
 - Operator Startup Report Template: `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 - Startup Bundle: `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
 - Project Index: `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
@@ -108,7 +109,7 @@ Sprint 011 QA passed.
 - Current Branch: main
 - Current HEAD: `9d29e0a47a2c63a35cefa68b675a1ff5a9a56f5a`
 - Last Verified Commit: `9d29e0a47a2c63a35cefa68b675a1ff5a9a56f5a`
-- Working Tree Status: DIRTY - Sprint 012 transition documentation updates are uncommitted by instruction
+- Working Tree Status: DIRTY - Master Plan documentation enhancement changes are uncommitted by instruction
 - Repository Push Status: PUSHED - local HEAD matches `origin/main`
 - Repository Verification Status: VERIFIED - repository metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-11
