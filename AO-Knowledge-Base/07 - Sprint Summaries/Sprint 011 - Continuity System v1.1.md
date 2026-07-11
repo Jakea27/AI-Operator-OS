@@ -6,7 +6,7 @@ Active.
 
 ## Phase
 
-Task 2A - AI Operator Knowledge Delivery.
+Task 3 - Documentation Determinism.
 
 ## Objective
 
@@ -20,6 +20,8 @@ Sprint 011 Task 1 updates continuity documents only. It does not modify applicat
 
 Sprint 011 Task 2A creates a generated AI Operator startup bundle so future ChatGPT operators can receive the complete required continuity context as a single markdown file when private repository access is unavailable.
 
+Sprint 011 Task 3 removes ambiguous documentation references and makes the startup reading order fully deterministic using exact repository paths.
+
 ## Files Being Changed
 
 - `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
@@ -29,6 +31,8 @@ Sprint 011 Task 2A creates a generated AI Operator startup bundle so future Chat
 - `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
 - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
 - `AO-Knowledge-Base/CHANGELOG.md`
+- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 - `scripts/generate-ai-operator-startup-bundle.mjs`
 
 ## Acceptance Criteria
@@ -75,3 +79,32 @@ Create a generated startup bundle that packages the complete required AI operato
 
 - No root `package.json` exists, so no root `npm run continuity:bundle` script was added.
 - No application code, UI, routes, stores, components, package files, or build behavior were changed.
+
+## Sprint Sequence Note
+
+Sprint 011 was intentionally inserted after Sprint 010 to establish the Documentation-First Continuity System before further feature development.
+
+The feature sprint originally expected after Sprint 010 is now Sprint 012.
+
+This renumbering is intentional and does not represent a missing sprint.
+
+Sprint 012 features are not defined or planned in Sprint 011 Task 3.
+
+## Task 3 - Documentation Determinism
+
+### Objective
+
+Remove ambiguous documentation references and make startup reading fully deterministic.
+
+### Results
+
+- Replaced the generic Project Index reading stages with exact repository paths.
+- Added Startup Source Priority to define GitHub source documents as primary and the generated bundle as fallback.
+- Added explicit continuity document pointers to Active Project State.
+- Updated the startup bundle generator to read the exact Project Index order.
+- Updated the startup bundle generator to detect the Current Sprint Summary from Active Project State.
+- Regenerated the startup bundle with validation metadata.
+
+### Next Required Action
+
+CEO review followed by clean-room startup validation.

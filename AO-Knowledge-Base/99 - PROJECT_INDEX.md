@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the required reading order for every AI operator before beginning work on AI Operator OS.
+This document defines the exact required reading order for every AI operator before beginning work on AI Operator OS.
 
 The Knowledge Base is the continuity layer. It exists so each operator starts from documented project truth instead of relying on conversation memory.
 
@@ -12,29 +12,47 @@ The Knowledge Base is the continuity layer. It exists so each operator starts fr
 
 ## Required Reading Order
 
-1. Vision
-2. Philosophy
-3. Architecture
-4. Development Standards
-5. Active Project State
-6. Development State
-7. Current Context
-8. Current Sprint Summary
+Every AI operator must read the following source documents in this exact order.
 
-## Recommended Documents
+1. `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
+2. `AO-Knowledge-Base/README.md`
+3. `AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md`
+4. `AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md`
+5. `AO-Knowledge-Base/10 - Standards/README.md`
+6. `AO-Knowledge-Base/10 - Standards/Automation Standards.md`
+7. `AO-Knowledge-Base/10 - Standards/Business Standards.md`
+8. `AO-Knowledge-Base/10 - Standards/Coding Standards.md`
+9. `AO-Knowledge-Base/10 - Standards/Department Standards.md`
+10. `AO-Knowledge-Base/10 - Standards/Documentation Standards.md`
+11. `AO-Knowledge-Base/10 - Standards/UI Standards.md`
+12. `AO-Knowledge-Base/10 - Standards/Workflow Standards.md`
+13. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+14. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+15. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+16. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+17. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
-- `00 - Vision/`
-- `00 - Vision/AI Operator OS Philosophy.md`
-- `02 - Architecture/Architecture v2 - Operating System Foundation.md`
-- `10 - Standards/`
-- `98 - ACTIVE_PROJECT_STATE.md`
-- `DEVELOPMENT_STATE.md`
-- `CURRENT_CONTEXT.md`
-- `07 - Sprint Summaries/`
+## Startup Source Priority
+
+1. Primary Source:
+   Read the authoritative individual documents directly from the GitHub repository using the exact required paths in this Project Index.
+
+2. Fallback Source:
+   If direct repository access is unavailable, use:
+   `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+
+3. Failure Rule:
+   If neither the authoritative GitHub documents nor the generated Startup Bundle can be accessed, stop immediately.
+
+4. Authority Rule:
+   The individual AO Knowledge Base source documents remain authoritative. The Startup Bundle is a generated transport artifact and must not be edited directly.
+
+5. Conflict Rule:
+   If the Startup Bundle conflicts with the source documents, stop and report the inconsistency. Do not choose one silently.
 
 ## Operator Startup Procedure
 
-1. Read all required documents.
+1. Read all required documents in the exact order listed above.
 2. Confirm current sprint.
 3. Confirm remaining phases.
 4. Confirm next required action.

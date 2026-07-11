@@ -32,7 +32,7 @@ Active.
 
 ## Current Phase
 
-Task 2A - AI Operator Knowledge Delivery.
+Task 3 - Documentation Determinism.
 
 ## Last Completed Sprint
 
@@ -44,11 +44,11 @@ Sprint 012 - Not started.
 
 ## Current Objective
 
-Make the Documentation-First Continuity System fully self-verifying so every future AI operator can determine project state, sprint readiness, previous closeout status, and repository status without relying on conversation history or assumptions.
+Remove ambiguous documentation references and make startup reading fully deterministic.
 
 ## Next Required Action
 
-Complete Sprint 011 Task 2A documentation bundle generation, then stop for CEO review before QA and closeout.
+CEO review followed by clean-room startup validation.
 
 ## Blocking Issues
 
@@ -70,6 +70,14 @@ Sprint 010 QA passed.
 
 2026-07-11
 
+## Continuity Document Pointers
+
+- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+- Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 010 - CEO Experience and UI UX Redesign.md`
+- Operator Startup Report Template: `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+- Startup Bundle: `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+- Project Index: `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
+
 ## Previous Sprint Closeout Verification
 
 - Sprint: Sprint 010 - CEO Experience and UI/UX Redesign
@@ -85,9 +93,9 @@ Sprint 010 QA passed.
 ## Repository State
 
 - Current Branch: main
-- Last Verified Commit: `55aa49279ce3ccccd495fb3b29dd93f39f151c0f`
+- Last Verified Commit: `0780b1a25318931c744a9ee3ff243054778325fa`
 - Repository Push Status: PUSHED - local HEAD matches `origin/main`
-- Working Tree Status: DIRTY - Sprint 011 Task 2A documentation changes are uncommitted pending CEO review
+- Working Tree Status: DIRTY - Sprint 011 Task 3 documentation changes are uncommitted pending CEO review
 - Last Verified Date: 2026-07-11
 
 ## Rules

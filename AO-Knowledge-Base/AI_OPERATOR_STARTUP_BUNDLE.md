@@ -6,28 +6,33 @@
 
 - Bundle generation date: 2026-07-11
 - Continuity System Version: 1.1
-- Latest Sprint included: Sprint 011 - Continuity System v1.1
-- Current Git commit: 55aa49279ce3ccccd495fb3b29dd93f39f151c0f
+- Project Version: 0.1.0-alpha
+- Current Sprint: Sprint 011 - Continuity System v1.1
+- Last Completed Sprint: Sprint 010 - CEO Experience and UI/UX Redesign
+- Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md
+- Git commit: 0780b1a25318931c744a9ee3ff243054778325fa
+- Number of included documents: 17
+- Bundle Validation Status: VALID
 
 ## Included Documents
 
-1. Project Index — `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
-2. Vision — `AO-Knowledge-Base/README.md`
-3. AI Operator OS Philosophy — `AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md`
-4. Architecture v2 — `AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md`
-5. README — `AO-Knowledge-Base/10 - Standards/README.md`
-6. Automation Standards — `AO-Knowledge-Base/10 - Standards/Automation Standards.md`
-7. Business Standards — `AO-Knowledge-Base/10 - Standards/Business Standards.md`
-8. Coding Standards — `AO-Knowledge-Base/10 - Standards/Coding Standards.md`
-9. Department Standards — `AO-Knowledge-Base/10 - Standards/Department Standards.md`
-10. Documentation Standards — `AO-Knowledge-Base/10 - Standards/Documentation Standards.md`
-11. UI Standards — `AO-Knowledge-Base/10 - Standards/UI Standards.md`
-12. Workflow Standards — `AO-Knowledge-Base/10 - Standards/Workflow Standards.md`
-13. Active Project State — `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-14. Development State — `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-15. Current Context — `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-16. Sprint 011 - Continuity System v1.1 — `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
-17. Operator Startup Report Template — `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+1. 99 - PROJECT_INDEX - `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
+2. README - `AO-Knowledge-Base/README.md`
+3. AI Operator OS Philosophy - `AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md`
+4. Architecture v2 - Operating System Foundation - `AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md`
+5. README - `AO-Knowledge-Base/10 - Standards/README.md`
+6. Automation Standards - `AO-Knowledge-Base/10 - Standards/Automation Standards.md`
+7. Business Standards - `AO-Knowledge-Base/10 - Standards/Business Standards.md`
+8. Coding Standards - `AO-Knowledge-Base/10 - Standards/Coding Standards.md`
+9. Department Standards - `AO-Knowledge-Base/10 - Standards/Department Standards.md`
+10. Documentation Standards - `AO-Knowledge-Base/10 - Standards/Documentation Standards.md`
+11. UI Standards - `AO-Knowledge-Base/10 - Standards/UI Standards.md`
+12. Workflow Standards - `AO-Knowledge-Base/10 - Standards/Workflow Standards.md`
+13. 98 - ACTIVE_PROJECT_STATE - `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+14. DEVELOPMENT_STATE - `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+15. CURRENT_CONTEXT - `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+16. Sprint 011 - Continuity System v1.1 - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+17. OPERATOR_STARTUP_REPORT_TEMPLATE - `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
 ---
 
@@ -37,7 +42,7 @@
 
 ## Purpose
 
-This document defines the required reading order for every AI operator before beginning work on AI Operator OS.
+This document defines the exact required reading order for every AI operator before beginning work on AI Operator OS.
 
 The Knowledge Base is the continuity layer. It exists so each operator starts from documented project truth instead of relying on conversation memory.
 
@@ -47,29 +52,47 @@ The Knowledge Base is the continuity layer. It exists so each operator starts fr
 
 ## Required Reading Order
 
-1. Vision
-2. Philosophy
-3. Architecture
-4. Development Standards
-5. Active Project State
-6. Development State
-7. Current Context
-8. Current Sprint Summary
+Every AI operator must read the following source documents in this exact order.
 
-## Recommended Documents
+1. `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
+2. `AO-Knowledge-Base/README.md`
+3. `AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md`
+4. `AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md`
+5. `AO-Knowledge-Base/10 - Standards/README.md`
+6. `AO-Knowledge-Base/10 - Standards/Automation Standards.md`
+7. `AO-Knowledge-Base/10 - Standards/Business Standards.md`
+8. `AO-Knowledge-Base/10 - Standards/Coding Standards.md`
+9. `AO-Knowledge-Base/10 - Standards/Department Standards.md`
+10. `AO-Knowledge-Base/10 - Standards/Documentation Standards.md`
+11. `AO-Knowledge-Base/10 - Standards/UI Standards.md`
+12. `AO-Knowledge-Base/10 - Standards/Workflow Standards.md`
+13. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+14. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+15. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+16. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+17. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
-- `00 - Vision/`
-- `00 - Vision/AI Operator OS Philosophy.md`
-- `02 - Architecture/Architecture v2 - Operating System Foundation.md`
-- `10 - Standards/`
-- `98 - ACTIVE_PROJECT_STATE.md`
-- `DEVELOPMENT_STATE.md`
-- `CURRENT_CONTEXT.md`
-- `07 - Sprint Summaries/`
+## Startup Source Priority
+
+1. Primary Source:
+   Read the authoritative individual documents directly from the GitHub repository using the exact required paths in this Project Index.
+
+2. Fallback Source:
+   If direct repository access is unavailable, use:
+   `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+
+3. Failure Rule:
+   If neither the authoritative GitHub documents nor the generated Startup Bundle can be accessed, stop immediately.
+
+4. Authority Rule:
+   The individual AO Knowledge Base source documents remain authoritative. The Startup Bundle is a generated transport artifact and must not be edited directly.
+
+5. Conflict Rule:
+   If the Startup Bundle conflicts with the source documents, stop and report the inconsistency. Do not choose one silently.
 
 ## Operator Startup Procedure
 
-1. Read all required documents.
+1. Read all required documents in the exact order listed above.
 2. Confirm current sprint.
 3. Confirm remaining phases.
 4. Confirm next required action.
@@ -1108,7 +1131,7 @@ Active.
 
 ## Current Phase
 
-Task 2A - AI Operator Knowledge Delivery.
+Task 3 - Documentation Determinism.
 
 ## Last Completed Sprint
 
@@ -1120,11 +1143,11 @@ Sprint 012 - Not started.
 
 ## Current Objective
 
-Make the Documentation-First Continuity System fully self-verifying so every future AI operator can determine project state, sprint readiness, previous closeout status, and repository status without relying on conversation history or assumptions.
+Remove ambiguous documentation references and make startup reading fully deterministic.
 
 ## Next Required Action
 
-Complete Sprint 011 Task 2A documentation bundle generation, then stop for CEO review before QA and closeout.
+CEO review followed by clean-room startup validation.
 
 ## Blocking Issues
 
@@ -1146,6 +1169,14 @@ Sprint 010 QA passed.
 
 2026-07-11
 
+## Continuity Document Pointers
+
+- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+- Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 010 - CEO Experience and UI UX Redesign.md`
+- Operator Startup Report Template: `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+- Startup Bundle: `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+- Project Index: `AO-Knowledge-Base/99 - PROJECT_INDEX.md`
+
 ## Previous Sprint Closeout Verification
 
 - Sprint: Sprint 010 - CEO Experience and UI/UX Redesign
@@ -1161,9 +1192,9 @@ Sprint 010 QA passed.
 ## Repository State
 
 - Current Branch: main
-- Last Verified Commit: `55aa49279ce3ccccd495fb3b29dd93f39f151c0f`
+- Last Verified Commit: `0780b1a25318931c744a9ee3ff243054778325fa`
 - Repository Push Status: PUSHED - local HEAD matches `origin/main`
-- Working Tree Status: DIRTY - Sprint 011 Task 2A documentation changes are uncommitted pending CEO review
+- Working Tree Status: DIRTY - Sprint 011 Task 3 documentation changes are uncommitted pending CEO review
 - Last Verified Date: 2026-07-11
 
 ## Rules
@@ -1257,6 +1288,12 @@ Major shared/local stores include:
 
 None recorded in the continuity system at this time.
 
+## Continuity Tooling
+
+- `scripts/generate-ai-operator-startup-bundle.mjs` regenerates the AI Operator Startup Bundle from exact Knowledge Base source paths.
+- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md` is a generated fallback transport artifact for environments that cannot directly access the private repository.
+- Individual AO Knowledge Base source documents remain authoritative.
+
 ## Pending Refactors
 
 - Continue standardizing module detail pages.
@@ -1281,9 +1318,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is project continuity and post-Sprint 010 stabilization.
+The current focus is Sprint 011 - Continuity System v1.1.
 
-Sprint 010 has been completed and officially closed. Sprint 011 has not started.
+Sprint 010 has been completed and officially closed. Sprint 011 is active and currently in Task 3 - Documentation Determinism.
 
 ## Last Completed Sprint
 
@@ -1305,6 +1342,8 @@ Sprint 010 - CEO Experience and UI/UX Redesign.
 - Keep the CEO experience simple while allowing internal architecture to remain structured.
 - Continue improving workflow clarity without duplicating stores, routes, or modules.
 - Keep all new work local-first until cloud or external services have clear positive ROI.
+- Remove ambiguous continuity references so every future AI operator can complete startup from exact source paths.
+- Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 
 ## Known Risks
 
@@ -1315,7 +1354,7 @@ Sprint 010 - CEO Experience and UI/UX Redesign.
 
 ## Future Planned Work
 
-- Sprint 011 is not started.
+- Sprint 011 awaits CEO review and clean-room startup validation after Task 3 documentation determinism changes.
 - Future execution-layer work must follow Architecture v2 and the approval-first operating model.
 - Any future AI provider integration must remain replaceable and capability-based.
 
@@ -1349,7 +1388,7 @@ Active.
 
 ## Phase
 
-Task 2A - AI Operator Knowledge Delivery.
+Task 3 - Documentation Determinism.
 
 ## Objective
 
@@ -1363,6 +1402,8 @@ Sprint 011 Task 1 updates continuity documents only. It does not modify applicat
 
 Sprint 011 Task 2A creates a generated AI Operator startup bundle so future ChatGPT operators can receive the complete required continuity context as a single markdown file when private repository access is unavailable.
 
+Sprint 011 Task 3 removes ambiguous documentation references and makes the startup reading order fully deterministic using exact repository paths.
+
 ## Files Being Changed
 
 - `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
@@ -1372,6 +1413,8 @@ Sprint 011 Task 2A creates a generated AI Operator startup bundle so future Chat
 - `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
 - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
 - `AO-Knowledge-Base/CHANGELOG.md`
+- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 - `scripts/generate-ai-operator-startup-bundle.mjs`
 
 ## Acceptance Criteria
@@ -1418,6 +1461,35 @@ Create a generated startup bundle that packages the complete required AI operato
 
 - No root `package.json` exists, so no root `npm run continuity:bundle` script was added.
 - No application code, UI, routes, stores, components, package files, or build behavior were changed.
+
+## Sprint Sequence Note
+
+Sprint 011 was intentionally inserted after Sprint 010 to establish the Documentation-First Continuity System before further feature development.
+
+The feature sprint originally expected after Sprint 010 is now Sprint 012.
+
+This renumbering is intentional and does not represent a missing sprint.
+
+Sprint 012 features are not defined or planned in Sprint 011 Task 3.
+
+## Task 3 - Documentation Determinism
+
+### Objective
+
+Remove ambiguous documentation references and make startup reading fully deterministic.
+
+### Results
+
+- Replaced the generic Project Index reading stages with exact repository paths.
+- Added Startup Source Priority to define GitHub source documents as primary and the generated bundle as fallback.
+- Added explicit continuity document pointers to Active Project State.
+- Updated the startup bundle generator to read the exact Project Index order.
+- Updated the startup bundle generator to detect the Current Sprint Summary from Active Project State.
+- Regenerated the startup bundle with validation metadata.
+
+### Next Required Action
+
+CEO review followed by clean-room startup validation.
 
 ---
 

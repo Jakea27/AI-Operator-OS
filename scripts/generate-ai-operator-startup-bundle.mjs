@@ -7,24 +7,25 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, "..");
-const knowledgeBaseDir = path.join(repoRoot, "AO-Knowledge-Base");
-const outputPath = path.join(knowledgeBaseDir, "AI_OPERATOR_STARTUP_BUNDLE.md");
-
-function repoPath(...segments) {
-  return path.join(repoRoot, ...segments);
-}
-
-function displayPath(absolutePath) {
-  return path.relative(repoRoot, absolutePath).replaceAll(path.sep, "/");
-}
+const outputPath = path.join(repoRoot, "AO-Knowledge-Base", "AI_OPERATOR_STARTUP_BUNDLE.md");
+const projectIndexPath = "AO-Knowledge-Base/99 - PROJECT_INDEX.md";
+const activeProjectStatePath = "AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md";
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
   process.exit(1);
 }
 
+function toAbsolutePath(relativePath) {
+  return path.join(repoRoot, ...relativePath.split("/"));
+}
+
+function displayPath(absolutePath) {
+  return path.relative(repoRoot, absolutePath).replaceAll(path.sep, "/");
+}
+
 function requireFile(relativePath) {
-  const absolutePath = repoPath(...relativePath.split("/"));
+  const absolutePath = toAbsolutePath(relativePath);
   if (!existsSync(absolutePath)) {
     fail(`Required source document missing: ${relativePath}`);
   }
@@ -40,21 +41,55 @@ function readRequired(relativePath) {
   };
 }
 
-function getGitCommit() {
-  const gitExecutable = findGitExecutable();
-  if (!gitExecutable) {
-    return "REQUIRES VERIFICATION - git executable could not be found";
+function extractSection(content, heading) {
+  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(`^## ${escapedHeading}\\s*\\r?\\n([\\s\\S]*?)(?=^## |^# |$(?![\\s\\S]))`, "m");
+  const match = content.match(pattern);
+  if (!match) {
+    fail(`Required section missing: ## ${heading}`);
+  }
+  return match[1].trim();
+}
+
+function extractSingleLineField(content, heading) {
+  const section = extractSection(content, heading);
+  const value = section.split(/\r?\n/).map((line) => line.trim()).find(Boolean);
+  if (!value) {
+    fail(`Required field is blank: ## ${heading}`);
+  }
+  return value.replace(/\.$/, "");
+}
+
+function extractRequiredReadingPaths(projectIndexContent) {
+  const section = extractSection(projectIndexContent, "Required Reading Order");
+  const matches = [...section.matchAll(/^\d+\.\s+`([^`]+\.md)`\s*$/gm)];
+
+  if (matches.length === 0) {
+    fail("No exact markdown paths found in Project Index Required Reading Order.");
   }
 
-  try {
-    return execFileSync(gitExecutable, ["rev-parse", "HEAD"], {
-      cwd: repoRoot,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-  } catch {
-    return "REQUIRES VERIFICATION - git commit could not be retrieved";
+  const paths = matches.map((match) => match[1]);
+  const uniquePaths = new Set(paths);
+  if (uniquePaths.size !== paths.length) {
+    fail("Duplicate paths found in Project Index Required Reading Order.");
   }
+
+  return paths;
+}
+
+function extractPointer(activeProjectStateContent, label) {
+  const section = extractSection(activeProjectStateContent, "Continuity Document Pointers");
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp("^- " + escapedLabel + ": `([^`]+\\.md)`\\s*$", "m");
+  const match = section.match(pattern);
+
+  if (!match) {
+    fail(`Required continuity pointer missing or malformed: ${label}`);
+  }
+
+  const relativePath = match[1];
+  requireFile(relativePath);
+  return relativePath;
 }
 
 function findGitExecutable() {
@@ -137,83 +172,21 @@ function findGitExecutable() {
   return undefined;
 }
 
-function getContinuityVersion(projectIndexContent) {
-  const match = projectIndexContent.match(/## Continuity System Version\s+([\s\S]*?)(?:\n## |\n# |$)/);
-  if (!match) {
-    fail("Continuity System Version could not be found in AO-Knowledge-Base/99 - PROJECT_INDEX.md");
-  }
-  const version = match[1].trim().split(/\r?\n/)[0]?.trim();
-  if (!version) {
-    fail("Continuity System Version is blank in AO-Knowledge-Base/99 - PROJECT_INDEX.md");
-  }
-  return version;
-}
-
-function getLatestSprintSummary() {
-  const sprintSummaryDir = repoPath("AO-Knowledge-Base", "07 - Sprint Summaries");
-  if (!existsSync(sprintSummaryDir)) {
-    fail("Required sprint summary folder missing: AO-Knowledge-Base/07 - Sprint Summaries");
+function getGitCommit() {
+  const gitExecutable = findGitExecutable();
+  if (!gitExecutable) {
+    return "REQUIRES VERIFICATION - git executable could not be found";
   }
 
-  const sprintFiles = readdirSync(sprintSummaryDir)
-    .filter((fileName) => /^Sprint \d+ - .+\.md$/i.test(fileName))
-    .map((fileName) => {
-      const match = fileName.match(/^Sprint (\d+) - /i);
-      return {
-        fileName,
-        sprintNumber: match ? Number.parseInt(match[1], 10) : -1,
-      };
-    })
-    .sort((a, b) => {
-      if (a.sprintNumber !== b.sprintNumber) {
-        return b.sprintNumber - a.sprintNumber;
-      }
-      return a.fileName.localeCompare(b.fileName);
-    });
-
-  if (sprintFiles.length === 0) {
-    fail("No sprint summary files found in AO-Knowledge-Base/07 - Sprint Summaries");
+  try {
+    return execFileSync(gitExecutable, ["rev-parse", "HEAD"], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "REQUIRES VERIFICATION - git commit could not be retrieved";
   }
-
-  const latest = sprintFiles[0];
-  return {
-    title: latest.fileName.replace(/\.md$/i, ""),
-    relativePath: `AO-Knowledge-Base/07 - Sprint Summaries/${latest.fileName}`,
-  };
-}
-
-function getStandardsDocuments() {
-  const standardsDir = repoPath("AO-Knowledge-Base", "10 - Standards");
-  if (!existsSync(standardsDir)) {
-    fail("Required standards folder missing: AO-Knowledge-Base/10 - Standards");
-  }
-
-  const preferredOrder = [
-    "README.md",
-    "Automation Standards.md",
-    "Business Standards.md",
-    "Coding Standards.md",
-    "Department Standards.md",
-    "Documentation Standards.md",
-    "UI Standards.md",
-    "Workflow Standards.md",
-  ];
-
-  const existingMarkdown = new Set(
-    readdirSync(standardsDir).filter((fileName) => fileName.toLowerCase().endsWith(".md")),
-  );
-
-  const ordered = preferredOrder.filter((fileName) => existingMarkdown.has(fileName));
-  const unordered = [...existingMarkdown]
-    .filter((fileName) => !preferredOrder.includes(fileName))
-    .sort((a, b) => a.localeCompare(b));
-
-  const standardFiles = [...ordered, ...unordered];
-  if (standardFiles.length === 0) {
-    fail("No standards documents found in AO-Knowledge-Base/10 - Standards");
-  }
-
-  return standardFiles.map((fileName) => `AO-Knowledge-Base/10 - Standards/${fileName}`);
 }
 
 function renderDocument(document) {
@@ -227,52 +200,28 @@ function renderDocument(document) {
   ].join("\n");
 }
 
-const projectIndex = readRequired("AO-Knowledge-Base/99 - PROJECT_INDEX.md");
-const continuityVersion = getContinuityVersion(projectIndex.content);
-const latestSprint = getLatestSprintSummary();
+const projectIndex = readRequired(projectIndexPath);
+const activeProjectState = readRequired(activeProjectStatePath);
 
-const sourceDocuments = [
-  {
-    ...projectIndex,
-    title: "Project Index",
-  },
-  {
-    ...readRequired("AO-Knowledge-Base/README.md"),
-    title: "Vision",
-  },
-  {
-    ...readRequired("AO-Knowledge-Base/00 - Vision/AI Operator OS Philosophy.md"),
-    title: "AI Operator OS Philosophy",
-  },
-  {
-    ...readRequired("AO-Knowledge-Base/02 - Architecture/Architecture v2 - Operating System Foundation.md"),
-    title: "Architecture v2",
-  },
-  ...getStandardsDocuments().map((relativePath) => readRequired(relativePath)),
-  {
-    ...readRequired("AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md"),
-    title: "Active Project State",
-  },
-  {
-    ...readRequired("AO-Knowledge-Base/DEVELOPMENT_STATE.md"),
-    title: "Development State",
-  },
-  {
-    ...readRequired("AO-Knowledge-Base/CURRENT_CONTEXT.md"),
-    title: "Current Context",
-  },
-  {
-    ...readRequired(latestSprint.relativePath),
-    title: latestSprint.title,
-  },
-  {
-    ...readRequired("AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md"),
-    title: "Operator Startup Report Template",
-  },
-];
+const continuityVersion = extractSingleLineField(projectIndex.content, "Continuity System Version");
+const projectVersion = extractSingleLineField(activeProjectState.content, "Current Version");
+const currentSprint = extractSingleLineField(activeProjectState.content, "Current Sprint");
+const lastCompletedSprint = extractSingleLineField(activeProjectState.content, "Last Completed Sprint");
+const currentSprintSummaryPath = extractPointer(activeProjectState.content, "Current Sprint Summary");
 
+const requiredReadingPaths = extractRequiredReadingPaths(projectIndex.content);
+if (!requiredReadingPaths.includes(currentSprintSummaryPath)) {
+  fail("Project Index Required Reading Order does not include the Current Sprint Summary pointer from Active Project State.");
+}
+
+for (const requiredPath of requiredReadingPaths) {
+  requireFile(requiredPath);
+}
+
+const sourceDocuments = requiredReadingPaths.map((requiredPath) => readRequired(requiredPath));
 const generationDate = new Date().toISOString().slice(0, 10);
 const currentGitCommit = getGitCommit();
+const validationStatus = "VALID";
 
 const bundle = [
   "# AI Operator Startup Bundle",
@@ -283,12 +232,17 @@ const bundle = [
   "",
   `- Bundle generation date: ${generationDate}`,
   `- Continuity System Version: ${continuityVersion}`,
-  `- Latest Sprint included: ${latestSprint.title}`,
-  `- Current Git commit: ${currentGitCommit}`,
+  `- Project Version: ${projectVersion}`,
+  `- Current Sprint: ${currentSprint}`,
+  `- Last Completed Sprint: ${lastCompletedSprint}`,
+  `- Current Sprint Summary path: ${currentSprintSummaryPath}`,
+  `- Git commit: ${currentGitCommit}`,
+  `- Number of included documents: ${sourceDocuments.length}`,
+  `- Bundle Validation Status: ${validationStatus}`,
   "",
   "## Included Documents",
   "",
-  ...sourceDocuments.map((document, index) => `${index + 1}. ${document.title} — \`${document.sourcePath}\``),
+  ...sourceDocuments.map((document, index) => `${index + 1}. ${document.title} - \`${document.sourcePath}\``),
   "",
   ...sourceDocuments.map(renderDocument),
 ].join("\n");
@@ -297,4 +251,5 @@ writeFileSync(outputPath, `${bundle.trimEnd()}\n`, "utf8");
 
 console.log(`Generated ${displayPath(outputPath)}`);
 console.log(`Included ${sourceDocuments.length} documents.`);
-console.log(`Latest Sprint included: ${latestSprint.title}`);
+console.log(`Current Sprint Summary: ${currentSprintSummaryPath}`);
+console.log(`Bundle Validation Status: ${validationStatus}`);

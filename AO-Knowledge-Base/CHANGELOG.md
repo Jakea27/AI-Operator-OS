@@ -21,6 +21,16 @@
 - Updated Sprint 011 documentation to record Task 2A - AI Operator Knowledge Delivery.
 - Updated Active Project State to reflect Sprint 011 Task 2A as the current phase.
 
+### Updated
+
+- Updated Project Index to use one exact deterministic required reading order with repository paths.
+- Added Startup Source Priority to define GitHub source documents as primary and the generated Startup Bundle as fallback.
+- Added explicit continuity document pointers to Active Project State.
+- Updated Current Context and Development State for Sprint 011 Task 3.
+- Updated the startup bundle generator to use the exact Project Index order and the Current Sprint Summary pointer from Active Project State.
+- Regenerated the Startup Bundle with validation metadata and `Bundle Validation Status: VALID`.
+- Documented why Sprint 011 was inserted before Sprint 012 feature development.
+
 ## Project Continuity System - 2026-07-10
 
 ### Added

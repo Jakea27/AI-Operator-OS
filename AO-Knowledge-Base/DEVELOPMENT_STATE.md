@@ -78,6 +78,12 @@ Major shared/local stores include:
 
 None recorded in the continuity system at this time.
 
+## Continuity Tooling
+
+- `scripts/generate-ai-operator-startup-bundle.mjs` regenerates the AI Operator Startup Bundle from exact Knowledge Base source paths.
+- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md` is a generated fallback transport artifact for environments that cannot directly access the private repository.
+- Individual AO Knowledge Base source documents remain authoritative.
+
 ## Pending Refactors
 
 - Continue standardizing module detail pages.
@@ -87,4 +93,3 @@ None recorded in the continuity system at this time.
 ## Current Architecture Version
 
 Architecture v2 - Operating System Foundation.
-

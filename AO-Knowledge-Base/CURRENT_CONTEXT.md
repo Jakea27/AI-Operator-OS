@@ -8,9 +8,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is project continuity and post-Sprint 010 stabilization.
+The current focus is Sprint 011 - Continuity System v1.1.
 
-Sprint 010 has been completed and officially closed. Sprint 011 has not started.
+Sprint 010 has been completed and officially closed. Sprint 011 is active and currently in Task 3 - Documentation Determinism.
 
 ## Last Completed Sprint
 
@@ -32,6 +32,8 @@ Sprint 010 - CEO Experience and UI/UX Redesign.
 - Keep the CEO experience simple while allowing internal architecture to remain structured.
 - Continue improving workflow clarity without duplicating stores, routes, or modules.
 - Keep all new work local-first until cloud or external services have clear positive ROI.
+- Remove ambiguous continuity references so every future AI operator can complete startup from exact source paths.
+- Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 
 ## Known Risks
 
@@ -42,7 +44,7 @@ Sprint 010 - CEO Experience and UI/UX Redesign.
 
 ## Future Planned Work
 
-- Sprint 011 is not started.
+- Sprint 011 awaits CEO review and clean-room startup validation after Task 3 documentation determinism changes.
 - Future execution-layer work must follow Architecture v2 and the approval-first operating model.
 - Any future AI provider integration must remain replaceable and capability-based.
 
@@ -63,4 +65,3 @@ Sprint 010 - CEO Experience and UI/UX Redesign.
 - Automation is earned.
 - Infrastructure comes before intelligence.
 - AI providers are replaceable.
-
