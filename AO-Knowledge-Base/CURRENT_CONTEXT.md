@@ -8,9 +8,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 012 Planning.
+The current focus is Sprint 012 - AI Execution Infrastructure planning.
 
-Sprint 011 is officially closed. Sprint 012 is now active and ready for planning.
+Sprint 011 is officially closed. Sprint 012 is active in planning. Implementation has not started.
 
 ## Last Completed Sprint
 
@@ -43,7 +43,7 @@ Sprint 011 - Continuity System v1.1.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Await Sprint 012 planning.
+- Complete CEO review and approval of the Sprint 012 AI Execution Infrastructure plan.
 
 ## Known Risks
 
@@ -54,7 +54,7 @@ Sprint 011 - Continuity System v1.1.
 
 ## Future Planned Work
 
-- Sprint 012 planning is the next project phase.
+- Sprint 012 planning is active. Implementation must not begin until the CEO approves the plan.
 - Future execution-layer work must follow Architecture v2 and the approval-first operating model.
 - Any future AI provider integration must remain replaceable and capability-based.
 
@@ -70,7 +70,7 @@ Sprint 011 - Continuity System v1.1.
 - GitHub startup was validated.
 - Startup Bundle was validated.
 - Master Plan was added to the required startup reading order.
-- The project is awaiting Sprint 012 planning.
+- The project is awaiting CEO review and approval of the Sprint 012 plan.
 
 ## User Workflow Preferences
 

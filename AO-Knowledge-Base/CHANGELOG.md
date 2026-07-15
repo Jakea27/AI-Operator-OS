@@ -1,5 +1,14 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Planning - AI Execution Infrastructure - 2026-07-15
+
+### Planning
+
+- Replaced the temporary Sprint 012 planning summary with the official Sprint 012 - AI Execution Infrastructure plan.
+- Defined canonical execution vocabulary, architecture boundaries, data ownership, execution lifecycle, safety model, event model, implementation task breakdown, acceptance criteria, QA plan, documentation plan, exit criteria, risks, and recommended first implementation task.
+- Updated continuity pointers to reference the official Sprint 012 summary.
+- Confirmed Sprint 012 implementation has not started.
+
 ## Master Plan - 2026-07-11
 
 ### Added

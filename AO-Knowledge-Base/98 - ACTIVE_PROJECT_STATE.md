@@ -20,15 +20,15 @@ AI Operator OS
 
 ## Current Milestone
 
-Sprint 012 Planning
+Sprint 012 - AI Execution Infrastructure
 
 ## Current Sprint
 
-Sprint 012
+Sprint 012 - AI Execution Infrastructure
 
 ## Sprint Status
 
-READY TO BEGIN.
+ACTIVE - PLANNING.
 
 ## Current Phase
 
@@ -44,11 +44,11 @@ Sprint 012
 
 ## Current Objective
 
-Await Sprint 012 planning.
+Define the canonical AI Execution Infrastructure architecture, lifecycle, data ownership, safety model, implementation tasks, QA plan, and exit criteria.
 
 ## Next Required Action
 
-Sprint 012 Planning.
+CEO review and approval of the Sprint 012 plan.
 
 ## Blocking Issues
 
@@ -73,14 +73,14 @@ Sprint 011 QA passed.
 ## Current Sprint Verification
 
 - Sprint: Sprint 012
-- Status: READY TO BEGIN
+- Status: ACTIVE - PLANNING
 - Implementation: NOT STARTED
 - QA: NOT STARTED
-- Documentation: NOT STARTED
+- Documentation: PLANNING IN PROGRESS
 
 ## Continuity Document Pointers
 
-- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - Planning.md`
+- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
 - Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
 - Master Plan: `AO-Knowledge-Base/MASTER_PLAN.md`
 - Operator Startup Report Template: `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
@@ -109,10 +109,10 @@ Sprint 011 QA passed.
 - Current Branch: main
 - Current HEAD: `ee31a858a18d6326818a33c23560b98e07c676d8`
 - Last Verified Commit: `ee31a858a18d6326818a33c23560b98e07c676d8`
-- Working Tree Status: DIRTY - repository metadata synchronization documentation changes are uncommitted by instruction
-- Repository Push Status: PUSHED - local HEAD matches `origin/main`; working tree has uncommitted documentation-only synchronization changes
+- Working Tree Status: DIRTY - Sprint 012 planning documentation changes are uncommitted by instruction
+- Repository Push Status: PUSHED - local HEAD matches `origin/main`; working tree has uncommitted documentation-only planning changes
 - Repository Verification Status: VERIFIED - repository metadata is maintained only in Active Project State
-- Last Verified Date: 2026-07-13
+- Last Verified Date: 2026-07-15
 
 ## Rules
 
