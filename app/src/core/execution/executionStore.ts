@@ -1,0 +1,469 @@
+import { useSyncExternalStore } from 'react'
+import {
+  CostRecord,
+  ExecutionEvent,
+  ExecutionInput,
+  ExecutionLog,
+  ExecutionLogLevel,
+  ExecutionRecord,
+  ExecutionResult,
+  ExecutionRiskLevel,
+  ExecutionStatus,
+  ExecutionType,
+  ExecutionUpdate,
+  FailureRecord,
+  FailureSeverity,
+  RetryRecord,
+  RetryStatus,
+} from './executionTypes'
+
+const STORAGE_KEY = 'ai-operator-os-execution-core-v1'
+
+const listeners = new Set<() => void>()
+
+function id(prefix: string) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function now() {
+  return new Date().toISOString()
+}
+
+function fallbackExecutionCode(index: number) {
+  return `EXE-${String(index + 1).padStart(4, '0')}`
+}
+
+function generateExecutionCode(existing: ExecutionRecord[]) {
+  const max = existing.reduce((highest, execution) => {
+    const match = execution.executionId?.match(/^EXE-(\d+)$/)
+    if (!match) return highest
+    return Math.max(highest, Number(match[1]))
+  }, 0)
+
+  return `EXE-${String(max + 1).padStart(4, '0')}`
+}
+
+function normalizeMoney(value: unknown) {
+  const numeric = Number(value)
+  if (!Number.isFinite(numeric)) return 0
+  return Math.max(0, Math.round(numeric * 100) / 100)
+}
+
+function event(message: string, createdAt = now()): ExecutionEvent {
+  return {
+    id: id('execution-event'),
+    eventType: 'Execution Created',
+    message,
+    source: 'Execution Store',
+    createdAt,
+  }
+}
+
+function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): ExecutionRecord {
+  const timestamp = raw.createdAt ?? now()
+  const executionId = raw.executionId ?? fallbackExecutionCode(index)
+
+  return {
+    id: raw.id ?? id('execution'),
+    executionId,
+    title: raw.title?.trim() || 'Untitled Execution',
+    description: raw.description?.trim() || 'Execution foundation record. No execution behavior is implemented yet.',
+    status: raw.status ?? 'Prepared',
+    priority: raw.priority ?? 'Medium',
+    executionType: raw.executionType ?? 'Manual',
+    riskLevel: raw.riskLevel ?? 'Low',
+    workItem: {
+      workItemRecordId: raw.workItem?.workItemRecordId ?? '',
+      workItemId: raw.workItem?.workItemId ?? 'WI-0000',
+      title: raw.workItem?.title ?? 'Unknown Work Item',
+      projectId: raw.workItem?.projectId ?? '',
+      projectCode: raw.workItem?.projectCode ?? 'PROJ-0000',
+      businessId: raw.workItem?.businessId ?? '',
+      businessCode: raw.workItem?.businessCode ?? 'BIZ-0000',
+    },
+    queueItem: {
+      queueRecordId: raw.queueItem?.queueRecordId ?? '',
+      queueId: raw.queueItem?.queueId ?? 'EQ-0000',
+      sourceWorkItemRecordId: raw.queueItem?.sourceWorkItemRecordId ?? '',
+      sourceWorkItemId: raw.queueItem?.sourceWorkItemId ?? 'WI-0000',
+    },
+    capabilityPlan: raw.capabilityPlan,
+    selectedCapabilities: Array.isArray(raw.selectedCapabilities) ? raw.selectedCapabilities : [],
+    selectedTools: Array.isArray(raw.selectedTools) ? raw.selectedTools : [],
+    selectedProviders: Array.isArray(raw.selectedProviders) ? raw.selectedProviders : [],
+    approval: raw.approval,
+    businessId: raw.businessId ?? raw.workItem?.businessId ?? '',
+    businessCode: raw.businessCode ?? raw.workItem?.businessCode ?? 'BIZ-0000',
+    businessName: raw.businessName ?? 'Unknown Business',
+    projectId: raw.projectId ?? raw.workItem?.projectId ?? '',
+    projectCode: raw.projectCode ?? raw.workItem?.projectCode ?? 'PROJ-0000',
+    projectName: raw.projectName ?? 'Unknown Project',
+    departmentId: raw.departmentId ?? '',
+    departmentCode: raw.departmentCode ?? 'DEP-0000',
+    departmentName: raw.departmentName ?? 'Unassigned Department',
+    managerId: raw.managerId,
+    managerName: raw.managerName ?? 'Unassigned',
+    operatorId: raw.operatorId,
+    operatorCode: raw.operatorCode,
+    operatorName: raw.operatorName ?? 'Unassigned',
+    timing: {
+      preparedAt: raw.timing?.preparedAt ?? timestamp,
+      readyAt: raw.timing?.readyAt,
+      startedAt: raw.timing?.startedAt,
+      pausedAt: raw.timing?.pausedAt,
+      completedAt: raw.timing?.completedAt,
+      failedAt: raw.timing?.failedAt,
+      cancelledAt: raw.timing?.cancelledAt,
+      durationMs: raw.timing?.durationMs,
+    },
+    estimatedCost: normalizeMoney(raw.estimatedCost),
+    actualCost: normalizeMoney(raw.actualCost),
+    costRecords: Array.isArray(raw.costRecords) ? raw.costRecords : [],
+    result: raw.result,
+    resultRef: raw.resultRef,
+    events: Array.isArray(raw.events) && raw.events.length > 0
+      ? raw.events
+      : [event('Execution foundation record created.', timestamp)],
+    logs: Array.isArray(raw.logs) ? raw.logs : [],
+    retryHistory: Array.isArray(raw.retryHistory) ? raw.retryHistory : [],
+    failures: Array.isArray(raw.failures) ? raw.failures : [],
+    notes: raw.notes ?? '',
+    createdAt: timestamp,
+    updatedAt: raw.updatedAt ?? timestamp,
+  }
+}
+
+function readState(): ExecutionRecord[] {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY)
+    if (!stored) return []
+    const parsed = JSON.parse(stored)
+    if (!Array.isArray(parsed)) return []
+    return parsed.map((item, index) => normalizeExecution(item, index))
+  } catch {
+    return []
+  }
+}
+
+let state = readState()
+
+if (typeof window !== 'undefined' && state.length > 0) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch {
+    // Keep normalized in-memory state if localStorage is temporarily unavailable.
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (storageEvent) => {
+    if (storageEvent.key !== STORAGE_KEY) return
+    state = readState()
+    listeners.forEach((listener) => listener())
+  })
+}
+
+function persist(next: ExecutionRecord[]) {
+  state = next
+  if (typeof window !== 'undefined') {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    } catch {
+      // Preserve in-memory state and still notify local subscribers.
+    }
+  }
+  listeners.forEach((listener) => listener())
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
+function getSnapshot() {
+  return state
+}
+
+function appendEvent(execution: ExecutionRecord, message: string, eventType: ExecutionEvent['eventType'] = 'State Updated') {
+  const createdAt = now()
+  return {
+    ...execution,
+    updatedAt: createdAt,
+    events: [
+      {
+        id: id('execution-event'),
+        eventType,
+        message,
+        source: 'Execution Store',
+        createdAt,
+      },
+      ...execution.events,
+    ],
+  }
+}
+
+export const executionStore = {
+  createExecution(input: ExecutionInput) {
+    const timestamp = now()
+    const execution: ExecutionRecord = {
+      id: id('execution'),
+      executionId: generateExecutionCode(state),
+      title: input.title.trim() || 'Untitled Execution',
+      description: input.description.trim() || 'Execution foundation record. No execution behavior is implemented yet.',
+      status: 'Prepared',
+      priority: input.priority,
+      executionType: input.executionType,
+      riskLevel: input.riskLevel,
+      workItem: input.workItem,
+      queueItem: input.queueItem,
+      capabilityPlan: input.capabilityPlan,
+      selectedCapabilities: input.selectedCapabilities ?? [],
+      selectedTools: input.selectedTools ?? [],
+      selectedProviders: input.selectedProviders ?? [],
+      approval: input.approval,
+      businessId: input.businessId,
+      businessCode: input.businessCode,
+      businessName: input.businessName,
+      projectId: input.projectId,
+      projectCode: input.projectCode,
+      projectName: input.projectName,
+      departmentId: input.departmentId,
+      departmentCode: input.departmentCode,
+      departmentName: input.departmentName,
+      managerId: input.managerId,
+      managerName: input.managerName || 'Unassigned',
+      operatorId: input.operatorId,
+      operatorCode: input.operatorCode,
+      operatorName: input.operatorName || 'Unassigned',
+      timing: {
+        preparedAt: timestamp,
+      },
+      estimatedCost: normalizeMoney(input.estimatedCost),
+      actualCost: normalizeMoney(input.actualCost),
+      costRecords: [],
+      result: undefined,
+      resultRef: undefined,
+      events: [event(`Execution record prepared from ${input.queueItem.queueId}.`, timestamp)],
+      logs: [],
+      retryHistory: [],
+      failures: [],
+      notes: input.notes.trim(),
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
+
+    persist([execution, ...state])
+    return execution
+  },
+
+  updateExecution(executionRecordId: string, updates: ExecutionUpdate) {
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      return appendEvent(
+        {
+          ...execution,
+          ...updates,
+          title: updates.title?.trim() || execution.title,
+          description: updates.description?.trim() || execution.description,
+          estimatedCost: updates.estimatedCost === undefined ? execution.estimatedCost : normalizeMoney(updates.estimatedCost),
+          actualCost: updates.actualCost === undefined ? execution.actualCost : normalizeMoney(updates.actualCost),
+          notes: updates.notes ?? execution.notes,
+        },
+        'Execution record updated.',
+      )
+    }))
+  },
+
+  addExecutionLog(executionRecordId: string, input: Omit<ExecutionLog, 'id' | 'logId' | 'createdAt'>) {
+    const timestamp = now()
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const log: ExecutionLog = {
+        id: id('execution-log'),
+        logId: `EXLOG-${String(execution.logs.length + 1).padStart(4, '0')}`,
+        level: input.level,
+        message: input.message,
+        source: input.source,
+        metadata: input.metadata,
+        createdAt: timestamp,
+      }
+      return appendEvent(
+        {
+          ...execution,
+          logs: [log, ...execution.logs],
+        },
+        'Execution log recorded.',
+        'Log Recorded',
+      )
+    }))
+  },
+
+  addRetryRecord(executionRecordId: string, input: Omit<RetryRecord, 'id' | 'retryId' | 'createdAt' | 'updatedAt'>) {
+    const timestamp = now()
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const retryRecord: RetryRecord = {
+        id: id('execution-retry'),
+        retryId: `EXRETRY-${String(execution.retryHistory.length + 1).padStart(4, '0')}`,
+        attemptNumber: input.attemptNumber,
+        status: input.status,
+        reason: input.reason,
+        resultSummary: input.resultSummary,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      }
+      return appendEvent(
+        {
+          ...execution,
+          retryHistory: [retryRecord, ...execution.retryHistory],
+        },
+        'Retry history recorded.',
+        'Retry Recorded',
+      )
+    }))
+  },
+
+  addFailureRecord(executionRecordId: string, input: Omit<FailureRecord, 'id' | 'failureId' | 'createdAt'>) {
+    const timestamp = now()
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const failureRecord: FailureRecord = {
+        id: id('execution-failure'),
+        failureId: `EXFAIL-${String(execution.failures.length + 1).padStart(4, '0')}`,
+        severity: input.severity,
+        message: input.message,
+        cause: input.cause,
+        resolutionNotes: input.resolutionNotes,
+        createdAt: timestamp,
+        resolvedAt: input.resolvedAt,
+      }
+      return appendEvent(
+        {
+          ...execution,
+          failures: [failureRecord, ...execution.failures],
+        },
+        'Failure record added.',
+        'Failure Recorded',
+      )
+    }))
+  },
+
+  addCostRecord(executionRecordId: string, input: Omit<CostRecord, 'id' | 'costRecordId' | 'executionRecordId' | 'executionId' | 'createdAt'>) {
+    const timestamp = now()
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const costRecord: CostRecord = {
+        id: id('execution-cost'),
+        costRecordId: `EXCOST-${String(execution.costRecords.length + 1).padStart(4, '0')}`,
+        executionRecordId: execution.id,
+        executionId: execution.executionId,
+        kind: input.kind,
+        amount: normalizeMoney(input.amount),
+        currency: input.currency || 'USD',
+        businessId: input.businessId,
+        projectId: input.projectId,
+        providerId: input.providerId,
+        toolId: input.toolId,
+        approvalId: input.approvalId,
+        notes: input.notes,
+        createdAt: timestamp,
+      }
+      return appendEvent(
+        {
+          ...execution,
+          estimatedCost: input.kind === 'Estimated' ? normalizeMoney(input.amount) : execution.estimatedCost,
+          actualCost: input.kind === 'Actual' ? normalizeMoney(input.amount) : execution.actualCost,
+          costRecords: [costRecord, ...execution.costRecords],
+        },
+        'Execution cost record added.',
+        'Cost Recorded',
+      )
+    }))
+  },
+
+  attachResult(executionRecordId: string, input: Omit<ExecutionResult, 'id' | 'resultId' | 'executionRecordId' | 'executionId' | 'createdAt' | 'updatedAt'>) {
+    const timestamp = now()
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const result: ExecutionResult = {
+        id: id('execution-result'),
+        resultId: `EXR-${String(state.length + 1).padStart(4, '0')}`,
+        executionRecordId: execution.id,
+        executionId: execution.executionId,
+        status: input.status,
+        summary: input.summary,
+        artifactRefs: input.artifactRefs,
+        recommendedNextAction: input.recommendedNextAction,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      }
+      return appendEvent(
+        {
+          ...execution,
+          result,
+          resultRef: result.resultId,
+        },
+        'Execution result referenced.',
+        'Result Referenced',
+      )
+    }))
+  },
+
+  getExecutions() {
+    return state
+  },
+
+  getExecution(executionRecordId: string) {
+    return state.find((execution) => execution.id === executionRecordId)
+  },
+
+  getExecutionsForQueueItem(queueRecordId: string) {
+    return state.filter((execution) => execution.queueItem.queueRecordId === queueRecordId)
+  },
+
+  getExecutionsForWorkItem(workItemRecordId: string) {
+    return state.filter((execution) => execution.workItem.workItemRecordId === workItemRecordId)
+  },
+}
+
+export function useExecutionStore() {
+  const executions = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  return {
+    executions,
+    createExecution: executionStore.createExecution,
+    updateExecution: executionStore.updateExecution,
+    addExecutionLog: executionStore.addExecutionLog,
+    addRetryRecord: executionStore.addRetryRecord,
+    addFailureRecord: executionStore.addFailureRecord,
+    addCostRecord: executionStore.addCostRecord,
+    attachResult: executionStore.attachResult,
+    getExecutionsForQueueItem: executionStore.getExecutionsForQueueItem,
+    getExecutionsForWorkItem: executionStore.getExecutionsForWorkItem,
+  }
+}
+
+export const executionStatuses: ExecutionStatus[] = [
+  'Prepared',
+  'Awaiting Capability Review',
+  'Awaiting Approval',
+  'Approved',
+  'Ready',
+  'Running',
+  'Paused',
+  'Completed',
+  'Failed',
+  'Cancelled',
+  'Requires Human Intervention',
+]
+
+export const executionTypes: ExecutionType[] = ['Manual', 'Draft', 'Review', 'Future AI', 'Future Automation']
+
+export const executionRiskLevels: ExecutionRiskLevel[] = ['Low', 'Medium', 'High', 'Critical']
+
+export const executionLogLevels: ExecutionLogLevel[] = ['Info', 'Warning', 'Error', 'Audit']
+
+export const retryStatuses: RetryStatus[] = ['Planned', 'Attempted', 'Succeeded', 'Failed', 'Cancelled']
+
+export const failureSeverities: FailureSeverity[] = ['Minor', 'Moderate', 'Major', 'Critical']

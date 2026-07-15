@@ -1,5 +1,16 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 1 - Execution Core Architecture - 2026-07-15
+
+### Added
+
+- Created the Execution Core architecture foundation.
+- Added canonical execution TypeScript models for execution attempts, source references, capabilities, capability plans, tools, providers, approval references, results, cost records, events, logs, retries, and failures.
+- Added a local-first Execution Store using the existing `localStorage` and `useSyncExternalStore` persistence pattern.
+- Documented the Execution Core ownership model and persistence boundary.
+- Confirmed no execution behavior, lifecycle engine, event bus, UI, external provider integration, automation, or tool execution was added.
+- Verified `npm.cmd run build` passes.
+
 ## Sprint 012 Planning Closeout - 2026-07-15
 
 ### Synchronized
