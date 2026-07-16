@@ -22,6 +22,7 @@ export type ExecutionLogLevel = 'Info' | 'Warning' | 'Error' | 'Audit'
 export type ExecutionEventType =
   | 'Execution Created'
   | 'State Updated'
+  | 'Lifecycle Transition'
   | 'Capability Referenced'
   | 'Approval Referenced'
   | 'Provider Referenced'
@@ -272,6 +273,23 @@ export type ExecutionTiming = {
 }
 
 /**
+ * Purpose: Preserve immutable lifecycle state transition history.
+ * Fields: Stores source state, target state, actor, reason, validity, and timestamp.
+ * Relationships: Belongs to an Execution record and is created by the lifecycle engine.
+ * Ownership: Execution Store owns persisted lifecycle history; lifecycle utilities own transition validation rules.
+ * Future extensibility: Can later be displayed in execution detail UI or used by approval/readiness gates.
+ */
+export type ExecutionTransitionHistoryItem = {
+  id: string
+  fromStatus: ExecutionStatus
+  toStatus: ExecutionStatus
+  actor: string
+  reason: string
+  valid: boolean
+  createdAt: ISODateTimeString
+}
+
+/**
  * Purpose: Canonical execution attempt record for AI Operator OS.
  * Fields: Stores execution ID, source references, execution state, timing, selected infrastructure references, costs, logs, events, retries, failures, and result reference.
  * Relationships: Created from Execution Queue work and references Work Item, Capability Plan, Approval, Capability, Tool, Provider, Business, Project, Department, Manager, and Operator IDs.
@@ -315,6 +333,7 @@ export type ExecutionRecord = {
   result?: ExecutionResult
   resultRef?: string
   events: ExecutionEvent[]
+  transitionHistory: ExecutionTransitionHistoryItem[]
   logs: ExecutionLog[]
   retryHistory: RetryRecord[]
   failures: FailureRecord[]
@@ -377,3 +396,23 @@ export type ExecutionUpdate = Partial<Pick<
 >>
 
 export type ExecutionStoreSnapshot = ExecutionRecord[]
+
+export type ExecutionLifecycleTransitionInput = {
+  toStatus: ExecutionStatus
+  actor?: string
+  reason?: string
+  createdAt?: ISODateTimeString
+}
+
+export type ExecutionLifecycleTransitionResult =
+  | {
+    success: true
+    execution: ExecutionRecord
+    message: string
+  }
+  | {
+    success: false
+    execution: ExecutionRecord
+    message: string
+    allowedTransitions: ExecutionStatus[]
+  }

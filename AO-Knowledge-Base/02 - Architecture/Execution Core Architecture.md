@@ -6,24 +6,39 @@ The Execution Core is the permanent local-first foundation for future AI Operato
 
 It defines execution records, references, logs, cost records, retry history, failure records, result references, and persistence.
 
-This document describes the Sprint 012 Task 1 foundation only. It does not describe an execution engine, lifecycle engine, provider integration, queue processor, event bus, or external tool runtime.
+This document describes the Sprint 012 execution foundation through Task 2.
+
+It does not describe provider integration, queue processing, event bus behavior, external tool runtime, autonomous execution, or UI execution controls.
 
 ## Scope
 
-Sprint 012 Task 1 creates:
+Sprint 012 Task 1 created:
 
 - Canonical TypeScript execution models.
 - A local-first Execution Store.
 - Source references to Work Items, Execution Queue items, Capability Plans, Approval records, providers, tools, and capabilities.
 - Execution-owned records for attempt state, timing, retry history, logs, cost references, result references, and failure records.
 
-Sprint 012 Task 1 does not create:
+Sprint 012 Task 2 created:
+
+- Deterministic lifecycle transition validation.
+- Allowed transition helpers.
+- Invalid transition protection.
+- Timestamp recording for lifecycle state changes.
+- Immutable transition history entries.
+- Pause and resume helpers.
+- Retry support.
+- Failure recording support.
+- Execution Store integration for persisted lifecycle updates.
+
+Sprint 012 Tasks 1-2 do not create:
 
 - Execution behavior.
 - AI provider calls.
 - Tool execution.
 - Queue processing.
 - Approval enforcement behavior.
+- Event bus behavior.
 - Dashboard or Command Center UI.
 - External integrations.
 
@@ -82,6 +97,47 @@ Storage key:
 
 `ai-operator-os-execution-core-v1`
 
+## Lifecycle Engine
+
+The lifecycle engine lives at:
+
+`app/src/core/execution/executionLifecycle.ts`
+
+The lifecycle engine owns validation rules only.
+
+It provides:
+
+- `executionAllowedTransitions`
+- `getAllowedExecutionTransitions`
+- `canTransitionExecution`
+- `assertCanTransitionExecution`
+- `transitionExecutionRecord`
+- `pauseExecutionRecord`
+- `resumeExecutionRecord`
+- `markExecutionRequiresHumanIntervention`
+- `recordFailureForExecution`
+- `recordRetryForExecution`
+
+Allowed transitions:
+
+| From | Allowed To |
+| --- | --- |
+| Prepared | Awaiting Capability Review, Cancelled |
+| Awaiting Capability Review | Awaiting Approval, Requires Human Intervention, Cancelled |
+| Awaiting Approval | Approved, Requires Human Intervention, Cancelled |
+| Approved | Ready, Cancelled |
+| Ready | Running, Requires Human Intervention, Cancelled |
+| Running | Paused, Completed, Failed, Requires Human Intervention, Cancelled |
+| Paused | Running, Requires Human Intervention, Cancelled |
+| Failed | Requires Human Intervention, Ready, Cancelled |
+| Requires Human Intervention | Awaiting Capability Review, Awaiting Approval, Ready, Cancelled |
+| Completed | No outgoing transitions |
+| Cancelled | No outgoing transitions |
+
+Invalid transitions return structured failure results and do not mutate persisted execution records.
+
+The lifecycle engine records state changes as transition history and execution events. It does not execute work.
+
 ## Persistence
 
 Execution records persist locally.
@@ -96,8 +152,10 @@ The store supports:
 - Adding estimated or actual cost records.
 - Attaching result references.
 - Reading executions by queue item or work item.
+- Transitioning execution state through validated lifecycle helpers.
+- Persisting transition history.
 
-These are storage operations only. They do not perform work or enforce lifecycle behavior.
+These are storage and lifecycle-state operations only. They do not perform work, call providers, invoke tools, or enforce approval gates.
 
 ## Relationships
 
@@ -121,7 +179,7 @@ Approval Queue
 ↓
 Execution Core
 
-Future Sprint 012 tasks will add lifecycle behavior, gates, integration, UI, and Command Center visibility.
+Future Sprint 012 tasks will add capability and approval gates, integration, UI, and Command Center visibility.
 
 ## Safety Rules
 
@@ -129,6 +187,8 @@ Future Sprint 012 tasks will add lifecycle behavior, gates, integration, UI, and
 - Execution Core must not call providers.
 - Execution Core must not invoke tools.
 - Execution Core must not bypass Approval Queue.
+- Lifecycle helpers must not execute work.
+- Lifecycle helpers must not become a queue processor or event bus.
 - Execution Core must not store credentials.
 - Execution Core must not become a duplicate Work Item, Approval, Capability Planning, or Money store.
 
@@ -136,7 +196,6 @@ Future Sprint 012 tasks will add lifecycle behavior, gates, integration, UI, and
 
 Future tasks may add:
 
-- Deterministic lifecycle transition helpers.
 - Capability and approval readiness gates.
 - Execution Queue detail integration.
 - Execution detail UI.

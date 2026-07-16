@@ -1,8 +1,17 @@
 import { useSyncExternalStore } from 'react'
 import {
+  pauseExecutionRecord,
+  recordFailureForExecution,
+  recordRetryForExecution,
+  resumeExecutionRecord,
+  transitionExecutionRecord,
+} from './executionLifecycle'
+import {
   CostRecord,
   ExecutionEvent,
   ExecutionInput,
+  ExecutionLifecycleTransitionInput,
+  ExecutionLifecycleTransitionResult,
   ExecutionLog,
   ExecutionLogLevel,
   ExecutionRecord,
@@ -124,6 +133,7 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
     events: Array.isArray(raw.events) && raw.events.length > 0
       ? raw.events
       : [event('Execution foundation record created.', timestamp)],
+    transitionHistory: Array.isArray(raw.transitionHistory) ? raw.transitionHistory : [],
     logs: Array.isArray(raw.logs) ? raw.logs : [],
     retryHistory: Array.isArray(raw.retryHistory) ? raw.retryHistory : [],
     failures: Array.isArray(raw.failures) ? raw.failures : [],
@@ -246,6 +256,7 @@ export const executionStore = {
       result: undefined,
       resultRef: undefined,
       events: [event(`Execution record prepared from ${input.queueItem.queueId}.`, timestamp)],
+      transitionHistory: [],
       logs: [],
       retryHistory: [],
       failures: [],
@@ -256,6 +267,82 @@ export const executionStore = {
 
     persist([execution, ...state])
     return execution
+  },
+
+  transitionExecution(executionRecordId: string, input: ExecutionLifecycleTransitionInput): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      result = transitionExecutionRecord(execution, input)
+      return result.success ? result.execution : execution
+    })
+
+    if (result?.success) {
+      persist(next)
+    }
+
+    return result
+  },
+
+  pauseExecution(executionRecordId: string, actor?: string, reason?: string): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      result = pauseExecutionRecord(execution, actor, reason)
+      return result.success ? result.execution : execution
+    })
+
+    if (result?.success) {
+      persist(next)
+    }
+
+    return result
+  },
+
+  resumeExecution(executionRecordId: string, actor?: string, reason?: string): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      result = resumeExecutionRecord(execution, actor, reason)
+      return result.success ? result.execution : execution
+    })
+
+    if (result?.success) {
+      persist(next)
+    }
+
+    return result
+  },
+
+  recordExecutionFailure(
+    executionRecordId: string,
+    input: Omit<FailureRecord, 'id' | 'failureId' | 'createdAt'>,
+    actor?: string,
+  ): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      result = recordFailureForExecution(execution, input, actor)
+      return result.success ? result.execution : execution
+    })
+
+    if (result?.success) {
+      persist(next)
+    }
+
+    return result
+  },
+
+  recordLifecycleRetry(executionRecordId: string, input: Omit<RetryRecord, 'id' | 'retryId' | 'createdAt' | 'updatedAt'>) {
+    persist(state.map((execution) =>
+      execution.id === executionRecordId
+        ? recordRetryForExecution(execution, input)
+        : execution,
+    ))
   },
 
   updateExecution(executionRecordId: string, updates: ExecutionUpdate) {
@@ -433,6 +520,11 @@ export function useExecutionStore() {
   return {
     executions,
     createExecution: executionStore.createExecution,
+    transitionExecution: executionStore.transitionExecution,
+    pauseExecution: executionStore.pauseExecution,
+    resumeExecution: executionStore.resumeExecution,
+    recordExecutionFailure: executionStore.recordExecutionFailure,
+    recordLifecycleRetry: executionStore.recordLifecycleRetry,
     updateExecution: executionStore.updateExecution,
     addExecutionLog: executionStore.addExecutionLog,
     addRetryRecord: executionStore.addRetryRecord,

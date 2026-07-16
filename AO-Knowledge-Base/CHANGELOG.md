@@ -1,5 +1,16 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 2 - Execution Lifecycle Engine - 2026-07-15
+
+### Added
+
+- Added deterministic execution lifecycle transition validation.
+- Added allowed transition map, invalid transition protection, timestamp recording, immutable transition history, pause/resume helpers, retry support, and failure recording support.
+- Integrated lifecycle transitions with the existing Execution Store without creating duplicate stores or duplicate ownership.
+- Updated Execution Core Architecture documentation with lifecycle boundaries and transition rules.
+- Confirmed no execution behavior, provider connection, AI execution, API integration, UI change, queue processor, or event bus was added.
+- Verified `npm.cmd run build` passes.
+
 ## Sprint 012 Task 1 Documentation Synchronization - 2026-07-15
 
 ### Synchronized
