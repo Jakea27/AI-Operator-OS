@@ -6,7 +6,7 @@ The Execution Core is the permanent local-first foundation for future AI Operato
 
 It defines execution records, references, logs, cost records, retry history, failure records, result references, and persistence.
 
-This document describes the Sprint 012 execution foundation through Task 2.
+This document describes the Sprint 012 execution foundation through Task 3.
 
 It does not describe provider integration, queue processing, event bus behavior, external tool runtime, autonomous execution, or UI execution controls.
 
@@ -31,13 +31,22 @@ Sprint 012 Task 2 created:
 - Failure recording support.
 - Execution Store integration for persisted lifecycle updates.
 
-Sprint 012 Tasks 1-2 do not create:
+Sprint 012 Task 3 created:
+
+- Capability Plan reference resolution.
+- Approval Queue reference resolution.
+- Capability readiness validation.
+- Approval readiness validation.
+- Execution readiness reports with blockers.
+- Store helpers that advance eligible execution records through readiness and approval lifecycle gates.
+
+Sprint 012 Tasks 1-3 do not create:
 
 - Execution behavior.
 - AI provider calls.
 - Tool execution.
 - Queue processing.
-- Approval enforcement behavior.
+- Approval execution behavior.
 - Event bus behavior.
 - Dashboard or Command Center UI.
 - External integrations.
@@ -138,6 +147,68 @@ Invalid transitions return structured failure results and do not mutate persiste
 
 The lifecycle engine records state changes as transition history and execution events. It does not execute work.
 
+## Capability and Approval Readiness
+
+The readiness integration lives at:
+
+`app/src/core/execution/executionReadiness.ts`
+
+The readiness integration reads existing module stores:
+
+- Capability Planning: `app/src/core/capabilityPlanning`
+- Approval Queue: `app/src/features/approval`
+
+The readiness integration provides:
+
+- `evaluateExecutionReadiness`
+- `applyReadinessReferences`
+- `readinessMessage`
+
+Execution Store exposes:
+
+- `syncReadinessReferences`
+- `evaluateReadiness`
+- `advanceFromCapabilityReview`
+- `advanceFromApprovalReview`
+- `markReadyWhenEligible`
+
+Readiness rules:
+
+| Lifecycle Step | Required Existing Record | Required State |
+| --- | --- | --- |
+| Awaiting Capability Review -> Awaiting Approval | Capability Plan | Capability Plan is Approved and has no missing requirements |
+| Awaiting Approval -> Approved | Approval Queue record | Approval status is Approved |
+| Approved -> Ready | Capability Plan and Approval Queue record | Capability ready and approval ready |
+
+Capability Planning remains the owner of:
+
+- Required capabilities.
+- Preferred providers.
+- Required tools.
+- Required permissions.
+- Required operator roles.
+- Estimated cost.
+- Readiness status.
+
+Approval Queue remains the owner of:
+
+- Approval decision state.
+- Decision notes.
+- Decision history.
+- CEO approval status.
+
+Execution Core stores:
+
+- Capability Plan references.
+- Capability, tool, and provider references derived from the existing Capability Plan.
+- Approval references derived from the existing Approval Queue record.
+- Readiness blockers.
+- Lifecycle transitions caused by satisfied readiness gates.
+
+Invalid or incomplete readiness does not mutate execution lifecycle state.
+
+Task 3 does not execute work, call providers, process queues, or bypass the Approval Queue.
+
 ## Persistence
 
 Execution records persist locally.
@@ -154,8 +225,11 @@ The store supports:
 - Reading executions by queue item or work item.
 - Transitioning execution state through validated lifecycle helpers.
 - Persisting transition history.
+- Synchronizing Capability Planning and Approval Queue references.
+- Evaluating readiness blockers.
+- Advancing through readiness/approval lifecycle gates only when referenced records satisfy requirements.
 
-These are storage and lifecycle-state operations only. They do not perform work, call providers, invoke tools, or enforce approval gates.
+These are storage, lifecycle-state, and readiness-gate operations only. They do not perform work, call providers, invoke tools, or execute approvals.
 
 ## Relationships
 
@@ -179,7 +253,7 @@ Approval Queue
 ↓
 Execution Core
 
-Future Sprint 012 tasks will add capability and approval gates, integration, UI, and Command Center visibility.
+Future Sprint 012 tasks will add Execution Queue detail integration, UI, and Command Center visibility.
 
 ## Safety Rules
 
@@ -189,6 +263,7 @@ Future Sprint 012 tasks will add capability and approval gates, integration, UI,
 - Execution Core must not bypass Approval Queue.
 - Lifecycle helpers must not execute work.
 - Lifecycle helpers must not become a queue processor or event bus.
+- Readiness gates must read existing Capability Planning and Approval Queue records instead of duplicating them.
 - Execution Core must not store credentials.
 - Execution Core must not become a duplicate Work Item, Approval, Capability Planning, or Money store.
 
@@ -196,7 +271,6 @@ Future Sprint 012 tasks will add capability and approval gates, integration, UI,
 
 Future tasks may add:
 
-- Capability and approval readiness gates.
 - Execution Queue detail integration.
 - Execution detail UI.
 - Cost and logging polish.

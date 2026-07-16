@@ -416,3 +416,27 @@ export type ExecutionLifecycleTransitionResult =
     message: string
     allowedTransitions: ExecutionStatus[]
   }
+
+export type ExecutionReadinessBlocker = {
+  code:
+    | 'Missing Capability Plan'
+    | 'Capability Plan Not Approved'
+    | 'Capability Requirements Missing'
+    | 'Missing Approval'
+    | 'Approval Not Approved'
+    | 'Invalid Current State'
+  message: string
+}
+
+export type ExecutionReadinessReport = {
+  executionRecordId: string
+  executionId: string
+  capabilityPlan?: CapabilityPlanReference
+  approval?: ApprovalReference
+  capabilityReady: boolean
+  approvalReady: boolean
+  eligibleForAwaitingApproval: boolean
+  eligibleForApproved: boolean
+  eligibleForReady: boolean
+  blockers: ExecutionReadinessBlocker[]
+}

@@ -2,6 +2,15 @@
 
 # Sprint 012 - AI Execution Infrastructure
 
+Task 3 - Capability & Approval Integration:
+- Integrated Execution Core readiness checks with existing Capability Planning and Approval Queue records.
+- Added capability and approval reference resolution without creating duplicate stores.
+- Added readiness reports and blocker messages.
+- Added Execution Store helpers to synchronize readiness references and advance eligible records through capability and approval lifecycle gates.
+- Preserved existing Capability Planning and Approval Queue ownership boundaries.
+- Confirmed no execution behavior, provider execution, AI/model execution, APIs, network calls, routing changes, UI redesign, autonomous behavior, or duplicate ownership was added.
+- Verified `npm.cmd run build` passes.
+
 Task 2 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 2 implementation commit was pushed.
 - Updated repository metadata to `513c554240a1c6caf69da936cbfe4af0c2d03f33`.

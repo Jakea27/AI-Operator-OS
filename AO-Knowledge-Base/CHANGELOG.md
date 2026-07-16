@@ -1,5 +1,16 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 3 - Capability & Approval Integration - 2026-07-16
+
+### Added
+
+- Integrated Execution Core readiness checks with existing Capability Planning and Approval Queue records.
+- Added capability plan reference resolution, approval reference resolution, readiness reports, and blocker messaging.
+- Added Execution Store helpers for synchronizing readiness references and advancing eligible lifecycle states through capability and approval gates.
+- Preserved existing Capability Planning and Approval Queue stores as the authoritative owners of their data.
+- Confirmed no execution behavior, provider execution, AI/model execution, APIs, network calls, routing changes, UI redesign, autonomous behavior, or duplicate ownership was added.
+- Verified `npm.cmd run build` passes.
+
 ## Sprint 012 Task 2 Documentation Synchronization - 2026-07-16
 
 ### Synchronized

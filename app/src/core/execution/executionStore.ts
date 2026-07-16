@@ -7,6 +7,11 @@ import {
   transitionExecutionRecord,
 } from './executionLifecycle'
 import {
+  applyReadinessReferences,
+  evaluateExecutionReadiness,
+  readinessMessage,
+} from './executionReadiness'
+import {
   CostRecord,
   ExecutionEvent,
   ExecutionInput,
@@ -16,6 +21,7 @@ import {
   ExecutionLogLevel,
   ExecutionRecord,
   ExecutionResult,
+  ExecutionReadinessReport,
   ExecutionRiskLevel,
   ExecutionStatus,
   ExecutionType,
@@ -345,6 +351,116 @@ export const executionStore = {
     ))
   },
 
+  syncReadinessReferences(executionRecordId: string) {
+    let synced: ExecutionRecord | undefined
+    persist(state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      synced = appendEvent(
+        applyReadinessReferences(execution),
+        'Capability and approval references synchronized.',
+        'State Updated',
+      )
+      return synced
+    }))
+    return synced
+  },
+
+  evaluateReadiness(executionRecordId: string): ExecutionReadinessReport | undefined {
+    const execution = state.find((item) => item.id === executionRecordId)
+    if (!execution) return undefined
+    return evaluateExecutionReadiness(applyReadinessReferences(execution))
+  },
+
+  advanceFromCapabilityReview(executionRecordId: string): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const synced = applyReadinessReferences(execution)
+      const readiness = evaluateExecutionReadiness(synced)
+
+      if (!readiness.eligibleForAwaitingApproval) {
+        result = {
+          success: false,
+          execution: synced,
+          message: readinessMessage(readiness),
+          allowedTransitions: ['Awaiting Approval', 'Requires Human Intervention', 'Cancelled'],
+        }
+        return synced
+      }
+
+      result = transitionExecutionRecord(synced, {
+        toStatus: 'Awaiting Approval',
+        actor: 'Execution Readiness Gate',
+        reason: 'Capability Plan is approved and requirements are satisfied.',
+      })
+      return result.success ? result.execution : synced
+    })
+
+    persist(next)
+    return result
+  },
+
+  advanceFromApprovalReview(executionRecordId: string): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const synced = applyReadinessReferences(execution)
+      const readiness = evaluateExecutionReadiness(synced)
+
+      if (!readiness.eligibleForApproved) {
+        result = {
+          success: false,
+          execution: synced,
+          message: readinessMessage(readiness),
+          allowedTransitions: ['Approved', 'Requires Human Intervention', 'Cancelled'],
+        }
+        return synced
+      }
+
+      result = transitionExecutionRecord(synced, {
+        toStatus: 'Approved',
+        actor: 'Execution Approval Gate',
+        reason: 'Linked Approval Queue record is approved.',
+      })
+      return result.success ? result.execution : synced
+    })
+
+    persist(next)
+    return result
+  },
+
+  markReadyWhenEligible(executionRecordId: string): ExecutionLifecycleTransitionResult | undefined {
+    let result: ExecutionLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      const synced = applyReadinessReferences(execution)
+      const readiness = evaluateExecutionReadiness(synced)
+
+      if (!readiness.eligibleForReady) {
+        result = {
+          success: false,
+          execution: synced,
+          message: readinessMessage(readiness),
+          allowedTransitions: ['Ready', 'Cancelled'],
+        }
+        return synced
+      }
+
+      result = transitionExecutionRecord(synced, {
+        toStatus: 'Ready',
+        actor: 'Execution Readiness Gate',
+        reason: 'Capability and approval requirements are satisfied. Execution is ready but not running.',
+      })
+      return result.success ? result.execution : synced
+    })
+
+    persist(next)
+    return result
+  },
+
   updateExecution(executionRecordId: string, updates: ExecutionUpdate) {
     persist(state.map((execution) => {
       if (execution.id !== executionRecordId) return execution
@@ -525,6 +641,11 @@ export function useExecutionStore() {
     resumeExecution: executionStore.resumeExecution,
     recordExecutionFailure: executionStore.recordExecutionFailure,
     recordLifecycleRetry: executionStore.recordLifecycleRetry,
+    syncReadinessReferences: executionStore.syncReadinessReferences,
+    evaluateReadiness: executionStore.evaluateReadiness,
+    advanceFromCapabilityReview: executionStore.advanceFromCapabilityReview,
+    advanceFromApprovalReview: executionStore.advanceFromApprovalReview,
+    markReadyWhenEligible: executionStore.markReadyWhenEligible,
     updateExecution: executionStore.updateExecution,
     addExecutionLog: executionStore.addExecutionLog,
     addRetryRecord: executionStore.addRetryRecord,
