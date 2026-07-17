@@ -1,5 +1,17 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 4 - Execution Queue Detail Integration - 2026-07-17
+
+### Added
+
+- Integrated the active Execution Queue detail workflow with the Execution Core.
+- Added duplicate-protected Execution Record creation from existing Execution Queue items.
+- Added queue-detail visibility for Execution ID, lifecycle state, Capability Plan reference, Approval reference, timing, retries, failures, costs, logs, readiness blockers, and result references.
+- Added reference synchronization and readiness-gate controls using the existing lifecycle/readiness helpers.
+- Preserved Execution Queue, Work Item, Capability Planning, Approval Queue, and Money ownership boundaries by storing references only.
+- Confirmed no AI/model execution, provider call, API, automation, queue processing, routing change, or UI redesign was added.
+- Verified `npm.cmd run build` passes.
+
 ## Sprint 012 Task 3 Documentation Synchronization - 2026-07-16
 
 ### Synchronized

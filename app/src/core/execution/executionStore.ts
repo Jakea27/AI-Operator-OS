@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import type { ExecutionQueueRecord } from '../executionQueue'
 import {
   pauseExecutionRecord,
   recordFailureForExecution,
@@ -270,6 +271,75 @@ export const executionStore = {
       createdAt: timestamp,
       updatedAt: timestamp,
     }
+
+    persist([execution, ...state])
+    return execution
+  },
+
+  createExecutionFromQueueItem(queueItem: ExecutionQueueRecord) {
+    const existing = state.find((execution) => execution.queueItem.queueRecordId === queueItem.id)
+
+    if (existing) {
+      return existing
+    }
+
+    const timestamp = now()
+    const execution: ExecutionRecord = applyReadinessReferences({
+      id: id('execution'),
+      executionId: generateExecutionCode(state),
+      title: `${queueItem.sourceWorkItemId} execution record`,
+      description: `Execution infrastructure record for ${queueItem.workItemTitle}. This record stores references only and does not execute work.`,
+      status: 'Prepared',
+      priority: queueItem.priority,
+      executionType: queueItem.executionType,
+      riskLevel: queueItem.requiresApproval ? 'High' : 'Low',
+      workItem: {
+        workItemRecordId: queueItem.sourceWorkItemRecordId,
+        workItemId: queueItem.sourceWorkItemId,
+        title: queueItem.workItemTitle,
+        projectId: queueItem.projectId,
+        projectCode: queueItem.projectCode,
+        businessId: queueItem.businessId,
+        businessCode: queueItem.businessCode,
+      },
+      queueItem: {
+        queueRecordId: queueItem.id,
+        queueId: queueItem.queueId,
+        sourceWorkItemRecordId: queueItem.sourceWorkItemRecordId,
+        sourceWorkItemId: queueItem.sourceWorkItemId,
+      },
+      selectedCapabilities: [],
+      selectedTools: [],
+      selectedProviders: [],
+      businessId: queueItem.businessId,
+      businessCode: queueItem.businessCode,
+      businessName: queueItem.businessName,
+      projectId: queueItem.projectId,
+      projectCode: queueItem.projectCode,
+      projectName: queueItem.projectName,
+      departmentId: queueItem.departmentId,
+      departmentCode: queueItem.departmentCode,
+      departmentName: queueItem.departmentName,
+      managerId: queueItem.managerId,
+      managerName: queueItem.managerName || 'Unassigned',
+      operatorId: queueItem.operatorId,
+      operatorCode: queueItem.operatorCode,
+      operatorName: queueItem.operatorName || 'Unassigned',
+      timing: {
+        preparedAt: timestamp,
+      },
+      estimatedCost: 0,
+      actualCost: 0,
+      costRecords: [],
+      events: [event(`Execution detail record prepared from ${queueItem.queueId}.`, timestamp)],
+      transitionHistory: [],
+      logs: [],
+      retryHistory: [],
+      failures: [],
+      notes: queueItem.notes,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    })
 
     persist([execution, ...state])
     return execution
@@ -626,6 +696,10 @@ export const executionStore = {
     return state.filter((execution) => execution.queueItem.queueRecordId === queueRecordId)
   },
 
+  getExecutionForQueueItem(queueRecordId: string) {
+    return state.find((execution) => execution.queueItem.queueRecordId === queueRecordId)
+  },
+
   getExecutionsForWorkItem(workItemRecordId: string) {
     return state.filter((execution) => execution.workItem.workItemRecordId === workItemRecordId)
   },
@@ -636,6 +710,7 @@ export function useExecutionStore() {
   return {
     executions,
     createExecution: executionStore.createExecution,
+    createExecutionFromQueueItem: executionStore.createExecutionFromQueueItem,
     transitionExecution: executionStore.transitionExecution,
     pauseExecution: executionStore.pauseExecution,
     resumeExecution: executionStore.resumeExecution,
@@ -652,6 +727,7 @@ export function useExecutionStore() {
     addFailureRecord: executionStore.addFailureRecord,
     addCostRecord: executionStore.addCostRecord,
     attachResult: executionStore.attachResult,
+    getExecutionForQueueItem: executionStore.getExecutionForQueueItem,
     getExecutionsForQueueItem: executionStore.getExecutionsForQueueItem,
     getExecutionsForWorkItem: executionStore.getExecutionsForWorkItem,
   }

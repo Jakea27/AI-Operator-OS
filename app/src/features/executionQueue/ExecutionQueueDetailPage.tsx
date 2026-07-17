@@ -1,7 +1,8 @@
-import { ArrowLeft, Check, ClipboardList, Cpu } from 'lucide-react'
+import { ArrowLeft, Check, ClipboardList, Cpu, ShieldCheck } from 'lucide-react'
 import { ReactNode, useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useCapabilityPlanningStore } from '@/src/core/capabilityPlanning'
+import { useExecutionStore } from '@/src/core/execution'
 import {
   ExecutionQueuePriority,
   ExecutionQueueRecord,
@@ -24,12 +25,23 @@ function formatDate(value: string) {
   }).format(new Date(value))
 }
 
+function formatOptionalDate(value?: string) {
+  return value ? formatDate(value) : 'Not recorded'
+}
+
+function formatMoney(value: number) {
+  return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(value)
+}
+
 export function ExecutionQueueDetailPage() {
   const { queueItemId } = useParams()
   const executionQueue = useExecutionQueueStore()
   const capabilityPlanning = useCapabilityPlanningStore()
+  const executionCore = useExecutionStore()
   const queueItem = executionQueue.queueItems.find((item) => item.id === queueItemId || item.queueId === queueItemId)
   const capabilityPlan = queueItem ? capabilityPlanning.capabilityPlans.find((plan) => plan.sourceQueueItemId === queueItem.id) : undefined
+  const execution = queueItem ? executionCore.executions.find((record) => record.queueItem.queueRecordId === queueItem.id) : undefined
+  const readiness = execution ? executionCore.evaluateReadiness(execution.id) : undefined
   const [draft, setDraft] = useState<ExecutionQueueRecord | undefined>(queueItem)
   const [showCapabilityPlanForm, setShowCapabilityPlanForm] = useState(false)
 
@@ -55,6 +67,10 @@ export function ExecutionQueueDetailPage() {
     const plan = capabilityPlanning.createCapabilityPlanFromQueueItem(queueRecord)
     setShowCapabilityPlanForm(false)
     return plan
+  }
+
+  function createExecutionRecord(queueRecord: ExecutionQueueRecord) {
+    executionCore.createExecutionFromQueueItem(queueRecord)
   }
 
   return (
@@ -154,6 +170,75 @@ export function ExecutionQueueDetailPage() {
                 </p>
                 <button onClick={() => setShowCapabilityPlanForm(true)} className="btn-primary mt-4 inline-flex items-center gap-2">
                   <Cpu size={14} /> Create Capability Plan
+                </button>
+              </div>
+            )}
+          </Section>
+
+          <Section title="Execution Record" eyebrow="Sprint 012 infrastructure detail">
+            {execution ? (
+              <div className="space-y-4">
+                <div className="grid gap-3 md:grid-cols-3">
+                  <Info label="Execution ID" value={execution.executionId} />
+                  <Info label="Lifecycle State" value={execution.status} />
+                  <Info label="Retry Count" value={String(execution.retryHistory.length)} />
+                  <Info label="Capability Plan" value={execution.capabilityPlan?.capabilityPlanId || 'Not linked'} />
+                  <Info label="Approval" value={execution.approval?.approvalId || 'Not linked'} />
+                  <Info label="Estimated Cost" value={formatMoney(execution.estimatedCost)} />
+                  <Info label="Actual Cost" value={formatMoney(execution.actualCost)} />
+                  <Info label="Failures" value={String(execution.failures.length)} />
+                  <Info label="Logs" value={String(execution.logs.length)} />
+                  <Info label="Created" value={formatDate(execution.createdAt)} />
+                  <Info label="Updated" value={formatDate(execution.updatedAt)} />
+                  <Info label="Ready" value={formatOptionalDate(execution.timing.readyAt)} />
+                  <Info label="Started" value={formatOptionalDate(execution.timing.startedAt)} />
+                  <Info label="Completed" value={formatOptionalDate(execution.timing.completedAt)} />
+                  <Info label="Failed" value={formatOptionalDate(execution.timing.failedAt)} />
+                  <Info label="Result Reference" value={execution.resultRef || 'Not recorded'} />
+                </div>
+
+                {readiness ? (
+                  <div className="rounded-xl border border-line bg-ink/35 p-4">
+                    <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Readiness Check</p>
+                    <p className="m-0 mt-2 text-sm font-semibold text-white">
+                      Capability {readiness.capabilityReady ? 'ready' : 'not ready'} · Approval {readiness.approvalReady ? 'ready' : 'not ready'}
+                    </p>
+                    {readiness.blockers.length > 0 ? (
+                      <ul className="mt-3 space-y-2 pl-4 text-sm leading-6 text-muted">
+                        {readiness.blockers.map((blocker) => (
+                          <li key={`${blocker.code}-${blocker.message}`}>{blocker.message}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="m-0 mt-3 text-sm leading-6 text-muted">
+                        Capability and approval requirements are satisfied. This still does not execute work.
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+
+                <div className="flex flex-wrap gap-3">
+                  <button onClick={() => executionCore.syncReadinessReferences(execution.id)} className="btn-secondary inline-flex items-center gap-2">
+                    <ShieldCheck size={14} /> Sync References
+                  </button>
+                  <button onClick={() => executionCore.advanceFromCapabilityReview(execution.id)} className="btn-secondary">
+                    Advance Capability Gate
+                  </button>
+                  <button onClick={() => executionCore.advanceFromApprovalReview(execution.id)} className="btn-secondary">
+                    Advance Approval Gate
+                  </button>
+                  <button onClick={() => executionCore.markReadyWhenEligible(execution.id)} className="btn-secondary">
+                    Mark Ready If Eligible
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-line bg-white/[0.02] p-4">
+                <p className="m-0 text-sm leading-6 text-[#aeb8b3]">
+                  No Execution Record exists for this queue item yet. Create one to track lifecycle state, references, retry history, failures, costs, logs, and future result references without executing work.
+                </p>
+                <button onClick={() => createExecutionRecord(queueItem)} className="btn-primary mt-4 inline-flex items-center gap-2">
+                  <ShieldCheck size={14} /> Create Execution Record
                 </button>
               </div>
             )}

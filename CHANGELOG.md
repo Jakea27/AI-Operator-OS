@@ -2,6 +2,15 @@
 
 # Sprint 012 - AI Execution Infrastructure
 
+Task 4 - Execution Queue Detail Integration:
+- Integrated Execution Core detail records into the active Execution Queue detail workflow.
+- Added duplicate-protected Execution Record creation from queue items.
+- Added Execution Record visibility for lifecycle state, Capability Plan and Approval references, timing, retries, failures, costs, logs, readiness blockers, and result references.
+- Added reference synchronization and readiness-gate controls using existing Execution Core helpers.
+- Preserved reference-only ownership across Work Items, Execution Queue, Capability Planning, Approval Queue, and Money.
+- Confirmed no execution behavior, AI/model execution, provider calls, APIs, automation, routing changes, or UI redesign were added.
+- Verified `npm.cmd run build` passes.
+
 Task 3 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 3 implementation commit was pushed.
 - Updated repository metadata to `443b0d1071e28b35dbca3e5892fb2cfbe60e2669`.

@@ -6,7 +6,7 @@ The Execution Core is the permanent local-first foundation for future AI Operato
 
 It defines execution records, references, logs, cost records, retry history, failure records, result references, and persistence.
 
-This document describes the Sprint 012 execution foundation through Task 3.
+This document describes the Sprint 012 execution foundation through Task 4.
 
 It does not describe provider integration, queue processing, event bus behavior, external tool runtime, autonomous execution, or UI execution controls.
 
@@ -40,7 +40,15 @@ Sprint 012 Task 3 created:
 - Execution readiness reports with blockers.
 - Store helpers that advance eligible execution records through readiness and approval lifecycle gates.
 
-Sprint 012 Tasks 1-3 do not create:
+Sprint 012 Task 4 created:
+
+- Execution Record creation from the active Execution Queue detail workflow.
+- Duplicate protection so one queue item does not create multiple execution records by accident.
+- Queue-detail visibility for lifecycle state, Capability Plan references, Approval references, timing, retries, failures, costs, logs, readiness blockers, and result references.
+- Reference synchronization from existing Capability Planning and Approval Queue records.
+- Readiness-gate controls that use existing lifecycle/readiness helpers without executing work.
+
+Sprint 012 Tasks 1-4 do not create:
 
 - Execution behavior.
 - AI provider calls.
@@ -48,7 +56,6 @@ Sprint 012 Tasks 1-3 do not create:
 - Queue processing.
 - Approval execution behavior.
 - Event bus behavior.
-- Dashboard or Command Center UI.
 - External integrations.
 
 ## Data Ownership
@@ -105,6 +112,13 @@ The store uses the existing AI Operator OS persistence pattern:
 Storage key:
 
 `ai-operator-os-execution-core-v1`
+
+Task 4 added queue-detail creation helpers:
+
+- `createExecutionFromQueueItem`
+- `getExecutionForQueueItem`
+
+These helpers map an existing Execution Queue record into an Execution Record by reference. They do not duplicate Work Item, Queue, Capability Plan, Approval, or finance ownership.
 
 ## Lifecycle Engine
 
@@ -209,6 +223,40 @@ Invalid or incomplete readiness does not mutate execution lifecycle state.
 
 Task 3 does not execute work, call providers, process queues, or bypass the Approval Queue.
 
+## Execution Queue Detail Integration
+
+Sprint 012 Task 4 connects the active Execution Queue detail page to the Execution Core.
+
+The active UI file is:
+
+`app/src/features/executionQueue/ExecutionQueueDetailPage.tsx`
+
+The detail page now supports:
+
+- Creating a local Execution Record for the current queue item.
+- Preventing duplicate Execution Records for the same queue item.
+- Displaying the linked Execution ID.
+- Displaying lifecycle state.
+- Displaying linked Capability Plan and Approval references.
+- Displaying created, updated, ready, started, completed, and failed timestamps.
+- Displaying retry, failure, log, cost, and result-reference summaries.
+- Showing readiness blockers from existing Capability Planning and Approval Queue records.
+- Synchronizing readiness references.
+- Advancing readiness gates through existing lifecycle helpers when records are eligible.
+
+This integration is infrastructure visibility only.
+
+It does not:
+
+- Execute work.
+- Run AI.
+- Call providers.
+- Invoke tools.
+- Process queues automatically.
+- Create duplicate Capability Planning or Approval Queue records.
+- Change routing.
+- Redesign the UI.
+
 ## Persistence
 
 Execution records persist locally.
@@ -228,12 +276,13 @@ The store supports:
 - Synchronizing Capability Planning and Approval Queue references.
 - Evaluating readiness blockers.
 - Advancing through readiness/approval lifecycle gates only when referenced records satisfy requirements.
+- Creating and finding Execution Records from Execution Queue detail records.
 
 These are storage, lifecycle-state, and readiness-gate operations only. They do not perform work, call providers, invoke tools, or execute approvals.
 
 ## Relationships
 
-Execution Core sits after Capability Planning and Approval Queue in the architecture, but Task 1 only creates the data foundation.
+Execution Core sits after Capability Planning and Approval Queue in the architecture. Through Task 4, the active Execution Queue detail workflow can create and inspect the Execution Core record for a queue item.
 
 Current relationship:
 
@@ -253,7 +302,7 @@ Approval Queue
 ↓
 Execution Core
 
-Future Sprint 012 tasks will add Execution Queue detail integration, UI, and Command Center visibility.
+Future Sprint 012 tasks will add a dedicated Execution Dashboard/detail page, cost/logging polish, and Command Center visibility.
 
 ## Safety Rules
 
@@ -264,6 +313,7 @@ Future Sprint 012 tasks will add Execution Queue detail integration, UI, and Com
 - Lifecycle helpers must not execute work.
 - Lifecycle helpers must not become a queue processor or event bus.
 - Readiness gates must read existing Capability Planning and Approval Queue records instead of duplicating them.
+- Execution Queue detail integration must create and display Execution Records by reference only.
 - Execution Core must not store credentials.
 - Execution Core must not become a duplicate Work Item, Approval, Capability Planning, or Money store.
 
@@ -271,7 +321,6 @@ Future Sprint 012 tasks will add Execution Queue detail integration, UI, and Com
 
 Future tasks may add:
 
-- Execution Queue detail integration.
 - Execution detail UI.
 - Cost and logging polish.
 - Command Center visibility.
