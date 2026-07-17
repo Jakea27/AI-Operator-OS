@@ -10,12 +10,12 @@
 - Current Sprint: Sprint 012 - AI Execution Infrastructure
 - Last Completed Sprint: Sprint 011 - Continuity System v1.1
 - Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md
-- Repository metadata source: AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md
-- Current HEAD: `e07b34bbf834d44daa2553f810c25766e3dbd626`
-- Last Verified Commit: `e07b34bbf834d44daa2553f810c25766e3dbd626`
-- Working Tree Status: CLEAN
-- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 4 documentation synchronization commit
-- Repository Verification Status: VERIFIED - repository metadata is maintained only in Active Project State
+- Repository checkpoint source: AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md
+- Repository Checkpoint: `5aaf1d1b6f388efccd9c1b39ee213fc46c8c6265`
+- Checkpoint Description: Last verified repository checkpoint after Sprint 012 Task 4 Startup Bundle Synchronization. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
+- Working Tree Status: CLEAN at Repository Checkpoint
+- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 4 Startup Bundle Synchronization commit
+- Repository Verification Status: VERIFIED - repository checkpoint metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-17
 - Number of included documents: 18
 - Bundle Validation: VALID
@@ -104,8 +104,28 @@ Every AI operator must read the following source documents in this exact order.
 2. Confirm current sprint.
 3. Confirm remaining phases.
 4. Confirm next required action.
-5. Verify no sprint is currently awaiting QA or closeout.
-6. Only then begin implementation.
+5. Verify repository checkpoint consistency.
+6. Verify no sprint is currently awaiting QA or closeout.
+7. Only then begin implementation.
+
+## Repository Checkpoint Verification
+
+Repository verification uses the `Repository Checkpoint` documented in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
+
+The checkpoint is the last verified repository state after implementation and documentation synchronization. It is not required to equal the commit that contains a regenerated Startup Bundle.
+
+This prevents a documentation synchronization commit from invalidating itself simply because committing the bundle changes Git history.
+
+Startup verification must confirm:
+
+- Branch is `main`.
+- Origin is the official GitHub repository.
+- Local repository is synchronized with `origin/main`.
+- Working tree status matches the current documented workflow state.
+- Startup Bundle validation is `VALID`.
+- Active Project State contains the current sprint, phase, next action, and repository checkpoint.
+
+Startup verification must not fail only because the Startup Bundle was committed after generation. If the repository is clean and synchronized beyond the documented checkpoint, the checkpoint remains valid unless another continuity document records a conflicting project state.
 
 ## Operator Verification Gate
 
@@ -122,6 +142,8 @@ Every AI operator must verify the following before making recommendations, writi
 - Blocking Issues
 - Recent Philosophy Additions
 - Documentation Consistency
+- Repository Checkpoint
+- Repository Synchronization
 
 ### Previous Sprint
 
@@ -439,7 +461,7 @@ Created the Command Center experience, grouped navigation, and shared visual sys
 
 #### AO-011 - Continuity System v1.1
 
-Created the Documentation-First Continuity System, deterministic startup flow, Operator Verification Gate, Startup Bundle, repository-state normalization, and clean-room validation.
+Created the Documentation-First Continuity System, deterministic startup flow, Operator Verification Gate, Startup Bundle, repository checkpoint normalization, and clean-room validation.
 
 ### Current
 
@@ -539,7 +561,7 @@ Insert Sprint 011 after Sprint 010 to establish the Documentation-First Continui
 
 Reasoning:
 
-Clean startup, deterministic context, and repository-state verification are required before AI operators can safely continue complex work.
+Clean startup, deterministic context, and repository checkpoint verification are required before AI operators can safely continue complex work.
 
 ### 2026-07-11 - Strategy Shift to Infrastructure + Early B2C + B2B + Scale
 
@@ -1489,14 +1511,14 @@ Sprint 012 Task 4 QA passed.
 - Sprint: Sprint 011 - Continuity System v1.1
 - Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
 
-## Repository State
+## Repository Checkpoint
 
 - Current Branch: main
-- Current HEAD: `e07b34bbf834d44daa2553f810c25766e3dbd626`
-- Last Verified Commit: `e07b34bbf834d44daa2553f810c25766e3dbd626`
-- Working Tree Status: CLEAN
-- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 4 documentation synchronization commit
-- Repository Verification Status: VERIFIED - repository metadata is maintained only in Active Project State
+- Repository Checkpoint: `5aaf1d1b6f388efccd9c1b39ee213fc46c8c6265`
+- Checkpoint Description: Last verified repository checkpoint after Sprint 012 Task 4 Startup Bundle Synchronization. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
+- Working Tree Status: CLEAN at Repository Checkpoint
+- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 4 Startup Bundle Synchronization commit
+- Repository Verification Status: VERIFIED - repository checkpoint metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-17
 
 ## Rules
@@ -1616,7 +1638,8 @@ None recorded in the continuity system at this time.
 - `scripts/generate-ai-operator-startup-bundle.mjs` regenerates the AI Operator Startup Bundle from exact Knowledge Base source paths.
 - `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md` is a generated fallback transport artifact for environments that cannot directly access the private repository.
 - Individual AO Knowledge Base source documents remain authoritative.
-- Repository metadata is authoritative only in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
+- Repository checkpoint metadata is authoritative only in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
+- Startup verification checks the documented Repository Checkpoint, branch, origin, synchronization status, working tree status, and bundle validation without requiring the generated bundle to contain the commit that contains itself.
 
 ## Pending Refactors
 
@@ -1662,7 +1685,8 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 011 established documentation-first startup as the required operator onboarding path.
 - GitHub source documents are primary.
 - The generated Startup Bundle is a fallback transport artifact.
-- Active Project State is the single authoritative repository metadata source.
+- Active Project State is the single authoritative repository checkpoint source.
+- Repository verification uses a Repository Checkpoint rather than requiring the Startup Bundle to contain the commit that contains itself.
 - Verification must happen before implementation.
 - Sprint 011 was closed after implementation COMPLETE, QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push COMPLETE.
 - The Master Plan is now the authoritative strategic planning document.
@@ -1675,7 +1699,7 @@ Sprint 011 - Continuity System v1.1.
 - Keep all new work local-first until cloud or external services have clear positive ROI.
 - Remove ambiguous continuity references so every future AI operator can complete startup from exact source paths.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
-- Maintain repository metadata only in Active Project State.
+- Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
 - Begin Sprint 012 Task 5 - Execution Dashboard & Detail Page.
 
@@ -1700,7 +1724,8 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 011 Git commit is complete.
 - Sprint 011 Git push is complete.
 - Sprint 011 is officially closed.
-- Repository state is normalized.
+- Repository checkpoint state is normalized.
+- Repository verification now uses a checkpoint model so documentation synchronization commits do not invalidate themselves.
 - GitHub startup was validated.
 - Startup Bundle was validated.
 - Master Plan was added to the required startup reading order.
@@ -1782,7 +1807,7 @@ Planning closeout confirms:
 - Task 1 QA passed.
 - Documentation for planning is complete.
 - The next required action at planning closeout was to begin Sprint 012 Task 1.
-- Repository metadata is maintained authoritatively in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
+- Repository checkpoint metadata is maintained authoritatively in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
 
 ## Task 1 - Execution Core Architecture
 
@@ -2757,7 +2782,7 @@ Sprint 012 cannot close until:
 - Git commit is created.
 - Repository is pushed.
 - Working tree is clean at the verified checkpoint.
-- Repository state is documented using normalized snapshot terminology.
+- Repository checkpoint state is documented using normalized checkpoint terminology.
 - Startup verification passes.
 - Sprint closeout is documented.
 

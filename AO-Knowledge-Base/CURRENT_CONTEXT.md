@@ -28,7 +28,8 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 011 established documentation-first startup as the required operator onboarding path.
 - GitHub source documents are primary.
 - The generated Startup Bundle is a fallback transport artifact.
-- Active Project State is the single authoritative repository metadata source.
+- Active Project State is the single authoritative repository checkpoint source.
+- Repository verification uses a Repository Checkpoint rather than requiring the Startup Bundle to contain the commit that contains itself.
 - Verification must happen before implementation.
 - Sprint 011 was closed after implementation COMPLETE, QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push COMPLETE.
 - The Master Plan is now the authoritative strategic planning document.
@@ -41,7 +42,7 @@ Sprint 011 - Continuity System v1.1.
 - Keep all new work local-first until cloud or external services have clear positive ROI.
 - Remove ambiguous continuity references so every future AI operator can complete startup from exact source paths.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
-- Maintain repository metadata only in Active Project State.
+- Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
 - Begin Sprint 012 Task 5 - Execution Dashboard & Detail Page.
 
@@ -66,7 +67,8 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 011 Git commit is complete.
 - Sprint 011 Git push is complete.
 - Sprint 011 is officially closed.
-- Repository state is normalized.
+- Repository checkpoint state is normalized.
+- Repository verification now uses a checkpoint model so documentation synchronization commits do not invalidate themselves.
 - GitHub startup was validated.
 - Startup Bundle was validated.
 - Master Plan was added to the required startup reading order.

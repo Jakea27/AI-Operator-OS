@@ -11,7 +11,7 @@ Sprint 011 establishes the Documentation-First Continuity System v1.1 as the req
 
 GitHub remains the primary startup source. The generated `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md` is a fallback transport artifact for environments that cannot reliably read the private repository. Source documents remain authoritative, and any conflict between the bundle and source documents must stop work until resolved.
 
-Repository metadata now has one authoritative source: `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`. Sprint summaries and generated bundles must point to Active Project State instead of duplicating HEAD, commit, working-tree, push, or verification timestamps. Verification before implementation is now a permanent operating rule.
+Repository checkpoint metadata now has one authoritative source: `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`. Sprint summaries and generated bundles must point to Active Project State instead of duplicating self-referential commit metadata. Verification before implementation is now a permanent operating rule. The checkpoint model prevents a Startup Bundle commit from immediately making the bundle stale simply because HEAD changed.
 
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 

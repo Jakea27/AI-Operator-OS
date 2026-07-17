@@ -160,7 +160,7 @@ Created the Command Center experience, grouped navigation, and shared visual sys
 
 #### AO-011 - Continuity System v1.1
 
-Created the Documentation-First Continuity System, deterministic startup flow, Operator Verification Gate, Startup Bundle, repository-state normalization, and clean-room validation.
+Created the Documentation-First Continuity System, deterministic startup flow, Operator Verification Gate, Startup Bundle, repository checkpoint normalization, and clean-room validation.
 
 ### Current
 
@@ -260,7 +260,7 @@ Insert Sprint 011 after Sprint 010 to establish the Documentation-First Continui
 
 Reasoning:
 
-Clean startup, deterministic context, and repository-state verification are required before AI operators can safely continue complex work.
+Clean startup, deterministic context, and repository checkpoint verification are required before AI operators can safely continue complex work.
 
 ### 2026-07-11 - Strategy Shift to Infrastructure + Early B2C + B2B + Scale
 
@@ -271,4 +271,3 @@ Shift the business strategy from completing the operating system first to buildi
 Reasoning:
 
 This reduces the risk of delayed revenue, allows slow-compounding assets to start earlier, and creates a path for B2B cash flow to fund continued development.
-

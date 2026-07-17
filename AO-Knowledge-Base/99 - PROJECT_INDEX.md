@@ -57,8 +57,28 @@ Every AI operator must read the following source documents in this exact order.
 2. Confirm current sprint.
 3. Confirm remaining phases.
 4. Confirm next required action.
-5. Verify no sprint is currently awaiting QA or closeout.
-6. Only then begin implementation.
+5. Verify repository checkpoint consistency.
+6. Verify no sprint is currently awaiting QA or closeout.
+7. Only then begin implementation.
+
+## Repository Checkpoint Verification
+
+Repository verification uses the `Repository Checkpoint` documented in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
+
+The checkpoint is the last verified repository state after implementation and documentation synchronization. It is not required to equal the commit that contains a regenerated Startup Bundle.
+
+This prevents a documentation synchronization commit from invalidating itself simply because committing the bundle changes Git history.
+
+Startup verification must confirm:
+
+- Branch is `main`.
+- Origin is the official GitHub repository.
+- Local repository is synchronized with `origin/main`.
+- Working tree status matches the current documented workflow state.
+- Startup Bundle validation is `VALID`.
+- Active Project State contains the current sprint, phase, next action, and repository checkpoint.
+
+Startup verification must not fail only because the Startup Bundle was committed after generation. If the repository is clean and synchronized beyond the documented checkpoint, the checkpoint remains valid unless another continuity document records a conflicting project state.
 
 ## Operator Verification Gate
 
@@ -75,6 +95,8 @@ Every AI operator must verify the following before making recommendations, writi
 - Blocking Issues
 - Recent Philosophy Additions
 - Documentation Consistency
+- Repository Checkpoint
+- Repository Synchronization
 
 ### Previous Sprint
 

@@ -34,7 +34,7 @@ Planning closeout confirms:
 - Task 1 QA passed.
 - Documentation for planning is complete.
 - The next required action at planning closeout was to begin Sprint 012 Task 1.
-- Repository metadata is maintained authoritatively in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
+- Repository checkpoint metadata is maintained authoritatively in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
 
 ## Task 1 - Execution Core Architecture
 
@@ -1009,7 +1009,7 @@ Sprint 012 cannot close until:
 - Git commit is created.
 - Repository is pushed.
 - Working tree is clean at the verified checkpoint.
-- Repository state is documented using normalized snapshot terminology.
+- Repository checkpoint state is documented using normalized checkpoint terminology.
 - Startup verification passes.
 - Sprint closeout is documented.
 

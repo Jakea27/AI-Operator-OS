@@ -103,10 +103,10 @@ function renderDocument(document) {
 }
 
 function extractRepositoryState(activeProjectStateContent) {
-  const section = extractSection(activeProjectStateContent, "Repository State");
+  const section = extractSection(activeProjectStateContent, "Repository Checkpoint");
   const requiredLabels = [
-    "Current HEAD",
-    "Last Verified Commit",
+    "Repository Checkpoint",
+    "Checkpoint Description",
     "Working Tree Status",
     "Repository Push Status",
     "Repository Verification Status",
@@ -121,7 +121,7 @@ function extractRepositoryState(activeProjectStateContent) {
     const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const match = section.match(new RegExp(`^- ${escapedLabel}:\\s*(.+?)\\s*$`, "m"));
     if (!match || !match[1]?.trim()) {
-      fail(`Repository metadata missing from Active Project State: ${label}`);
+      fail(`Repository checkpoint metadata missing from Active Project State: ${label}`);
     }
     repositoryState[label] = match[1].trim();
   }
@@ -169,9 +169,9 @@ const bundle = [
   `- Current Sprint: ${currentSprint}`,
   `- Last Completed Sprint: ${lastCompletedSprint}`,
   `- Current Sprint Summary path: ${currentSprintSummaryPath}`,
-  `- Repository metadata source: ${repositoryState.source}`,
-  `- Current HEAD: ${repositoryState["Current HEAD"]}`,
-  `- Last Verified Commit: ${repositoryState["Last Verified Commit"]}`,
+  `- Repository checkpoint source: ${repositoryState.source}`,
+  `- Repository Checkpoint: ${repositoryState["Repository Checkpoint"]}`,
+  `- Checkpoint Description: ${repositoryState["Checkpoint Description"]}`,
   `- Working Tree Status: ${repositoryState["Working Tree Status"]}`,
   `- Repository Push Status: ${repositoryState["Repository Push Status"]}`,
   `- Repository Verification Status: ${repositoryState["Repository Verification Status"]}`,
@@ -191,5 +191,5 @@ writeFileSync(outputPath, `${bundle.trimEnd()}\n`, "utf8");
 console.log(`Generated ${displayPath(outputPath)}`);
 console.log(`Included ${sourceDocuments.length} documents.`);
 console.log(`Current Sprint Summary: ${currentSprintSummaryPath}`);
-console.log(`Repository metadata source: ${repositoryState.source}`);
+console.log(`Repository checkpoint source: ${repositoryState.source}`);
 console.log(`Bundle Validation: ${validation}`);

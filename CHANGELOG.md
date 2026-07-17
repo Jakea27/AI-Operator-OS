@@ -1,10 +1,18 @@
 # Changelog
 
+# Continuity Checkpoint Model
+
+Documentation:
+- Replaced self-referential Startup Bundle repository verification language with the Repository Checkpoint model.
+- Clarified that Startup Bundle generation commits do not invalidate the bundle simply because Git history advances.
+- Updated continuity documentation and startup bundle generation to use Repository Checkpoint metadata from Active Project State.
+- Regenerated the AI Operator Startup Bundle with checkpoint metadata.
+
 # Sprint 012 - AI Execution Infrastructure
 
 Task 4 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 4 implementation commit was pushed.
-- Updated repository metadata to `7def0aac493fb656e37fbbd6d462f40222c090e4`.
+- Updated repository checkpoint metadata to `7def0aac493fb656e37fbbd6d462f40222c090e4`.
 - Recorded Task 4 implementation, QA, documentation, commit, and push as complete.
 - Updated the current phase to Sprint 012 Task 5 - Execution Dashboard & Detail Page.
 
@@ -19,7 +27,7 @@ Task 4 - Execution Queue Detail Integration:
 
 Task 3 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 3 implementation commit was pushed.
-- Updated repository metadata to `443b0d1071e28b35dbca3e5892fb2cfbe60e2669`.
+- Updated repository checkpoint metadata to `443b0d1071e28b35dbca3e5892fb2cfbe60e2669`.
 - Recorded Task 3 implementation, QA, documentation, commit, and push as complete.
 - Updated the current phase to Sprint 012 Task 4 - Execution Queue Detail Integration.
 
@@ -34,7 +42,7 @@ Task 3 - Capability & Approval Integration:
 
 Task 2 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 2 implementation commit was pushed.
-- Updated repository metadata to `513c554240a1c6caf69da936cbfe4af0c2d03f33`.
+- Updated repository checkpoint metadata to `513c554240a1c6caf69da936cbfe4af0c2d03f33`.
 - Recorded Task 2 implementation, QA, documentation, commit, and push as complete.
 - Updated the current phase to Sprint 012 Task 3 - Capability & Approval Integration.
 
@@ -50,7 +58,7 @@ Task 2 - Execution Lifecycle Engine:
 
 Task 1 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 1 implementation commit was pushed.
-- Updated repository metadata to `475c9c4c3a515ca860e10b513872c0e8b1ec1968`.
+- Updated repository checkpoint metadata to `475c9c4c3a515ca860e10b513872c0e8b1ec1968`.
 - Recorded Task 1 implementation, QA, documentation, commit, and push as complete.
 - Updated the current phase to Sprint 012 Task 2 - Execution Lifecycle Engine.
 
@@ -66,7 +74,7 @@ Task 1 - Execution Core Architecture:
 Planning Closeout:
 - Recorded Sprint 012 Planning as complete after CEO review, commit, and push.
 - Updated continuity state so Sprint 012 Task 1 - Execution Core Architecture is the current phase.
-- Synchronized repository metadata with the current Git repository state.
+- Synchronized repository checkpoint metadata with the current Git repository state.
 - Confirmed Sprint 012 implementation and QA have not started.
 
 Planning:
@@ -87,11 +95,11 @@ Closed:
 - Added Sprint 012 Planning summary as the current sprint summary pointer.
 
 Documentation Finalization:
-- Added Task 5 - Repository State Normalization documentation.
-- Established Active Project State as the single authoritative repository-state source.
-- Removed duplicated repository metadata from Sprint 011 summary documentation.
-- Updated the startup bundle generator to source repository metadata only from Active Project State.
-- Regenerated the AI Operator Startup Bundle with repository metadata source and valid bundle status.
+- Added Task 5 - Repository Checkpoint Normalization documentation.
+- Established Active Project State as the single authoritative repository checkpoint source.
+- Removed duplicated repository checkpoint metadata from Sprint 011 summary documentation.
+- Updated the startup bundle generator to source repository checkpoint metadata only from Active Project State.
+- Regenerated the AI Operator Startup Bundle with repository checkpoint source and valid bundle status.
 - Recorded Sprint 011 implementation as complete.
 - Recorded Sprint 011 QA as PASS.
 - Prepared Sprint 011 for Git commit and closeout.
