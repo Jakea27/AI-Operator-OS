@@ -118,6 +118,7 @@ const titles: Record<string, string> = {
   '/projects': 'Projects',
   '/work-items': 'Work Items',
   '/execution-queue': 'Execution Queue',
+  '/executions': 'Execution Dashboard',
   '/capability-planning': 'Capability Planning',
   '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
@@ -131,6 +132,7 @@ function getWorkspaceTitle(pathname: string) {
   if (pathname.startsWith('/operators')) return 'Operators'
   if (pathname.startsWith('/projects')) return 'Projects'
   if (pathname.startsWith('/work-items')) return 'Work Items'
+  if (pathname.startsWith('/executions')) return 'Execution Dashboard'
   if (pathname.startsWith('/execution-queue')) return 'Execution Queue'
   if (pathname.startsWith('/capability-planning')) return 'Capability Planning'
   return titles[pathname] ?? 'Workspace'

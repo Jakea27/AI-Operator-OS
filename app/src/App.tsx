@@ -19,6 +19,8 @@ import { WorkItemDetailPage } from '@/src/features/workItems/WorkItemDetailPage'
 import { WorkItemsPage } from '@/src/features/workItems/WorkItemsPage'
 import { ExecutionQueueDetailPage } from '@/src/features/executionQueue/ExecutionQueueDetailPage'
 import { ExecutionQueuePage } from '@/src/features/executionQueue/ExecutionQueuePage'
+import { ExecutionDashboardPage } from '@/src/features/execution/ExecutionDashboardPage'
+import { ExecutionDetailPage } from '@/src/features/execution/ExecutionDetailPage'
 
 export default function App() {
   return (
@@ -43,6 +45,8 @@ export default function App() {
         <Route path="work-items/:workItemId" element={<WorkItemDetailPage />} />
         <Route path="execution-queue" element={<ExecutionQueuePage />} />
         <Route path="execution-queue/:queueItemId" element={<ExecutionQueueDetailPage />} />
+        <Route path="executions" element={<ExecutionDashboardPage />} />
+        <Route path="executions/:executionId" element={<ExecutionDetailPage />} />
         <Route path="capability-planning" element={<CapabilityPlanningPage />} />
         <Route path="capability-planning/:capabilityPlanId" element={<CapabilityPlanDetailPage />} />
         <Route path="approval" element={<ApprovalQueuePage />} />

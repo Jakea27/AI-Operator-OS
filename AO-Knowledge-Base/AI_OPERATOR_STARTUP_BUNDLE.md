@@ -1435,7 +1435,7 @@ Sprint 012 - AI Execution Infrastructure
 
 ## Sprint Status
 
-ACTIVE - TASK 4 COMPLETE.
+ACTIVE - TASK 5 IMPLEMENTATION COMPLETE.
 
 ## Current Phase
 
@@ -1451,11 +1451,11 @@ Sprint 012
 
 ## Current Objective
 
-Begin Sprint 012 Task 5 by creating execution dashboard and detail page visibility for Execution Core records.
+Complete CEO QA for Sprint 012 Task 5 after adding read-only Execution Dashboard and Execution Detail Page visibility.
 
 ## Next Required Action
 
-Begin Sprint 012 Task 5.
+CEO QA for Sprint 012 Task 5.
 
 ## Blocking Issues
 
@@ -1467,11 +1467,11 @@ main
 
 ## Last QA Result
 
-Sprint 012 Task 4 QA passed.
+Sprint 012 Task 4 QA passed. Sprint 012 Task 5 build verification passed; CEO QA pending.
 
 ## Last Build Result
 
-`npm.cmd run build` passed during Sprint 012 Task 4 verification.
+`npm.cmd run build` passed during Sprint 012 Task 5 verification.
 
 ## Last Updated
 
@@ -1480,10 +1480,10 @@ Sprint 012 Task 4 QA passed.
 ## Current Sprint Verification
 
 - Sprint: Sprint 012
-- Status: ACTIVE - TASK 4 COMPLETE
-- Implementation: TASK 4 COMPLETE
-- QA: TASK 4 PASS
-- Documentation: TASK 4 COMPLETE
+- Status: ACTIVE - TASK 5 IMPLEMENTATION COMPLETE
+- Implementation: TASK 5 COMPLETE
+- QA: TASK 5 AWAITING CEO QA
+- Documentation: TASK 5 UPDATED
 
 ## Continuity Document Pointers
 
@@ -1542,7 +1542,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Build passing as of Sprint 012 Task 4 verification.
+Build passing as of Sprint 012 Task 5 verification.
 
 Command used:
 
@@ -1550,19 +1550,19 @@ Command used:
 
 ## Current Status
 
-Sprint 012 Task 4 - Execution Queue Detail Integration complete.
+Sprint 012 Task 5 - Execution Dashboard & Detail Page implementation complete.
 
 ## Next Phase
 
-Sprint 012 Task 5 - Execution Dashboard & Detail Page.
+Sprint 012 Task 5 CEO QA.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 Task 4 implementation is COMPLETE. Task 5 has NOT STARTED.
+Sprint 012 Task 5 implementation is COMPLETE. Task 5 added read-only execution dashboard/detail visibility.
 
 ## Current Sprint QA Status
 
-Sprint 012 Task 4 QA passed. Full Sprint 012 QA has NOT STARTED.
+Sprint 012 Task 5 build verification passed. CEO QA for Task 5 is PENDING. Full Sprint 012 QA has NOT STARTED.
 
 ## Previous Sprint
 
@@ -1667,7 +1667,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 The current focus is Sprint 012 - AI Execution Infrastructure Task 5: Execution Dashboard & Detail Page.
 
-Sprint 011 is officially closed. Sprint 012 planning is complete, reviewed, committed, and pushed. Task 1, Task 2, Task 3, and Task 4 implementation, QA, documentation, commit, and push are complete.
+Sprint 011 is officially closed. Sprint 012 planning is complete, reviewed, committed, and pushed. Task 1, Task 2, Task 3, and Task 4 implementation, QA, documentation, commit, and push are complete. Task 5 implementation is complete and awaiting CEO QA.
 
 ## Last Completed Sprint
 
@@ -1701,7 +1701,7 @@ Sprint 011 - Continuity System v1.1.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 012 Task 5 - Execution Dashboard & Detail Page.
+- Complete CEO QA for Sprint 012 Task 5 - Execution Dashboard & Detail Page.
 
 ## Known Risks
 
@@ -1712,7 +1712,7 @@ Sprint 011 - Continuity System v1.1.
 
 ## Future Planned Work
 
-- Sprint 012 Task 4 is complete. Task 5 is the next implementation task.
+- Sprint 012 Task 5 implementation is complete. CEO QA is the next required action.
 - Future execution-layer work must follow Architecture v2 and the approval-first operating model.
 - Any future AI provider integration must remain replaceable and capability-based.
 
@@ -1747,7 +1747,11 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 012 Task 4 CEO QA passed.
 - Sprint 012 Task 4 implementation commit was pushed.
 - Sprint 012 Task 4 documentation is synchronized to the committed repository state.
-- The project is ready to begin Sprint 012 Task 5 - Execution Dashboard & Detail Page.
+- Sprint 012 Task 5 added the read-only Execution Dashboard and Execution Detail Page.
+- Sprint 012 Task 5 added local filtering, sorting, execution summary metrics, lifecycle inspection, relationship navigation, missing-reference states, empty states, and cost/log/retry/failure/result visibility.
+- Sprint 012 Task 5 preserved existing stores and did not add execution behavior, lifecycle mutation, provider calls, tools, APIs, automation, or autonomous behavior.
+- Sprint 012 Task 5 build verification passed.
+- The project is waiting for CEO QA on Sprint 012 Task 5 - Execution Dashboard & Detail Page.
 
 ## User Workflow Preferences
 
@@ -1775,7 +1779,7 @@ Sprint 011 - Continuity System v1.1.
 
 ## Status
 
-ACTIVE - TASK 4 COMPLETE.
+ACTIVE - TASK 5 IMPLEMENTATION COMPLETE.
 
 ## Phase
 
@@ -1783,15 +1787,15 @@ Sprint 012 Task 5 - Execution Dashboard & Detail Page.
 
 ## Implementation
 
-TASK 4 COMPLETE. TASK 5 NOT STARTED.
+TASK 5 COMPLETE.
 
 ## QA
 
-Task 4 PASS.
+Task 5 build verification PASS. CEO QA pending.
 
 ## Documentation
 
-Task 4 documentation COMPLETE.
+Task 5 documentation UPDATED.
 
 ## Planning Closeout
 
@@ -2042,6 +2046,80 @@ Task 4 added:
 ### Current Status
 
 Task 4 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 5 - Execution Dashboard & Detail Page is the current phase.
+
+## Task 5 - Execution Dashboard & Detail Page
+
+### Status
+
+IMPLEMENTATION COMPLETE. CEO QA pending.
+
+### Objective
+
+Create the first CEO-facing interface for AI Execution Infrastructure by adding read-only dashboard and detail views for Execution Core records.
+
+This task is visibility and inspection only. It does not execute AI, call providers, trigger tools, mutate lifecycle state, approve work, or introduce autonomous behavior.
+
+### Implementation Summary
+
+Task 5 added:
+
+- Execution Dashboard route at `/executions`.
+- Execution Detail route at `/executions/:executionId`.
+- Execution Queue entry point linking to the Execution Dashboard.
+- Execution Queue detail links to the read-only Execution Detail page for linked Execution Records.
+- Summary metrics for all Execution Core lifecycle states.
+- Additional indicators for CEO action, failures, long-running or paused executions, recent completions, estimated cost, and actual cost.
+- Execution list cards showing Execution ID, Work Item, lifecycle state, Capability Plan reference, Approval status, provider/tool references, retry count, estimated cost, actual cost, created time, updated time, failure indicators, and human-intervention indicators.
+- Local filtering by lifecycle state, approval status, capability readiness, failed state, human-intervention state, and completed state.
+- Local sorting by updated time, oldest waiting, retry count, estimated cost, and actual cost.
+- Execution Detail sections for Identity, Lifecycle, Readiness and Governance, Execution Configuration, History and Audit, Relationships, Cost References, and Result Reference.
+- Safe empty states for no records, no filtered matches, missing references, no logs, no retries, no failures, no result, and no cost records.
+
+### Files Created
+
+- `app/src/features/execution/ExecutionDashboardPage.tsx`
+- `app/src/features/execution/ExecutionDetailPage.tsx`
+
+### Files Modified
+
+- `app/src/App.tsx`
+- `app/components/AppShell.tsx`
+- `app/src/features/executionQueue/ExecutionQueuePage.tsx`
+- `app/src/features/executionQueue/ExecutionQueueDetailPage.tsx`
+- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
+- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
+- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+- `AO-Knowledge-Base/CHANGELOG.md`
+- `CHANGELOG.md`
+- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+
+### Architecture Decisions
+
+- Execution Store remains the single owner of Execution Records.
+- Execution Dashboard and Execution Detail are read-only consumers of existing stores and references.
+- No new persistence key, duplicate store, duplicate route system, or duplicated source-of-truth data was added.
+- Existing Execution Queue navigation remains the sidebar entry point; `/executions` is reachable from Execution Queue and queue detail records.
+- Execution Detail links to existing supported routes for Work Item, Execution Queue item, Capability Plan, and Approval Queue.
+- Approval detail routing was not invented; Approval references navigate to the existing Approval Queue page.
+- Lifecycle mutation controls are not exposed in Task 5 surfaces.
+- The previous queue-detail lifecycle gate controls were replaced with read-only navigation to align with Task 5 safety requirements.
+
+### Verification
+
+- `npm.cmd run build` passed.
+- TypeScript compile passed.
+- Vite production build passed.
+- Execution Dashboard route compiles.
+- Execution Detail route compiles.
+- Execution Queue entry point compiles.
+- Empty and missing-reference states are handled without throwing.
+- No provider execution, AI/model execution, API call, tool call, approval action, lifecycle mutation, automation, or autonomous behavior was added.
+
+### Current Status
+
+Task 5 implementation is complete and documentation has been updated. CEO QA is pending. Do not begin Sprint 012 Task 6 until Task 5 QA passes and the CEO authorizes the next task.
 
 ## Sprint Objective
 

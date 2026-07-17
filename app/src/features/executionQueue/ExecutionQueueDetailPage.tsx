@@ -218,18 +218,12 @@ export function ExecutionQueueDetailPage() {
                 ) : null}
 
                 <div className="flex flex-wrap gap-3">
-                  <button onClick={() => executionCore.syncReadinessReferences(execution.id)} className="btn-secondary inline-flex items-center gap-2">
-                    <ShieldCheck size={14} /> Sync References
-                  </button>
-                  <button onClick={() => executionCore.advanceFromCapabilityReview(execution.id)} className="btn-secondary">
-                    Advance Capability Gate
-                  </button>
-                  <button onClick={() => executionCore.advanceFromApprovalReview(execution.id)} className="btn-secondary">
-                    Advance Approval Gate
-                  </button>
-                  <button onClick={() => executionCore.markReadyWhenEligible(execution.id)} className="btn-secondary">
-                    Mark Ready If Eligible
-                  </button>
+                  <Link to={`/executions/${execution.id}`} className="btn-primary inline-flex items-center gap-2">
+                    <ShieldCheck size={14} /> Open Execution Detail
+                  </Link>
+                  <Link to="/executions" className="btn-secondary">
+                    Open Execution Dashboard
+                  </Link>
                 </div>
               </div>
             ) : (

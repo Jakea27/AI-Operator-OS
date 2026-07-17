@@ -1,5 +1,18 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 5 - Execution Dashboard & Detail Page - 2026-07-17
+
+### Added
+
+- Added read-only Execution Dashboard and Execution Detail Page routes.
+- Added Execution Core summary metrics, local filtering, local sorting, execution list cards, and relationship navigation.
+- Added detail sections for identity, lifecycle, readiness and governance, execution configuration, history and audit, relationships, cost references, and result reference.
+- Added safe empty and missing-reference states for execution records, logs, retries, failures, costs, results, and related records.
+- Reused existing Execution Store, Execution Queue, Capability Planning, and Approval Queue references without creating duplicate stores or duplicate ownership.
+- Preserved Execution Queue as the sidebar entry point and linked to execution visibility from existing execution workflow pages.
+- Confirmed Task 5 remains read-only with no execution behavior, lifecycle mutation, provider calls, tool calls, APIs, approval actions, automation, or autonomous behavior.
+- Verified `npm.cmd run build` passes.
+
 ## Continuity Checkpoint Model - 2026-07-17
 
 ### Updated

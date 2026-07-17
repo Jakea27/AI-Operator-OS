@@ -2,6 +2,7 @@ import { PageIntro } from '@/components/PageIntro'
 import { SummaryCard } from '@/components/SummaryCard'
 import { ExecutionQueueRecord, useExecutionQueueStore } from '@/src/core/executionQueue'
 import { ExecutionQueueCard } from './ExecutionQueueCard'
+import { Link } from 'react-router-dom'
 
 export function ExecutionQueuePage() {
   const executionQueue = useExecutionQueueStore()
@@ -20,6 +21,7 @@ export function ExecutionQueuePage() {
         eyebrow="Module 007"
         title="Execution Queue"
         description="Review local queue records created from Work Items. Queue items prepare future execution and approval workflows, but do not execute anything."
+        action={<Link to="/executions" className="btn-secondary">Open Execution Dashboard</Link>}
       />
 
       <div className="mb-6 grid gap-4 md:grid-cols-3 xl:grid-cols-6">

@@ -6,7 +6,7 @@ The Execution Core is the permanent local-first foundation for future AI Operato
 
 It defines execution records, references, logs, cost records, retry history, failure records, result references, and persistence.
 
-This document describes the Sprint 012 execution foundation through Task 4.
+This document describes the Sprint 012 execution foundation through Task 5.
 
 It does not describe provider integration, queue processing, event bus behavior, external tool runtime, autonomous execution, or UI execution controls.
 
@@ -48,7 +48,17 @@ Sprint 012 Task 4 created:
 - Reference synchronization from existing Capability Planning and Approval Queue records.
 - Readiness-gate controls that use existing lifecycle/readiness helpers without executing work.
 
-Sprint 012 Tasks 1-4 do not create:
+Sprint 012 Task 5 created:
+
+- A read-only Execution Dashboard route.
+- A read-only Execution Detail route.
+- Execution Store summary metrics.
+- Execution list filtering and sorting.
+- Lifecycle, readiness, approval, capability, cost, log, retry, failure, event, and result visibility.
+- Safe empty and missing-reference states.
+- Relationship navigation to existing supported Work Item, Execution Queue, Capability Planning, and Approval Queue routes.
+
+Sprint 012 Tasks 1-5 do not create:
 
 - Execution behavior.
 - AI provider calls.
@@ -257,6 +267,67 @@ It does not:
 - Change routing.
 - Redesign the UI.
 
+## Execution Dashboard and Detail Page
+
+Sprint 012 Task 5 adds the first CEO-facing execution inspection workspace.
+
+The active files are:
+
+- `app/src/features/execution/ExecutionDashboardPage.tsx`
+- `app/src/features/execution/ExecutionDetailPage.tsx`
+
+The active routes are:
+
+- `/executions`
+- `/executions/:executionId`
+
+Navigation decision:
+
+- No new sidebar item was added.
+- Execution Queue remains the operations entry point.
+- Execution Queue links to the Execution Dashboard.
+- Queue detail records link to their read-only Execution Detail page.
+
+The Execution Dashboard reads the existing Execution Store and displays:
+
+- Total execution records.
+- Lifecycle counts for every Execution Status.
+- CEO action, failure, long-running/paused, recent completion, estimated cost, and actual cost indicators.
+- Local filtering by lifecycle, approval status, capability readiness, failure state, human-intervention state, and completed state.
+- Local sorting by updated time, oldest waiting, retry count, estimated cost, and actual cost.
+
+The Execution Detail Page reads the existing Execution Store and displays:
+
+- Execution identity.
+- Work Item and Execution Queue references.
+- Lifecycle timing.
+- Transition history.
+- Pause/resume history.
+- Retry history.
+- Failure history.
+- Execution logs.
+- Event history.
+- Capability Plan reference.
+- Approval reference.
+- Selected capability, tool, and provider references.
+- Estimated and actual cost.
+- Cost records.
+- Result reference.
+
+Task 5 is read-only.
+
+It does not expose buttons that:
+
+- Start execution.
+- Retry execution.
+- Cancel execution.
+- Approve work.
+- Reject work.
+- Change lifecycle state.
+- Assign providers.
+- Assign tools.
+- Trigger external actions.
+
 ## Persistence
 
 Execution records persist locally.
@@ -302,7 +373,7 @@ Approval Queue
 ↓
 Execution Core
 
-Future Sprint 012 tasks will add a dedicated Execution Dashboard/detail page, cost/logging polish, and Command Center visibility.
+Future Sprint 012 tasks will add cost/logging polish and Command Center visibility.
 
 ## Safety Rules
 
@@ -314,6 +385,7 @@ Future Sprint 012 tasks will add a dedicated Execution Dashboard/detail page, co
 - Lifecycle helpers must not become a queue processor or event bus.
 - Readiness gates must read existing Capability Planning and Approval Queue records instead of duplicating them.
 - Execution Queue detail integration must create and display Execution Records by reference only.
+- Execution Dashboard and Detail Page must remain read-only until a later approved task authorizes lifecycle controls.
 - Execution Core must not store credentials.
 - Execution Core must not become a duplicate Work Item, Approval, Capability Planning, or Money store.
 
@@ -321,7 +393,6 @@ Future Sprint 012 tasks will add a dedicated Execution Dashboard/detail page, co
 
 Future tasks may add:
 
-- Execution detail UI.
 - Cost and logging polish.
 - Command Center visibility.
 - Provider and tool adapters after approval architecture remains stable.

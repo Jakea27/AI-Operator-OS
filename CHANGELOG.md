@@ -1,5 +1,18 @@
 # Changelog
 
+# Sprint 012 - AI Execution Infrastructure
+
+Task 5 - Execution Dashboard & Detail Page:
+- Added read-only Execution Dashboard and Execution Detail Page routes.
+- Added execution summary metrics for every lifecycle state.
+- Added local execution filtering and sorting.
+- Added execution list cards with Work Item, lifecycle, capability, approval, retry, cost, provider/tool, failure, and human-intervention context.
+- Added Execution Detail sections for identity, lifecycle, readiness and governance, execution configuration, history and audit, relationships, cost references, and result reference.
+- Added safe empty and missing-reference states.
+- Preserved existing stores and reference ownership.
+- Confirmed no execution behavior, lifecycle mutation, provider calls, tool calls, APIs, approval actions, automation, or autonomous behavior was added.
+- Verified `npm.cmd run build` passes.
+
 # Continuity Checkpoint Model
 
 Documentation:
@@ -7,8 +20,6 @@ Documentation:
 - Clarified that Startup Bundle generation commits do not invalidate the bundle simply because Git history advances.
 - Updated continuity documentation and startup bundle generation to use Repository Checkpoint metadata from Active Project State.
 - Regenerated the AI Operator Startup Bundle with checkpoint metadata.
-
-# Sprint 012 - AI Execution Infrastructure
 
 Task 4 Documentation Synchronization:
 - Synchronized continuity documentation after the Sprint 012 Task 4 implementation commit was pushed.
