@@ -1,7 +1,7 @@
 # Roadmap
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-28
+Last Updated: 2026-07-18
 
 ## Start Here for Future Sessions
 
@@ -38,6 +38,50 @@ Goal: Build the foundation of the OS before building revenue automation.
 - [x] Persisted daily briefing snapshots
 - [x] Briefing priorities, risks, and recommendations
 ## AO Issue Roadmap
+
+## Strategic Milestone Roadmap
+
+### AO-012 — Execution Infrastructure
+
+Purpose: prove AI Operator OS can execute work end-to-end without AI providers.
+
+Includes:
+
+- Worker Framework
+- Worker Registration
+- Job Queue
+- Execution Engine
+- Capability Manager
+- Provider Interface framework only
+- Approval Pipeline
+- Execution Logging
+- Tool Execution for deterministic non-AI tools
+- End-to-end execution workflow
+
+Workers may execute deterministic tools only. AO-012 does not include AI providers, model execution, autonomous AI behavior, or provider-specific intelligence.
+
+### AO-013 — AI Provider Integration
+
+Purpose: teach AI Operator OS how to use AI providers without tying the architecture to any single vendor.
+
+Includes:
+
+- Provider Manager
+- Provider registration
+- Capability discovery
+- Provider health
+- Provider selection
+- Provider abstraction layer
+- Local AI support through Ollama, local model detection, and model management
+- Cloud AI support for OpenAI, future Codex integration, Claude-ready architecture, Gemini-ready architecture, and future providers
+- Worker integration where workers request capabilities, Provider Manager selects providers, workers receive responses, workers log execution, and workers return results
+- CEO visibility for Provider Dashboard, Installed Providers, Available Models, Provider Health, Usage Metrics, and Local vs Cloud usage
+
+### AO-014+ — Revenue, Integrations, and Scaling
+
+After execution infrastructure and provider integration are stable, the roadmap proceeds into early revenue foundations, multi-business management, B2B revenue systems, external integrations, autonomous departments, and long-term scaling.
+
+## Legacy AO Issue Roadmap
 
 - [x] AO-001 Money Department
 - [x] AO-002 CEO Daily Briefing

@@ -141,6 +141,21 @@ Sprint 0.1 - Foundation and Desktop Command Center
 
 ## Next Priorities
 
-1. AO-005 Approval Queue.
-2. AO-006 Automation Engine.
+1. AO-012 Execution Infrastructure: prove deterministic end-to-end execution without AI providers.
+2. AO-013 AI Provider Integration: add Provider Manager, local/cloud provider support, provider health, model visibility, and worker capability routing.
 3. Add export, backup, and restore for operating and memory stores.
+
+## Roadmap Revision - AO-013 AI Provider Integration
+
+On 2026-07-18, the roadmap was revised to clearly separate execution infrastructure from AI intelligence.
+
+AO-012 is now Execution Infrastructure. Its purpose is to prove AI Operator OS can execute work end-to-end without AI providers. Workers may execute deterministic tools only. AO-012 includes Worker Framework, Worker Registration, Job Queue, Execution Engine, Capability Manager, Provider Interface framework only, Approval Pipeline, Execution Logging, deterministic Tool Execution, and an end-to-end execution workflow.
+
+AO-013 is now AI Provider Integration. Its purpose is to teach AI Operator OS how to use AI providers through a Provider Manager, provider abstraction layer, provider registration, capability discovery, provider health, provider selection, local AI support, cloud AI support, worker integration, and CEO provider visibility.
+
+Permanent architecture philosophy:
+
+- Separate infrastructure from intelligence.
+- Departments and workers request capabilities; they do not choose providers.
+- Provider Manager selects providers based on capability, cost, speed, availability, and business rules.
+- AI Operator OS must remain independent from any single AI vendor.

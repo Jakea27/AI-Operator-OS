@@ -110,11 +110,15 @@ AI Operator OS may eventually use external services when they create clear value
 
 The operating system is never built around one AI company.
 
-OpenAI, Claude, Gemini, local models, and future models are interchangeable resources.
+OpenAI, Codex, Claude, Gemini, Ollama, local models, and future models are interchangeable resources.
 
 The workflow belongs to AI Operator OS.
 
 AI providers may improve, decline, change pricing, change policies, or disappear. The business architecture should remain stable even when the model provider changes.
+
+Execution infrastructure and AI intelligence are separate layers. AI Operator OS must first prove that work can move through workers, jobs, deterministic tools, approvals, logs, and results without AI providers. AI providers are added later through a Provider Manager.
+
+Departments and workers request capabilities. They do not choose providers directly. The Provider Manager selects providers based on capability, cost, speed, availability, and business rules.
 
 ## 8. Infrastructure Before Intelligence
 

@@ -3,7 +3,7 @@
 Status: Active  
 Version: 0.1  
 Owner: Jake Allen  
-Last Updated: 2026-07-11
+Last Updated: 2026-07-18
 
 ## Purpose
 
@@ -80,6 +80,18 @@ The CEO retains final authority over money, public communication, client impact,
 ### AI Providers Are Replaceable
 
 AI providers are implementation details. The operating system owns the workflow and should not depend on a single model vendor.
+
+### Separate Infrastructure From Intelligence
+
+Execution infrastructure must prove that AI Operator OS can move work end-to-end without depending on AI providers. AI intelligence is added later through provider interfaces, not built into the execution foundation.
+
+### Departments Request Capabilities
+
+Departments and workers do not choose providers directly. They request capabilities. The Provider Manager selects providers based on capability, cost, speed, availability, and business rules.
+
+### Provider Independence
+
+AI Operator OS must never become tied to a single AI vendor. Local models, OpenAI, Claude, Gemini, Codex, and future providers are interchangeable resources behind the operating system's workflow.
 
 ### Reduce Thinking, Not Clicks
 
@@ -166,31 +178,65 @@ Created the Documentation-First Continuity System, deterministic startup flow, O
 
 #### AO-012 - AI Execution Infrastructure
 
-Plan and build the first approved execution infrastructure layer. This must preserve human approval, provider replaceability, capability planning, cost visibility, and local-first operating rules.
+Prove AI Operator OS can execute work end-to-end without AI providers.
+
+AO-012 includes:
+
+- Worker Framework
+- Worker Registration
+- Job Queue
+- Execution Engine
+- Capability Manager
+- Provider Interface framework only
+- Approval Pipeline
+- Execution Logging
+- Tool Execution for deterministic non-AI tools
+- End-to-end execution workflow
+
+Workers may execute deterministic tools only. AO-012 does not include AI providers, model execution, autonomous AI work, or provider-specific intelligence.
 
 ### Future
 
-#### AO-013 - Early Revenue Foundation
+#### AO-013 - AI Provider Integration
+
+Teach AI Operator OS how to use AI providers while preserving provider independence.
+
+AO-013 includes:
+
+- Provider Manager
+- Provider registration
+- Capability discovery
+- Provider health
+- Provider selection
+- Provider abstraction layer
+- Local AI support through Ollama, local model detection, and model management
+- Cloud AI support for OpenAI, future Codex integration, Claude-ready architecture, Gemini-ready architecture, and future providers
+- Worker integration where workers request capabilities, Provider Manager selects providers, workers receive responses, workers log execution, and workers return results
+- CEO features for Provider Dashboard, Installed Providers, Available Models, Provider Health, Usage Metrics, and Local vs Cloud visibility
+
+AO-013 does not replace AO-012. It sits on top of the execution infrastructure after the non-AI execution workflow is proven.
+
+#### AO-014 - Early Revenue Foundation
 
 Begin practical early revenue systems, especially B2C opportunities that can compound over time while infrastructure continues maturing.
 
-#### AO-014 - Multi-Business Management
+#### AO-015 - Multi-Business Management
 
 Improve the operating system's ability to manage multiple active businesses without increasing CEO workload linearly.
 
-#### AO-015 - B2B Revenue Systems
+#### AO-016 - B2B Revenue Systems
 
 Create B2B revenue workflows that can generate more immediate cash flow and help fund continued growth.
 
-#### AO-016 - External Integrations
+#### AO-017 - External Integrations
 
 Add approved external services, tools, and APIs only when ROI, cost, permission, and approval rules are clear.
 
-#### AO-017 - Autonomous Departments
+#### AO-018 - Autonomous Departments
 
 Advance departments toward higher autonomy after approval architecture, capability planning, execution infrastructure, and monitoring are stable.
 
-#### AO-018+ - Long-Term Scaling
+#### AO-019+ - Long-Term Scaling
 
 Scale toward autonomous business management, portfolio operations, advanced analytics, reusable business blueprints, and continuously improving operators.
 
@@ -271,3 +317,13 @@ Shift the business strategy from completing the operating system first to buildi
 Reasoning:
 
 This reduces the risk of delayed revenue, allows slow-compounding assets to start earlier, and creates a path for B2B cash flow to fund continued development.
+
+### 2026-07-18 - AO-013 AI Provider Integration Inserted After Execution Infrastructure
+
+Decision:
+
+Separate execution infrastructure from AI intelligence. AO-012 proves deterministic end-to-end execution without AI providers. AO-013 then adds AI Provider Integration through a Provider Manager, provider abstraction layer, local/cloud provider support, and worker capability requests.
+
+Reasoning:
+
+Execution Infrastructure must never depend on a specific AI provider. Departments and workers request capabilities; Provider Manager selects providers based on capability, cost, speed, availability, and business rules. This preserves provider independence and prevents AI Operator OS from becoming tied to one vendor.

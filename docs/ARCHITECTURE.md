@@ -1,7 +1,7 @@
 # Architecture
 
 Version: 0.1.0-alpha
-Last Updated: 2026-06-28
+Last Updated: 2026-07-18
 
 ## Operating Model
 
@@ -15,6 +15,32 @@ Jake = CEO
 AI Operator OS is local-first. The first version runs while the owner's computer is on. Future cloud workers are allowed only when ROI is positive.
 
 The desktop application uses one Electron + React + Vite + TypeScript + Tailwind codebase under `app/`.
+
+## Architecture Philosophy
+
+### Separate Infrastructure From Intelligence
+
+Execution Infrastructure must never depend on a specific AI provider. AO-012 proves the operating system can move work end-to-end through workers, jobs, deterministic tools, approval gates, execution logs, and results without AI providers or model execution.
+
+AI intelligence is added later through AO-013 AI Provider Integration. Provider integration sits behind the execution architecture; it does not redefine the execution workflow.
+
+### Departments Request Capabilities
+
+Departments and workers do not choose providers directly.
+
+They request capabilities such as research, drafting, summarization, browser access, local model inference, code assistance, or deterministic tool execution. The Provider Manager selects providers using:
+
+- Capability
+- Cost
+- Speed
+- Availability
+- Business rules
+
+### Maintain Provider Independence
+
+AI providers are replaceable implementation details. AI Operator OS must not become tied to OpenAI, Codex, Claude, Gemini, Ollama, a local model, or any future vendor.
+
+The operating system owns the workflow. Providers supply capability.
 
 ## Core Application Layers
 

@@ -437,20 +437,21 @@ Sprint 012 solves these problems:
 
 - Work cannot safely move beyond approval without a controlled execution layer.
 - Operators need a shared runtime boundary instead of one-off module behavior.
-- Capabilities, tools, providers, prompts, memory, cost, approvals, logs, and results need clear ownership.
+- Capabilities, tools, provider-interface references, prompts, memory, cost, approvals, logs, and results need clear ownership before AI providers are integrated.
 - Future B2C and B2B automation need a reusable infrastructure layer before business-specific workflows are built.
 - CEO visibility must exist before execution becomes more autonomous.
 
-Sprint 012 supports future roadmap items by creating the foundation needed for:
+Sprint 012 supports future roadmap items by creating deterministic execution infrastructure needed for:
 
-- AO-013 Early Revenue Foundation
-- AO-014 Multi-Business Management
-- AO-015 B2B Revenue Systems
-- AO-016 External Integrations
-- AO-017 Autonomous Departments
-- AO-018+ Long-Term Scaling
+- AO-013 AI Provider Integration
+- AO-014 Early Revenue Foundation
+- AO-015 Multi-Business Management
+- AO-016 B2B Revenue Systems
+- AO-017 External Integrations
+- AO-018 Autonomous Departments
+- AO-019+ Long-Term Scaling
 
-Infrastructure must exist before B2C and B2B automation because revenue workflows involve money, customers, reputation, publishing, tools, providers, and operational risk. AI Operator OS must first know what can execute, who approved it, what capability it uses, what tool or provider it touches, what it costs, what happened, and what the CEO needs to see.
+Infrastructure must exist before AI provider integration, B2C automation, and B2B automation because revenue workflows involve money, customers, reputation, publishing, tools, providers, and operational risk. AI Operator OS must first know what can execute, who approved it, what capability it uses, what tool or provider-interface reference it touches, what it costs, what happened, and what the CEO needs to see.
 
 Sprint 012 intentionally excludes:
 

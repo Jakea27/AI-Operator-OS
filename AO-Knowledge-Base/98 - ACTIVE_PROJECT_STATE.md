@@ -46,6 +46,10 @@ Sprint 012
 
 Validate the Sprint 012 execution infrastructure before Sprint 012 closeout.
 
+## Roadmap Planning Note
+
+AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO-013 is AI Provider Integration and will add Provider Manager, provider abstraction, local/cloud provider support, provider health, and worker capability routing after deterministic execution infrastructure is proven.
+
 ## Next Required Action
 
 Begin Sprint 012 Task 7 - Execution Infrastructure Validation.

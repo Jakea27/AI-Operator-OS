@@ -1,5 +1,17 @@
 # AO Knowledge Base Changelog
 
+## AO-013 Roadmap Revision and Architecture Philosophy Update - 2026-07-18
+
+### Updated
+
+- Revised the long-term roadmap to separate AO-012 Execution Infrastructure from AO-013 AI Provider Integration.
+- Defined AO-012 as deterministic end-to-end execution infrastructure without AI providers or model execution.
+- Defined AO-013 as AI Provider Integration with Provider Manager, provider registration, capability discovery, provider health, provider selection, local AI, cloud AI, worker integration, and CEO provider visibility.
+- Added permanent architecture philosophy that execution infrastructure must remain separate from AI intelligence.
+- Added permanent architecture philosophy that departments and workers request capabilities rather than choosing providers.
+- Added permanent architecture philosophy that Provider Manager selects providers based on capability, cost, speed, availability, and business rules.
+- Reinforced provider independence so AI Operator OS never becomes tied to a single AI vendor.
+
 ## Sprint 012 Task 6 Documentation Synchronization - 2026-07-18
 
 ### Synchronized
