@@ -9,6 +9,8 @@ import { SummaryCard } from '@/components/SummaryCard'
 import {
   ExecutionRecord,
   ExecutionStatus,
+  auditCompleteness,
+  costDelta,
   executionStatuses,
   useExecutionStore,
 } from '@/src/core/execution'
@@ -107,6 +109,8 @@ export function ExecutionDashboardPage() {
     }).length,
     estimatedCost: executions.reduce((total, execution) => total + execution.estimatedCost, 0),
     actualCost: executions.reduce((total, execution) => total + execution.actualCost, 0),
+    costVariance: executions.reduce((total, execution) => total + costDelta(execution), 0),
+    auditComplete: executions.filter((execution) => auditCompleteness(execution) === 'Complete').length,
   }), [executions])
 
   const filteredExecutions = useMemo(() => {
@@ -142,13 +146,15 @@ export function ExecutionDashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-8">
         <SummaryCard label="CEO Action" value={stats.awaitingCEO} helper="Awaiting approval" icon={<ClipboardList size={16} />} />
         <SummaryCard label="Failed" value={stats.failed} helper="Failed or has failures" icon={<AlertTriangle size={16} />} />
         <SummaryCard label="Long / Paused" value={stats.longRunning} helper="Running over 24h or paused" icon={<Clock size={16} />} />
         <SummaryCard label="Recent Completions" value={stats.recentCompletions} helper="Completed in 7 days" />
         <SummaryCard label="Estimated Cost" value={formatMoney(stats.estimatedCost)} helper="Execution estimates" icon={<CircleDollarSign size={16} />} />
         <SummaryCard label="Actual Cost" value={formatMoney(stats.actualCost)} helper="Recorded actuals" icon={<CircleDollarSign size={16} />} />
+        <SummaryCard label="Cost Variance" value={formatMoney(stats.costVariance)} helper="Actual minus estimate" icon={<CircleDollarSign size={16} />} />
+        <SummaryCard label="Audit Complete" value={stats.auditComplete} helper="Costs, logs, events" />
       </div>
 
       <section className="panel p-5">
@@ -220,6 +226,8 @@ function ExecutionListCard({ execution }: { execution: ExecutionRecord }) {
         <Info label="Retry Count" value={String(execution.retryHistory.length)} />
         <Info label="Estimated Cost" value={formatMoney(execution.estimatedCost)} />
         <Info label="Actual Cost" value={formatMoney(execution.actualCost)} />
+        <Info label="Cost Variance" value={formatMoney(costDelta(execution))} />
+        <Info label="Audit Health" value={auditCompleteness(execution)} />
         <Info label="Updated" value={formatDate(execution.updatedAt)} />
         <Info label="Provider" value={execution.selectedProviders[0]?.name || 'Not assigned'} />
         <Info label="Tools" value={execution.selectedTools.length ? `${execution.selectedTools.length} linked` : 'Not assigned'} />

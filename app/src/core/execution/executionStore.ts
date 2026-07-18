@@ -13,12 +13,22 @@ import {
   readinessMessage,
 } from './executionReadiness'
 import {
+  createCostRecord,
+  createExecutionEvent,
+  createExecutionLog,
+  normalizeCurrency,
+  normalizeMoney,
+  summarizeCostRecord,
+  validateExecutionAudit,
+} from './executionAudit'
+import {
   CostRecord,
   ExecutionEvent,
   ExecutionInput,
   ExecutionLifecycleTransitionInput,
   ExecutionLifecycleTransitionResult,
   ExecutionLog,
+  ExecutionLogCategory,
   ExecutionLogLevel,
   ExecutionRecord,
   ExecutionResult,
@@ -59,28 +69,57 @@ function generateExecutionCode(existing: ExecutionRecord[]) {
   return `EXE-${String(max + 1).padStart(4, '0')}`
 }
 
-function normalizeMoney(value: unknown) {
-  const numeric = Number(value)
-  if (!Number.isFinite(numeric)) return 0
-  return Math.max(0, Math.round(numeric * 100) / 100)
-}
-
 function event(message: string, createdAt = now()): ExecutionEvent {
-  return {
-    id: id('execution-event'),
+  return createExecutionEvent({
     eventType: 'Execution Created',
     message,
     source: 'Execution Store',
     createdAt,
+  })
+}
+
+function normalizeCostRecord(raw: Partial<CostRecord>, executionId: string, executionRecordId: string, index = 0): CostRecord {
+  return {
+    id: raw.id ?? id('execution-cost'),
+    costRecordId: raw.costRecordId ?? `EXCOST-${String(index + 1).padStart(4, '0')}`,
+    executionRecordId: raw.executionRecordId ?? executionRecordId,
+    executionId: raw.executionId ?? executionId,
+    kind: raw.kind ?? 'Estimated',
+    category: raw.category ?? 'Other',
+    status: raw.status ?? 'Recorded',
+    amount: normalizeMoney(raw.amount),
+    currency: normalizeCurrency(raw.currency),
+    businessId: raw.businessId,
+    projectId: raw.projectId,
+    providerId: raw.providerId,
+    toolId: raw.toolId,
+    approvalId: raw.approvalId,
+    notes: raw.notes?.trim() || 'Execution cost recorded.',
+    recordedBy: raw.recordedBy?.trim() || 'Execution Core',
+    createdAt: raw.createdAt ?? now(),
+  }
+}
+
+function normalizeLog(raw: Partial<ExecutionLog>, index = 0): ExecutionLog {
+  return {
+    id: raw.id ?? id('execution-log'),
+    logId: raw.logId ?? `EXLOG-${String(index + 1).padStart(4, '0')}`,
+    level: raw.level ?? 'Info',
+    category: raw.category ?? 'System',
+    message: raw.message?.trim() || 'Execution log recorded.',
+    source: raw.source?.trim() || 'Execution Store',
+    metadata: raw.metadata,
+    createdAt: raw.createdAt ?? now(),
   }
 }
 
 function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): ExecutionRecord {
   const timestamp = raw.createdAt ?? now()
+  const recordId = raw.id ?? id('execution')
   const executionId = raw.executionId ?? fallbackExecutionCode(index)
 
   return {
-    id: raw.id ?? id('execution'),
+    id: recordId,
     executionId,
     title: raw.title?.trim() || 'Untitled Execution',
     description: raw.description?.trim() || 'Execution foundation record. No execution behavior is implemented yet.',
@@ -134,14 +173,16 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
     },
     estimatedCost: normalizeMoney(raw.estimatedCost),
     actualCost: normalizeMoney(raw.actualCost),
-    costRecords: Array.isArray(raw.costRecords) ? raw.costRecords : [],
+    costRecords: Array.isArray(raw.costRecords)
+      ? raw.costRecords.map((record, costIndex) => normalizeCostRecord(record, executionId, recordId, costIndex))
+      : [],
     result: raw.result,
     resultRef: raw.resultRef,
     events: Array.isArray(raw.events) && raw.events.length > 0
       ? raw.events
       : [event('Execution foundation record created.', timestamp)],
     transitionHistory: Array.isArray(raw.transitionHistory) ? raw.transitionHistory : [],
-    logs: Array.isArray(raw.logs) ? raw.logs : [],
+    logs: Array.isArray(raw.logs) ? raw.logs.map((log, logIndex) => normalizeLog(log, logIndex)) : [],
     retryHistory: Array.isArray(raw.retryHistory) ? raw.retryHistory : [],
     failures: Array.isArray(raw.failures) ? raw.failures : [],
     notes: raw.notes ?? '',
@@ -209,13 +250,12 @@ function appendEvent(execution: ExecutionRecord, message: string, eventType: Exe
     ...execution,
     updatedAt: createdAt,
     events: [
-      {
-        id: id('execution-event'),
+      createExecutionEvent({
         eventType,
         message,
         source: 'Execution Store',
         createdAt,
-      },
+      }),
       ...execution.events,
     ],
   }
@@ -549,19 +589,22 @@ export const executionStore = {
     }))
   },
 
-  addExecutionLog(executionRecordId: string, input: Omit<ExecutionLog, 'id' | 'logId' | 'createdAt'>) {
+  addExecutionLog(
+    executionRecordId: string,
+    input: Omit<ExecutionLog, 'id' | 'logId' | 'createdAt' | 'category'> & { category?: ExecutionLogCategory },
+  ) {
     const timestamp = now()
     persist(state.map((execution) => {
       if (execution.id !== executionRecordId) return execution
-      const log: ExecutionLog = {
-        id: id('execution-log'),
-        logId: `EXLOG-${String(execution.logs.length + 1).padStart(4, '0')}`,
+      const log = createExecutionLog({
+        sequence: execution.logs.length + 1,
         level: input.level,
+        category: input.category,
         message: input.message,
         source: input.source,
         metadata: input.metadata,
         createdAt: timestamp,
-      }
+      })
       return appendEvent(
         {
           ...execution,
@@ -587,10 +630,24 @@ export const executionStore = {
         createdAt: timestamp,
         updatedAt: timestamp,
       }
+      const auditLog = createExecutionLog({
+        sequence: execution.logs.length + 1,
+        level: retryRecord.status === 'Failed' ? 'Warning' : 'Audit',
+        category: 'Retry',
+        message: `Retry ${retryRecord.retryId} recorded as ${retryRecord.status}: ${retryRecord.reason}`,
+        source: 'Execution Store',
+        metadata: {
+          retryId: retryRecord.retryId,
+          attemptNumber: retryRecord.attemptNumber,
+          status: retryRecord.status,
+        },
+        createdAt: timestamp,
+      })
       return appendEvent(
         {
           ...execution,
           retryHistory: [retryRecord, ...execution.retryHistory],
+          logs: [auditLog, ...execution.logs],
         },
         'Retry history recorded.',
         'Retry Recorded',
@@ -612,10 +669,24 @@ export const executionStore = {
         createdAt: timestamp,
         resolvedAt: input.resolvedAt,
       }
+      const auditLog = createExecutionLog({
+        sequence: execution.logs.length + 1,
+        level: failureRecord.severity === 'Critical' ? 'Error' : 'Warning',
+        category: 'Failure',
+        message: `Failure ${failureRecord.failureId} recorded: ${failureRecord.message}`,
+        source: 'Execution Store',
+        metadata: {
+          failureId: failureRecord.failureId,
+          severity: failureRecord.severity,
+          resolved: Boolean(failureRecord.resolvedAt),
+        },
+        createdAt: timestamp,
+      })
       return appendEvent(
         {
           ...execution,
           failures: [failureRecord, ...execution.failures],
+          logs: [auditLog, ...execution.logs],
         },
         'Failure record added.',
         'Failure Recorded',
@@ -623,15 +694,16 @@ export const executionStore = {
     }))
   },
 
-  addCostRecord(executionRecordId: string, input: Omit<CostRecord, 'id' | 'costRecordId' | 'executionRecordId' | 'executionId' | 'createdAt'>) {
+  addCostRecord(
+    executionRecordId: string,
+    input: Omit<CostRecord, 'id' | 'costRecordId' | 'executionRecordId' | 'executionId' | 'createdAt' | 'category' | 'status' | 'recordedBy'> & Pick<Partial<CostRecord>, 'category' | 'status' | 'recordedBy'>,
+  ) {
     const timestamp = now()
     persist(state.map((execution) => {
       if (execution.id !== executionRecordId) return execution
-      const costRecord: CostRecord = {
-        id: id('execution-cost'),
-        costRecordId: `EXCOST-${String(execution.costRecords.length + 1).padStart(4, '0')}`,
-        executionRecordId: execution.id,
-        executionId: execution.executionId,
+      const costRecord = createCostRecord({
+        execution,
+        sequence: execution.costRecords.length + 1,
         kind: input.kind,
         amount: normalizeMoney(input.amount),
         currency: input.currency || 'USD',
@@ -640,15 +712,35 @@ export const executionStore = {
         providerId: input.providerId,
         toolId: input.toolId,
         approvalId: input.approvalId,
+        category: input.category,
+        status: input.status,
         notes: input.notes,
+        recordedBy: input.recordedBy,
         createdAt: timestamp,
-      }
+      })
+      const auditLog = createExecutionLog({
+        sequence: execution.logs.length + 1,
+        level: 'Audit',
+        category: 'Cost',
+        message: summarizeCostRecord(costRecord),
+        source: 'Execution Store',
+        metadata: {
+          costRecordId: costRecord.costRecordId,
+          kind: costRecord.kind,
+          category: costRecord.category,
+          status: costRecord.status,
+          amount: costRecord.amount,
+          currency: costRecord.currency,
+        },
+        createdAt: timestamp,
+      })
       return appendEvent(
         {
           ...execution,
           estimatedCost: input.kind === 'Estimated' ? normalizeMoney(input.amount) : execution.estimatedCost,
           actualCost: input.kind === 'Actual' ? normalizeMoney(input.amount) : execution.actualCost,
           costRecords: [costRecord, ...execution.costRecords],
+          logs: [auditLog, ...execution.logs],
         },
         'Execution cost record added.',
         'Cost Recorded',
@@ -703,6 +795,11 @@ export const executionStore = {
   getExecutionsForWorkItem(workItemRecordId: string) {
     return state.filter((execution) => execution.workItem.workItemRecordId === workItemRecordId)
   },
+
+  validateExecutionAudit(executionRecordId: string) {
+    const execution = state.find((item) => item.id === executionRecordId)
+    return execution ? validateExecutionAudit(execution) : undefined
+  },
 }
 
 export function useExecutionStore() {
@@ -730,6 +827,7 @@ export function useExecutionStore() {
     getExecutionForQueueItem: executionStore.getExecutionForQueueItem,
     getExecutionsForQueueItem: executionStore.getExecutionsForQueueItem,
     getExecutionsForWorkItem: executionStore.getExecutionsForWorkItem,
+    validateExecutionAudit: executionStore.validateExecutionAudit,
   }
 }
 

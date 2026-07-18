@@ -19,6 +19,18 @@ export type ExecutionRiskLevel = 'Low' | 'Medium' | 'High' | 'Critical'
 
 export type ExecutionLogLevel = 'Info' | 'Warning' | 'Error' | 'Audit'
 
+export type ExecutionLogCategory =
+  | 'Lifecycle'
+  | 'Readiness'
+  | 'Capability'
+  | 'Approval'
+  | 'Cost'
+  | 'Failure'
+  | 'Retry'
+  | 'Result'
+  | 'System'
+  | 'Manual'
+
 export type ExecutionEventType =
   | 'Execution Created'
   | 'State Updated'
@@ -34,6 +46,10 @@ export type ExecutionEventType =
   | 'Log Recorded'
 
 export type ExecutionCostKind = 'Estimated' | 'Actual'
+
+export type ExecutionCostCategory = 'Provider' | 'Tool' | 'Infrastructure' | 'Labor' | 'Other'
+
+export type ExecutionCostStatus = 'Planned' | 'Recorded' | 'Reviewed' | 'Reconciled'
 
 export type ExecutionResultStatus = 'Pending' | 'Recorded' | 'Reviewed' | 'Archived'
 
@@ -181,6 +197,8 @@ export type CostRecord = {
   executionRecordId: string
   executionId: string
   kind: ExecutionCostKind
+  category: ExecutionCostCategory
+  status: ExecutionCostStatus
   amount: number
   currency: string
   businessId?: string
@@ -189,6 +207,7 @@ export type CostRecord = {
   toolId?: string
   approvalId?: string
   notes: string
+  recordedBy: string
   createdAt: ISODateTimeString
 }
 
@@ -219,6 +238,7 @@ export type ExecutionLog = {
   id: string
   logId: string
   level: ExecutionLogLevel
+  category: ExecutionLogCategory
   message: string
   source: string
   metadata?: Record<string, string | number | boolean | null>

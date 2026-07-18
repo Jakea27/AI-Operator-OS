@@ -6,7 +6,7 @@ The Execution Core is the permanent local-first foundation for future AI Operato
 
 It defines execution records, references, logs, cost records, retry history, failure records, result references, and persistence.
 
-This document describes the Sprint 012 execution foundation through Task 5.
+This document describes the Sprint 012 execution foundation through Task 6.
 
 It does not describe provider integration, queue processing, event bus behavior, external tool runtime, autonomous execution, or UI execution controls.
 
@@ -58,7 +58,18 @@ Sprint 012 Task 5 created:
 - Safe empty and missing-reference states.
 - Relationship navigation to existing supported Work Item, Execution Queue, Capability Planning, and Approval Queue routes.
 
-Sprint 012 Tasks 1-5 do not create:
+Sprint 012 Task 6 created:
+
+- Structured execution audit helpers.
+- Migration-safe normalization for older cost and log records.
+- Cost record category, status, and recorded-by metadata.
+- Log category metadata.
+- Automatic audit logs for cost, retry, and failure record creation.
+- Store validation helper for execution audit completeness.
+- Dashboard cost variance and audit completeness visibility.
+- Detail-page cost record and metadata readability improvements.
+
+Sprint 012 Tasks 1-6 do not create:
 
 - Execution behavior.
 - AI provider calls.
@@ -327,6 +338,52 @@ It does not expose buttons that:
 - Assign providers.
 - Assign tools.
 - Trigger external actions.
+
+## Cost Tracking and Logging Polish
+
+Sprint 012 Task 6 strengthens attempt-level auditability without adding execution behavior.
+
+Execution Core owns:
+
+- Estimated execution cost stored on the execution record.
+- Actual execution cost stored on the execution record.
+- Append-only attempt-level cost records.
+- Append-only execution logs.
+- Execution events.
+- Retry history.
+- Failure history.
+
+Execution cost records include:
+
+- Cost kind.
+- Cost category.
+- Review/reconciliation status.
+- Amount.
+- Currency.
+- Source references for business, project, provider, tool, and approval where available.
+- Recorded-by metadata.
+- Notes.
+- Timestamp.
+
+Execution logs include:
+
+- Log level.
+- Log category.
+- Message.
+- Source.
+- Optional metadata.
+- Timestamp.
+
+Cost, retry, and failure record creation adds matching audit logs. This improves inspection quality while preserving the rule that Execution Core records infrastructure history only.
+
+Task 6 does not:
+
+- Create Money Department records.
+- Reconcile accounting.
+- Execute providers.
+- Call external APIs.
+- Mutate external modules.
+- Add autonomous behavior.
 
 ## Persistence
 

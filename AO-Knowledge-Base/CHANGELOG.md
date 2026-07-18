@@ -1,5 +1,21 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 6 - Cost Tracking and Logging Polish - 2026-07-18
+
+### Implemented
+
+- Polished Execution Core attempt-level cost tracking and logging structure.
+- Added structured audit helpers for execution events, logs, and cost records.
+- Added cost record category, status, recorded-by metadata, and migration-safe defaults.
+- Added log category metadata and migration-safe defaults.
+- Added store validation helper for execution audit completeness.
+- Added automatic audit logs for cost, retry, and failure record creation.
+- Improved Execution Dashboard cost variance and audit completeness visibility.
+- Improved Execution Detail cost record readability and timeline metadata visibility.
+- Confirmed Task 6 does not add execution behavior, provider calls, APIs, automation, or autonomous behavior.
+- `npm.cmd run build` passed.
+- Task 6 is awaiting CEO QA.
+
 ## Sprint 012 Task 5 Documentation Synchronization - 2026-07-17
 
 ### Synchronized

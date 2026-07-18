@@ -1435,7 +1435,7 @@ Sprint 012 - AI Execution Infrastructure
 
 ## Sprint Status
 
-ACTIVE - TASK 5 COMPLETE.
+ACTIVE - TASK 6 IMPLEMENTATION COMPLETE.
 
 ## Current Phase
 
@@ -1451,11 +1451,11 @@ Sprint 012
 
 ## Current Objective
 
-Begin Sprint 012 Task 6 by polishing execution cost tracking and logging visibility.
+Wait for CEO QA on Sprint 012 Task 6 after completing cost tracking and logging polish implementation.
 
 ## Next Required Action
 
-Begin Sprint 012 Task 6 - Cost Tracking and Logging Polish.
+CEO QA for Sprint 012 Task 6 - Cost Tracking and Logging Polish.
 
 ## Blocking Issues
 
@@ -1467,11 +1467,11 @@ main
 
 ## Last QA Result
 
-Sprint 012 Task 5 QA passed.
+Sprint 012 Task 5 QA passed. Sprint 012 Task 6 QA is awaiting CEO review.
 
 ## Last Build Result
 
-`npm.cmd run build` passed during Sprint 012 Task 5 verification.
+`npm.cmd run build` passed during Sprint 012 Task 6 verification.
 
 ## Last Updated
 
@@ -1480,10 +1480,10 @@ Sprint 012 Task 5 QA passed.
 ## Current Sprint Verification
 
 - Sprint: Sprint 012
-- Status: ACTIVE - TASK 5 COMPLETE
-- Implementation: TASK 5 COMPLETE
-- QA: TASK 5 PASS
-- Documentation: TASK 5 COMPLETE
+- Status: ACTIVE - TASK 6 IMPLEMENTATION COMPLETE
+- Implementation: TASK 6 COMPLETE
+- QA: TASK 6 AWAITING CEO QA
+- Documentation: TASK 6 UPDATED FOR CEO QA
 
 ## Continuity Document Pointers
 
@@ -1542,7 +1542,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Build passing as of Sprint 012 Task 5 verification.
+Build passing as of Sprint 012 Task 6 verification.
 
 Command used:
 
@@ -1550,19 +1550,19 @@ Command used:
 
 ## Current Status
 
-Sprint 012 Task 5 - Execution Dashboard & Detail Page complete.
+Sprint 012 Task 6 - Cost Tracking and Logging Polish implementation complete.
 
 ## Next Phase
 
-Sprint 012 Task 6 - Cost Tracking and Logging Polish.
+Sprint 012 Task 6 - Cost Tracking and Logging Polish CEO QA.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 Task 5 implementation is COMPLETE. Task 6 has NOT STARTED.
+Sprint 012 Task 6 implementation is COMPLETE. CEO QA is pending.
 
 ## Current Sprint QA Status
 
-Sprint 012 Task 5 QA passed. Full Sprint 012 QA has NOT STARTED.
+Sprint 012 Task 5 QA passed. Sprint 012 Task 6 QA is awaiting CEO review. Full Sprint 012 QA has NOT STARTED.
 
 ## Previous Sprint
 
@@ -1665,9 +1665,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 012 - AI Execution Infrastructure Task 6: Cost Tracking and Logging Polish.
+The current focus is Sprint 012 - AI Execution Infrastructure Task 6: Cost Tracking and Logging Polish CEO QA.
 
-Sprint 011 is officially closed. Sprint 012 planning is complete, reviewed, committed, and pushed. Task 1, Task 2, Task 3, Task 4, and Task 5 implementation, QA, documentation, commit, and push are complete.
+Sprint 011 is officially closed. Sprint 012 planning is complete, reviewed, committed, and pushed. Task 1, Task 2, Task 3, Task 4, and Task 5 implementation, QA, documentation, commit, and push are complete. Task 6 implementation and build verification are complete; CEO QA is pending.
 
 ## Last Completed Sprint
 
@@ -1701,7 +1701,7 @@ Sprint 011 - Continuity System v1.1.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 012 Task 6 - Cost Tracking and Logging Polish.
+- Complete CEO QA for Sprint 012 Task 6 - Cost Tracking and Logging Polish.
 
 ## Known Risks
 
@@ -1712,7 +1712,7 @@ Sprint 011 - Continuity System v1.1.
 
 ## Future Planned Work
 
-- Sprint 012 Task 5 is complete. Task 6 is the next implementation task.
+- Sprint 012 Task 6 implementation is complete. CEO QA is the next required action.
 - Future execution-layer work must follow Architecture v2 and the approval-first operating model.
 - Any future AI provider integration must remain replaceable and capability-based.
 
@@ -1754,7 +1754,11 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 012 Task 5 CEO QA passed.
 - Sprint 012 Task 5 implementation commit was pushed.
 - Sprint 012 Task 5 documentation is synchronized to the committed repository state.
-- The project is ready to begin Sprint 012 Task 6 - Cost Tracking and Logging Polish.
+- Sprint 012 Task 6 polished execution cost records, audit logs, execution detail cost visibility, dashboard cost variance, and audit completeness visibility.
+- Sprint 012 Task 6 preserved Execution Core ownership of attempt-level cost/log records.
+- Sprint 012 Task 6 build verification passed with `npm.cmd run build`.
+- Sprint 012 Task 6 does not add execution behavior, provider calls, APIs, autonomous behavior, routing changes, or unrelated UI changes.
+- The project is waiting for CEO QA on Sprint 012 Task 6 - Cost Tracking and Logging Polish.
 
 ## User Workflow Preferences
 
@@ -1782,7 +1786,7 @@ Sprint 011 - Continuity System v1.1.
 
 ## Status
 
-ACTIVE - TASK 5 COMPLETE.
+ACTIVE - TASK 6 IMPLEMENTATION COMPLETE.
 
 ## Phase
 
@@ -1790,15 +1794,15 @@ Sprint 012 Task 6 - Cost Tracking and Logging Polish.
 
 ## Implementation
 
-TASK 5 COMPLETE. TASK 6 NOT STARTED.
+TASK 6 COMPLETE. TASK 7 NOT STARTED.
 
 ## QA
 
-Task 5 PASS.
+Task 5 PASS. Task 6 awaiting CEO QA.
 
 ## Documentation
 
-Task 5 documentation COMPLETE.
+Task 6 documentation updated for CEO QA.
 
 ## Planning Closeout
 
@@ -2124,6 +2128,86 @@ Task 5 added:
 ### Current Status
 
 Task 5 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 6 - Cost Tracking and Logging Polish is the current phase.
+
+## Task 6 - Cost Tracking and Logging Polish
+
+### Objective
+
+Polish execution cost tracking, improve execution logging consistency, strengthen execution audit history, and keep attempt-level cost/log ownership inside the Execution Core.
+
+### Implementation Summary
+
+Task 6 added:
+
+- Structured execution audit utilities in the Execution Core.
+- Migration-safe cost record normalization for older local records.
+- Migration-safe log normalization for older local records.
+- Cost record category, status, and recorded-by fields.
+- Log category support for clearer audit history.
+- Centralized money and currency normalization helpers.
+- Centralized execution event, log, and cost record creation helpers.
+- Store validation helper for execution audit completeness.
+- Automatic audit log creation when cost records are added.
+- Automatic audit log creation when retry records are added.
+- Automatic audit log creation when failure records are added.
+- Dashboard cost variance visibility.
+- Dashboard audit completeness visibility.
+- Execution Detail cost variance and audit health fields.
+- Execution Detail cost record badges for category and review/reconciliation status.
+- Execution Detail recorded-by and source reference context for cost records.
+- Metadata rendering in execution log and event timelines.
+
+### Ownership Boundaries
+
+- Execution Core continues to own attempt-level estimated cost, actual cost, cost records, execution logs, events, retries, failures, and result references.
+- Money Department remains the owner of financial reporting and business accounting.
+- Capability Planning remains the owner of infrastructure estimates and requirements.
+- Approval Queue remains the owner of approval decisions.
+- Task 6 stores references and audit history only; it does not duplicate external module ownership.
+
+### Safety Boundaries
+
+- No provider execution was added.
+- No AI/model execution was added.
+- No APIs, network calls, automation, or autonomous behavior were added.
+- No routing changes were made.
+- Existing execution pages remain read-only inspection surfaces.
+
+### Files Created
+
+- `app/src/core/execution/executionAudit.ts`
+
+### Files Modified
+
+- `app/src/core/execution/executionTypes.ts`
+- `app/src/core/execution/executionStore.ts`
+- `app/src/core/execution/index.ts`
+- `app/src/features/execution/ExecutionDashboardPage.tsx`
+- `app/src/features/execution/ExecutionDetailPage.tsx`
+- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
+- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
+- `AO-Knowledge-Base/CHANGELOG.md`
+- `CHANGELOG.md`
+- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+
+### Verification
+
+- `npm.cmd run build` passed.
+- TypeScript passed through `tsc --noEmit`.
+- Vite production build passed.
+- Existing execution persistence remains local-first through the existing Execution Store.
+- Existing execution dashboard and detail routes continue to compile.
+
+### QA Status
+
+Awaiting CEO QA.
+
+### Current Status
+
+Task 6 implementation is complete. The next required action is CEO QA for Sprint 012 Task 6.
 
 ## Sprint Objective
 

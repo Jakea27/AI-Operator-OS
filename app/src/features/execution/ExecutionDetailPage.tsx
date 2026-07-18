@@ -4,7 +4,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { EmptyState } from '@/components/EmptyState'
 import { SectionHeader } from '@/components/SectionHeader'
 import { StatusBadge, statusTone } from '@/components/StatusBadge'
-import { useExecutionStore } from '@/src/core/execution'
+import { auditCompleteness, costDelta, useExecutionStore } from '@/src/core/execution'
 
 function formatDate(value?: string) {
   if (!value) return 'Not recorded'
@@ -115,6 +115,8 @@ export function ExecutionDetailPage() {
               <Info label="Human Intervention" value={execution.status === 'Requires Human Intervention' ? 'Required' : 'Not required'} />
               <Info label="Estimated Cost" value={formatMoney(execution.estimatedCost)} />
               <Info label="Actual Cost" value={formatMoney(execution.actualCost)} />
+              <Info label="Cost Variance" value={formatMoney(costDelta(execution))} />
+              <Info label="Audit Health" value={auditCompleteness(execution)} />
             </div>
 
             {readiness?.blockers.length ? (
@@ -172,12 +174,17 @@ export function ExecutionDetailPage() {
                 title: `${item.logId} · ${item.level}`,
                 meta: `${item.source} · ${formatDate(item.createdAt)}`,
                 copy: item.message,
+                metadata: {
+                  category: item.category,
+                  ...item.metadata,
+                },
               }))} emptyTitle="No logs" emptyCopy="No execution logs have been captured yet." />
               <Timeline title="Event History" items={execution.events.map((item) => ({
                 id: item.id,
                 title: item.eventType,
                 meta: `${item.source} · ${formatDate(item.createdAt)}`,
                 copy: item.message,
+                metadata: item.metadata,
               }))} emptyTitle="No events" emptyCopy="No execution events have been captured." />
             </div>
           </Section>
@@ -200,6 +207,20 @@ export function ExecutionDetailPage() {
                   <div key={record.id} className="rounded-xl border border-line bg-ink/35 p-3">
                     <p className="m-0 text-sm font-semibold text-white">{record.costRecordId} · {record.kind}</p>
                     <p className="m-0 mt-1 text-xs text-muted">{formatMoney(record.amount)} {record.currency} · {formatDate(record.createdAt)}</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <StatusBadge label={record.category} tone="neutral" />
+                      <StatusBadge label={record.status} tone={record.status === 'Reconciled' ? 'good' : 'neutral'} />
+                    </div>
+                    <p className="m-0 mt-1 text-xs text-muted">Recorded by {record.recordedBy}</p>
+                    {(record.providerId || record.toolId || record.approvalId) ? (
+                      <p className="m-0 mt-1 text-xs text-muted">
+                        {record.providerId ? `Provider ${record.providerId}` : ''}
+                        {record.providerId && (record.toolId || record.approvalId) ? ' Â· ' : ''}
+                        {record.toolId ? `Tool ${record.toolId}` : ''}
+                        {record.toolId && record.approvalId ? ' Â· ' : ''}
+                        {record.approvalId ? `Approval ${record.approvalId}` : ''}
+                      </p>
+                    ) : null}
                     <p className="m-0 mt-2 text-sm leading-6 text-muted">{record.notes || 'No cost note recorded.'}</p>
                   </div>
                 ))}
@@ -275,7 +296,15 @@ function ReferenceList({ title, items, empty }: { title: string; items: string[]
   )
 }
 
-function Timeline({ title, items, emptyTitle, emptyCopy }: { title: string; items: Array<{ id: string; title: string; meta: string; copy: string }>; emptyTitle: string; emptyCopy: string }) {
+function formatMetadata(metadata?: Record<string, string | number | boolean | null>) {
+  if (!metadata) return []
+
+  return Object.entries(metadata)
+    .filter(([, value]) => value !== null && value !== '')
+    .map(([key, value]) => `${key}: ${String(value)}`)
+}
+
+function Timeline({ title, items, emptyTitle, emptyCopy }: { title: string; items: Array<{ id: string; title: string; meta: string; copy: string; metadata?: Record<string, string | number | boolean | null> }>; emptyTitle: string; emptyCopy: string }) {
   return (
     <div className="rounded-xl border border-line bg-ink/35 p-4">
       <div className="mb-3 flex items-center gap-2">
@@ -289,6 +318,15 @@ function Timeline({ title, items, emptyTitle, emptyCopy }: { title: string; item
               <p className="m-0 text-sm font-semibold text-white">{item.title}</p>
               <p className="m-0 mt-1 text-[11px] text-muted">{item.meta}</p>
               <p className="m-0 mt-2 text-sm leading-6 text-muted">{item.copy}</p>
+              {formatMetadata(item.metadata).length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {formatMetadata(item.metadata).map((entry) => (
+                    <span key={entry} className="rounded-full border border-line bg-ink/45 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                      {entry}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
