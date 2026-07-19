@@ -7,14 +7,14 @@
 - Bundle generation date: 2026-07-19
 - Continuity System Version: 1.1
 - Project Version: 0.1.0-alpha
-- Current Sprint: Sprint 012 - AI Execution Infrastructure
-- Last Completed Sprint: Sprint 011 - Continuity System v1.1
-- Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md
+- Current Sprint: Sprint 013 - AI Provider Integration
+- Last Completed Sprint: Sprint 012 - AI Execution Infrastructure
+- Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 013 - AI Provider Integration.md
 - Repository checkpoint source: AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md
-- Repository Checkpoint: `1b56da7906c24139acd14dc191534de47579ef97`
-- Checkpoint Description: Last verified repository checkpoint after Sprint 012 Task 7 - Command Center Visibility implementation, QA documentation synchronization, commit, and push. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
+- Repository Checkpoint: `8a6164da1ad46aab45f9d0cf55538d4adc2fa5ca`
+- Checkpoint Description: Last verified repository checkpoint after Sprint 012 Task 8 closeout preparation documentation synchronization, commit, and push. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
 - Working Tree Status: CLEAN at Repository Checkpoint
-- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 7 documentation synchronization commit
+- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 8 closeout preparation commit
 - Repository Verification Status: VERIFIED - repository checkpoint metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-19
 - Number of included documents: 18
@@ -38,7 +38,7 @@
 14. 98 - ACTIVE_PROJECT_STATE - `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
 15. DEVELOPMENT_STATE - `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 16. CURRENT_CONTEXT - `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-17. Sprint 012 - AI Execution Infrastructure - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
+17. Sprint 013 - AI Provider Integration - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 013 - AI Provider Integration.md`
 18. OPERATOR_STARTUP_REPORT_TEMPLATE - `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
 ---
@@ -77,7 +77,7 @@ Every AI operator must read the following source documents in this exact order.
 14. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
 15. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 16. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
+17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 013 - AI Provider Integration.md`
 18. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
 ## Startup Source Priority
@@ -1490,31 +1490,31 @@ AI Operator OS
 
 ## Current Milestone
 
-Sprint 012 - AI Execution Infrastructure
+Sprint 013 - AI Provider Integration
 
 ## Current Sprint
 
-Sprint 012 - AI Execution Infrastructure
+Sprint 013 - AI Provider Integration
 
 ## Sprint Status
 
-ACTIVE - FINAL CEO QA AWAITING.
+ACTIVE - PLANNING / TASK 1 READY.
 
 ## Current Phase
 
-Sprint 012 Final CEO QA and Closeout Approval.
+Sprint 013 Planning / Task 1.
 
 ## Last Completed Sprint
 
-Sprint 011 - Continuity System v1.1
+Sprint 012 - AI Execution Infrastructure
 
 ## Next Sprint
 
-Sprint 013 - AI Provider Integration
+Sprint 014
 
 ## Current Objective
 
-Prepare Sprint 012 for final CEO QA and closeout approval after completing internal validation and documentation.
+Begin Sprint 013 AI Provider Integration from the approved roadmap after Sprint 012 closeout.
 
 ## Roadmap Planning Note
 
@@ -1522,7 +1522,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-CEO performs final Sprint 012 QA and approves closeout.
+Begin Sprint 013 implementation.
 
 ## Blocking Issues
 
@@ -1534,7 +1534,7 @@ main
 
 ## Last QA Result
 
-Sprint 012 internal QA passed. Final Sprint 012 CEO QA is awaiting approval.
+Sprint 012 Final CEO QA passed.
 
 ## Last Build Result
 
@@ -1546,17 +1546,18 @@ Sprint 012 internal QA passed. Final Sprint 012 CEO QA is awaiting approval.
 
 ## Current Sprint Verification
 
-- Sprint: Sprint 012
-- Status: ACTIVE - FINAL CEO QA AWAITING
-- Implementation: SPRINT 012 COMPLETE
-- Internal QA: PASS
-- CEO QA: AWAITING FINAL CEO QA
-- Documentation: SPRINT 012 COMPLETE
+- Sprint: Sprint 013
+- Status: ACTIVE - PLANNING / TASK 1 READY
+- Previous Sprint: Sprint 012 CLOSED
+- Sprint 012 Implementation: COMPLETE
+- Sprint 012 Internal QA: PASS
+- Sprint 012 Final CEO QA: PASS
+- Sprint 012 Documentation: COMPLETE
 
 ## Continuity Document Pointers
 
-- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
-- Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 013 - AI Provider Integration.md`
+- Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
 - Master Plan: `AO-Knowledge-Base/MASTER_PLAN.md`
 - Operator Startup Report Template: `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 - Startup Bundle: `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
@@ -1564,28 +1565,40 @@ Sprint 012 internal QA passed. Final Sprint 012 CEO QA is awaiting approval.
 
 ## Previous Sprint Closeout Verification
 
-- Sprint: Sprint 011 - Continuity System v1.1
+- Sprint: Sprint 012 - AI Execution Infrastructure
 - Implementation: COMPLETE
-- QA: PASS
+- Internal QA: PASS
+- Final CEO QA: PASS
 - Documentation: COMPLETE
-- Git Commit: COMPLETE - `9d29e0a` (`Continue Sprint 011 - Continuity System v1.1`)
+- Git Commit: COMPLETE
 - Git Push: PUSHED
-- Working Tree: CLEAN at verified Sprint 011 commit before Sprint 012 transition documentation edits
+- Working Tree: CLEAN at verified Sprint 012 checkpoint
 - Sprint Closeout: CLOSED
-- Continuity Status: READY FOR NEXT SPRINT
+- Continuity Status: SPRINT 013 ACTIVE
 
 ## Last Completed Sprint Summary
 
-- Sprint: Sprint 011 - Continuity System v1.1
-- Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 011 - Continuity System v1.1.md`
+- Sprint: Sprint 012 - AI Execution Infrastructure
+- Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
+
+## Sprint 012 Closeout Verification
+
+- Sprint: Sprint 012 - AI Execution Infrastructure
+- Status: CLOSED
+- Implementation: COMPLETE
+- Internal QA: PASS
+- Final CEO QA: PASS
+- Documentation: COMPLETE
+- Closeout: COMPLETE
+- Sprint 013 Activation: ACTIVE
 
 ## Repository Checkpoint
 
 - Current Branch: main
-- Repository Checkpoint: `1b56da7906c24139acd14dc191534de47579ef97`
-- Checkpoint Description: Last verified repository checkpoint after Sprint 012 Task 7 - Command Center Visibility implementation, QA documentation synchronization, commit, and push. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
+- Repository Checkpoint: `8a6164da1ad46aab45f9d0cf55538d4adc2fa5ca`
+- Checkpoint Description: Last verified repository checkpoint after Sprint 012 Task 8 closeout preparation documentation synchronization, commit, and push. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
 - Working Tree Status: CLEAN at Repository Checkpoint
-- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 7 documentation synchronization commit
+- Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 012 Task 8 closeout preparation commit
 - Repository Verification Status: VERIFIED - repository checkpoint metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-19
 
@@ -1618,23 +1631,23 @@ Command used:
 
 ## Current Status
 
-Sprint 012 Execution Infrastructure implementation and internal validation complete.
+Sprint 012 closed. Sprint 013 - AI Provider Integration active.
 
 ## Next Phase
 
-Sprint 012 Final CEO QA and Closeout Approval.
+Sprint 013 Planning / Task 1.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, and documentation are COMPLETE. Final CEO QA and closeout approval are awaiting review.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 is active.
 
 ## Current Sprint QA Status
 
-Sprint 012 internal QA passed. Final Sprint 012 CEO QA is awaiting approval.
+Sprint 012 Final CEO QA passed.
 
 ## Previous Sprint
 
-Sprint 011 COMPLETE.
+Sprint 012 COMPLETE.
 
 ## Current Electron Status
 
@@ -1733,13 +1746,13 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 012 - AI Execution Infrastructure final CEO QA and closeout approval.
+The current focus is Sprint 013 - AI Provider Integration.
 
-Sprint 011 is officially closed. Sprint 012 planning is complete, reviewed, committed, and pushed. Tasks 1 through 7 are complete. Sprint 012 Task 8 internal validation and documentation finalization are complete. Sprint 012 is awaiting final CEO QA and closeout approval.
+Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is now active.
 
 ## Last Completed Sprint
 
-Sprint 011 - Continuity System v1.1.
+Sprint 012 - AI Execution Infrastructure.
 
 ## Major Decisions Made Recently
 
@@ -1769,7 +1782,7 @@ Sprint 011 - Continuity System v1.1.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- CEO performs final Sprint 012 QA and approves closeout.
+- Begin Sprint 013 implementation.
 
 ## Known Risks
 
@@ -1780,9 +1793,9 @@ Sprint 011 - Continuity System v1.1.
 
 ## Future Planned Work
 
-- Sprint 012 implementation and internal validation are complete. Sprint 012 is awaiting final CEO closeout approval.
-- Future execution-layer work must follow Architecture v2 and the approval-first operating model.
-- Any future AI provider integration must remain replaceable and capability-based.
+- Sprint 012 is closed.
+- Sprint 013 - AI Provider Integration is active.
+- Sprint 013 must preserve Architecture v2, approval-first operation, provider independence, and the separation of infrastructure from intelligence.
 
 ## Current Handoff
 
@@ -1838,18 +1851,19 @@ Sprint 011 - Continuity System v1.1.
 - Sprint 012 implementation is complete.
 - Sprint 012 internal QA passed.
 - Sprint 012 documentation is complete.
-- Sprint 012 final CEO QA is awaiting approval.
-- Sprint 013 is not active and must not begin until Sprint 012 is officially closed.
+- Sprint 012 final CEO QA passed.
+- Sprint 012 is officially closed.
+- Sprint 013 is now active.
 
 ## Sprint 013 Handoff
 
-Sprint 013 - AI Provider Integration is the next planned sprint after Sprint 012 closes.
+Sprint 013 - AI Provider Integration is the active sprint.
 
 Sprint 013 purpose: teach AI Operator OS how to use AI providers without coupling departments or workers to specific vendors.
 
 Future Sprint 013 scope may include Provider Manager, provider abstraction, provider registration, provider health, capability discovery, provider selection, Ollama/local model support, OpenAI provider support, future provider framework, AI prompt execution, response handling, usage metrics, worker capability requests, and provider-independent execution.
 
-Do not begin Sprint 013 implementation or detailed planning until Sprint 012 is formally closed by the CEO.
+Sprint 013 implementation is authorized by the Sprint 012 closeout, but no Sprint 013 implementation files have been created by this synchronization.
 
 ## User Workflow Preferences
 
@@ -1871,636 +1885,38 @@ Do not begin Sprint 013 implementation or detailed planning until Sprint 012 is 
 
 ---
 
-## Source: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md
+## Source: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 013 - AI Provider Integration.md
 
-# Sprint 012 - AI Execution Infrastructure
+# Sprint 013 - AI Provider Integration
 
 ## Status
 
-ACTIVE - FINAL CEO QA AWAITING.
+ACTIVE - PLANNING / TASK 1 READY.
 
 ## Phase
 
-Sprint 012 Final CEO QA and Closeout Approval.
+Sprint 013 Planning / Task 1.
 
-## Implementation
+## Objective
 
-SPRINT 012 IMPLEMENTATION COMPLETE.
+Teach AI Operator OS how to use AI providers without coupling departments, workers, or execution infrastructure to a specific vendor.
 
-## QA
+## Current Context
 
-Internal QA PASS. Final CEO QA awaiting approval.
+Sprint 012 - AI Execution Infrastructure is closed.
 
-## Documentation
+Sprint 013 begins from the approved AO-013 roadmap revision:
 
-Sprint 012 documentation COMPLETE.
-
-## Planning Closeout
-
-Sprint 012 planning has been completed, reviewed, committed, and pushed.
-
-At planning closeout, the project became ready to begin Task 1 - Execution Core Architecture.
-
-Planning closeout confirms:
-
-- Sprint 012 remains active.
-- Sprint 012 planning is complete.
-- Task 1 implementation is complete.
-- Task 1 QA passed.
-- Documentation for planning is complete.
-- The next required action at planning closeout was to begin Sprint 012 Task 1.
-- Repository checkpoint metadata is maintained authoritatively in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
-
-## Task 1 - Execution Core Architecture
-
-### Status
-
-COMPLETE.
-
-### Objective
-
-Create the permanent execution data foundation for future AI Operator OS execution without adding execution behavior, external providers, automation, UI, dashboard changes, or lifecycle orchestration.
-
-### Implementation Summary
-
-Task 1 added:
-
-- Canonical execution TypeScript models.
-- Local-first Execution Store.
-- Execution references to Work Items and Execution Queue items.
-- Capability, Capability Plan, Tool, Provider, and Approval reference models.
-- Execution Result, Cost Record, Execution Event, Execution Log, Retry Record, and Failure Record models.
-- `useSyncExternalStore` support.
-- Module-owned localStorage persistence.
-- Safe empty defaults and read-time normalization.
-- Store helpers for recording logs, retries, failures, cost records, and result references.
-
-### Files Created
-
-- `app/src/core/execution/executionTypes.ts`
-- `app/src/core/execution/executionStore.ts`
-- `app/src/core/execution/index.ts`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-
-### Architecture Decisions
-
-- Execution Core owns execution attempts, execution state, timing, retry history, failure history, execution logs, result references, and attempt-level cost records.
-- Work Item remains the owner of work definition.
-- Execution Queue remains the owner of queue state.
-- Capability Planning remains the owner of capability requirements.
-- Approval Queue remains the owner of approval decisions.
-- Money Department / Cost Tracking remains the owner of financial reporting.
-- Execution Core stores references to external module records instead of duplicating authoritative data.
-- Task 1 intentionally does not implement lifecycle behavior, execution behavior, provider behavior, approval enforcement, queue processing, event bus behavior, or UI.
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript compile passed.
-- Vite production build passed.
-- Existing stores were not modified.
-- Existing UI routes and components were not modified.
-- QA passed.
-
-### Current Status
-
-Task 1 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 2 - Execution Lifecycle Engine is the current phase.
-
-## Task 2 - Execution Lifecycle Engine
-
-### Status
-
-COMPLETE.
-
-### Objective
-
-Add lifecycle state management to the Execution Core without implementing execution behavior, provider calls, AI execution, routing changes, UI, APIs, or autonomous behavior.
-
-### Implementation Summary
-
-Task 2 added:
-
-- Execution lifecycle engine module.
-- Allowed transition map.
-- Transition validation helpers.
-- Invalid transition protection.
-- Timestamp recording for lifecycle state changes.
-- Immutable transition history entries.
-- Pause and resume helpers.
-- Retry history support.
-- Failure recording support.
-- Execution Store integration for persisted lifecycle transitions.
-
-### Files Created
-
-- `app/src/core/execution/executionLifecycle.ts`
-
-### Files Modified
-
-- `app/src/core/execution/executionTypes.ts`
-- `app/src/core/execution/executionStore.ts`
-- `app/src/core/execution/index.ts`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-
-### Architecture Decisions
-
-- Lifecycle validation lives in `executionLifecycle.ts`.
-- Execution Store remains the single persistence owner for execution attempts and transition history.
-- Invalid transitions return structured failure results and do not mutate local state.
-- Lifecycle helpers do not execute work, call providers, enforce approval gates, process queues, or act as an event bus.
-- Retry and failure records remain execution-owned audit records.
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript compile passed.
-- Vite production build passed.
-- Existing UI routes and components were not modified.
-- Existing non-execution stores were not modified.
-- CEO QA passed.
-
-### Current Status
-
-Task 2 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 3 - Capability & Approval Integration is the current phase.
-
-## Task 3 - Capability & Approval Integration
-
-### Status
-
-COMPLETE.
-
-### Objective
-
-Integrate the Execution Core with existing Capability Planning and Approval Queue records by reference so execution records can verify readiness and approval gates without executing work.
-
-### Implementation Summary
-
-Task 3 added:
-
-- Execution readiness integration module.
-- Capability Plan resolution from linked execution records or source Execution Queue items.
-- Approval Queue resolution from linked approval IDs or source queue/work item references.
-- Capability readiness validation.
-- Approval readiness validation.
-- Readiness report model with blockers.
-- Store helpers to synchronize capability and approval references.
-- Store helpers to advance eligible records from Awaiting Capability Review to Awaiting Approval.
-- Store helpers to advance approved records from Awaiting Approval to Approved.
-- Store helpers to mark approved and capability-ready records as Ready.
-
-### Files Created
-
-- `app/src/core/execution/executionReadiness.ts`
-
-### Files Modified
-
-- `app/src/core/execution/executionTypes.ts`
-- `app/src/core/execution/executionStore.ts`
-- `app/src/core/execution/index.ts`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-
-### Architecture Decisions
-
-- Capability Planning remains the owner of capability requirements.
-- Approval Queue remains the owner of approval decisions.
-- Execution Core stores references and readiness reports only.
-- Readiness gates can advance lifecycle state only when existing Capability Planning and Approval Queue records satisfy requirements.
-- No duplicate Capability Store or Approval Store was created.
-- No execution behavior, provider execution, AI/model execution, network call, routing change, UI redesign, or autonomous behavior was added.
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript compile passed.
-- Vite production build passed.
-- Capability and approval references are read from existing stores.
-- Existing UI routes and components were not modified.
-- CEO QA passed.
-
-### Current Status
-
-Task 3 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 4 - Execution Queue Detail Integration is the current phase.
-
-## Task 4 - Execution Queue Detail Integration
-
-### Status
-
-COMPLETE.
-
-### Objective
-
-Integrate the active Execution Queue detail workflow with the Execution Core so queue items can create and view detailed execution infrastructure records.
-
-This task adds execution-detail infrastructure only. It does not execute AI, call providers, run APIs, automate work, process queues, or redesign the UI.
-
-### Implementation Summary
-
-Task 4 added:
-
-- Duplicate-protected Execution Record creation from an Execution Queue item.
-- Execution Core store helper for creating Execution Records from existing queue records.
-- Execution Core store helper for locating the Execution Record linked to a queue item.
-- Active Execution Queue detail page integration.
-- Visible Execution Record section on queue detail records.
-- Lifecycle state visibility.
-- Capability Plan and Approval reference visibility.
-- Readiness blocker visibility.
-- Timing visibility for created, updated, ready, started, completed, and failed timestamps.
-- Retry count, failure count, log count, estimated cost, actual cost, and result-reference visibility.
-- Reference synchronization action.
-- Readiness-gate actions that use the existing lifecycle/readiness helpers and do not execute work.
-
-### Files Modified
-
-- `app/src/core/execution/executionStore.ts`
-- `app/src/features/executionQueue/ExecutionQueueDetailPage.tsx`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-- `AO-Knowledge-Base/CHANGELOG.md`
-- `CHANGELOG.md`
-- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
-
-### Architecture Decisions
-
-- Execution Queue remains the owner of queue status and queue preparation context.
-- Execution Core owns Execution Records, lifecycle state, timing, retries, failures, logs, costs, and result references.
-- Work Item, Capability Planning, and Approval Queue ownership boundaries remain unchanged.
-- Execution Records store references to source records instead of duplicating Work Item, Capability Plan, Approval, or financial source data.
-- Duplicate Execution Records for the same queue item are prevented by checking the queue record ID before creation.
-- Execution Queue detail is now the bridge for creating and inspecting execution infrastructure records.
-- No provider execution, AI/model execution, API call, automation, routing change, or UI redesign was added.
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript compile passed.
-- Vite production build passed.
-- Execution Queue detail page compiles with the Execution Core integration.
-- Existing Execution Queue, Capability Planning, Approval Queue, and lifecycle helpers remain intact.
-- CEO QA passed.
-
-### Current Status
-
-Task 4 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 5 - Execution Dashboard & Detail Page is the current phase.
-
-## Task 5 - Execution Dashboard & Detail Page
-
-### Status
-
-COMPLETE.
-
-### Objective
-
-Create the first CEO-facing interface for AI Execution Infrastructure by adding read-only dashboard and detail views for Execution Core records.
-
-This task is visibility and inspection only. It does not execute AI, call providers, trigger tools, mutate lifecycle state, approve work, or introduce autonomous behavior.
-
-### Implementation Summary
-
-Task 5 added:
-
-- Execution Dashboard route at `/executions`.
-- Execution Detail route at `/executions/:executionId`.
-- Execution Queue entry point linking to the Execution Dashboard.
-- Execution Queue detail links to the read-only Execution Detail page for linked Execution Records.
-- Summary metrics for all Execution Core lifecycle states.
-- Additional indicators for CEO action, failures, long-running or paused executions, recent completions, estimated cost, and actual cost.
-- Execution list cards showing Execution ID, Work Item, lifecycle state, Capability Plan reference, Approval status, provider/tool references, retry count, estimated cost, actual cost, created time, updated time, failure indicators, and human-intervention indicators.
-- Local filtering by lifecycle state, approval status, capability readiness, failed state, human-intervention state, and completed state.
-- Local sorting by updated time, oldest waiting, retry count, estimated cost, and actual cost.
-- Execution Detail sections for Identity, Lifecycle, Readiness and Governance, Execution Configuration, History and Audit, Relationships, Cost References, and Result Reference.
-- Safe empty states for no records, no filtered matches, missing references, no logs, no retries, no failures, no result, and no cost records.
-
-### Files Created
-
-- `app/src/features/execution/ExecutionDashboardPage.tsx`
-- `app/src/features/execution/ExecutionDetailPage.tsx`
-
-### Files Modified
-
-- `app/src/App.tsx`
-- `app/components/AppShell.tsx`
-- `app/src/features/executionQueue/ExecutionQueuePage.tsx`
-- `app/src/features/executionQueue/ExecutionQueueDetailPage.tsx`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
-- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-- `AO-Knowledge-Base/CHANGELOG.md`
-- `CHANGELOG.md`
-- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
-
-### Architecture Decisions
-
-- Execution Store remains the single owner of Execution Records.
-- Execution Dashboard and Execution Detail are read-only consumers of existing stores and references.
-- No new persistence key, duplicate store, duplicate route system, or duplicated source-of-truth data was added.
-- Existing Execution Queue navigation remains the sidebar entry point; `/executions` is reachable from Execution Queue and queue detail records.
-- Execution Detail links to existing supported routes for Work Item, Execution Queue item, Capability Plan, and Approval Queue.
-- Approval detail routing was not invented; Approval references navigate to the existing Approval Queue page.
-- Lifecycle mutation controls are not exposed in Task 5 surfaces.
-- The previous queue-detail lifecycle gate controls were replaced with read-only navigation to align with Task 5 safety requirements.
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript compile passed.
-- Vite production build passed.
-- Execution Dashboard route compiles.
-- Execution Detail route compiles.
-- Execution Queue entry point compiles.
-- Empty and missing-reference states are handled without throwing.
-- No provider execution, AI/model execution, API call, tool call, approval action, lifecycle mutation, automation, or autonomous behavior was added.
-- CEO QA passed.
-
-### Current Status
-
-Task 5 is complete, committed, pushed, and synchronized into the continuity system. Sprint 012 Task 6 - Cost Tracking and Logging Polish is the current phase.
-
-## Task 6 - Cost Tracking and Logging Polish
-
-### Objective
-
-Polish execution cost tracking, improve execution logging consistency, strengthen execution audit history, and keep attempt-level cost/log ownership inside the Execution Core.
-
-### Implementation Summary
-
-Task 6 added:
-
-- Structured execution audit utilities in the Execution Core.
-- Migration-safe cost record normalization for older local records.
-- Migration-safe log normalization for older local records.
-- Cost record category, status, and recorded-by fields.
-- Log category support for clearer audit history.
-- Centralized money and currency normalization helpers.
-- Centralized execution event, log, and cost record creation helpers.
-- Store validation helper for execution audit completeness.
-- Automatic audit log creation when cost records are added.
-- Automatic audit log creation when retry records are added.
-- Automatic audit log creation when failure records are added.
-- Dashboard cost variance visibility.
-- Dashboard audit completeness visibility.
-- Execution Detail cost variance and audit health fields.
-- Execution Detail cost record badges for category and review/reconciliation status.
-- Execution Detail recorded-by and source reference context for cost records.
-- Metadata rendering in execution log and event timelines.
-
-### Ownership Boundaries
-
-- Execution Core continues to own attempt-level estimated cost, actual cost, cost records, execution logs, events, retries, failures, and result references.
-- Money Department remains the owner of financial reporting and business accounting.
-- Capability Planning remains the owner of infrastructure estimates and requirements.
-- Approval Queue remains the owner of approval decisions.
-- Task 6 stores references and audit history only; it does not duplicate external module ownership.
-
-### Safety Boundaries
-
-- No provider execution was added.
-- No AI/model execution was added.
-- No APIs, network calls, automation, or autonomous behavior were added.
-- No routing changes were made.
-- Existing execution pages remain read-only inspection surfaces.
-
-### Files Created
-
-- `app/src/core/execution/executionAudit.ts`
-
-### Files Modified
-
-- `app/src/core/execution/executionTypes.ts`
-- `app/src/core/execution/executionStore.ts`
-- `app/src/core/execution/index.ts`
-- `app/src/features/execution/ExecutionDashboardPage.tsx`
-- `app/src/features/execution/ExecutionDetailPage.tsx`
-- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-- `AO-Knowledge-Base/CHANGELOG.md`
-- `CHANGELOG.md`
-- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript passed through `tsc --noEmit`.
-- Vite production build passed.
-- Existing execution persistence remains local-first through the existing Execution Store.
-- Existing execution dashboard and detail routes continue to compile.
-
-### QA Status
-
-PASS.
-
-### Current Status
-
-Task 6 implementation, QA, and documentation are complete. Sprint 012 Task 7 - Command Center Visibility is complete. Sprint 012 Task 8 - QA, Documentation & Sprint Closeout is authorized.
-
-## Task 7 - Command Center Visibility
-
-### Objective
-
-Surface execution infrastructure status in the CEO Command Center so the CEO can see what requires attention without turning the Dashboard into an execution workspace.
-
-### Implementation Summary
-
-Task 7 added read-only Command Center visibility for:
-
-- Execution records awaiting CEO approval.
-- Execution records requiring human intervention.
-- Failed execution records.
-- Long-running or paused execution records.
-- Capability readiness blockers.
-- Ready and running execution counts.
-- Recently completed execution records.
-- Estimated execution cost, actual execution cost, and cost variance.
-- Audit completeness issues.
-- Execution event history in recent activity.
-
-### Command Center Behavior
-
-- CEO Required Actions now includes execution-related attention items with severity, explanation, blocked reference, and navigation to the owning record.
-- CEO Snapshot now includes execution readiness, execution risk, and execution cost cards.
-- Awaiting AI / System Work now distinguishes ready work, infrastructure waits, approval waits, running execution records, human intervention, and autonomous AI running.
-- Recent Activity can show actual execution events from the Execution Core.
-- Alerts can surface failed, intervention-required, paused/long-running, cost variance, and audit completeness concerns.
-
-### Ownership Boundaries
-
-- The Command Center reads from the existing Execution Core, Execution Queue, Capability Planning, Approval Queue, and cost/audit helpers.
-- The Command Center does not own execution records, queue records, capability plans, approvals, costs, logs, or events.
-- Navigation routes the CEO into the module that owns the record.
-- Duplicate alerts are reduced by prioritizing stronger execution conditions before lower-priority audit reminders.
-
-### Safety Boundaries
-
-- No execution controls were added.
-- No lifecycle mutation was added.
-- No approval actions were added.
-- No provider execution was added.
-- No AI/model execution was added.
-- No APIs, network calls, automation, or autonomous behavior were added.
-- The Command Center remains an inspection and attention-routing surface.
-
-### Files Modified
-
-- `app/pages/Dashboard.tsx`
-- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
-- `AO-Knowledge-Base/02 - Architecture/Execution Core Architecture.md`
-- `AO-Knowledge-Base/CHANGELOG.md`
-- `CHANGELOG.md`
-- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
-
-### Verification
-
-- `npm.cmd run build` passed.
-- TypeScript passed through `tsc --noEmit`.
-- Vite production build passed.
-- Existing execution stores remain local-first.
-- Existing Command Center navigation remains read-only.
-
-### QA Status
-
-PASS.
-
-### Current Status
-
-Task 7 implementation, QA, and documentation are complete. Sprint 012 Task 8 - QA, Documentation & Sprint Closeout is the current phase.
-
-## Task 8 - QA, Documentation & Sprint Closeout Preparation
-
-### Objective
-
-Complete final internal validation, finalize Sprint 012 documentation, prepare the CEO QA walkthrough, and hand off Sprint 012 for final CEO closeout approval.
-
-Task 8 introduces no new application features.
-
-### Internal Regression Validation
-
-Task 8 verified:
-
-- Repository startup verification passed before documentation updates.
-- Production build succeeded with `npm.cmd run build`.
-- TypeScript passed through `tsc --noEmit`.
-- Vite production build passed.
-- Execution Core files and store exist.
-- Execution Lifecycle Engine files exist.
-- Capability Planning, Approval Queue, Execution Queue, and Execution Dashboard routes remain registered through the active application router.
-- Execution Dashboard and Execution Detail remain read-only inspection surfaces.
-- Command Center execution visibility routes to owning modules.
-- Missing-reference handling is represented in Execution Dashboard and Detail code paths.
-- No duplicate execution, approval, capability planning, execution queue, work item, or money ownership was introduced.
-- No AI provider integration, model execution, external AI API call, autonomous behavior, or Provider Manager implementation was added.
-
-### Architecture Validation
-
-Sprint 012 preserved the approved ownership model:
-
-- Execution Core owns execution records, attempts, lifecycle state, timing, retry history, failure history, execution logs, event history, attempt-level costs, result references, and audit history.
-- Execution Queue owns queue records and queue state.
-- Work Items own work definitions.
-- Capability Planning owns capability requirements and readiness state.
-- Approval Queue owns approval decisions.
-- Money and Cost Tracking own financial reporting.
-- Command Center owns executive visibility, inspection, and navigation only.
-- Execution Dashboard and Execution Detail are inspection-only.
-
-### Sprint 012 Acceptance Status
-
-Sprint 012 delivered:
-
-- Execution Core.
-- Execution Store.
-- Execution lifecycle validation.
-- Invalid-transition protection.
-- Capability readiness relationships.
-- Approval relationships.
-- Execution Queue detail integration.
-- Execution record creation.
-- Execution Dashboard.
-- Execution Detail page.
-- Cost tracking.
-- Execution logging.
-- Retry and failure history.
-- Event and audit visibility.
-- Command Center visibility.
-- Provider-interface references/framework only where documented.
-- No AI provider execution.
-
-### Full CEO QA Walkthrough
-
-The CEO should complete final behavioral QA before Sprint 012 is officially closed:
-
-1. Launch the application normally.
-2. Confirm the production build has passed.
-3. Verify existing module navigation still works.
-4. Confirm existing persisted data remains intact.
-5. Open Execution Queue.
-6. Confirm eligible queue records can open related execution context.
-7. Confirm duplicate execution records are not created for the same queue item.
-8. Open Execution Dashboard.
-9. Test execution filtering and sorting.
-10. Open Execution Detail.
-11. Verify relationship navigation to Work Item, Execution Queue, Capability Plan, and Approval where references exist.
-12. Confirm capability readiness displays without duplicating Capability Planning ownership.
-13. Confirm approval references display without duplicating Approval Queue ownership.
-14. Confirm lifecycle visibility is inspect-only.
-15. Confirm estimated and actual cost tracking is visible.
-16. Confirm logs and audit information are visible.
-17. Confirm retry and failure history are visible where records exist.
-18. Confirm empty states are understandable.
-19. Confirm missing references are handled safely.
-20. Confirm restart persistence for execution records.
-21. Confirm Command Center surfaces execution visibility.
-22. Confirm no unauthorized execution controls are exposed.
-23. Confirm no AI provider execution exists.
-24. Confirm no regressions in Work Items, Execution Queue, Capability Planning, Approval Queue, Dashboard/Command Center, Businesses, Projects, Money, Memory, or Roadmap.
-
-### Risks
-
-- Final CEO behavioral QA may reveal a UI clarity issue that internal build/regression checks cannot detect.
-- The production bundle still reports a large chunk warning; this is non-blocking but remains technical debt for future code splitting.
-- Sprint 013 provider integration must not weaken the Sprint 012 ownership boundaries.
-
-### Deferred Items
-
-- Provider Manager.
-- AI provider registration.
-- Ollama/local model detection.
-- OpenAI provider integration.
-- Provider health and usage metrics.
-- AI prompt execution.
-- Provider-independent response handling.
-- Actual execution controls.
-- Autonomous behavior.
-
-### Lessons Learned
-
+- AO-012 = Execution Infrastructure.
+- AO-013 = AI Provider Integration.
 - Separate infrastructure from intelligence.
-- Documentation synchronization must occur before the next task.
-- Repository refresh must follow every pushed synchronization.
-- Repository Checkpoint must not self-reference the commit containing it.
-- Implementation reports do not replace CEO behavioral QA.
-- UI behavior must be tested directly.
+- Departments and workers request capabilities.
+- Provider Manager selects providers.
+- AI Operator OS remains provider-independent.
 
-### Repository Checkpoint Model
+## Approved Scope
 
-Sprint 012 used the Repository Checkpoint model to avoid self-invalidating Startup Bundle commits. The authoritative checkpoint is maintained only in `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`.
-
-### AO-013 Handoff
-
-After Sprint 012 is formally closed, Sprint 013 - AI Provider Integration is the next planned sprint.
-
-Approved Sprint 013 purpose: teach AI Operator OS how to use AI providers without coupling departments or workers to specific vendors.
-
-Future Sprint 013 scope may include:
+Sprint 013 may plan and implement AI provider integration infrastructure such as:
 
 - Provider Manager.
 - Provider abstraction layer.
@@ -2519,780 +1935,30 @@ Future Sprint 013 scope may include:
 - Worker capability requests.
 - Provider-independent execution.
 
-Sprint 013 must not begin until Sprint 012 receives final CEO QA and closeout approval.
+## Architecture Boundaries
 
-### Current Status
+- Execution Infrastructure must not depend on a specific AI provider.
+- Providers are implementation details, not architecture.
+- Departments and workers request capabilities instead of selecting vendors directly.
+- Provider Manager selects providers based on capability, cost, speed, availability, and business rules.
+- CEO approval remains required for risky, money-impacting, public, client-impacting, deletion, pricing, contract, or external-service actions.
 
-Sprint 012 implementation, internal QA, and documentation are complete. Sprint 012 is awaiting final CEO QA and closeout approval.
+## Out of Scope Until Explicitly Approved
 
-## Sprint Objective
+- Uncontrolled autonomous execution.
+- Provider-specific department architecture.
+- Bypassing Capability Planning.
+- Bypassing Approval Queue.
+- Hardcoding AI Operator OS to a single vendor.
+- External actions without CEO-approved capability and approval flow.
 
-Sprint 012 establishes the universal AI Execution Infrastructure foundation for AI Operator OS.
+## Next Required Action
 
-The sprint defines and then implements the local-first infrastructure that will eventually allow AI Operators to perform work safely, visibly, and consistently.
+Begin Sprint 013 implementation from the approved roadmap and Architecture v2 rules.
 
-Execution Infrastructure is required because AI Operator OS has reached the point where work can be created, queued, capability-planned, and approved, but it still lacks the controlled foundation for actual execution attempts, execution state, cost visibility, result recording, failure handling, and audit logs.
+## Current Status
 
-Sprint 012 solves these problems:
-
-- Work cannot safely move beyond approval without a controlled execution layer.
-- Operators need a shared runtime boundary instead of one-off module behavior.
-- Capabilities, tools, provider-interface references, prompts, memory, cost, approvals, logs, and results need clear ownership before AI providers are integrated.
-- Future B2C and B2B automation need a reusable infrastructure layer before business-specific workflows are built.
-- CEO visibility must exist before execution becomes more autonomous.
-
-Sprint 012 supports future roadmap items by creating deterministic execution infrastructure needed for:
-
-- AO-013 AI Provider Integration
-- AO-014 Early Revenue Foundation
-- AO-015 Multi-Business Management
-- AO-016 B2B Revenue Systems
-- AO-017 External Integrations
-- AO-018 Autonomous Departments
-- AO-019+ Long-Term Scaling
-
-Infrastructure must exist before AI provider integration, B2C automation, and B2B automation because revenue workflows involve money, customers, reputation, publishing, tools, providers, and operational risk. AI Operator OS must first know what can execute, who approved it, what capability it uses, what tool or provider-interface reference it touches, what it costs, what happened, and what the CEO needs to see.
-
-Sprint 012 intentionally excludes:
-
-- Revenue systems
-- Autonomous departments
-- Business-specific automation
-- Uncontrolled autonomous execution
-- External provider execution without approved infrastructure
-- AI decision making that bypasses human approval
-
-## Canonical Vocabulary
-
-### CEO
-
-- Purpose: Final human authority for business direction, approvals, risk, spending, public actions, and strategic decisions.
-- Responsibilities: Set direction, approve consequential work, resolve exceptions, review performance, and improve the operating system.
-- Authoritative owner: Human CEO.
-- Relationships: Receives visibility from Command Center, Approval Queue, Execution Logs, and Results; approves or rejects risky work.
-- Lifecycle: Permanent role.
-- Extensibility boundaries: The CEO may be supported by AI, but final authority is never delegated by default.
-
-### Business
-
-- Purpose: Active or intended operating entity inside the AI Operator OS portfolio.
-- Responsibilities: Own company structure, projects, operating context, and business outcomes.
-- Authoritative owner: Business Manager module.
-- Relationships: Originates from Opportunities; owns Projects and Company Structure.
-- Lifecycle: Building, Launching, Operating, Optimizing, Scaling, Paused, Archived.
-- Extensibility boundaries: Businesses organize operations; they do not execute work directly.
-
-### Department
-
-- Purpose: Major business function such as Research, Development, Marketing, Finance, Sales, Operations, Customer Success, Administration, or Content.
-- Responsibilities: Own functional context, managers, operators, and future squads.
-- Authoritative owner: Company Structure module.
-- Relationships: Belongs to a Business; contains Managers and Operators.
-- Lifecycle: Planning, Ready, Operating, Paused, Archived.
-- Extensibility boundaries: Departments coordinate ownership; they do not bypass Work Items or Execution Queue.
-
-### Manager
-
-- Purpose: Department-level coordination record.
-- Responsibilities: Track department ownership, health, focus, priority, and operator supervision.
-- Authoritative owner: Company Structure department records.
-- Relationships: Belongs to a Department; may supervise Operators; may be referenced by Projects and Work Items.
-- Lifecycle: Planning, Ready, Operating, Paused.
-- Extensibility boundaries: Managers coordinate work; they do not execute work autonomously.
-
-### Squad
-
-- Purpose: Future sub-department unit for scaled department work.
-- Responsibilities: Group operators, workflows, and capabilities around a recurring operating function.
-- Authoritative owner: Future Company Structure or Department extension.
-- Relationships: Belongs to a Department; contains Operators and recurring workflows.
-- Lifecycle: Future planned concept.
-- Extensibility boundaries: Squads must not become isolated execution systems.
-
-### Operator
-
-- Purpose: Specialized workforce role assigned to a Business, Department, and Manager.
-- Responsibilities: Create, manage, analyze, draft, recommend, and prepare work.
-- Authoritative owner: Operator Layer.
-- Relationships: May be assigned to Work Items, may create recommendations, may request capabilities.
-- Lifecycle: Planning, Ready, Operating, Paused, Archived or equivalent operator status model.
-- Extensibility boundaries: Operators create or manage work; the Execution Engine executes work.
-
-### Work Item
-
-- Purpose: Specific executable unit of work.
-- Responsibilities: Define what needs to be done, why it matters, who owns it, and what context it belongs to.
-- Authoritative owner: Work Item module.
-- Relationships: Belongs to Project; references Business, Department, Manager, Operator.
-- Lifecycle: Planning, Ready, In Progress, Blocked, Review, Completed, Archived.
-- Extensibility boundaries: Work Items define work; they do not execute themselves.
-
-### Execution Queue Item
-
-- Purpose: Prepared queue record created from a Work Item.
-- Responsibilities: Hold execution preparation state, priority, execution type, approval requirement, source context, and queue status.
-- Authoritative owner: Execution Queue module.
-- Relationships: Originates from Work Item; feeds Capability Planning and Approval Queue.
-- Lifecycle: Queued, Waiting Approval, Ready, Blocked, Completed, Archived.
-- Extensibility boundaries: Queue items prepare execution; they do not perform execution.
-
-### Capability Plan
-
-- Purpose: Planning record that describes what infrastructure is required before a queue item can execute.
-- Responsibilities: Identify required capabilities, preferred providers, tools, permissions, operator roles, estimated cost, runtime, readiness, and notes.
-- Authoritative owner: Capability Planning module.
-- Relationships: Belongs to Execution Queue Item; informs Approval Queue and future Execution Engine.
-- Lifecycle: Planning, Ready for Review, Requires Changes, Approved or equivalent readiness flow.
-- Extensibility boundaries: Capability Plans define requirements; they do not install providers or execute work.
-
-### Capability
-
-- Purpose: Reusable approved skill or ability the platform can make available to execution.
-- Responsibilities: Define what kind of work can be performed, required tools, provider options, permissions, risk level, approval requirements, and operating constraints.
-- Authoritative owner: Sprint 012 Capability Manager architecture.
-- Relationships: Requested by Operators or Capability Plans; used by Execution Engine; may require Tools and Providers.
-- Lifecycle: Proposed, Under Review, Approved, Available, Suspended, Deprecated.
-- Extensibility boundaries: Capabilities describe reusable skills; they do not directly call tools.
-
-### Tool
-
-- Purpose: Controlled action interface such as browser, file writer, GitHub, email, CRM, hosting, search, or spreadsheet manipulation.
-- Responsibilities: Define allowed actions, permissions, constraints, safety checks, and result format.
-- Authoritative owner: Sprint 012 Tool Manager architecture.
-- Relationships: Used by Capabilities; may rely on Providers; invoked only through Execution Engine.
-- Lifecycle: Proposed, Approved, Available, Suspended, Deprecated.
-- Extensibility boundaries: Tools perform controlled actions; they must not bypass approval or logging.
-
-### Provider
-
-- Purpose: Replaceable external or local service that powers a tool, model, API, or runtime.
-- Responsibilities: Provide implementation capability while remaining interchangeable.
-- Authoritative owner: Sprint 012 Provider/Model Selection architecture.
-- Relationships: Supports Tools, Models, and Capabilities.
-- Lifecycle: Candidate, Approved, Available, Suspended, Deprecated.
-- Extensibility boundaries: Providers are implementation details, not architecture.
-
-### Approval
-
-- Purpose: Human decision record controlling whether consequential work may proceed.
-- Responsibilities: Store approval state, decision, decision history, notes, and related source context.
-- Authoritative owner: Approval Queue module.
-- Relationships: May originate from Execution Queue or recommendations; gates execution.
-- Lifecycle: Draft, Pending, Approved, Rejected, Changes Requested, Deferred, Archived.
-- Extensibility boundaries: Approval records decisions; they do not execute work.
-
-### Execution Attempt
-
-- Purpose: Individual attempt to execute approved prepared work.
-- Responsibilities: Track execution state, source queue item, capability, tool, provider, timing, costs, logs, result, and errors.
-- Authoritative owner: Sprint 012 Execution Engine store/domain.
-- Relationships: Created from approved Execution Queue Item; references Capability Plan, Approval, Capability, Tool, Provider.
-- Lifecycle: Prepared, Awaiting Capability Review, Awaiting Approval, Approved, Ready, Running, Paused, Completed, Failed, Cancelled, Requires Human Intervention.
-- Extensibility boundaries: Attempts execute through approved infrastructure only.
-
-### Execution Result
-
-- Purpose: Recorded outcome of an Execution Attempt.
-- Responsibilities: Store output summary, artifacts, result status, cost, duration, errors, and next-action recommendations.
-- Authoritative owner: Execution Engine result records.
-- Relationships: Belongs to Execution Attempt; visible to CEO and source modules.
-- Lifecycle: Draft Result, Recorded, Reviewed, Archived.
-- Extensibility boundaries: Results record outcome; they do not trigger follow-up execution without a new approved workflow.
-
-### Event
-
-- Purpose: Structured record of important domain, system, or UI transitions.
-- Responsibilities: Preserve traceability, audit context, and cross-module visibility.
-- Authoritative owner: Sprint 012 Event Model architecture.
-- Relationships: Published by Work Items, Execution Queue, Capability Planning, Approval Queue, Execution Engine, Cost Tracking, Logging, and Results.
-- Lifecycle: Created, Persisted, Consumed, Archived.
-- Extensibility boundaries: Events inform systems; they should not secretly execute consequential actions.
-
-### Memory
-
-- Purpose: Durable business knowledge, decisions, rules, research, SOPs, architecture, and lessons learned.
-- Responsibilities: Provide business context and historical knowledge to operators and future execution planning.
-- Authoritative owner: Business Memory module.
-- Relationships: Read by briefings, operators, planning, and future execution context.
-- Lifecycle: Active, Pinned, Archived, Deleted.
-- Extensibility boundaries: Memory informs execution; it is not a command source by itself.
-
-### Context
-
-- Purpose: Bounded set of relevant records supplied to an operator, planner, or execution attempt.
-- Responsibilities: Provide enough information to act safely without duplicating source data.
-- Authoritative owner: Context assembler within future Operator Runtime or Execution Engine architecture.
-- Relationships: Reads source modules by reference.
-- Lifecycle: Assembled, Used, Logged, Expired.
-- Extensibility boundaries: Context should reference authoritative records, not create competing state.
-
-### Cost Record
-
-- Purpose: Estimate or actual cost related to planning, provider use, tool use, or execution attempts.
-- Responsibilities: Track cost visibility before and after execution.
-- Authoritative owner: Sprint 012 Cost Tracking architecture; future integration may link to Money module.
-- Relationships: References Capability Plan, Execution Attempt, Tool, Provider, Business, and Project.
-- Lifecycle: Estimated, Approved, Incurred, Recorded, Reviewed.
-- Extensibility boundaries: Cost records track cost; they do not authorize spending without approval.
-
-### Log Entry
-
-- Purpose: Immutable execution or system audit record.
-- Responsibilities: Record state transitions, tool calls, safety checks, provider interactions, errors, retries, and human interventions.
-- Authoritative owner: Execution Logging architecture.
-- Relationships: Belongs to Execution Attempt or Event.
-- Lifecycle: Created, Persisted, Reviewed, Archived.
-- Extensibility boundaries: Logs must not be edited to rewrite execution history.
-
-## Architecture Overview
-
-Sprint 012 defines the following execution architecture.
-
-### Execution Engine
-
-Responsible for creating and managing Execution Attempts after work has moved through Work Item, Execution Queue, Capability Planning, and Approval.
-
-Sprint 012 scope:
-
-- Define local-first execution attempt records.
-- Manage safe state transitions.
-- Enforce capability, approval, and safety gates.
-- Store logs, results, retries, and human intervention state.
-
-Future work:
-
-- Real provider calls.
-- Autonomous scheduling.
-- Business-specific automation.
-
-### Operator Runtime
-
-Responsible for preparing execution context for operators and future AI work.
-
-Sprint 012 scope:
-
-- Define boundaries for what operators can request.
-- Define context packaging rules.
-- Preserve the rule that operators manage or create work, while Execution Engine executes work.
-
-Future work:
-
-- Live AI model invocation.
-- Multi-operator runtime scheduling.
-
-### Capability Manager
-
-Responsible for defining approved reusable capabilities.
-
-Sprint 012 scope:
-
-- Define capability records and readiness states.
-- Connect capabilities to Capability Plans.
-- Preserve approval requirements and operating constraints.
-
-Future work:
-
-- Capability installation.
-- Capability marketplace.
-
-### Tool Manager
-
-Responsible for defining controlled action interfaces.
-
-Sprint 012 scope:
-
-- Define tool records, permissions, risk levels, and constraints.
-- Ensure tools are invoked only through Execution Engine.
-
-Future work:
-
-- Real tool adapters.
-- Credentialed integrations.
-
-### Prompt Management
-
-Responsible for versioned prompts and instruction templates.
-
-Sprint 012 scope:
-
-- Define prompt ownership and versioning.
-- Link prompts to capabilities and execution attempts.
-
-Future work:
-
-- Prompt optimization loops.
-- Prompt performance analytics.
-
-### Model Selection
-
-Responsible for provider-independent model choice.
-
-Sprint 012 scope:
-
-- Define model/provider selection records.
-- Preserve provider replaceability.
-- Link model choice to cost and capability requirements.
-
-Future work:
-
-- Real provider configuration.
-- Model benchmarks.
-
-### Memory Integration
-
-Responsible for connecting execution context to Business Memory.
-
-Sprint 012 scope:
-
-- Define what memory can be read as context.
-- Define memory references in execution logs/results.
-
-Future work:
-
-- Automated memory retrieval.
-- Memory writeback proposals.
-
-### Cost Tracking
-
-Responsible for estimated and actual cost visibility.
-
-Sprint 012 scope:
-
-- Define cost records for execution planning and attempts.
-- Track estimate vs actual cost.
-- Require approval for spending-sensitive work.
-
-Future work:
-
-- Provider billing integrations.
-- Budget enforcement automation.
-
-### Execution Logging
-
-Responsible for audit trail and CEO visibility.
-
-Sprint 012 scope:
-
-- Define log entries for state transitions, safety checks, retries, errors, results, and manual intervention.
-- Keep logs local-first and immutable in practice.
-
-Future work:
-
-- Advanced audit dashboards.
-- Exportable audit reports.
-
-### Approval Enforcement
-
-Responsible for ensuring no risky execution runs without CEO approval.
-
-Sprint 012 scope:
-
-- Check linked Approval Queue records before execution readiness.
-- Block execution when approval is missing, rejected, deferred, archived, or changes requested.
-
-Future work:
-
-- More granular approval policies.
-
-### Safe Execution Lifecycle
-
-Responsible for deterministic state transitions and prohibited paths.
-
-Sprint 012 scope:
-
-- Define lifecycle states, transition rules, history, and CEO visibility.
-
-Future work:
-
-- Runtime orchestration.
-
-### Event Model
-
-Responsible for structured event definitions and audit-friendly transitions.
-
-Sprint 012 scope:
-
-- Define event names, publishers, consumers, payload requirements, persistence, and audit type.
-
-Future work:
-
-- Event bus or subscription runtime.
-
-## Data Ownership Model
-
-| Data | Authoritative Owner | Notes |
-| --- | --- | --- |
-| Work definition | Work Item module | Defines executable unit; does not execute. |
-| Queue status | Execution Queue module | Tracks preparation status before execution. |
-| Capability requirements | Capability Planning module | Defines required capabilities, tools, permissions, providers, cost, runtime. |
-| Approval decision | Approval Queue module | Human decision state; gates execution. |
-| Execution status | Execution Engine domain | Tracks each Execution Attempt. |
-| Provider selection | Model Selection / Provider records | Provider choices remain replaceable and linked to capabilities. |
-| Tool selection | Tool Manager | Tools are controlled action interfaces. |
-| Cost estimate | Capability Planning / Cost Tracking | Estimate begins in planning and is referenced by execution. |
-| Actual cost | Cost Tracking | Actual cost belongs to execution attempt records and cost records. |
-| Timing | Execution Engine | Attempt start, pause, completion, failure, and duration. |
-| Outputs | Execution Results | Result records belong to attempts. |
-| Errors | Execution Logs / Execution Attempt | Errors are logged and summarized in attempt state. |
-| Retry history | Execution Engine | Retries are attempt-level history and logs. |
-| Logs | Execution Logging | Logs preserve audit trail. |
-| Result records | Execution Results | Results are referenced back to source queue item and work item. |
-
-Existing modules participate as follows:
-
-- Work Item defines the work.
-- Execution Queue prepares the work for execution.
-- Capability Planning defines infrastructure requirements.
-- Approval Queue records CEO authorization.
-- Execution Engine creates attempts only after capability and approval checks pass.
-
-## Execution Lifecycle
-
-| State | Entry Conditions | Allowed Transitions | Prohibited Transitions | Responsible System | Required History Entry | CEO Visibility | Approval Implications |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Prepared | Queue item selected for execution planning | Awaiting Capability Review, Cancelled | Running, Completed | Execution Engine | Attempt prepared | Visible in execution context | No execution allowed |
-| Awaiting Capability Review | Capability requirements not validated | Awaiting Approval, Requires Human Intervention, Cancelled | Running | Capability Manager | Capability review requested | Visible if blocked | Approval cannot proceed without requirements |
-| Awaiting Approval | Capability requirements ready and approval required | Approved, Cancelled, Requires Human Intervention | Ready, Running | Approval Queue | Approval requested | Visible as CEO action | CEO decision required |
-| Approved | Linked approval is approved | Ready, Cancelled | Running without readiness checks | Approval Queue / Execution Engine | Approval verified | Visible as approved | Execution may prepare |
-| Ready | Approval and capability checks pass | Running, Cancelled | Completed, Failed | Execution Engine | Execution ready | Visible as ready | Approved work only |
-| Running | Execution attempt begins | Paused, Completed, Failed, Requires Human Intervention, Cancelled | Awaiting Approval | Execution Engine | Execution started | Visible as active | Must already be approved if risky |
-| Paused | Execution stopped temporarily | Running, Cancelled, Requires Human Intervention | Completed without resume/result | Execution Engine | Execution paused | Visible as paused | May require CEO review depending on cause |
-| Completed | Work finished successfully | Archived or result review flow | Running, Failed | Execution Engine | Execution completed | Visible result | No further execution without new work |
-| Failed | Work ended unsuccessfully | Requires Human Intervention, Ready if retry allowed, Cancelled | Completed without result correction | Execution Engine | Execution failed | Visible as exception | Retry may require approval |
-| Cancelled | Work intentionally stopped | Archived | Running, Completed | Execution Engine / CEO | Execution cancelled | Visible as stopped | New execution requires new attempt |
-| Requires Human Intervention | Missing decision, failure, safety concern, or blocked dependency | Awaiting Capability Review, Awaiting Approval, Ready, Cancelled | Running without resolution | Execution Engine / CEO | Human intervention required | High visibility | CEO or manager action required |
-
-## Safety Model
-
-### May Eventually Run Without Case-by-Case Approval
-
-Only low-risk, approved, bounded actions may eventually run without case-by-case approval.
-
-Examples:
-
-- Local draft generation.
-- Local summarization.
-- Local classification.
-- Internal formatting.
-- Non-destructive local analysis.
-- Preparing recommendations for review.
-
-These still require logging, cost visibility, and operating constraints.
-
-### Always Requires CEO Approval
-
-The following always require CEO approval:
-
-- Money-impacting actions.
-- Public publishing.
-- Client-facing communication or deliverables.
-- Deletion or destructive edits.
-- Pricing changes.
-- Contracts.
-- External service connections.
-- Credential use.
-- Paid provider usage beyond approved limits.
-- Business launch actions.
-- Legal, financial, or reputational-risk actions.
-
-### Approval Check
-
-Execution Engine must verify linked approval state before readiness or running. Approved is the only approval state that may permit risky execution.
-
-Rejected, deferred, archived, missing, or changes-requested approvals block execution.
-
-### Financial Protection
-
-Cost estimates must be visible before approval. Actual costs must be recorded after execution. Spending limits must block or pause execution when exceeded.
-
-### Publishing and Client Protection
-
-Public or client-facing outputs must remain draft/review-only unless explicitly approved.
-
-### Deletion and Destructive Protection
-
-Destructive actions require explicit approval and should prefer reversible operations where possible.
-
-### Credentials
-
-Credentials must remain outside ordinary local records. Execution records may reference required credential classes but must not store secrets.
-
-### Retries
-
-Retries must be limited, logged, and safety-checked. Repeated failures move to Requires Human Intervention.
-
-### Provider Independence
-
-Providers remain replaceable. Architecture stores provider references and constraints, not vendor-dependent workflow logic.
-
-### Pipeline Enforcement
-
-No module may bypass:
-
-Work Item → Execution Queue → Capability Planning → Approval → Execution Engine → Logging → Result.
-
-## Event Model
-
-| Event | Publisher | Consumers | Required Payload | Persistence | Audit Type |
-| --- | --- | --- | --- | --- | --- |
-| Work Item Created | Work Item module | Project, Execution Queue candidate views | workItemId, projectId, businessId, createdAt | Persisted by Work Item | Domain |
-| Queue Item Created | Execution Queue | Capability Planning, Dashboard | queueItemId, workItemId, status, priority, createdAt | Persisted by Execution Queue | Domain |
-| Capability Plan Created | Capability Planning | Approval Queue, Execution Engine readiness | capabilityPlanId, queueItemId, requirements, estimatedCost | Persisted by Capability Planning | Domain |
-| Capability Validation Passed | Capability Manager | Execution Engine, Approval Queue | capabilityPlanId, validatedCapabilities, timestamp | Persisted in capability history/log | Domain |
-| Approval Requested | Approval Queue | Dashboard, CEO, Operators | approvalId, sourceQueueItemId, risk, priority | Persisted by Approval Queue | Domain |
-| Approval Granted | Approval Queue | Execution Engine, Dashboard | approvalId, decision, decidedAt | Persisted by Approval Queue | Domain |
-| Approval Rejected | Approval Queue | Execution Engine, Operator Workspace | approvalId, decision, note, decidedAt | Persisted by Approval Queue | Domain |
-| Execution Ready | Execution Engine | Dashboard, Queue Detail | executionAttemptId, queueItemId, readinessChecks | Persisted by Execution Engine | Domain |
-| Execution Started | Execution Engine | Dashboard, Logs | executionAttemptId, startedAt, capabilityId | Persisted by Execution Logs | System |
-| Execution Completed | Execution Engine | Results, Dashboard, Source Modules | executionAttemptId, resultId, completedAt, cost | Persisted by Execution Engine | Domain |
-| Execution Failed | Execution Engine | Dashboard, CEO Actions, Logs | executionAttemptId, error, failedAt | Persisted by Execution Logs | System |
-| Execution Cancelled | Execution Engine / CEO | Dashboard, Logs | executionAttemptId, reason, cancelledAt | Persisted by Execution Logs | Domain |
-| Human Intervention Required | Execution Engine | Command Center, CEO, Manager | executionAttemptId, reason, blocker | Persisted by Execution Logs | Domain |
-| Cost Recorded | Cost Tracking | Money, Dashboard, Execution Detail | costRecordId, executionAttemptId, estimateOrActual, amount | Persisted by Cost Tracking | Domain |
-| Result Recorded | Execution Results | Work Item, Queue, Dashboard | resultId, executionAttemptId, summary, artifactRefs | Persisted by Results | Domain |
-
-UI-only events may exist for presentation state, but they must not replace persisted domain/system events.
-
-## Proposed Implementation Tasks
-
-### Task 1 - Execution Core Types and Store
-
-- Purpose: Establish the smallest useful local-first execution foundation.
-- Dependencies: Work Item, Execution Queue, Capability Planning, Approval Queue.
-- Files or modules likely affected: `app/src/core/execution`.
-- Deliverables: Execution types, execution attempt store, result/log/cost types, local persistence.
-- Acceptance Criteria: Records persist, use stable IDs, no external execution, no duplicate stores.
-- QA Requirements: Build, create/read/update local records, restart persistence.
-- Explicit Exclusions: No provider calls, no automation, no UI execution.
-- CEO Review Point: Confirm data model and ownership before UI.
-
-### Task 2 - Execution Lifecycle Engine
-
-- Purpose: Implement deterministic lifecycle transitions and prohibited transitions.
-- Dependencies: Task 1.
-- Files or modules likely affected: `app/src/core/execution`.
-- Deliverables: Transition helpers, validation, history entries.
-- Acceptance Criteria: Invalid transitions are blocked and logged.
-- QA Requirements: State transition tests/manual checks.
-- Explicit Exclusions: No tool calls.
-- CEO Review Point: Confirm lifecycle safety.
-
-### Task 3 - Capability and Approval Gate Integration
-
-- Purpose: Connect execution readiness to Capability Planning and Approval Queue.
-- Dependencies: Tasks 1-2.
-- Files or modules likely affected: execution core, capability planning reads, approval reads.
-- Deliverables: Readiness checks, approval gate checks, blocked reasons.
-- Acceptance Criteria: Risky work cannot become Ready or Running without approved approval.
-- QA Requirements: Pending/rejected/missing approval blocks execution.
-- Explicit Exclusions: No new approval workflow.
-- CEO Review Point: Confirm approval enforcement.
-
-### Task 4 - Execution Queue Detail Integration
-
-- Purpose: Let approved queue items create/open execution attempts.
-- Dependencies: Tasks 1-3.
-- Files or modules likely affected: Execution Queue detail/page components.
-- Deliverables: Execution section, create attempt action, duplicate prevention, open attempt link.
-- Acceptance Criteria: One active attempt per queue item unless explicitly new attempt is allowed.
-- QA Requirements: Queue item to execution attempt flow, persistence after restart.
-- Explicit Exclusions: No automatic execution.
-- CEO Review Point: Confirm workflow clarity.
-
-### Task 5 - Execution Dashboard and Detail Page
-
-- Purpose: Provide CEO visibility into execution attempts.
-- Dependencies: Tasks 1-4.
-- Files or modules likely affected: `app/src/features/execution`.
-- Deliverables: Execution page, detail page, status cards, logs/results/cost sections.
-- Acceptance Criteria: CEO can view attempts, status, source context, logs, result placeholders, cost visibility.
-- QA Requirements: Navigation, filters, detail routing, persistence.
-- Explicit Exclusions: No provider action.
-- CEO Review Point: Confirm visibility.
-
-### Task 6 - Cost Tracking and Logging Polish
-
-- Purpose: Ensure attempts record estimates, actual costs, timing, logs, retries, and failures.
-- Dependencies: Tasks 1-5.
-- Files or modules likely affected: execution core and UI.
-- Deliverables: Cost records, log entries, retry history, failure reason display.
-- Acceptance Criteria: Costs/logs are visible and linked to attempts.
-- QA Requirements: Failure, retry, and cost record scenarios.
-- Explicit Exclusions: No billing integrations.
-- CEO Review Point: Confirm cost visibility.
-
-### Task 7 - Command Center Visibility
-
-- Purpose: Surface execution state in the Command Center without duplicating modules.
-- Dependencies: Tasks 1-6.
-- Files or modules likely affected: Dashboard/Command Center.
-- Deliverables: Execution summary cards and CEO-required action signals.
-- Acceptance Criteria: Blocked, failed, or intervention-required execution appears clearly.
-- QA Requirements: Dashboard counts update from execution store.
-- Explicit Exclusions: No action execution from dashboard.
-- CEO Review Point: Confirm attention routing.
-
-### Task 8 - Documentation, QA, and Closeout
-
-- Purpose: Complete Sprint 012 documentation and verification.
-- Dependencies: Tasks 1-7.
-- Files or modules likely affected: Knowledge Base, changelogs, Project Memory, Startup Bundle.
-- Deliverables: Updated docs, QA results, build verification, closeout.
-- Acceptance Criteria: Documentation complete, build passes, Git commit/push, clean tree.
-- QA Requirements: Full regression checklist.
-- Explicit Exclusions: No Sprint 013 work.
-- CEO Review Point: Final closeout approval.
-
-## Acceptance Criteria
-
-- Architecture remains consistent with existing Work Item, Execution Queue, Capability Planning, and Approval Queue ownership.
-- No duplicate stores or approval systems are created.
-- Execution attempts persist locally.
-- Execution state transitions are valid, logged, and auditable.
-- Risky execution cannot run without approved CEO approval.
-- Duplicate execution attempts are prevented where required.
-- Logs, results, errors, retries, costs, timing, and source references are visible.
-- Failed attempts can move to Requires Human Intervention.
-- Cost estimates and actual costs are distinguishable.
-- Existing modules continue to work.
-- Command Center visibility reflects execution issues without becoming an execution workspace.
-- Build succeeds.
-- No unauthorized external execution occurs.
-- No provider credentials are stored in ordinary records.
-
-## QA Plan
-
-### Build Verification
-
-- Run `npm run build`.
-- Confirm no TypeScript errors.
-
-### Navigation
-
-- Verify any new Execution UI is routed through the active router/sidebar only if implemented in scope.
-- Confirm no duplicate pages or route systems exist.
-
-### Record Creation
-
-- Create execution attempts from eligible queue items.
-- Verify required source context is carried by reference.
-
-### Relationship Integrity
-
-- Verify Business → Project → Work Item → Execution Queue → Capability Planning → Approval → Execution Attempt relationships.
-
-### Persistence After Restart
-
-- Create attempts, logs, costs, failures, results.
-- Restart app.
-- Confirm records persist.
-
-### Approval Enforcement
-
-- Missing approval blocks execution.
-- Pending approval blocks execution.
-- Rejected approval blocks execution.
-- Approved approval allows readiness.
-
-### State Transitions
-
-- Validate allowed transitions.
-- Attempt prohibited transitions and confirm they are blocked.
-
-### Duplicate Prevention
-
-- Confirm duplicate active attempts are prevented where required.
-
-### Failure Handling
-
-- Simulate failure state.
-- Confirm error log and CEO visibility.
-
-### Retry Handling
-
-- Confirm retries are counted, logged, and limited.
-
-### Cost Tracking
-
-- Confirm estimated and actual costs appear separately.
-
-### Logging
-
-- Confirm every major lifecycle transition creates a log/history entry.
-
-### Result Storage
-
-- Confirm result records link to execution attempt and source queue item.
-
-### CEO Workflow
-
-- Confirm intervention-required and failed states surface clearly.
-
-### Existing-Module Regressions
-
-- Verify Work Items, Execution Queue, Capability Planning, Approval Queue, Dashboard, and Business/Project links still load.
-
-### External Action Safety
-
-- Confirm no real external action occurs unless explicitly scoped and approved.
-
-## Documentation Plan
-
-Sprint 012 must update:
-
-- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
-- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
-- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 012 - AI Execution Infrastructure.md`
-- Architecture documentation
-- Coding Standards if implementation patterns change
-- Workflow Standards if execution workflow rules change
-- `AO-Knowledge-Base/CHANGELOG.md`
-- Root `CHANGELOG.md` if repository convention requires it
-- `docs/PROJECT_MEMORY.md`
-- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
-
-Update `AO-Knowledge-Base/MASTER_PLAN.md` only if strategy changes.
-
-## Exit Criteria
-
-Sprint 012 cannot close until:
-
-- Implementation is COMPLETE.
-- QA is PASS.
-- Documentation is COMPLETE.
-- Build passes.
-- Git commit is created.
-- Repository is pushed.
-- Working tree is clean at the verified checkpoint.
-- Repository checkpoint state is documented using normalized checkpoint terminology.
-- Startup verification passes.
-- Sprint closeout is documented.
-
-Sprint 012-specific exit criteria:
-
-- Execution infrastructure performs no unauthorized external execution.
-- Approval enforcement is verified.
-- Execution logs and results are persisted.
-- Cost visibility exists for execution attempts.
-- Human-intervention handling is visible.
-- Provider independence is preserved.
-
-## Risks
-
-- Execution infrastructure could accidentally become business-specific automation.
-- Provider details could leak into architecture instead of remaining replaceable.
-- Approval enforcement could be duplicated instead of reading Approval Queue.
-- Cost records could split from Money/finance architecture if not carefully scoped.
-- Logs could become editable notes instead of audit history.
-- UI could expose too much internal complexity to the CEO.
-- Attempting to build external execution too early could violate the Master Plan.
-
-## Recommended First Implementation Task
-
-Begin with Task 1 - Execution Core Types and Store.
-
-This is the smallest useful foundation because it defines local-first execution attempts, results, logs, costs, IDs, source references, and persistence without enabling external execution or provider calls.
+Sprint 013 is active. No Sprint 013 implementation files have been created by Sprint 012 closeout synchronization.
 
 ---
 
