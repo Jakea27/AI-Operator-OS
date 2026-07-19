@@ -13,6 +13,12 @@ GitHub remains the primary startup source. The generated `AO-Knowledge-Base/AI_O
 
 Repository checkpoint metadata now has one authoritative source: `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`. Sprint summaries and generated bundles must point to Active Project State instead of duplicating self-referential commit metadata. Verification before implementation is now a permanent operating rule. The checkpoint model prevents a Startup Bundle commit from immediately making the bundle stale simply because HEAD changed.
 
+Sprint 012 completes the AI Execution Infrastructure foundation through internal validation. The sprint added Execution Core records and store, lifecycle validation, capability readiness references, approval references, Execution Queue detail integration, read-only Execution Dashboard and Execution Detail views, attempt-level cost tracking, logs, retry/failure history, event/audit visibility, and Command Center execution visibility.
+
+Sprint 012 preserves the permanent architecture philosophy that infrastructure is separate from intelligence. Execution Infrastructure remains provider-independent: no AI providers are connected, no AI/model execution exists, no external AI APIs are called, no autonomous behavior was added, and no Provider Manager exists yet. Departments and workers request capabilities; the future Provider Manager will select providers.
+
+Sprint 013 is the planned AI Provider Integration handoff after Sprint 012 receives final CEO QA and closeout approval. The approved direction is to teach AI Operator OS how to use providers without coupling departments or workers to specific vendors.
+
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.
