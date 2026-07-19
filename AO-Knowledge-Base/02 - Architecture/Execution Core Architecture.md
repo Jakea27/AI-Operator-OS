@@ -385,6 +385,43 @@ Task 6 does not:
 - Mutate external modules.
 - Add autonomous behavior.
 
+## Command Center Visibility
+
+Sprint 012 Task 7 adds CEO-facing visibility without changing execution ownership or behavior.
+
+The Command Center reads existing records from:
+
+- Execution Core.
+- Execution Queue.
+- Capability Planning.
+- Approval Queue.
+
+The Command Center may surface:
+
+- Execution records awaiting CEO approval.
+- Execution records requiring human intervention.
+- Failed execution records.
+- Long-running or paused execution records.
+- Capability readiness blockers.
+- Ready and running execution counts.
+- Recently completed execution records.
+- Estimated cost, actual cost, and cost variance.
+- Audit completeness issues.
+- Real execution events in recent activity.
+
+The Command Center must not:
+
+- Create execution records.
+- Mutate lifecycle state.
+- Approve or reject work.
+- Retry, pause, resume, cancel, or run execution.
+- Call providers.
+- Invoke tools.
+- Start AI/model execution.
+- Duplicate execution, approval, capability, queue, cost, log, or event ownership.
+
+Command Center cards and alerts should route the CEO to the owning module. The Command Center answers what needs attention; the owning module remains where detailed work is reviewed.
+
 ## Persistence
 
 Execution records persist locally.
@@ -430,7 +467,7 @@ Approval Queue
 ↓
 Execution Core
 
-Future Sprint 012 tasks will add cost/logging polish and Command Center visibility.
+Sprint 012 Tasks 5-7 added read-only execution dashboard, cost/logging polish, and Command Center visibility.
 
 ## Safety Rules
 
@@ -442,7 +479,7 @@ Future Sprint 012 tasks will add cost/logging polish and Command Center visibili
 - Lifecycle helpers must not become a queue processor or event bus.
 - Readiness gates must read existing Capability Planning and Approval Queue records instead of duplicating them.
 - Execution Queue detail integration must create and display Execution Records by reference only.
-- Execution Dashboard and Detail Page must remain read-only until a later approved task authorizes lifecycle controls.
+- Execution Dashboard, Execution Detail, and Command Center visibility must remain read-only until a later approved task authorizes lifecycle controls.
 - Execution Core must not store credentials.
 - Execution Core must not become a duplicate Work Item, Approval, Capability Planning, or Money store.
 
@@ -450,8 +487,7 @@ Future Sprint 012 tasks will add cost/logging polish and Command Center visibili
 
 Future tasks may add:
 
-- Cost and logging polish.
-- Command Center visibility.
+- Full Sprint 012 validation and closeout.
 - Provider and tool adapters after approval architecture remains stable.
 
 These extensions should build on the Task 1 types and store instead of replacing them.

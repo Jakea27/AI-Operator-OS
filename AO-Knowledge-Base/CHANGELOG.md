@@ -1,5 +1,18 @@
 # AO Knowledge Base Changelog
 
+## Sprint 012 Task 7 - Command Center Visibility - 2026-07-19
+
+### Implemented
+
+- Added read-only Execution Infrastructure visibility to the CEO Command Center.
+- Surfaced execution records awaiting approval, requiring human intervention, failed, long-running/paused, capability-blocked, cost-variance, and audit-incomplete states.
+- Added execution readiness, execution risk, and execution cost summary cards.
+- Updated Awaiting AI / System Work copy to distinguish infrastructure readiness, approval waits, running execution records, human intervention, and the absence of autonomous AI execution.
+- Added real Execution Core events to Recent Activity where available.
+- Preserved inspection-only behavior with no execution controls, provider calls, AI execution, APIs, automation, or autonomous behavior.
+- `npm.cmd run build` passed.
+- Task 7 is awaiting CEO QA.
+
 ## AO-013 Roadmap Revision and Architecture Philosophy Update - 2026-07-18
 
 ### Updated
@@ -19,7 +32,7 @@
 - Recorded Sprint 012 Task 6 implementation as complete.
 - Recorded Sprint 012 Task 6 QA as PASS.
 - Recorded Sprint 012 Task 6 documentation as complete.
-- Advanced the current phase to Sprint 012 Task 7 - Execution Infrastructure Validation.
+- Advanced the current phase to Sprint 012 Task 7 - Command Center Visibility.
 - Regenerated the AI Operator Startup Bundle from authoritative source documents.
 - Confirmed Repository Checkpoint validation remains active under the checkpoint model.
 

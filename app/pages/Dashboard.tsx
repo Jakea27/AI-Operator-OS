@@ -25,6 +25,13 @@ import { getRegisteredOperators, useOperatorStore } from '@/src/core/operators'
 import { useProjectStore } from '@/src/core/projects'
 import { useRoadmapStore } from '@/src/core/roadmap'
 import { useWorkItemStore } from '@/src/core/workItems'
+import {
+  ExecutionRecord,
+  auditCompleteness,
+  costDelta,
+  useExecutionStore,
+  validateExecutionAudit,
+} from '@/src/core/execution'
 import { useExecutionQueueStore } from '@/src/core/executionQueue'
 import { Approval, getApprovalDecisionLabel, getApprovalStats, useApprovalStore } from '@/src/features/approval'
 import { generateDailyBriefing } from '@/src/services/briefing/briefingEngine'
@@ -73,6 +80,39 @@ function severityWeight(severity: Severity) {
   }[severity]
 }
 
+function approvalStatus(execution: ExecutionRecord) {
+  return execution.approval?.status || 'Missing'
+}
+
+function isHumanIntervention(execution: ExecutionRecord) {
+  return execution.status === 'Requires Human Intervention'
+}
+
+function isFailed(execution: ExecutionRecord) {
+  return execution.status === 'Failed' || execution.failures.length > 0
+}
+
+function isLongRunningOrPaused(execution: ExecutionRecord) {
+  if (execution.status === 'Paused') return true
+  if (execution.status !== 'Running' || !execution.timing.startedAt) return false
+
+  const startedAt = new Date(execution.timing.startedAt).getTime()
+  if (!Number.isFinite(startedAt)) return false
+
+  return Date.now() - startedAt > 1000 * 60 * 60 * 24
+}
+
+function waitingOnCEO(execution: ExecutionRecord) {
+  return execution.status === 'Awaiting Approval' || approvalStatus(execution) === 'Pending'
+}
+
+function isCostConcern(execution: ExecutionRecord) {
+  const variance = costDelta(execution)
+  if (variance <= 0) return false
+  if (variance >= 25) return true
+  return execution.estimatedCost > 0 && variance / execution.estimatedCost >= 0.25
+}
+
 export function Dashboard() {
   const {
     data,
@@ -81,6 +121,7 @@ export function Dashboard() {
   } = useOperatingStore()
   const money = useMoneyStore()
   const approvalQueue = useApprovalStore()
+  const executionStore = useExecutionStore()
   const executionQueue = useExecutionQueueStore()
   const capabilityPlanning = useCapabilityPlanningStore()
   const businessStore = useBusinessStore()
@@ -93,6 +134,29 @@ export function Dashboard() {
   const approvalStats = getApprovalStats(approvalQueue.approvals)
   const pendingApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Pending')
   const deferredApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Deferred')
+  const executions = executionStore.executions
+  const executionsAwaitingApproval = executions.filter(waitingOnCEO)
+  const executionsRequiringHumanIntervention = executions.filter(isHumanIntervention)
+  const failedExecutions = executions.filter(isFailed)
+  const longRunningExecutions = executions.filter(isLongRunningOrPaused)
+  const readyExecutions = executions.filter((execution) => execution.status === 'Ready')
+  const runningExecutions = executions.filter((execution) => execution.status === 'Running')
+  const blockedByCapabilityExecutions = executions.filter((execution) =>
+    execution.status === 'Awaiting Capability Review' &&
+    (!execution.capabilityPlan || execution.capabilityPlan.readinessStatus !== 'Approved')
+  )
+  const recentlyCompletedExecutions = executions.filter((execution) => {
+    if (!execution.timing.completedAt) return false
+    const completedAt = new Date(execution.timing.completedAt).getTime()
+    return Number.isFinite(completedAt) && Date.now() - completedAt < 1000 * 60 * 60 * 24 * 7
+  })
+  const executionCost = executions.reduce((summary, execution) => ({
+    estimated: summary.estimated + execution.estimatedCost,
+    actual: summary.actual + execution.actualCost,
+    variance: summary.variance + costDelta(execution),
+  }), { estimated: 0, actual: 0, variance: 0 })
+  const incompleteAuditExecutions = executions.filter((execution) => auditCompleteness(execution) !== 'Complete' || !validateExecutionAudit(execution).valid)
+  const costConcernExecutions = executions.filter((execution) => isCostConcern(execution))
   const activeQueueItems = executionQueue.queueItems.filter((item) => !['Completed', 'Archived'].includes(item.queueStatus))
   const blockedQueueItems = executionQueue.queueItems.filter((item) => item.queueStatus === 'Blocked')
   const readyQueueItems = executionQueue.queueItems.filter((item) => item.queueStatus === 'Ready')
@@ -120,6 +184,12 @@ export function Dashboard() {
 
   const actions = buildAttentionActions({
     pendingApprovals,
+    executionsAwaitingApproval,
+    executionsRequiringHumanIntervention,
+    failedExecutions,
+    blockedByCapabilityExecutions,
+    costConcernExecutions,
+    incompleteAuditExecutions,
     blockedQueueItems,
     blockedPlans,
     incompletePlans,
@@ -127,6 +197,7 @@ export function Dashboard() {
   })
 
   const recentActivity = buildRecentActivity({
+    executions,
     approvals: approvalQueue.approvals,
     capabilityPlans: capabilityPlanning.capabilityPlans,
     queueItems: executionQueue.queueItems,
@@ -137,6 +208,11 @@ export function Dashboard() {
   })
 
   const alerts = buildAlerts({
+    executionsRequiringHumanIntervention,
+    failedExecutions,
+    longRunningExecutions,
+    costConcernExecutions,
+    incompleteAuditExecutions,
     deferredApprovals,
     incompletePlans,
     blockedQueueItems,
@@ -207,6 +283,9 @@ export function Dashboard() {
             <SummaryNavCard label="Revenue" value={formatCurrency(money.metrics.currentMonthRevenue)} detail="Current month" to="/money" icon={<Banknote size={18} />} />
             <SummaryNavCard label="Profit" value={formatCurrency(money.metrics.profit)} detail={`${money.metrics.profitMargin.toFixed(1)}% margin`} to="/money" icon={<DollarSign size={18} />} />
             <SummaryNavCard label="Execution Queue" value={String(activeQueueItems.length)} detail="Active queue records" to="/execution-queue" icon={<ListChecks size={18} />} />
+            <SummaryNavCard label="Execution Ready" value={String(readyExecutions.length)} detail="Prepared for future execution" to="/executions" icon={<Cpu size={18} />} />
+            <SummaryNavCard label="Execution Risk" value={String(failedExecutions.length + executionsRequiringHumanIntervention.length)} detail="Failed or needs human help" to="/executions" icon={<AlertTriangle size={18} />} />
+            <SummaryNavCard label="Execution Cost" value={formatCurrency(executionCost.actual)} detail={`${formatCurrency(executionCost.variance)} variance`} to="/executions" icon={<DollarSign size={18} />} />
             <SummaryNavCard label="Capability Plans" value={String(capabilityPlanning.capabilityPlans.length)} detail={`${incompletePlans.length} need readiness work`} to="/capability-planning" icon={<Cpu size={18} />} />
             <SummaryNavCard label="Businesses" value={String(activeBusinesses.length)} detail="Active business records" to="/businesses" icon={<BriefcaseBusiness size={18} />} />
           </div>
@@ -218,7 +297,9 @@ export function Dashboard() {
           <div className="space-y-3 text-sm leading-6 text-[#c3cbc7]">
             <p className="m-0">{approvalStats.pending} approval{approvalStats.pending === 1 ? '' : 's'} currently require CEO review.</p>
             <p className="m-0">{activeQueueItems.length} execution queue item{activeQueueItems.length === 1 ? '' : 's'} remain active; {blockedQueueItems.length} are blocked.</p>
+            <p className="m-0">{readyExecutions.length} execution record{readyExecutions.length === 1 ? '' : 's'} are ready, {runningExecutions.length} are marked running, and {recentlyCompletedExecutions.length} completed in the last 7 days.</p>
             <p className="m-0">{incompletePlans.length} capability plan{incompletePlans.length === 1 ? '' : 's'} need infrastructure readiness work.</p>
+            <p className="m-0">Execution cost tracking shows {formatCurrency(executionCost.estimated)} estimated, {formatCurrency(executionCost.actual)} actual, and {formatCurrency(executionCost.variance)} variance.</p>
             <p className="m-0">{activeBusinesses.length} active business record{activeBusinesses.length === 1 ? '' : 's'} are tracked locally.</p>
             <p className="m-0">Revenue is {formatCurrency(money.metrics.currentMonthRevenue)} and profit is {formatCurrency(money.metrics.profit)} for the current month.</p>
           </div>
@@ -231,10 +312,12 @@ export function Dashboard() {
 
         <Section title="Awaiting AI / System Work" eyebrow="No autonomous execution yet">
           <div className="grid gap-3 sm:grid-cols-2">
-            <SystemWorkItem label="Ready for future execution" value={readyQueueItems.length} copy="Queue items marked Ready." />
-            <SystemWorkItem label="Waiting on infrastructure" value={incompletePlans.length} copy="Capability plans still missing requirements." />
-            <SystemWorkItem label="Waiting on approval" value={approvalStats.pending} copy="Approval Queue records awaiting CEO decision." />
-            <SystemWorkItem label="Autonomous AI running" value={0} copy="No autonomous AI work is running yet." />
+            <SystemWorkItem label="Ready for future execution" value={readyExecutions.length + readyQueueItems.length} copy="Execution records or queue items ready for later deterministic execution." />
+            <SystemWorkItem label="Waiting on infrastructure" value={blockedByCapabilityExecutions.length + incompletePlans.length} copy="Capability readiness is incomplete. This is infrastructure, not AI model execution." />
+            <SystemWorkItem label="Waiting on approval" value={executionsAwaitingApproval.length + approvalStats.pending} copy="Execution or approval records awaiting CEO decision." />
+            <SystemWorkItem label="Running" value={runningExecutions.length} copy="Execution records marked Running. AO-012 does not imply AI providers are running." />
+            <SystemWorkItem label="Requires human intervention" value={executionsRequiringHumanIntervention.length} copy="Execution records that need human judgment or missing context." />
+            <SystemWorkItem label="Autonomous AI running" value={0} copy="No autonomous AI provider execution exists in AO-012." />
           </div>
         </Section>
       </div>
@@ -309,17 +392,34 @@ export function Dashboard() {
 
 function buildAttentionActions({
   pendingApprovals,
+  executionsAwaitingApproval,
+  executionsRequiringHumanIntervention,
+  failedExecutions,
+  blockedByCapabilityExecutions,
+  costConcernExecutions,
+  incompleteAuditExecutions,
   blockedQueueItems,
   blockedPlans,
   incompletePlans,
   blockedWorkItems,
 }: {
   pendingApprovals: Approval[]
+  executionsAwaitingApproval: ExecutionRecord[]
+  executionsRequiringHumanIntervention: ExecutionRecord[]
+  failedExecutions: ExecutionRecord[]
+  blockedByCapabilityExecutions: ExecutionRecord[]
+  costConcernExecutions: ExecutionRecord[]
+  incompleteAuditExecutions: ExecutionRecord[]
   blockedQueueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
   blockedPlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
   incompletePlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
   blockedWorkItems: ReturnType<typeof useWorkItemStore>['workItems']
 }): AttentionAction[] {
+  const pendingApprovalIds = new Set(pendingApprovals.map((approval) => approval.id))
+  const interventionIds = new Set(executionsRequiringHumanIntervention.map((execution) => execution.id))
+  const failedIds = new Set(failedExecutions.map((execution) => execution.id))
+  const costConcernIds = new Set(costConcernExecutions.map((execution) => execution.id))
+
   return [
     ...pendingApprovals.map((approval) => ({
       id: `approval-${approval.id}`,
@@ -329,6 +429,63 @@ function buildAttentionActions({
       blocked: approval.sourceQueueCode ? `${approval.sourceQueueCode} or related approval workflow` : 'Approval Queue decision',
       to: '/approval',
     })),
+    ...executionsAwaitingApproval
+      .filter((execution) => !execution.approval?.approvalId || !pendingApprovalIds.has(execution.approval.approvalId))
+      .map((execution) => ({
+        id: `execution-approval-${execution.id}`,
+        severity: 'High' as const,
+        title: `${execution.executionId}: approval required`,
+        why: 'This execution record is waiting on CEO approval before it can move toward readiness.',
+        blocked: execution.queueItem.queueId,
+        to: `/executions/${execution.id}`,
+      })),
+    ...executionsRequiringHumanIntervention.map((execution) => ({
+      id: `execution-human-${execution.id}`,
+      severity: 'Critical' as const,
+      title: `${execution.executionId}: human intervention required`,
+      why: 'The Execution Core marked this record as requiring human judgment or missing context.',
+      blocked: execution.workItem.workItemId,
+      to: `/executions/${execution.id}`,
+    })),
+    ...failedExecutions
+      .filter((execution) => !interventionIds.has(execution.id))
+      .map((execution) => ({
+        id: `execution-failed-${execution.id}`,
+        severity: 'Critical' as const,
+        title: `${execution.executionId}: execution failed`,
+        why: 'A failure is recorded and should be reviewed before any future work continues.',
+        blocked: execution.workItem.workItemId,
+        to: `/executions/${execution.id}`,
+      })),
+    ...blockedByCapabilityExecutions.map((execution) => ({
+      id: `execution-capability-${execution.id}`,
+      severity: 'Medium' as const,
+      title: `${execution.executionId}: capability readiness blocked`,
+      why: 'Capability requirements are missing or not approved, so the execution cannot move forward.',
+      blocked: execution.capabilityPlan?.capabilityPlanId || execution.queueItem.queueId,
+      to: execution.capabilityPlan?.capabilityPlanRecordId
+        ? `/capability-planning/${execution.capabilityPlan.capabilityPlanRecordId}`
+        : `/executions/${execution.id}`,
+    })),
+    ...costConcernExecutions.map((execution) => ({
+      id: `execution-cost-${execution.id}`,
+      severity: 'Medium' as const,
+      title: `${execution.executionId}: cost variance concern`,
+      why: `Actual execution cost is above estimate by ${formatCurrency(costDelta(execution))}.`,
+      blocked: 'Cost review',
+      to: `/executions/${execution.id}`,
+    })),
+    ...incompleteAuditExecutions
+      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id) && !costConcernIds.has(execution.id))
+      .slice(0, 4)
+      .map((execution) => ({
+        id: `execution-audit-${execution.id}`,
+        severity: 'Low' as const,
+        title: `${execution.executionId}: audit information incomplete`,
+        why: 'Execution audit records are incomplete or missing cost/log/event context.',
+        blocked: 'Execution audit review',
+        to: `/executions/${execution.id}`,
+      })),
     ...blockedQueueItems.map((item) => ({
       id: `queue-${item.id}`,
       severity: 'High' as const,
@@ -367,6 +524,7 @@ function buildAttentionActions({
 }
 
 function buildRecentActivity({
+  executions,
   approvals,
   capabilityPlans,
   queueItems,
@@ -375,6 +533,7 @@ function buildRecentActivity({
   businesses,
   memories,
 }: {
+  executions: ExecutionRecord[]
   approvals: Approval[]
   capabilityPlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
   queueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
@@ -384,6 +543,25 @@ function buildRecentActivity({
   memories: ReturnType<typeof useMemoryStore>['memoryEntries']
 }): ActivityItem[] {
   return [
+    ...executions.flatMap((execution) => {
+      const eventItems = execution.events.slice(-3).map((event) => ({
+        id: `execution-event-${execution.id}-${event.id}`,
+        title: `${execution.executionId}: ${event.eventType}`,
+        meta: `Execution - ${execution.status} - ${event.source}`,
+        createdAt: event.createdAt,
+        to: `/executions/${execution.id}`,
+      }))
+
+      if (eventItems.length > 0) return eventItems
+
+      return [{
+        id: `execution-${execution.id}`,
+        title: `${execution.executionId}: ${execution.workItem.title}`,
+        meta: `Execution - ${execution.status}`,
+        createdAt: execution.updatedAt,
+        to: `/executions/${execution.id}`,
+      }]
+    }),
     ...approvals.map((approval) => ({
       id: `approval-${approval.id}`,
       title: approval.title,
@@ -437,17 +615,80 @@ function buildRecentActivity({
 }
 
 function buildAlerts({
+  executionsRequiringHumanIntervention,
+  failedExecutions,
+  longRunningExecutions,
+  costConcernExecutions,
+  incompleteAuditExecutions,
   deferredApprovals,
   incompletePlans,
   blockedQueueItems,
   dueWorkItems,
 }: {
+  executionsRequiringHumanIntervention: ExecutionRecord[]
+  failedExecutions: ExecutionRecord[]
+  longRunningExecutions: ExecutionRecord[]
+  costConcernExecutions: ExecutionRecord[]
+  incompleteAuditExecutions: ExecutionRecord[]
   deferredApprovals: Approval[]
   incompletePlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
   blockedQueueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
   dueWorkItems: ReturnType<typeof useWorkItemStore>['workItems']
 }): AttentionAction[] {
+  const interventionIds = new Set(executionsRequiringHumanIntervention.map((execution) => execution.id))
+  const failedIds = new Set(failedExecutions.map((execution) => execution.id))
+  const costConcernIds = new Set(costConcernExecutions.map((execution) => execution.id))
+
   return [
+    ...executionsRequiringHumanIntervention.map((execution) => ({
+      id: `alert-execution-human-${execution.id}`,
+      severity: 'Critical' as const,
+      title: `${execution.executionId} requires human intervention`,
+      why: execution.workItem.title,
+      blocked: execution.workItem.workItemId,
+      to: `/executions/${execution.id}`,
+    })),
+    ...failedExecutions
+      .filter((execution) => !interventionIds.has(execution.id))
+      .map((execution) => ({
+        id: `alert-execution-failed-${execution.id}`,
+        severity: 'Critical' as const,
+        title: `${execution.executionId} failed`,
+        why: execution.failures[execution.failures.length - 1]?.message || execution.workItem.title,
+        blocked: execution.workItem.workItemId,
+        to: `/executions/${execution.id}`,
+      })),
+    ...longRunningExecutions
+      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id))
+      .map((execution) => ({
+        id: `alert-execution-running-${execution.id}`,
+        severity: 'Medium' as const,
+        title: `${execution.executionId} needs execution review`,
+        why: execution.status === 'Paused' ? 'Execution is paused.' : 'Execution has been marked Running for more than 24 hours.',
+        blocked: execution.workItem.workItemId,
+        to: `/executions/${execution.id}`,
+      })),
+    ...costConcernExecutions
+      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id))
+      .map((execution) => ({
+        id: `alert-execution-cost-${execution.id}`,
+        severity: 'Medium' as const,
+        title: `${execution.executionId} cost variance`,
+        why: `Actual cost is above estimate by ${formatCurrency(costDelta(execution))}.`,
+        blocked: 'Execution cost review',
+        to: `/executions/${execution.id}`,
+      })),
+    ...incompleteAuditExecutions
+      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id) && !costConcernIds.has(execution.id))
+      .slice(0, 3)
+      .map((execution) => ({
+        id: `alert-execution-audit-${execution.id}`,
+        severity: 'Low' as const,
+        title: `${execution.executionId} audit incomplete`,
+        why: 'Cost, event, or relationship audit context is incomplete.',
+        blocked: 'Execution audit review',
+        to: `/executions/${execution.id}`,
+      })),
     ...blockedQueueItems.map((item) => ({
       id: `alert-queue-${item.id}`,
       severity: 'High' as const,
@@ -584,8 +825,14 @@ function formatShortDate(value: string) {
 function destinationName(to: string) {
   if (to === '/approval') return 'Approval Queue'
   if (to === '/money') return 'Money'
-  if (to === '/execution-queue') return 'Execution Queue'
-  if (to === '/capability-planning') return 'Capability Planning'
+  if (to === '/executions' || to.startsWith('/executions/')) return 'Execution Dashboard'
+  if (to === '/execution-queue' || to.startsWith('/execution-queue/')) return 'Execution Queue'
+  if (to === '/capability-planning' || to.startsWith('/capability-planning/')) return 'Capability Planning'
   if (to === '/businesses') return 'Businesses'
+  if (to === '/operators') return 'Operators'
+  if (to === '/projects' || to.startsWith('/projects/')) return 'Projects'
+  if (to === '/work-items' || to.startsWith('/work-items/')) return 'Work Items'
+  if (to === '/memory') return 'Memory'
+  if (to === '/roadmap') return 'Roadmap'
   return 'module'
 }
