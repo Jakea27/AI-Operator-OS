@@ -19,6 +19,10 @@ Sprint 012 preserves the permanent architecture philosophy that infrastructure i
 
 Sprint 013 is the planned AI Provider Integration handoff after Sprint 012 receives final CEO QA and closeout approval. The approved direction is to teach AI Operator OS how to use providers without coupling departments or workers to specific vendors.
 
+Sprint 013 Task 1 creates the Provider Architecture Foundation. The provider domain now has TypeScript models and a local-first store for provider definitions, provider-independent capabilities, model records, configuration metadata, health metadata, usage summaries, and selection-policy structures. The provider store starts empty, uses a module-owned localStorage key, supports `useSyncExternalStore`, safely normalizes malformed storage, and prevents duplicate provider/model/policy records.
+
+Task 1 intentionally does not connect OpenAI, Ollama, Anthropic, Google, Codex, or any provider. It does not store secrets, send prompts, call APIs, execute models, perform health checks, implement Provider Manager selection behavior, route workers to providers, or add autonomous behavior. Execution Core remains provider-independent.
+
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.

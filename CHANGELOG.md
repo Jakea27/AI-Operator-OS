@@ -1,5 +1,15 @@
 # Changelog
 
+# Sprint 013 Task 1 - Provider Architecture Foundation
+
+- Created the provider-domain type foundation for AI Operator OS.
+- Added provider-independent capability definitions.
+- Added provider, model, configuration, health, usage, and selection-policy structures.
+- Added a local-first provider store with `useSyncExternalStore`, module-owned localStorage persistence, safe malformed-storage fallback, and duplicate protection.
+- Confirmed no provider connection, secret storage, prompt execution, API call, model execution, Provider Manager selection behavior, or autonomous behavior was added.
+- `npm.cmd run build` passed.
+- Task 1 is awaiting CEO QA.
+
 # Sprint 012 Closed / Sprint 013 Activated
 
 - Recorded Sprint 012 - AI Execution Infrastructure as CLOSED.
