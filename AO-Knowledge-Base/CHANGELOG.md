@@ -1,5 +1,18 @@
 # AO Knowledge Base Changelog
 
+## Sprint 013 Task 2 - Provider Manager - 2026-07-20
+
+### Implemented
+
+- Added the Provider Manager coordination service.
+- Added provider registration, unregistration, enable, disable, lookup, validation, compatibility, and metadata-only recommendation helpers.
+- Added health and availability evaluation using stored provider metadata only.
+- Added provider and model capability lookup.
+- Added deterministic read-only recommendation logic using capability, priority, provider state, configured state, enabled state, availability, health, local/cloud preference, preferred provider, fallback, and business-rule metadata.
+- Confirmed Task 2 does not call providers, send prompts, execute models, run network checks, route workers, or add autonomous behavior.
+- `npm.cmd run build` passed.
+- Task 2 is awaiting CEO QA.
+
 ## Sprint 013 Task 1 - Provider Architecture Foundation - 2026-07-20
 
 ### Implemented

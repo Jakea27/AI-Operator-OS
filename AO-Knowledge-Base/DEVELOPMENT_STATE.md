@@ -8,7 +8,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Build passing as of Sprint 013 Task 1 implementation verification.
+Build passing as of Sprint 013 Task 2 implementation verification.
 
 Command used:
 
@@ -16,19 +16,19 @@ Command used:
 
 ## Current Status
 
-Sprint 013 Task 1 - Provider Architecture Foundation implementation complete.
+Sprint 013 Task 2 - Provider Manager implementation complete.
 
 ## Next Phase
 
-Sprint 013 Task 1 CEO QA.
+Sprint 013 Task 2 CEO QA.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 implementation and internal verification are COMPLETE. CEO QA is awaiting review.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 2 implementation and internal verification are COMPLETE. CEO QA is awaiting review.
 
 ## Current Sprint QA Status
 
-Sprint 013 Task 1 internal verification passed. CEO QA is awaiting review.
+Sprint 013 Task 2 internal verification passed. CEO QA is awaiting review.
 
 ## Previous Sprint
 

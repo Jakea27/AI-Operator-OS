@@ -23,6 +23,10 @@ Sprint 013 Task 1 creates the Provider Architecture Foundation. The provider dom
 
 Task 1 intentionally does not connect OpenAI, Ollama, Anthropic, Google, Codex, or any provider. It does not store secrets, send prompts, call APIs, execute models, perform health checks, implement Provider Manager selection behavior, route workers to providers, or add autonomous behavior. Execution Core remains provider-independent.
 
+Sprint 013 Task 2 adds the Provider Manager as a central provider coordination service. It wraps provider registration, unregistration, enable/disable, lookup, validation, compatibility checks, capability lookup, and deterministic read-only recommendation logic using stored metadata only. Recommendations can consider capabilities, provider state, configured state, enabled state, availability, health, local/cloud preference, preferred provider, fallback eligibility, and business-rule metadata.
+
+Task 2 intentionally does not call providers, send prompts, execute models, run network health checks, route workers, implement autonomous behavior, or mutate Execution Core ownership. Provider Manager recommendations are planning/inspection outputs only.
+
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.

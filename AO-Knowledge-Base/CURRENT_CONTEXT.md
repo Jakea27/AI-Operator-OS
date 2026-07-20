@@ -8,9 +8,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 013 Task 1 - Provider Architecture Foundation.
+The current focus is Sprint 013 Task 2 - Provider Manager.
 
-Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is active. Sprint 013 Task 1 implementation is complete and awaiting CEO QA.
+Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is active. Sprint 013 Task 1 implementation is complete. Sprint 013 Task 2 implementation is complete and awaiting CEO QA.
 
 ## Last Completed Sprint
 
@@ -44,7 +44,7 @@ Sprint 012 - AI Execution Infrastructure.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- CEO QA for Sprint 013 Task 1 - Provider Architecture Foundation.
+- CEO QA for Sprint 013 Task 2 - Provider Manager.
 
 ## Known Risks
 
@@ -58,7 +58,8 @@ Sprint 012 - AI Execution Infrastructure.
 - Sprint 012 is closed.
 - Sprint 013 - AI Provider Integration is active.
 - Sprint 013 must preserve Architecture v2, approval-first operation, provider independence, and the separation of infrastructure from intelligence.
-- Sprint 013 Task 1 created the local-first provider architecture foundation and is awaiting CEO QA.
+- Sprint 013 Task 1 created the local-first provider architecture foundation.
+- Sprint 013 Task 2 created the Provider Manager coordination service and is awaiting CEO QA.
 
 ## Current Handoff
 
@@ -141,7 +142,26 @@ Task 1 created:
 - Provider selection-policy structures without selection behavior.
 - Local-first provider store with `useSyncExternalStore`, module-owned localStorage persistence, safe malformed-storage fallback, duplicate protection, and deterministic CRUD-style record management.
 
-Task 1 is awaiting CEO QA. Do not advance to Task 2 until Jake approves Task 1.
+Task 1 remains the provider architecture foundation. Task 2 builds on it without connecting providers.
+
+## Sprint 013 Task 2 Handoff
+
+Task 2 created:
+
+- Provider Manager coordination service.
+- Provider registration and unregistration wrappers.
+- Provider enable/disable helpers.
+- Provider lookup helpers.
+- Provider health and availability evaluation from stored metadata only.
+- Capability and model capability lookup.
+- Provider validation.
+- Provider compatibility checking.
+- Deterministic, read-only provider recommendation logic.
+- Preferred provider, priority, fallback, local/cloud preference, health, availability, configured-state, and business-rule metadata handling.
+
+Task 2 does not contact providers, send prompts, execute models, route workers, call APIs, run network health checks, implement autonomous behavior, or mutate Execution Core ownership.
+
+Task 2 is awaiting CEO QA. Do not advance to Task 3 until Jake approves Task 2.
 
 ## User Workflow Preferences
 

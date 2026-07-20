@@ -221,3 +221,49 @@ Provider Architecture Foundation must not:
 ## Future Direction
 
 Future Sprint 013 tasks may add Provider Manager, provider registration workflows, local/cloud provider integration, provider health checks, capability discovery, provider selection, prompt execution, response handling, and usage metrics only when explicitly approved.
+
+## Provider Manager
+
+Sprint 013 Task 2 adds the Provider Manager as the central provider coordination service.
+
+Provider Manager responsibilities:
+
+- Register providers.
+- Unregister providers.
+- Enable providers.
+- Disable providers.
+- Look up provider records.
+- Evaluate provider health from stored health metadata only.
+- Evaluate provider availability from stored provider and health metadata only.
+- Look up providers and models by provider-independent capability.
+- Validate provider records.
+- Check provider compatibility against capability and business-rule requirements.
+- Produce deterministic, read-only provider recommendations.
+
+Provider Manager recommendation logic may consider:
+
+- Requested capabilities.
+- Provider priority.
+- Provider status.
+- Enabled state.
+- Configured state.
+- Stored availability.
+- Stored health.
+- Local/cloud preference.
+- Preferred provider metadata.
+- Excluded provider metadata.
+- Fallback eligibility.
+- Business-rule policy metadata.
+
+Provider Manager must not:
+
+- Contact providers.
+- Send prompts.
+- Execute models.
+- Run health-check network requests.
+- Store credentials.
+- Route workers to providers.
+- Mutate Execution Core lifecycle or execution records.
+- Make autonomous decisions.
+
+Task 2 recommendations are inspection and planning outputs only. They do not select or execute a provider for real work.

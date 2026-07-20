@@ -1,5 +1,16 @@
 # Changelog
 
+# Sprint 013 Task 2 - Provider Manager
+
+- Added the Provider Manager coordination service.
+- Added provider registration, unregistration, enable, disable, lookup, validation, compatibility, and metadata-only recommendation helpers.
+- Added health and availability evaluation using stored provider metadata only.
+- Added provider and model capability lookup.
+- Added deterministic read-only recommendation logic.
+- Confirmed no provider API calls, prompt execution, model execution, network checks, worker routing, or autonomous behavior were added.
+- `npm.cmd run build` passed.
+- Task 2 is awaiting CEO QA.
+
 # Sprint 013 Task 1 - Provider Architecture Foundation
 
 - Created the provider-domain type foundation for AI Operator OS.
