@@ -27,9 +27,11 @@ Sprint 013 Task 2 adds the Provider Manager as a central provider coordination s
 
 Task 2 intentionally does not call providers, send prompts, execute models, run network health checks, route workers, implement autonomous behavior, or mutate Execution Core ownership. Provider Manager recommendations are planning/inspection outputs only.
 
-Sprint 013 Task 1 and Task 2 passed CEO QA, were committed, and were pushed to GitHub. Sprint 013 Task 3 - Capability Routing implementation is complete and awaiting CEO QA. Task 3 connects provider-independent capability requests to Provider Manager recommendation planning while preserving the rule that no providers are executed, no prompts are sent, no APIs are called, and no autonomous behavior is added.
+Sprint 013 Task 1, Task 2, and Task 3 passed CEO QA, were committed, and were pushed to GitHub. Sprint 013 Task 3 - Capability Routing is complete. Task 3 connects provider-independent capability requests to Provider Manager recommendation planning while preserving the rule that no providers are executed, no prompts are sent, no APIs are called, and no autonomous behavior is added.
 
 Sprint 013 Task 3 adds capability request types, typed request-origin references, a deterministic Capability Resolver, normalized Provider Manager request generation, structured routed/unable-to-route results, deterministic failure and warning codes, fallback candidate reporting, and stateless routing behavior. Capability Routing does not persist routing records, create execution records, mutate Capability Planning or Approval Queue, duplicate provider ownership, or add live provider behavior.
+
+Sprint 013 Task 4 is ready and awaiting a CEO-approved task brief. Do not implement Task 4 until the next scope is explicitly provided.
 
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
