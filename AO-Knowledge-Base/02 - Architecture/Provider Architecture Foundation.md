@@ -3,8 +3,8 @@
 Status: Active  
 Version: 0.1  
 Owner: Jake Allen  
-Last Updated: 2026-07-20  
-Scope: Sprint 013 Task 1
+Last Updated: 2026-07-22  
+Scope: Sprint 013 Tasks 1-3
 
 ## Purpose
 
@@ -267,3 +267,129 @@ Provider Manager must not:
 - Make autonomous decisions.
 
 Task 2 recommendations are inspection and planning outputs only. They do not select or execute a provider for real work.
+
+## Capability Routing
+
+Sprint 013 Task 3 adds the provider-independent Capability Routing layer.
+
+Capability Routing translates a structured capability request into a deterministic, read-only routing recommendation using Provider Manager and stored provider metadata only.
+
+The architectural flow is:
+
+```text
+Department / Worker / Operator
+↓
+Capability Request
+↓
+Capability Resolver
+↓
+Provider Manager
+↓
+Provider Recommendation
+```
+
+Capability Request describes what is needed. It may include:
+
+- Request ID.
+- Requested provider-independent capability.
+- Additional capability requirements.
+- Requesting entity type and ID.
+- Work Item reference.
+- Execution reference.
+- Capability Plan reference.
+- Input and output modality requirements.
+- Minimum context requirement.
+- Structured-output and tool-use requirements.
+- Local/cloud constraints.
+- Privacy requirement.
+- Maximum estimated cost.
+- Speed and quality priorities.
+- Optional CEO-approved preferred-provider constraint.
+- Excluded providers.
+- Fallback preference.
+- Request timestamp and metadata.
+
+Capability Resolver owns:
+
+- Capability request validation.
+- Capability requirement normalization.
+- Recognized-capability checks.
+- Modality validation.
+- Cost and policy constraint validation.
+- Local/cloud contradiction detection.
+- Missing-data detection.
+- Normalized Provider Manager request generation.
+- Structured routing-result generation.
+
+Provider Manager remains the only provider-domain service that evaluates provider and model metadata and recommends providers.
+
+Capability Routing does not own:
+
+- Provider definitions.
+- Provider configuration.
+- Provider health.
+- Provider persistence.
+- Department, manager, worker, operator, workflow, or system records.
+- Work Items.
+- Execution Queue records.
+- Execution Core records.
+- Capability Planning decisions.
+- Approval decisions.
+- Prompt content.
+- AI responses.
+- Execution logs.
+- Execution costs.
+- Financial reporting.
+
+## Routing Results
+
+Capability Routing returns structured results.
+
+Successful routed results include:
+
+- Request ID.
+- Normalized request.
+- Recommended provider reference.
+- Recommended model reference where applicable.
+- Recommendation score.
+- Matched capabilities.
+- Provider-state snapshot.
+- Fallback candidates.
+- Deterministic reasons and warnings.
+- Generated timestamp.
+
+Unable-to-route results include deterministic failure codes such as:
+
+- Missing Request ID.
+- Missing Requesting Entity.
+- Missing Capability.
+- Unknown Capability.
+- Invalid Timestamp.
+- Invalid Cost Constraint.
+- Conflicting Runtime Constraints.
+- Preferred Provider Excluded.
+- Preferred Provider Not Approved.
+- No Configured Provider.
+- No Enabled Provider.
+- No Healthy Provider.
+- No Available Provider.
+- No Compatible Provider.
+- No Compatible Model.
+- Missing Capability Support.
+- Cost Constraint Failure.
+- Local Cloud Constraint Failure.
+- Privacy Constraint Failure.
+- Fallback Unavailable.
+- Human Review Required.
+
+Routing results are read-only planning outputs.
+
+They do not create execution records, mutate Capability Planning, mutate Approval Queue, change provider configuration, or execute work.
+
+## Capability Routing Persistence Decision
+
+Capability Routing is stateless in Sprint 013 Task 3.
+
+No routing store or localStorage key was created because current architecture requires deterministic recommendation output, not durable routing records.
+
+If future workflows need durable routing decisions, a later approved task may create a local-first routing record that references source requests and provider recommendations without duplicating provider, execution, approval, or capability-planning ownership.

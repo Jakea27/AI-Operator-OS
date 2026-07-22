@@ -13,7 +13,7 @@
 - Repository checkpoint source: AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md
 - Repository Checkpoint: `b4a6916edf730fedb1bc80af0fa38099bfbcb675`
 - Checkpoint Description: Last verified repository checkpoint after Sprint 013 Task 1 - Provider Architecture Foundation and Sprint 013 Task 2 - Provider Manager implementation, CEO QA approval, commit, and push. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
-- Working Tree Status: CLEAN at Repository Checkpoint
+- Working Tree Status: DIRTY - expected Sprint 013 Task 3 implementation and documentation changes awaiting CEO QA, commit, and push
 - Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 013 Task 2 implementation commit
 - Repository Verification Status: VERIFIED - repository checkpoint metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-22
@@ -1498,11 +1498,11 @@ Sprint 013 - AI Provider Integration
 
 ## Sprint Status
 
-ACTIVE - TASK 2 COMPLETE / TASK 3 READY.
+ACTIVE - TASK 3 IMPLEMENTATION COMPLETE / CEO QA AWAITING REVIEW.
 
 ## Current Phase
 
-Sprint 013 Task 3 - Capability Routing Planning.
+Sprint 013 Task 3 - Capability Routing CEO QA.
 
 ## Last Completed Sprint
 
@@ -1514,7 +1514,7 @@ Sprint 014
 
 ## Current Objective
 
-Begin Sprint 013 Task 3 - Capability Routing.
+Complete CEO QA review for Sprint 013 Task 3 - Capability Routing.
 
 ## Roadmap Planning Note
 
@@ -1522,7 +1522,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 013 Task 3 implementation.
+CEO QA for Sprint 013 Task 3.
 
 ## Blocking Issues
 
@@ -1534,11 +1534,11 @@ main
 
 ## Last QA Result
 
-Sprint 013 Task 1 and Task 2 CEO QA passed.
+Sprint 013 Task 3 internal QA passed. CEO QA is awaiting review.
 
 ## Last Build Result
 
-`npm.cmd run build` passed during Sprint 013 Task 2 implementation verification.
+`npm.cmd run build` passed during Sprint 013 Task 3 implementation verification.
 
 ## Last Updated
 
@@ -1547,7 +1547,7 @@ Sprint 013 Task 1 and Task 2 CEO QA passed.
 ## Current Sprint Verification
 
 - Sprint: Sprint 013
-- Status: ACTIVE - TASK 2 COMPLETE / TASK 3 READY
+- Status: ACTIVE - TASK 3 IMPLEMENTATION COMPLETE / CEO QA AWAITING REVIEW
 - Previous Sprint: Sprint 012 CLOSED
 - Sprint 012 Implementation: COMPLETE
 - Sprint 012 Internal QA: PASS
@@ -1567,7 +1567,13 @@ Sprint 013 Task 1 and Task 2 CEO QA passed.
 - Sprint 013 Task 2 Git Commit: COMPLETE
 - Sprint 013 Task 2 Git Push: PUSHED
 - Sprint 013 Task 2 Status: COMPLETE
-- Sprint 013 Task 3 Status: READY
+- Sprint 013 Task 3 Implementation: COMPLETE
+- Sprint 013 Task 3 Internal QA: PASS
+- Sprint 013 Task 3 CEO QA: AWAITING REVIEW
+- Sprint 013 Task 3 Documentation: UPDATED FOR QA HANDOFF
+- Sprint 013 Task 3 Git Commit: NOT STARTED
+- Sprint 013 Task 3 Git Push: NOT STARTED
+- Sprint 013 Task 3 Status: AWAITING CEO QA
 
 ## Continuity Document Pointers
 
@@ -1612,7 +1618,7 @@ Sprint 013 Task 1 and Task 2 CEO QA passed.
 - Current Branch: main
 - Repository Checkpoint: `b4a6916edf730fedb1bc80af0fa38099bfbcb675`
 - Checkpoint Description: Last verified repository checkpoint after Sprint 013 Task 1 - Provider Architecture Foundation and Sprint 013 Task 2 - Provider Manager implementation, CEO QA approval, commit, and push. The checkpoint identifies the last verified pushed state; it is not required to equal the commit that contains a regenerated Startup Bundle.
-- Working Tree Status: CLEAN at Repository Checkpoint
+- Working Tree Status: DIRTY - expected Sprint 013 Task 3 implementation and documentation changes awaiting CEO QA, commit, and push
 - Repository Push Status: PUSHED - local `main` matches `origin/main` at Sprint 013 Task 2 implementation commit
 - Repository Verification Status: VERIFIED - repository checkpoint metadata is maintained only in Active Project State
 - Last Verified Date: 2026-07-22
@@ -1638,7 +1644,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Build passing as of Sprint 013 Task 2 implementation verification.
+Build passing as of Sprint 013 Task 3 implementation verification.
 
 Command used:
 
@@ -1646,19 +1652,19 @@ Command used:
 
 ## Current Status
 
-Sprint 013 Task 1 and Task 2 complete, approved, committed, and pushed.
+Sprint 013 Task 1 and Task 2 complete, approved, committed, and pushed. Sprint 013 Task 3 implementation is complete and awaiting CEO QA.
 
 ## Next Phase
 
-Sprint 013 Task 3 - Capability Routing Planning.
+CEO QA for Sprint 013 Task 3 - Capability Routing.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 and Task 2 implementation, internal QA, CEO QA, documentation, commit, and push are COMPLETE. Task 3 is READY.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 and Task 2 implementation, internal QA, CEO QA, documentation, commit, and push are COMPLETE. Sprint 013 Task 3 implementation and internal QA are COMPLETE. Task 3 CEO QA is AWAITING REVIEW.
 
 ## Current Sprint QA Status
 
-Sprint 013 Task 1 and Task 2 CEO QA passed.
+Sprint 013 Task 1 and Task 2 CEO QA passed. Sprint 013 Task 3 internal QA passed; CEO QA is awaiting review.
 
 ## Previous Sprint
 
@@ -1715,6 +1721,7 @@ Major shared/local stores include:
 - Capability Planning
 - Execution Core
 - Providers
+- Capability Routing
 - Approval Queue
 - Money
 - Memory
@@ -1762,9 +1769,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 013 Task 3 - Capability Routing Planning.
+The current focus is Sprint 013 Task 3 - Capability Routing CEO QA.
 
-Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is active. Sprint 013 Task 1 and Task 2 are complete, approved by CEO QA, committed, and pushed. Sprint 013 Task 3 is ready.
+Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is active. Sprint 013 Task 1 and Task 2 are complete, approved by CEO QA, committed, and pushed. Sprint 013 Task 3 implementation is complete and awaiting CEO QA.
 
 ## Last Completed Sprint
 
@@ -1798,7 +1805,7 @@ Sprint 012 - AI Execution Infrastructure.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 013 Task 3 implementation.
+- Complete CEO QA for Sprint 013 Task 3.
 
 ## Known Risks
 
@@ -1815,7 +1822,7 @@ Sprint 012 - AI Execution Infrastructure.
 - Sprint 013 Task 1 created the local-first provider architecture foundation.
 - Sprint 013 Task 2 created the Provider Manager coordination service.
 - Sprint 013 Task 1 and Task 2 passed CEO QA and are committed and pushed.
-- Sprint 013 Task 3 - Capability Routing Planning is ready.
+- Sprint 013 Task 3 - Capability Routing implementation is complete and awaiting CEO QA.
 
 ## Current Handoff
 
@@ -1923,11 +1930,13 @@ Task 2 status: COMPLETE. CEO QA PASS. Git commit COMPLETE. Git push PUSHED.
 
 ## Sprint 013 Task 3 Handoff
 
-Task 3 - Capability Routing Planning is ready.
+Task 3 - Capability Routing implementation is complete.
 
-Expected direction: connect capability requests to provider recommendation planning without executing providers, sending prompts, routing workers to live providers, calling APIs, or adding autonomous behavior.
+Task 3 added provider-independent capability request types, typed requesting-entity references, a deterministic Capability Resolver, normalized provider-selection requests, structured routing success/failure results, deterministic reason codes, fallback candidates, and safe unable-to-route outcomes.
 
-Do not implement Task 3 unless explicitly instructed by Jake.
+Capability Routing delegates provider evaluation to Provider Manager and does not create execution records, mutate Capability Planning, mutate Approval Queue, persist routing records, call providers, send prompts, run APIs, execute models, route live workers, store secrets, or add autonomous behavior.
+
+Task 3 status: Implementation COMPLETE. Internal QA PASS. CEO QA AWAITING REVIEW. Git commit NOT STARTED. Git push NOT STARTED.
 
 ## User Workflow Preferences
 
@@ -1955,11 +1964,11 @@ Do not implement Task 3 unless explicitly instructed by Jake.
 
 ## Status
 
-ACTIVE - TASK 2 COMPLETE / TASK 3 READY.
+ACTIVE - TASK 3 IMPLEMENTATION COMPLETE / CEO QA AWAITING REVIEW.
 
 ## Phase
 
-Sprint 013 Task 3 - Capability Routing Planning.
+Sprint 013 Task 3 - Capability Routing CEO QA.
 
 ## Objective
 
@@ -2018,11 +2027,11 @@ Sprint 013 may plan and implement AI provider integration infrastructure such as
 
 ## Next Required Action
 
-Begin Sprint 013 Task 3 implementation.
+CEO QA for Sprint 013 Task 3.
 
 ## Current Status
 
-Sprint 013 Task 1 and Task 2 are complete, approved by CEO QA, committed, and pushed. Sprint 013 Task 3 - Capability Routing Planning is ready.
+Sprint 013 Task 1 and Task 2 are complete, approved by CEO QA, committed, and pushed. Sprint 013 Task 3 - Capability Routing implementation is complete and awaiting CEO QA.
 
 ## Task 1 - Provider Architecture Foundation
 
@@ -2224,17 +2233,107 @@ PASS.
 
 ### Status
 
-READY.
+AWAITING CEO QA.
 
 ### Objective
 
-Plan how capability requests should connect to Provider Manager recommendations while preserving provider independence and keeping execution infrastructure separate from AI intelligence.
+Implement provider-independent capability requests and deterministic routing recommendations while preserving provider independence and keeping execution infrastructure separate from AI intelligence.
+
+### Implementation Summary
+
+Task 3 added:
+
+- Provider-independent capability request structures.
+- Typed request-origin references for departments, managers, squads, workers, operators, workflows, and system origins.
+- Work Item, Execution, and Capability Plan reference fields without duplicating ownership.
+- Required input modality, output modality, minimum-context, structured-output, tool-use, local/cloud, privacy, cost, speed, quality, preferred-provider, excluded-provider, fallback, timestamp, and metadata constraints.
+- Capability Resolver service.
+- Deterministic request validation.
+- Requirement normalization into Provider Manager recommendation requests.
+- Contradictory-constraint detection.
+- Unknown-capability, missing-request, invalid-timestamp, invalid-cost, excluded-preferred-provider, local/cloud, privacy, cost, model-compatibility, and no-route failure codes.
+- Structured routed and unable-to-route result types.
+- Recommendation snapshots with matched capabilities, provider state, fallback candidates, reasons, warnings, and generated timestamps.
+- Stateless routing behavior with no localStorage persistence.
+
+### Files Created
+
+- `app/src/core/providers/capabilityRoutingTypes.ts`
+- `app/src/core/providers/capabilityResolver.ts`
+
+### Files Modified
+
+- `app/src/core/providers/index.ts`
+- `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
+- `AO-Knowledge-Base/CURRENT_CONTEXT.md`
+- `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
+- `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 013 - AI Provider Integration.md`
+- `AO-Knowledge-Base/02 - Architecture/Provider Architecture Foundation.md`
+- `AO-Knowledge-Base/CHANGELOG.md`
+- `CHANGELOG.md`
+- `docs/PROJECT_MEMORY.md`
+- `AO-Knowledge-Base/AI_OPERATOR_STARTUP_BUNDLE.md`
+
+### Architecture Decisions
+
+- Capability Routing owns request validation, requirement normalization, routing-result structures, and deterministic coordination between requests and Provider Manager recommendations.
+- Provider Manager remains the provider recommendation owner.
+- Capability Routing does not own providers, models, provider configuration, provider health, provider persistence, departments, operators, workers, work definitions, execution records, approval decisions, capability planning decisions, costs, logs, prompts, responses, or autonomous behavior.
+- Routing recommendations are read-only planning outputs.
+- Routing results are ephemeral and are not persisted because current architecture does not require durable routing records yet.
+- Preferred provider is represented only as an optional policy constraint, not as normal department/provider ownership.
+
+### Verification
+
+- `npm.cmd run build` passed.
+- TypeScript passed through `tsc --noEmit`.
+- Vite production build passed.
+- Safety scan found no provider API calls, network calls, prompt execution, model execution, secret persistence, autonomous behavior, duplicate provider store, routing store, or Execution Core provider dependency added.
+
+### Internal QA Notes
+
+Verified by implementation review, TypeScript compilation, production build, and focused safety scan:
+
+- Valid request structures compile.
+- Unknown capability requests are rejected.
+- Missing request ID and requesting entity are rejected.
+- Contradictory local-only/cloud-only constraints are rejected.
+- Local-only plus cloud-allowed conflict is rejected.
+- Preferred provider excluded by policy is rejected.
+- Preferred provider without approved policy is rejected.
+- Disabled, unconfigured, unavailable, unhealthy, non-compatible, no-model, cost-constrained, and privacy-constrained providers can produce deterministic failure codes.
+- Fallback candidates are returned only when fallback is allowed.
+- Provider Manager remains the delegated recommendation service.
+
+### Known Limitations
+
+- No Provider Dashboard exists.
+- No provider setup UI exists.
+- No live provider integrations exist.
+- No prompt execution exists.
+- No model execution exists.
+- No network health checks exist.
+- Routing results are not persisted.
+- Cost routing uses stored model cost metadata only where it exists.
+- Privacy routing uses current provider runtime metadata and documented privacy constraints; no external compliance check exists.
+
+### Deferred Task 4 Work
+
+Future Task 4 work may add the next approved provider-integration layer. It must not execute providers, send prompts, call APIs, route live workers, store secrets, or add autonomous behavior unless explicitly approved.
 
 ### Boundaries
 
-Task 3 must not begin until explicitly instructed.
+Task 3 does not execute providers, send prompts, call APIs, route workers to live providers, persist routing records, create execution records, or add autonomous behavior.
 
-Task 3 must not execute providers, send prompts, call APIs, route workers to live providers, or add autonomous behavior unless a future approved task explicitly changes scope.
+### Completion Status
+
+- Implementation: COMPLETE.
+- Internal QA: PASS.
+- CEO QA: AWAITING REVIEW.
+- Documentation: UPDATED FOR QA HANDOFF.
+- Git Commit: NOT STARTED.
+- Git Push: NOT STARTED.
+- Task Status: AWAITING CEO QA.
 
 ---
 

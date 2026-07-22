@@ -8,7 +8,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Build passing as of Sprint 013 Task 2 implementation verification.
+Build passing as of Sprint 013 Task 3 implementation verification.
 
 Command used:
 
@@ -16,19 +16,19 @@ Command used:
 
 ## Current Status
 
-Sprint 013 Task 1 and Task 2 complete, approved, committed, and pushed.
+Sprint 013 Task 1 and Task 2 complete, approved, committed, and pushed. Sprint 013 Task 3 implementation is complete and awaiting CEO QA.
 
 ## Next Phase
 
-Sprint 013 Task 3 - Capability Routing Planning.
+CEO QA for Sprint 013 Task 3 - Capability Routing.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 and Task 2 implementation, internal QA, CEO QA, documentation, commit, and push are COMPLETE. Task 3 is READY.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 and Task 2 implementation, internal QA, CEO QA, documentation, commit, and push are COMPLETE. Sprint 013 Task 3 implementation and internal QA are COMPLETE. Task 3 CEO QA is AWAITING REVIEW.
 
 ## Current Sprint QA Status
 
-Sprint 013 Task 1 and Task 2 CEO QA passed.
+Sprint 013 Task 1 and Task 2 CEO QA passed. Sprint 013 Task 3 internal QA passed; CEO QA is awaiting review.
 
 ## Previous Sprint
 
@@ -85,6 +85,7 @@ Major shared/local stores include:
 - Capability Planning
 - Execution Core
 - Providers
+- Capability Routing
 - Approval Queue
 - Money
 - Memory

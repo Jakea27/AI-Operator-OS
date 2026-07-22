@@ -1,3 +1,5 @@
 export * from './providerTypes'
 export * from './providerStore'
 export * from './providerManager'
+export * from './capabilityRoutingTypes'
+export * from './capabilityResolver'

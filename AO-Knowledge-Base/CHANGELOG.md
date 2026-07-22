@@ -1,5 +1,20 @@
 # AO Knowledge Base Changelog
 
+## Sprint 013 Task 3 - Capability Routing - 2026-07-22
+
+### Implemented
+
+- Added provider-independent capability request structures.
+- Added the deterministic Capability Resolver service.
+- Added normalized Provider Manager request generation.
+- Added structured routed and unable-to-route result types.
+- Added deterministic routing reason and failure codes.
+- Added local/cloud, privacy, cost, modality, context, preferred-provider, excluded-provider, and fallback constraint handling.
+- Confirmed Capability Routing delegates provider evaluation to Provider Manager.
+- Confirmed no routing store, duplicate provider store, provider API call, network request, prompt execution, model execution, execution record creation, or autonomous behavior was added.
+- `npm.cmd run build` passed.
+- Task 3 is awaiting CEO QA.
+
 ## Sprint 013 Task 1 and Task 2 CEO QA Synchronization - 2026-07-22
 
 ### Synchronized
