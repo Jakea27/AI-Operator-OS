@@ -2,11 +2,11 @@
 
 ## Status
 
-ACTIVE - TASK 2 IMPLEMENTATION COMPLETE.
+ACTIVE - TASK 2 COMPLETE / TASK 3 READY.
 
 ## Phase
 
-Sprint 013 Task 2 - Provider Manager.
+Sprint 013 Task 3 - Capability Routing Planning.
 
 ## Objective
 
@@ -65,11 +65,11 @@ Sprint 013 may plan and implement AI provider integration infrastructure such as
 
 ## Next Required Action
 
-CEO QA for Sprint 013 Task 2 - Provider Manager.
+Begin Sprint 013 Task 3 implementation.
 
 ## Current Status
 
-Sprint 013 Task 2 implementation and internal verification are complete. Task 2 is awaiting CEO QA and must not advance to Task 3 until Jake approves it.
+Sprint 013 Task 1 and Task 2 are complete, approved by CEO QA, committed, and pushed. Sprint 013 Task 3 - Capability Routing Planning is ready.
 
 ## Task 1 - Provider Architecture Foundation
 
@@ -162,13 +162,19 @@ The provider store supports:
 - No provider health checks execute.
 - No prompt execution or response handling exists.
 
-### Deferred Task 2 Work
+### Completion Status
 
-Future Sprint 013 tasks may add Provider Manager planning, provider registration UI, local/cloud provider setup workflows, provider health checks, capability discovery, or provider selection only when explicitly approved.
+- Implementation: COMPLETE.
+- Internal QA: PASS.
+- CEO QA: PASS.
+- Documentation: COMPLETE.
+- Git Commit: COMPLETE.
+- Git Push: PUSHED.
+- Task Status: COMPLETE.
 
 ### QA Status
 
-Internal verification PASS. CEO QA is awaiting review.
+PASS.
 
 ## Task 2 - Provider Manager
 
@@ -245,8 +251,34 @@ Task 2 added:
 
 ### Deferred Task 3 Work
 
-Future Task 3 work may add provider registration UI, provider setup workflows, provider dashboard visibility, provider health-check planning, or next approved provider integration steps.
+Future Task 3 work may add capability routing planning between capability requests and provider recommendations without executing providers, sending prompts, calling APIs, routing workers to live providers, or adding autonomous behavior.
+
+### Completion Status
+
+- Implementation: COMPLETE.
+- Internal QA: PASS.
+- CEO QA: PASS.
+- Documentation: COMPLETE.
+- Git Commit: COMPLETE.
+- Git Push: PUSHED.
+- Task Status: COMPLETE.
 
 ### QA Status
 
-Internal verification PASS. CEO QA is awaiting review.
+PASS.
+
+## Task 3 - Capability Routing Planning
+
+### Status
+
+READY.
+
+### Objective
+
+Plan how capability requests should connect to Provider Manager recommendations while preserving provider independence and keeping execution infrastructure separate from AI intelligence.
+
+### Boundaries
+
+Task 3 must not begin until explicitly instructed.
+
+Task 3 must not execute providers, send prompts, call APIs, route workers to live providers, or add autonomous behavior unless a future approved task explicitly changes scope.

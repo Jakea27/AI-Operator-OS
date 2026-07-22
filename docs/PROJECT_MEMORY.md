@@ -27,6 +27,8 @@ Sprint 013 Task 2 adds the Provider Manager as a central provider coordination s
 
 Task 2 intentionally does not call providers, send prompts, execute models, run network health checks, route workers, implement autonomous behavior, or mutate Execution Core ownership. Provider Manager recommendations are planning/inspection outputs only.
 
+Sprint 013 Task 1 and Task 2 passed CEO QA, were committed, and were pushed to GitHub. The current Sprint 013 phase is Task 3 - Capability Routing Planning. Task 3 should connect capability requests to Provider Manager recommendation planning while preserving the rule that no providers are executed, no prompts are sent, no APIs are called, and no autonomous behavior is added unless explicitly scoped later.
+
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.
