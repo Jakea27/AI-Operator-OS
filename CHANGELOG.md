@@ -1,5 +1,18 @@
 # Changelog
 
+# Sprint 013 Task 4 - Provider Health and Model Discovery Foundation
+
+- Added metadata-only provider-health evaluation structures and service.
+- Added normalized health states including Misconfigured and Disabled.
+- Added provider-independent model-discovery request, result, warning, failure, and registration-plan structures.
+- Added deterministic model normalization into existing Provider Model inputs.
+- Added duplicate provider/model detection and registration planning.
+- Added explicit registration-plan application through the existing Provider Store.
+- Updated Provider Manager compatibility so disabled, misconfigured, unavailable, unhealthy, and model-incompatible providers are not recommendation-compatible.
+- Confirmed no provider API calls, network requests, prompt execution, model execution, provider-specific integration, secret storage, UI, duplicate store, or autonomous behavior was added.
+- `npm.cmd run build` passed.
+- Task 4 is awaiting CEO QA.
+
 # Sprint 013 Task 3 Documentation Synchronization
 
 - Recorded Sprint 013 Task 3 - Capability Routing as COMPLETE.

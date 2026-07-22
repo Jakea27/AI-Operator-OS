@@ -4,7 +4,7 @@ Status: Active
 Version: 0.1  
 Owner: Jake Allen  
 Last Updated: 2026-07-22  
-Scope: Sprint 013 Tasks 1-3
+Scope: Sprint 013 Tasks 1-4
 
 ## Purpose
 
@@ -393,3 +393,146 @@ Capability Routing is stateless in Sprint 013 Task 3.
 No routing store or localStorage key was created because current architecture requires deterministic recommendation output, not durable routing records.
 
 If future workflows need durable routing decisions, a later approved task may create a local-first routing record that references source requests and provider recommendations without duplicating provider, execution, approval, or capability-planning ownership.
+
+## Provider Health and Model Discovery Foundation
+
+Sprint 013 Task 4 adds the provider-health and model-discovery foundation required before local AI integration begins.
+
+This foundation is architecture and local coordination logic only.
+
+It does not connect Ollama, OpenAI, Codex, Claude, Gemini, or any other provider.
+
+It does not perform network requests, execute prompts, execute models, stream responses, start provider processes, store secrets, create execution records, persist routing results, or add autonomous behavior.
+
+## Provider Health Evaluation
+
+Provider Health evaluation normalizes stored or explicitly supplied provider metadata into deterministic health results.
+
+Health evaluation may consider:
+
+- Provider enabled state.
+- Provider status.
+- Configuration readiness.
+- Stored health status.
+- Stored availability.
+- Last checked timestamp.
+- Last successful check timestamp.
+- Response-time metadata.
+- Compatible model count.
+- Warning codes.
+- Failure codes.
+- Human-readable summary.
+- Health information source.
+
+Normalized provider health states include:
+
+- Unknown.
+- Healthy.
+- Degraded.
+- Unavailable.
+- Misconfigured.
+- Disabled.
+- Error.
+- Not Checked.
+
+Provider Health evaluation must not:
+
+- Call a network.
+- Start a provider.
+- Test credentials.
+- Send prompts.
+- Execute models.
+- Modify Execution Core.
+- Trigger autonomous behavior.
+
+## Model Discovery Foundation
+
+Model Discovery accepts provider-independent discovery results supplied by a future provider adapter.
+
+Model Discovery owns:
+
+- Discovery request structures.
+- Discovery source metadata.
+- Discovered model structures.
+- Discovery warning and failure codes.
+- Deterministic model normalization.
+- Registration planning.
+
+Model Discovery supports:
+
+- Discovered model identifier.
+- Display name.
+- Model family.
+- Model version.
+- Context-window metadata.
+- Input modalities.
+- Output modalities.
+- Supported capabilities.
+- Tool-use support.
+- Structured-output support.
+- Local/cloud/hybrid runtime.
+- Cost metadata where available.
+- Availability.
+- Discovery timestamp.
+- Warning and failure codes.
+
+Discovery outcomes include:
+
+- Models Discovered.
+- No Models Discovered.
+- Provider Unavailable.
+- Provider Not Configured.
+- Discovery Unsupported.
+- Invalid Discovery Response.
+- Partial Discovery.
+
+## Model Normalization
+
+Model normalization translates provider-independent discovery input into the existing Provider Model input shape.
+
+Normalization:
+
+- Validates required identifiers.
+- Normalizes provider-independent capabilities.
+- Adds Tool Use and Structured Output capabilities from explicit flags.
+- Normalizes input and output modalities.
+- Normalizes context-window values.
+- Normalizes runtime.
+- Normalizes availability.
+- Preserves unknown metadata safely.
+- Rejects malformed model records deterministically.
+- Detects duplicate provider/model combinations.
+
+Normalization does not persist automatically.
+
+## Model Registration Planning
+
+Model Registration Planning produces read-only plans before any persistence occurs.
+
+Registration-plan item statuses include:
+
+- Add.
+- Update.
+- Unchanged.
+- Rejected.
+
+Registration plans report:
+
+- Added count.
+- Updated count.
+- Unchanged count.
+- Rejected count.
+- Warning count.
+- Failure count.
+
+Persistence may occur only through an explicit call that delegates to the existing Provider Store.
+
+No duplicate model store, health store, provider store, capability registry, routing store, or persistence key was created.
+
+## Recommendation Compatibility
+
+Provider Manager compatibility now accounts for stored health, configuration, availability, and compatible model metadata.
+
+Disabled, misconfigured, unavailable, unhealthy, and model-incompatible providers are not recommendation-compatible.
+
+Capability Resolver continues to delegate provider evaluation to Provider Manager and remains compatible with normalized model and health metadata.

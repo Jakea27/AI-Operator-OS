@@ -101,6 +101,8 @@ function healthScore(status: ProviderHealthStatus) {
     Unknown: 8,
     'Not Checked': 6,
     Degraded: 4,
+    Misconfigured: -18,
+    Disabled: -25,
     Unavailable: -20,
     Error: -30,
   }[status]
@@ -278,9 +280,11 @@ export const providerManager = {
         const models = matchingModels(provider, requiredCapabilities)
         const reasons = [...compatibility.reasons]
         const warnings: string[] = []
+        const healthBlocksRecommendation = ['Misconfigured', 'Disabled', 'Unavailable', 'Error'].includes(healthStatus)
 
         if (!configuration) warnings.push('No configuration metadata is recorded.')
         if (!configured) warnings.push('Provider is not configured for use.')
+        if (healthBlocksRecommendation) reasons.push(`Provider health is ${healthStatus}.`)
         if (models.length === 0 && requiredCapabilities.length > 0) warnings.push('No model advertises every requested capability.')
 
         const score =
@@ -301,7 +305,7 @@ export const providerManager = {
           provider,
           models,
           score,
-          compatible: compatibility.compatible,
+          compatible: compatibility.compatible && configured && !healthBlocksRecommendation && availability !== 'Unavailable' && (requiredCapabilities.length === 0 || models.length > 0),
           fallbackEligible,
           healthStatus,
           availability,

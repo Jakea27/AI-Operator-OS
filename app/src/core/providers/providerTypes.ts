@@ -26,7 +26,15 @@ export type ProviderCapability =
   | 'Long Context'
   | 'Structured Output'
 
-export type ProviderHealthStatus = 'Unknown' | 'Healthy' | 'Degraded' | 'Unavailable' | 'Error' | 'Not Checked'
+export type ProviderHealthStatus =
+  | 'Unknown'
+  | 'Healthy'
+  | 'Degraded'
+  | 'Unavailable'
+  | 'Misconfigured'
+  | 'Disabled'
+  | 'Error'
+  | 'Not Checked'
 
 export type ProviderAvailability = 'Unknown' | 'Available' | 'Unavailable' | 'Limited'
 

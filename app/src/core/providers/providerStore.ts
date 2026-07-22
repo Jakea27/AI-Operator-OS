@@ -38,7 +38,16 @@ export const providerCapabilities: ProviderCapability[] = [
   'Structured Output',
 ]
 
-export const providerHealthStatuses: ProviderHealthStatus[] = ['Unknown', 'Healthy', 'Degraded', 'Unavailable', 'Error', 'Not Checked']
+export const providerHealthStatuses: ProviderHealthStatus[] = [
+  'Unknown',
+  'Healthy',
+  'Degraded',
+  'Unavailable',
+  'Misconfigured',
+  'Disabled',
+  'Error',
+  'Not Checked',
+]
 
 function id(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
