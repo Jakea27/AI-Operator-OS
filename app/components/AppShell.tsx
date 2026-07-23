@@ -15,6 +15,7 @@ import {
   Map,
   Network,
   FolderKanban,
+  ServerCog,
   Settings,
   Sparkles,
   UserRound,
@@ -66,6 +67,7 @@ const navigationGroups: NavigationGroup[] = [
       { label: 'Projects', to: '/projects', icon: FolderKanban },
       { label: 'Work Items', to: '/work-items', icon: ListChecks },
       { label: 'Execution Queue', to: '/execution-queue', icon: ClipboardList },
+      { label: 'Providers', to: '/providers', icon: ServerCog },
       { label: 'Capability Planning', to: '/capability-planning', icon: Cpu },
       { label: 'Approval Queue', to: '/approval', icon: ClipboardCheck },
     ],
@@ -119,6 +121,7 @@ const titles: Record<string, string> = {
   '/work-items': 'Work Items',
   '/execution-queue': 'Execution Queue',
   '/executions': 'Execution Dashboard',
+  '/providers': 'Provider Dashboard',
   '/capability-planning': 'Capability Planning',
   '/approval': 'Approval Queue',
   '/roadmap': 'Roadmap',
@@ -134,6 +137,7 @@ function getWorkspaceTitle(pathname: string) {
   if (pathname.startsWith('/work-items')) return 'Work Items'
   if (pathname.startsWith('/executions')) return 'Execution Dashboard'
   if (pathname.startsWith('/execution-queue')) return 'Execution Queue'
+  if (pathname.startsWith('/providers')) return 'Provider Dashboard'
   if (pathname.startsWith('/capability-planning')) return 'Capability Planning'
   return titles[pathname] ?? 'Workspace'
 }

@@ -13,6 +13,7 @@ import { OperatorDetail } from '@/src/features/operators/OperatorDetail'
 import { OperatorsPage } from '@/src/features/operators/OperatorsPage'
 import { OpportunityDetailPage, OpportunityPipelinePage } from '@/src/features/opportunities'
 import { ProjectDetailPage, ProjectsPage } from '@/src/features/projects'
+import { ProviderDashboardPage, ProviderDetailPage } from '@/src/features/providers'
 import { Roadmap } from '@/pages/Roadmap'
 import { Settings } from '@/pages/Settings'
 import { WorkItemDetailPage } from '@/src/features/workItems/WorkItemDetailPage'
@@ -47,6 +48,8 @@ export default function App() {
         <Route path="execution-queue/:queueItemId" element={<ExecutionQueueDetailPage />} />
         <Route path="executions" element={<ExecutionDashboardPage />} />
         <Route path="executions/:executionId" element={<ExecutionDetailPage />} />
+        <Route path="providers" element={<ProviderDashboardPage />} />
+        <Route path="providers/:providerRecordId" element={<ProviderDetailPage />} />
         <Route path="capability-planning" element={<CapabilityPlanningPage />} />
         <Route path="capability-planning/:capabilityPlanId" element={<CapabilityPlanDetailPage />} />
         <Route path="approval" element={<ApprovalQueuePage />} />

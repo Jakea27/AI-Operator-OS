@@ -4,7 +4,7 @@ Status: Active
 Version: 0.1  
 Owner: Jake Allen  
 Last Updated: 2026-07-22  
-Scope: Sprint 013 Tasks 1-5
+Scope: Sprint 013 Tasks 1-7
 
 ## Purpose
 
@@ -809,3 +809,59 @@ The verified milestone preserves these permanent boundaries:
 - No worker AI was added.
 - No streaming was added.
 - No duplicate stores were introduced.
+
+## Provider Dashboard Foundation
+
+Sprint 013 Task 7 adds the first CEO-facing provider management interface.
+
+The Provider Dashboard owns provider visibility only. It does not own provider records, model records, health records, provider recommendations, provider execution, worker execution, capability routing, or approval decisions.
+
+Provider Dashboard reads from:
+
+- Existing Provider Store.
+- Existing Provider Manager.
+- Existing Ollama adapter metadata actions.
+- Existing Model Discovery Coordinator registration plans.
+
+Provider Dashboard displays:
+
+- Provider overview metrics.
+- Provider runtime and status.
+- Provider enabled/disabled state.
+- Provider health and availability metadata.
+- Provider configuration metadata.
+- Registered model metadata.
+- Provider validation issues.
+- Provider recommendation metadata.
+- Provider usage and cost summaries.
+- Local Ollama endpoint and model visibility where a local Ollama provider exists.
+
+Provider Dashboard may trigger only explicit user actions:
+
+- Add the built-in local Ollama provider record.
+- Enable or disable a provider record.
+- Run a local Ollama health check.
+- Discover local Ollama models.
+- Apply a reviewed model-registration plan.
+
+These actions must not run in the background and must not execute prompts.
+
+## Provider Dashboard Boundaries
+
+Provider Dashboard must not:
+
+- Create duplicate Provider Stores.
+- Create duplicate model, health, routing, or usage stores.
+- Add cloud provider integrations.
+- Add provider credentials or secret storage.
+- Display plaintext secrets.
+- Execute prompts.
+- Execute models.
+- Add worker AI execution.
+- Add department AI behavior.
+- Add autonomous behavior.
+- Add a chat UI.
+- Modify Execution Core ownership.
+- Bypass Provider Manager for provider recommendations.
+
+Provider Dashboard is a management and visibility layer. Provider Manager remains the central provider coordination service.
