@@ -865,3 +865,31 @@ Provider Dashboard must not:
 - Bypass Provider Manager for provider recommendations.
 
 Provider Dashboard is a management and visibility layer. Provider Manager remains the central provider coordination service.
+
+## Provider Dashboard QA Baseline
+
+Sprint 013 Task 7 CEO QA verified the Provider Dashboard Foundation.
+
+Verified behavior:
+
+- Provider Dashboard route and navigation are operational.
+- Provider Detail route is operational.
+- Ollama appears as an authoritative Provider Store record.
+- Provider status shows Available, Healthy, Configured, and Enabled.
+- Health check action works.
+- Model discovery works.
+- qwen2.5:7b appears in registered model metadata.
+- Provider data persists after application restart.
+- Model metadata persists after application restart.
+- No duplicate provider records were created.
+- No prompt execution occurs from the Provider Dashboard.
+- No chat UI exists.
+- No cloud provider was connected.
+- No secrets are displayed or stored.
+- Existing local Ollama prompt execution remains functional.
+
+Non-blocking observation:
+
+- qwen2.5:7b currently displays Disabled / Available / Not Checked model metadata in the Provider Detail UI.
+- This did not block Task 6 local prompt execution or Task 7 provider persistence QA.
+- Treat model-level enablement/status clarification as future polish unless authoritative architecture assigns it to a future task.
