@@ -1,4 +1,11 @@
 import { providerStore } from './providerStore'
+import { ollamaAdapter } from './adapters/ollama'
+import {
+  ProviderExecutionAdapter,
+  ProviderPromptFailureCode,
+  ProviderPromptExecutionInput,
+  ProviderPromptExecutionResult,
+} from './providerExecutionTypes'
 import {
   ProviderAvailability,
   ProviderCapability,
@@ -136,6 +143,66 @@ function matchingModels(provider: ProviderRecord, requiredCapabilities: Provider
     const supported = new Set(model.supportedCapabilities)
     return requiredCapabilities.every((capability) => supported.has(capability))
   })
+}
+
+function now() {
+  return new Date().toISOString()
+}
+
+function promptMetadata(input: ProviderPromptExecutionInput) {
+  return {
+    promptLength: input.prompt.length,
+    systemPromptLength: input.systemPrompt?.length ?? 0,
+    temperature: input.temperature,
+    maxTokens: input.maxTokens,
+    structuredResponse: Boolean(input.structuredResponse),
+    metadata: input.metadata ?? {},
+  }
+}
+
+function requiredCapabilitiesFromPromptRequest(input: ProviderPromptExecutionInput): ProviderCapability[] {
+  return uniqueCapabilities([
+    input.capabilityRequest.requestedCapability,
+    ...(input.capabilityRequest.additionalCapabilities ?? []),
+    ...(input.capabilityRequest.requiresStructuredOutput ? ['Structured Output' as ProviderCapability] : []),
+    ...(input.capabilityRequest.requiresToolUse ? ['Tool Use' as ProviderCapability] : []),
+    ...(input.capabilityRequest.minimumContextTokens ? ['Long Context' as ProviderCapability] : []),
+  ])
+}
+
+function failureResult(
+  input: ProviderPromptExecutionInput,
+  failures: ProviderPromptFailureCode[],
+  errorMessage: string,
+): ProviderPromptExecutionResult {
+  const timestamp = now()
+  return {
+    success: false,
+    response: '',
+    promptMetadata: promptMetadata(input),
+    tokenUsage: { source: 'Unavailable' },
+    warnings: [],
+    failures,
+    errorMessage,
+    startedAt: timestamp,
+    completedAt: timestamp,
+  }
+}
+
+const providerExecutionAdapters: ProviderExecutionAdapter[] = [
+  {
+    providerName: 'Ollama',
+    canExecute(provider) {
+      return provider.name.trim().toLowerCase() === 'ollama' && provider.runtime === 'Local'
+    },
+    executePrompt(input) {
+      return ollamaAdapter.executePrompt(input)
+    },
+  },
+]
+
+function adapterForProvider(provider: ProviderRecord) {
+  return providerExecutionAdapters.find((adapter) => adapter.canExecute(provider))
 }
 
 export const providerManager = {
@@ -315,5 +382,73 @@ export const providerManager = {
         }
       })
       .sort((a, b) => b.score - a.score || a.provider.name.localeCompare(b.provider.name))
+  },
+
+  async executePrompt(input: ProviderPromptExecutionInput): Promise<ProviderPromptExecutionResult> {
+    if (!input.prompt.trim()) {
+      return failureResult(input, ['Missing Prompt'], 'Prompt is required.')
+    }
+
+    const requiredCapabilities = requiredCapabilitiesFromPromptRequest(input)
+    const recommendations = this.recommendProviders({
+      requiredCapabilities,
+      localOnly: input.capabilityRequest.localOnly,
+      cloudAllowed: input.capabilityRequest.cloudOnly ? false : input.capabilityRequest.cloudAllowed,
+      preferredProviderId: input.capabilityRequest.preferredProviderId,
+      excludedProviderIds: input.capabilityRequest.excludedProviderIds,
+      fallbackAllowed: input.capabilityRequest.fallbackAllowed,
+      policy: {
+        id: `prompt-execution-policy-${input.capabilityRequest.requestId}`,
+        policyId: `PROMPT-${input.capabilityRequest.requestId}`,
+        name: `Prompt execution policy for ${input.capabilityRequest.requestId}`,
+        description: 'Ephemeral prompt execution policy. It is not persisted.',
+        requiredCapabilities,
+        providerPriority: input.capabilityRequest.qualityPriority ?? 'Medium',
+        maximumEstimatedCost: input.capabilityRequest.maximumEstimatedCost,
+        currency: input.capabilityRequest.currency ?? 'USD',
+        localOnly: Boolean(input.capabilityRequest.localOnly),
+        cloudAllowed: input.capabilityRequest.cloudOnly ? false : input.capabilityRequest.cloudAllowed ?? true,
+        privacyRequirement: input.capabilityRequest.privacyRequirement ?? (input.capabilityRequest.localOnly ? 'Local Only' : 'Any'),
+        speedPriority: input.capabilityRequest.speedPriority ?? 'Medium',
+        qualityPriority: input.capabilityRequest.qualityPriority ?? 'Medium',
+        fallbackAllowed: input.capabilityRequest.fallbackAllowed ?? true,
+        preferredProviderId: input.capabilityRequest.preferredProviderId,
+        excludedProviderIds: input.capabilityRequest.excludedProviderIds ?? [],
+        createdAt: now(),
+        updatedAt: now(),
+      },
+    })
+    const recommendation = recommendations.find((item) => item.compatible)
+
+    if (!recommendation) {
+      return failureResult(input, ['Provider Routing Failed'], 'No compatible provider recommendation was available; prompt was not executed.')
+    }
+
+    const provider = recommendation.provider
+    const model = recommendation.models[0] ?? matchingModels(provider, requiredCapabilities)[0]
+
+    if (!model) {
+      return failureResult(input, ['Model Not Found'], 'Recommended model record was not found.')
+    }
+
+    const adapter = adapterForProvider(provider)
+    if (!adapter) {
+      return failureResult(input, ['Provider Adapter Missing'], 'No execution adapter is available for the recommended provider.')
+    }
+
+    const result = await adapter.executePrompt({
+      provider,
+      model,
+      prompt: input.prompt,
+      systemPrompt: input.systemPrompt,
+      temperature: input.temperature,
+      maxTokens: input.maxTokens,
+      structuredResponse: input.structuredResponse,
+      metadata: input.metadata,
+    })
+
+    return {
+      ...result,
+    }
   },
 }

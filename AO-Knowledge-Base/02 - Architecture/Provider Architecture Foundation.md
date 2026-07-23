@@ -669,3 +669,127 @@ This behavioral verification confirms the adapter foundation can communicate wit
 It does not change the architecture boundary: Task 5 does not add AI Operator OS prompt execution, worker AI execution, cloud provider integration, autonomous execution, or external provider calls.
 
 Ollama missing/offline remains a safely handled supported state.
+
+## Local Prompt Execution Foundation
+
+Sprint 013 Task 6 adds the first provider-independent prompt execution foundation.
+
+The execution path is:
+
+```text
+Provider Prompt Execution Input
+↓
+Provider Manager
+↓
+Provider execution adapter contract
+↓
+Ollama adapter
+↓
+Local Ollama
+↓
+Local model
+↓
+Structured Provider Prompt Execution Result
+```
+
+Provider prompt execution structures support:
+
+- Capability request.
+- Prompt.
+- Optional system prompt.
+- Temperature.
+- Maximum token request.
+- Structured-response option.
+- Metadata.
+- Provider summary.
+- Model summary.
+- Latency.
+- Token usage where available.
+- Warnings.
+- Failures.
+- Timestamps.
+
+## Provider Execution Ownership
+
+Provider Manager coordinates provider prompt execution.
+
+Provider Manager may:
+
+- Receive a provider-independent prompt execution request.
+- Use existing provider recommendation metadata.
+- Select a provider and model from stored metadata.
+- Dispatch to the matching provider execution adapter.
+- Return a structured provider execution result.
+
+Provider Manager must not:
+
+- Bypass capability or provider metadata.
+- Hardcode departments or workers to a provider.
+- Persist execution records.
+- Own Work Items, Execution Queue, Execution Core, Capability Planning, or Approval Queue records.
+- Create autonomous execution.
+
+## Ollama Prompt Execution
+
+The Ollama adapter supports non-streaming local prompt execution through the configured local Ollama endpoint.
+
+Sprint 013 Task 6 uses Ollama's local `/api/generate` endpoint.
+
+Supported inputs:
+
+- Plain text prompt.
+- Optional system prompt composition.
+- Temperature.
+- Maximum token request.
+
+Unsupported in Task 6:
+
+- Streaming.
+- Chat UI.
+- Worker AI execution.
+- Department AI execution.
+- Autonomous jobs.
+- Cloud providers.
+- OpenAI.
+- Claude.
+- Gemini.
+- Codex.
+- External APIs.
+
+Execution Core remains provider-independent and does not import Ollama.
+
+Workers do not call Ollama directly.
+
+## Local Prompt Execution QA Baseline
+
+Sprint 013 Task 6 internal QA verified the first real AI Operator OS provider execution path.
+
+Smoke test:
+
+```text
+Provider Manager
+↓
+Ollama adapter
+↓
+Local Ollama
+↓
+qwen2.5:7b
+↓
+SUCCESS
+```
+
+The prompt was:
+
+```text
+Respond only with the word SUCCESS.
+```
+
+Result:
+
+- Provider selected: Ollama.
+- Model selected: qwen2.5:7b.
+- Response received: SUCCESS.
+- Structured provider result returned.
+- No cloud provider was connected.
+- No worker AI execution was added.
+- No autonomous execution was added.

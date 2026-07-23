@@ -6,6 +6,13 @@ import {
   ModelDiscoveryWarningCode,
 } from '../../modelDiscoveryTypes'
 import { providerManager } from '../../providerManager'
+import {
+  ProviderAdapterPromptExecutionInput,
+  ProviderPromptExecutionResult,
+  ProviderPromptFailureCode,
+  ProviderPromptTokenUsage,
+  ProviderPromptWarningCode,
+} from '../../providerExecutionTypes'
 import { providerStore } from '../../providerStore'
 import {
   ProviderCapability,
@@ -24,6 +31,7 @@ import {
   OllamaHealthCheckResult,
   OllamaModelDiscoveryResult,
   OllamaProviderRegistrationResult,
+  OllamaGenerateResponse,
   OllamaRegistrationApplyResult,
   OllamaRegistrationPlanResult,
   OllamaWarningCode,
@@ -194,6 +202,62 @@ async function fetchJsonWithTimeout<T>(url: string, timeoutMs: number): Promise<
     const endedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
     const latencyMs = Math.max(0, Math.round(endedAt - startedAt))
     const message = error instanceof Error ? error.message : 'Ollama request failed.'
+    return {
+      latencyMs,
+      errorCode: message.toLowerCase().includes('abort') ? 'Request Timeout' : 'Connection Refused',
+      message,
+    }
+  } finally {
+    globalThis.clearTimeout(timeoutId)
+  }
+}
+
+async function postJsonWithTimeout<T>(
+  url: string,
+  body: Record<string, unknown>,
+  timeoutMs: number,
+): Promise<{ data?: T; latencyMs: number; errorCode?: OllamaErrorCode; message?: string }> {
+  const startedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
+  const controller = new AbortController()
+  const timeoutId = globalThis.setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    })
+    const endedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    const latencyMs = Math.max(0, Math.round(endedAt - startedAt))
+
+    if (!response.ok) {
+      return {
+        latencyMs,
+        errorCode: 'Prompt Execution Failed',
+        message: `Ollama returned HTTP ${response.status}.`,
+      }
+    }
+
+    try {
+      return {
+        data: await response.json() as T,
+        latencyMs,
+      }
+    } catch {
+      return {
+        latencyMs,
+        errorCode: 'Invalid Response',
+        message: 'Ollama returned malformed JSON.',
+      }
+    }
+  } catch (error) {
+    const endedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    const latencyMs = Math.max(0, Math.round(endedAt - startedAt))
+    const message = error instanceof Error ? error.message : 'Ollama prompt request failed.'
     return {
       latencyMs,
       errorCode: message.toLowerCase().includes('abort') ? 'Request Timeout' : 'Connection Refused',
@@ -636,6 +700,215 @@ export function applyOllamaRegistrationPlan(providerRecordId: string, plan: Retu
   }
 }
 
+function latestConfiguration(providerRecordId: string) {
+  return [...providerStore.getState().configurations]
+    .filter((configuration) => configuration.providerRecordId === providerRecordId)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0]
+}
+
+function promptMetadata(input: ProviderAdapterPromptExecutionInput) {
+  return {
+    promptLength: input.prompt.length,
+    systemPromptLength: input.systemPrompt?.length ?? 0,
+    temperature: input.temperature,
+    maxTokens: input.maxTokens,
+    structuredResponse: Boolean(input.structuredResponse),
+    metadata: input.metadata ?? {},
+  }
+}
+
+function providerSummary(input: ProviderAdapterPromptExecutionInput) {
+  return {
+    providerId: input.provider.providerId,
+    providerRecordId: input.provider.id,
+    name: input.provider.name,
+    runtime: input.provider.runtime,
+  }
+}
+
+function modelSummary(input: ProviderAdapterPromptExecutionInput) {
+  return {
+    modelId: input.model.modelId,
+    modelRecordId: input.model.id,
+    name: input.model.modelName,
+    capabilities: input.model.supportedCapabilities,
+  }
+}
+
+function tokenUsageFromResponse(response: OllamaGenerateResponse | undefined): ProviderPromptTokenUsage {
+  const promptTokens = positiveNumber(response?.prompt_eval_count)
+  const completionTokens = positiveNumber(response?.eval_count)
+  if (promptTokens === undefined && completionTokens === undefined) {
+    return { source: 'Unavailable' }
+  }
+  return {
+    promptTokens,
+    completionTokens,
+    totalTokens: (promptTokens ?? 0) + (completionTokens ?? 0),
+    source: 'Provider Reported',
+  }
+}
+
+function errorToFailure(errorCode: OllamaErrorCode | undefined): ProviderPromptFailureCode {
+  if (errorCode === 'Invalid Endpoint') return 'Invalid Endpoint'
+  if (errorCode === 'Non Local Endpoint Rejected') return 'Non Local Endpoint Rejected'
+  if (errorCode === 'Request Timeout') return 'Request Timeout'
+  if (errorCode === 'Connection Refused' || errorCode === 'Provider Unavailable') return 'Provider Unavailable'
+  if (errorCode === 'Invalid Response') return 'Invalid Provider Response'
+  if (errorCode === 'Provider Disabled') return 'Provider Disabled'
+  if (errorCode === 'Provider Misconfigured') return 'Provider Misconfigured'
+  if (errorCode === 'Model Not Found') return 'Model Not Found'
+  return 'Prompt Execution Failed'
+}
+
+function buildPrompt(input: ProviderAdapterPromptExecutionInput) {
+  if (!input.systemPrompt?.trim()) return input.prompt
+  return `${input.systemPrompt.trim()}\n\n${input.prompt}`
+}
+
+export async function executeOllamaPrompt(input: ProviderAdapterPromptExecutionInput): Promise<ProviderPromptExecutionResult> {
+  const startedAt = now()
+  const completedAtForFailure = () => now()
+  const metadata = promptMetadata(input)
+
+  if (!input.prompt.trim()) {
+    return {
+      success: false,
+      response: '',
+      provider: providerSummary(input),
+      model: modelSummary(input),
+      promptMetadata: metadata,
+      tokenUsage: { source: 'Unavailable' },
+      warnings: [],
+      failures: ['Missing Prompt'],
+      errorMessage: 'Prompt is required.',
+      startedAt,
+      completedAt: completedAtForFailure(),
+    }
+  }
+
+  if (!input.provider.enabled || input.provider.status === 'Disabled') {
+    return {
+      success: false,
+      response: '',
+      provider: providerSummary(input),
+      model: modelSummary(input),
+      promptMetadata: metadata,
+      tokenUsage: { source: 'Unavailable' },
+      warnings: [],
+      failures: ['Provider Disabled'],
+      errorMessage: 'Ollama provider is disabled.',
+      startedAt,
+      completedAt: completedAtForFailure(),
+    }
+  }
+
+  if (!input.model.enabled || input.model.availability === 'Unavailable') {
+    return {
+      success: false,
+      response: '',
+      provider: providerSummary(input),
+      model: modelSummary(input),
+      promptMetadata: metadata,
+      tokenUsage: { source: 'Unavailable' },
+      warnings: [],
+      failures: ['Model Unavailable'],
+      errorMessage: 'Selected Ollama model is unavailable or disabled.',
+      startedAt,
+      completedAt: completedAtForFailure(),
+    }
+  }
+
+  const configuration = latestConfiguration(input.provider.id)
+  const endpointValidation = validateOllamaEndpoint(configuration?.endpoint ?? OLLAMA_DEFAULT_ENDPOINT)
+
+  if (!configuration?.configured || configuration.validationStatus !== 'Configured') {
+    return {
+      success: false,
+      response: '',
+      provider: providerSummary(input),
+      model: modelSummary(input),
+      promptMetadata: metadata,
+      tokenUsage: { source: 'Unavailable' },
+      warnings: [],
+      failures: ['Provider Misconfigured'],
+      errorMessage: 'Ollama provider configuration is not ready.',
+      startedAt,
+      completedAt: completedAtForFailure(),
+    }
+  }
+
+  if (!endpointValidation.valid) {
+    return {
+      success: false,
+      response: '',
+      provider: providerSummary(input),
+      model: modelSummary(input),
+      promptMetadata: metadata,
+      tokenUsage: { source: 'Unavailable' },
+      warnings: [],
+      failures: [errorToFailure(endpointValidation.errorCode)],
+      errorMessage: endpointValidation.message,
+      startedAt,
+      completedAt: completedAtForFailure(),
+    }
+  }
+
+  const warnings: ProviderPromptWarningCode[] = []
+  if (input.structuredResponse) warnings.push('Structured Response Not Guaranteed')
+
+  const result = await postJsonWithTimeout<OllamaGenerateResponse>(
+    endpointUrl(endpointValidation.endpoint, '/api/generate'),
+    {
+      model: input.model.modelName,
+      prompt: buildPrompt(input),
+      stream: false,
+      options: {
+        temperature: input.temperature,
+        num_predict: input.maxTokens,
+      },
+    },
+    configuration.connectionTimeoutMs,
+  )
+  const completedAt = now()
+
+  if (result.errorCode) {
+    return {
+      success: false,
+      response: '',
+      provider: providerSummary(input),
+      model: modelSummary(input),
+      promptMetadata: metadata,
+      latencyMs: result.latencyMs,
+      tokenUsage: { source: 'Unavailable' },
+      warnings,
+      failures: [errorToFailure(result.errorCode)],
+      errorMessage: result.message ?? 'Ollama prompt execution failed.',
+      startedAt,
+      completedAt,
+    }
+  }
+
+  const responseText = trim(result.data?.response) ?? ''
+  if (!responseText) warnings.push('Provider Returned Empty Response')
+  const tokenUsage = tokenUsageFromResponse(result.data)
+  if (tokenUsage.source === 'Unavailable') warnings.push('Token Usage Unavailable')
+
+  return {
+    success: true,
+    response: responseText,
+    provider: providerSummary(input),
+    model: modelSummary(input),
+    promptMetadata: metadata,
+    latencyMs: result.latencyMs,
+    tokenUsage,
+    warnings: unique(warnings),
+    failures: [],
+    startedAt,
+    completedAt,
+  }
+}
+
 export const ollamaAdapter = {
   defaultEndpoint: OLLAMA_DEFAULT_ENDPOINT,
   validateEndpoint: validateOllamaEndpoint,
@@ -646,4 +919,5 @@ export const ollamaAdapter = {
   discoverModels: discoverOllamaModels,
   createRegistrationPlan: createOllamaRegistrationPlan,
   applyRegistrationPlan: applyOllamaRegistrationPlan,
+  executePrompt: executeOllamaPrompt,
 }

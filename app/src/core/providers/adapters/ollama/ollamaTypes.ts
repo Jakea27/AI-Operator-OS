@@ -31,6 +31,8 @@ export type OllamaErrorCode =
   | 'Provider Disabled'
   | 'Provider Misconfigured'
   | 'Provider Not Found'
+  | 'Model Not Found'
+  | 'Prompt Execution Failed'
 
 export type OllamaWarningCode =
   | 'Partial Model Metadata'
@@ -116,4 +118,17 @@ export type OllamaRegistrationPlanResult = {
 export type OllamaRegistrationApplyResult = ModelRegistrationApplyResult & {
   provider: ProviderRecord
   appliedAt: string
+}
+
+export type OllamaGenerateResponse = {
+  model?: unknown
+  response?: unknown
+  done?: unknown
+  total_duration?: unknown
+  load_duration?: unknown
+  prompt_eval_count?: unknown
+  prompt_eval_duration?: unknown
+  eval_count?: unknown
+  eval_duration?: unknown
+  created_at?: unknown
 }
