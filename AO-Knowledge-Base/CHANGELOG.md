@@ -1,5 +1,21 @@
 # AO Knowledge Base Changelog
 
+## Sprint 013 Task 5 - Local AI Integration: Ollama Foundation - 2026-07-22
+
+### Implemented
+
+- Added the first real local provider adapter for Ollama under the existing provider architecture.
+- Added local Ollama endpoint validation with malformed and non-local endpoint rejection.
+- Added live Ollama health checks against `/api/version` with timeout, latency, connection-refused, unavailable, and invalid-response handling.
+- Added live local model discovery against `/api/tags`.
+- Added conservative Ollama model normalization and provider-independent capability mapping.
+- Added explicit Ollama provider creation support through Provider Manager and Provider Store.
+- Added explicit registration-plan generation through the existing Model Discovery Coordinator.
+- Added explicit registration-plan application through the existing Provider Store.
+- Confirmed no cloud provider integration, general prompt execution, model execution, worker AI routing, secret storage, duplicate provider store, or autonomous behavior was added.
+- `npm.cmd run build` passed.
+- Task 5 CEO QA is awaiting review.
+
 ## Sprint 013 Task 4 Documentation Synchronization - 2026-07-22
 
 ### Synchronized

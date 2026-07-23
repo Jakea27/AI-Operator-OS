@@ -4,7 +4,7 @@ Status: Active
 Version: 0.1  
 Owner: Jake Allen  
 Last Updated: 2026-07-22  
-Scope: Sprint 013 Tasks 1-4
+Scope: Sprint 013 Tasks 1-5
 
 ## Purpose
 
@@ -536,3 +536,117 @@ Provider Manager compatibility now accounts for stored health, configuration, av
 Disabled, misconfigured, unavailable, unhealthy, and model-incompatible providers are not recommendation-compatible.
 
 Capability Resolver continues to delegate provider evaluation to Provider Manager and remains compatible with normalized model and health metadata.
+
+## Ollama Local Provider Adapter
+
+Sprint 013 Task 5 adds the first real local provider adapter: Ollama.
+
+Ollama is implemented as an adapter behind the existing Provider Manager, Provider Store, provider-health metadata, and model-discovery coordinator.
+
+The Ollama adapter owns:
+
+- Local Ollama endpoint validation.
+- Local-only endpoint safety checks.
+- Live health checking against Ollama's local `/api/version` endpoint.
+- Live installed-model discovery against Ollama's local `/api/tags` endpoint.
+- Ollama response normalization.
+- Ollama error and warning normalization.
+- Conservative model capability mapping.
+- Explicit Ollama provider creation support.
+- Explicit model-registration planning and application through existing provider-domain services.
+
+The Ollama adapter does not own:
+
+- Provider Manager recommendations.
+- Provider persistence.
+- Model persistence.
+- Department, manager, operator, worker, workflow, Work Item, Execution Queue, or Execution Core ownership.
+- Prompt content.
+- AI responses.
+- Execution records.
+- Approval decisions.
+- Capability Planning decisions.
+- Autonomous execution.
+
+## Ollama Endpoint Rules
+
+Sprint 013 Task 5 supports configurable local Ollama endpoints.
+
+The default endpoint is:
+
+```text
+http://127.0.0.1:11434
+```
+
+Endpoint metadata is stored only as non-secret provider configuration metadata.
+
+The adapter rejects malformed endpoints and non-local endpoints by default.
+
+Allowed local endpoint targets include localhost, loopback addresses, and documented private/local network addresses. The adapter does not expose arbitrary URL fetching and does not store credentials, API keys, tokens, passwords, or secrets.
+
+## Ollama Health Checks
+
+Ollama health checks are narrow availability checks.
+
+They may contact only the configured local Ollama endpoint and must not execute a model or send a prompt.
+
+Health results normalize into existing Provider Health statuses:
+
+- Healthy.
+- Degraded.
+- Unavailable.
+- Misconfigured.
+- Disabled.
+- Unknown.
+
+Health checks record latency metadata and deterministic error outcomes such as invalid endpoint, non-local endpoint rejected, connection refused, timeout, provider unavailable, invalid response, and unsupported version metadata.
+
+## Ollama Model Discovery
+
+Ollama model discovery retrieves locally installed model metadata from the configured local Ollama endpoint.
+
+Discovery normalizes:
+
+- Model identifier.
+- Display name.
+- Family and version metadata where available.
+- Parameter or size metadata where available.
+- Local runtime.
+- Discovery timestamp.
+- Partial metadata warnings.
+
+Discovery does not automatically persist models.
+
+Discovery produces a registration plan first. Persistence requires an explicit registration-plan application through the existing Provider Store.
+
+## Ollama Capability Mapping
+
+Ollama model capabilities are mapped conservatively.
+
+The adapter may infer text generation, coding, reasoning, or embeddings only from available local model metadata and model-name evidence.
+
+The adapter must not claim image analysis, tool use, structured output, or other specialized capabilities without evidence.
+
+Unknown capability support remains unknown.
+
+Capabilities remain provider-independent. Ollama is an implementation detail behind Provider Manager.
+
+## Ollama Boundaries
+
+Sprint 013 Task 5 does not:
+
+- Connect cloud providers.
+- Execute prompts.
+- Execute models.
+- Route workers to live AI.
+- Add a chat interface.
+- Add streaming completion UI.
+- Add background polling.
+- Start or install Ollama.
+- Store secrets.
+- Add autonomous behavior.
+- Change Execution Core ownership.
+
+Execution Core remains provider-independent.
+
+Departments, managers, squads, operators, workers, workflows, and execution records request capabilities. They do not select Ollama directly.

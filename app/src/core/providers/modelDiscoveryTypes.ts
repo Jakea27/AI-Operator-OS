@@ -9,7 +9,7 @@ import {
   ProviderRuntime,
 } from './providerTypes'
 
-export type ModelDiscoverySource = 'Future Adapter' | 'Imported Metadata' | 'Manual Entry' | 'Stored Metadata' | 'Unknown'
+export type ModelDiscoverySource = 'Future Adapter' | 'Ollama Adapter' | 'Imported Metadata' | 'Manual Entry' | 'Stored Metadata' | 'Unknown'
 
 export type ModelDiscoveryOutcome =
   | 'Models Discovered'

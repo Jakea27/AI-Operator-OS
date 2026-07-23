@@ -545,6 +545,8 @@ export const providerStore = {
       providerRecordId: provider.id,
       providerId: provider.providerId,
       status: input.status ?? 'Not Checked',
+      lastCheckedAt: input.lastCheckedAt ?? timestamp,
+      lastSuccessfulCheckAt: input.lastSuccessfulCheckAt,
       responseTimeMs: input.responseTimeMs,
       lastError: input.lastError,
       consecutiveFailures: input.consecutiveFailures,

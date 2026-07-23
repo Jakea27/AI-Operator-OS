@@ -35,7 +35,9 @@ Sprint 013 Task 4 - Provider Health and Model Discovery Foundation is complete, 
 
 Task 4 intentionally does not connect Ollama, OpenAI, Codex, Claude, Gemini, or any provider. It does not call APIs, make network requests, execute prompts, execute models, stream responses, start provider processes, store secrets, add UI, create execution records, persist routing results, duplicate provider/model/health stores, or add autonomous behavior.
 
-Sprint 013 Task 5 - Local AI Integration: Ollama Foundation is ready but not started. Task 5 must not begin until Task 4 documentation synchronization is committed, pushed, and repository refresh passes.
+Sprint 013 Task 5 - Local AI Integration: Ollama Foundation implementation is complete and internal QA passed. Task 5 adds the first real local provider adapter for Ollama while preserving provider-independent architecture. The adapter supports local endpoint validation, live health checks against `/api/version`, live model discovery against `/api/tags`, conservative model capability mapping, explicit registration-plan generation, and explicit Provider Store persistence through existing provider-domain services.
+
+Task 5 intentionally does not add general prompt execution, model execution, worker AI routing, cloud provider integrations, secret storage, background polling, Ollama installation/startup behavior, arbitrary URL fetching, duplicate provider/model/health stores, or autonomous behavior. Sprint 013 Task 5 CEO QA is awaiting review.
 
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 

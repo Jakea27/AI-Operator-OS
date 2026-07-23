@@ -262,6 +262,8 @@ export type ProviderConfigurationInput = {
 export type ProviderHealthInput = {
   providerRecordId: string
   status?: ProviderHealthStatus
+  lastCheckedAt?: string
+  lastSuccessfulCheckAt?: string
   responseTimeMs?: number
   lastError?: string
   consecutiveFailures?: number
