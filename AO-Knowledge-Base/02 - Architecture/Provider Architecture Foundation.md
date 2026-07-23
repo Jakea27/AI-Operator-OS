@@ -650,3 +650,22 @@ Sprint 013 Task 5 does not:
 Execution Core remains provider-independent.
 
 Departments, managers, squads, operators, workers, workflows, and execution records request capabilities. They do not select Ollama directly.
+
+## Ollama Behavioral QA Baseline
+
+Sprint 013 Task 5 CEO QA verified the local Ollama foundation on Windows.
+
+Verified baseline:
+
+- Ollama installed successfully on Windows.
+- Ollama version 0.32.1 was verified.
+- The local Ollama service responded successfully.
+- `qwen2.5:7b` downloaded successfully.
+- The installed model appeared in `ollama list`.
+- The local model loaded and returned a valid response.
+
+This behavioral verification confirms the adapter foundation can communicate with a real local Ollama runtime.
+
+It does not change the architecture boundary: Task 5 does not add AI Operator OS prompt execution, worker AI execution, cloud provider integration, autonomous execution, or external provider calls.
+
+Ollama missing/offline remains a safely handled supported state.
