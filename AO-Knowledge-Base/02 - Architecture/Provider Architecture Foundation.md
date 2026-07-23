@@ -893,3 +893,36 @@ Non-blocking observation:
 - qwen2.5:7b currently displays Disabled / Available / Not Checked model metadata in the Provider Detail UI.
 - This did not block Task 6 local prompt execution or Task 7 provider persistence QA.
 - Treat model-level enablement/status clarification as future polish unless authoritative architecture assigns it to a future task.
+
+## Sprint 013 Final Integration Baseline
+
+Sprint 013 Task 8 validated the provider architecture after Tasks 1-7.
+
+Verified final architecture:
+
+- Provider Store owns provider records, provider configuration metadata, provider health metadata, provider model records, and provider persistence.
+- Provider Manager owns provider recommendation, provider eligibility, provider selection, and provider execution coordination.
+- Capability Resolver owns provider-independent capability request normalization, capability routing requests, and structured routed or unable-to-route results.
+- Provider adapters own provider-specific communication, provider-specific response normalization, and provider-specific error normalization.
+- Execution Core remains provider-independent.
+- Departments, workers, operators, squads, and workflows request capabilities rather than selecting Ollama or any specific provider directly.
+
+Verified final behavior:
+
+- Local Ollama API reported version 0.32.1.
+- Local model metadata includes qwen2.5:7b.
+- Provider Manager selected Ollama for the local prompt smoke test.
+- qwen2.5:7b returned `SUCCESS`.
+- Structured provider execution result was returned.
+- Smoke-test latency was 2895 ms.
+
+Verified final boundaries:
+
+- No cloud provider was connected.
+- No OpenAI, Claude, Gemini, or Codex provider integration exists.
+- No secrets were committed or displayed.
+- No chat UI exists.
+- No autonomous behavior exists.
+- No worker or department AI execution exists.
+- No duplicate provider, model, health, routing, or execution ownership exists.
+- Provider Dashboard remains a management and visibility layer, not a prompt execution console.
