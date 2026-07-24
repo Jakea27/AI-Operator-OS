@@ -32,6 +32,12 @@ export function ProjectCard({ project }: { project: ProjectRecord }) {
         <Info label="Priority" value={project.priority} />
         <Info label="Status" value={project.status} />
         <Info label="Progress" value={`${project.progress}%`} />
+        {project.businessAsset?.enabled ? (
+          <>
+            <Info label="Asset Type" value={project.businessAsset.assetType} />
+            <Info label="Production" value={`${project.businessAsset.currentProductionStage} Â· ${project.businessAsset.productionStatus}`} />
+          </>
+        ) : null}
       </div>
 
       <div className="mt-4">

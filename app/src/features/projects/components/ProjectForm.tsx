@@ -1,7 +1,17 @@
 import { useMemo, useState } from 'react'
 import { BusinessRecord, useBusinessStore } from '@/src/core/businesses'
 import { DepartmentRecord, useCompanyStructureStore } from '@/src/core/companyStructure'
-import { ProjectInput, ProjectPriority, ProjectStatus, projectPriorities, projectStatuses } from '@/src/core/projects'
+import {
+  BusinessAssetProductionStage,
+  BusinessAssetProductionStatus,
+  BusinessAssetType,
+  ProjectInput,
+  ProjectPriority,
+  ProjectStatus,
+  businessAssetTypes,
+  projectPriorities,
+  projectStatuses,
+} from '@/src/core/projects'
 
 type ProjectFormProps = {
   fixedBusiness?: BusinessRecord
@@ -33,6 +43,14 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
   const [startDate, setStartDate] = useState(today())
   const [targetDate, setTargetDate] = useState(defaultTargetDate())
   const [notes, setNotes] = useState('')
+  const [businessAssetEnabled, setBusinessAssetEnabled] = useState(false)
+  const [assetType, setAssetType] = useState<BusinessAssetType>('YouTube Video')
+  const [topic, setTopic] = useState('')
+  const [goal, setGoal] = useState('')
+  const [targetAudience, setTargetAudience] = useState('')
+  const [tone, setTone] = useState('')
+  const [targetLength, setTargetLength] = useState('')
+  const [additionalNotes, setAdditionalNotes] = useState('')
 
   const selectedBusiness = availableBusinesses.find((business) => business.id === businessId)
   const departments = useMemo(
@@ -61,6 +79,24 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
       startDate,
       targetDate,
       notes,
+      businessAsset: businessAssetEnabled ? {
+        enabled: true,
+        assetType,
+        platform: assetType === 'YouTube Video' ? 'YouTube' : '',
+        topic,
+        goal,
+        targetAudience,
+        tone,
+        targetLength,
+        additionalNotes,
+        currentProductionStage: 'Intake' satisfies BusinessAssetProductionStage,
+        productionStatus: 'Planning' satisfies BusinessAssetProductionStatus,
+        departmentId: selectedDepartment.id,
+        departmentName: selectedDepartment.departmentName,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        metadata: {},
+      } : undefined,
     })
   }
 
@@ -138,6 +174,59 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Notes</span>
           <textarea value={notes} onChange={(event) => setNotes(event.target.value)} className="field min-h-[92px]" />
         </label>
+      </div>
+
+      <div className="mt-5 rounded-2xl border border-line bg-ink/35 p-4">
+        <label className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            checked={businessAssetEnabled}
+            onChange={(event) => setBusinessAssetEnabled(event.target.checked)}
+            className="mt-1 h-4 w-4 accent-lime"
+          />
+          <span>
+            <span className="block text-sm font-semibold text-white">Create as Business Asset Project</span>
+            <span className="mt-1 block text-sm leading-6 text-muted">
+              Business Assets are produced by departments. Task 1 supports YouTube Video as the first asset type while keeping the Project system reusable.
+            </span>
+          </span>
+        </label>
+
+        {businessAssetEnabled ? (
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Asset Type</span>
+              <select value={assetType} onChange={(event) => setAssetType(event.target.value as BusinessAssetType)} className="field">
+                {businessAssetTypes.map((item) => <option key={item} value={item}>{item}</option>)}
+              </select>
+            </label>
+            <Info label="Platform" value={assetType === 'YouTube Video' ? 'YouTube' : 'Future platform'} />
+            <label className="space-y-2 md:col-span-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Topic</span>
+              <input value={topic} onChange={(event) => setTopic(event.target.value)} className="field" placeholder="What should this asset be about?" />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Goal</span>
+              <input value={goal} onChange={(event) => setGoal(event.target.value)} className="field" placeholder="Educate, attract leads, validate demand..." />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Audience</span>
+              <input value={targetAudience} onChange={(event) => setTargetAudience(event.target.value)} className="field" placeholder="Who is this for?" />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Tone</span>
+              <input value={tone} onChange={(event) => setTone(event.target.value)} className="field" placeholder="Executive, casual, punchy..." />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Length</span>
+              <input value={targetLength} onChange={(event) => setTargetLength(event.target.value)} className="field" placeholder="8-10 minutes, short-form, etc." />
+            </label>
+            <label className="space-y-2 md:col-span-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Business Asset Notes</span>
+              <textarea value={additionalNotes} onChange={(event) => setAdditionalNotes(event.target.value)} className="field min-h-[92px]" placeholder="Constraints, references, positioning, or CEO guidance." />
+            </label>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-5 flex flex-wrap gap-3">

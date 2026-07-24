@@ -264,6 +264,12 @@ function BusinessProjectCard({ project }: { project: ProjectRecord }) {
         <Info label="Department Owner" value={project.departmentName} />
         <Info label="Manager" value={project.managerName} />
         <Info label="Updated" value={formatDate(project.updatedAt)} />
+        {project.businessAsset?.enabled ? (
+          <>
+            <Info label="Asset Type" value={project.businessAsset.assetType} />
+            <Info label="Production" value={`${project.businessAsset.currentProductionStage} Â· ${project.businessAsset.productionStatus}`} />
+          </>
+        ) : null}
       </div>
 
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/[0.06]">

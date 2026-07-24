@@ -1,5 +1,15 @@
 # Changelog
 
+# Sprint 014 Task 1 - Business Asset Foundation
+
+- Extended the existing Project system with an optional Business Asset profile.
+- Added YouTube Video as the first supported Business Asset type.
+- Preserved future-compatible metadata for later asset types without implementing them.
+- Confirmed Business Assets remain existing Project records.
+- Confirmed no duplicate Business Asset Store, Creative Project Store, route, provider logic, approval logic, or execution system was created.
+- `npm.cmd run build` passed.
+- Task 1 internal QA passed and CEO QA is awaiting review.
+
 # Sprint 013 Closed / Sprint 014 Planning Activated
 
 - Recorded Sprint 013 - AI Provider Integration as CLOSED after final CEO QA PASS.

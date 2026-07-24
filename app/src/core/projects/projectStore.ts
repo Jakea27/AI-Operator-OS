@@ -1,5 +1,9 @@
 import { useSyncExternalStore } from 'react'
 import {
+  BusinessAssetProfile,
+  businessAssetProductionStages,
+  businessAssetProductionStatuses,
+  businessAssetTypes,
   ProjectInput,
   ProjectPriority,
   ProjectRecord,
@@ -48,6 +52,52 @@ function clampProgress(value: unknown) {
   return Math.min(100, Math.max(0, Math.round(numeric)))
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function normalizeString(value: unknown, fallback = '') {
+  return typeof value === 'string' ? value : fallback
+}
+
+function normalizeBusinessAsset(raw: unknown, fallbackDepartmentId: string, fallbackDepartmentName: string, projectCreatedAt: string): BusinessAssetProfile | undefined {
+  if (!isRecord(raw) || raw.enabled !== true) return undefined
+
+  const assetType = businessAssetTypes.includes(raw.assetType as BusinessAssetProfile['assetType'])
+    ? raw.assetType as BusinessAssetProfile['assetType']
+    : 'YouTube Video'
+  const currentProductionStage = businessAssetProductionStages.includes(raw.currentProductionStage as BusinessAssetProfile['currentProductionStage'])
+    ? raw.currentProductionStage as BusinessAssetProfile['currentProductionStage']
+    : 'Intake'
+  const productionStatus = businessAssetProductionStatuses.includes(raw.productionStatus as BusinessAssetProfile['productionStatus'])
+    ? raw.productionStatus as BusinessAssetProfile['productionStatus']
+    : 'Planning'
+  const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
+  const updatedAt = normalizeString(raw.updatedAt, createdAt)
+  const metadata = isRecord(raw.metadata)
+    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+
+  return {
+    enabled: true,
+    assetType,
+    platform: normalizeString(raw.platform, assetType === 'YouTube Video' ? 'YouTube' : ''),
+    topic: normalizeString(raw.topic),
+    goal: normalizeString(raw.goal),
+    targetAudience: normalizeString(raw.targetAudience),
+    tone: normalizeString(raw.tone),
+    targetLength: normalizeString(raw.targetLength),
+    additionalNotes: normalizeString(raw.additionalNotes),
+    currentProductionStage,
+    productionStatus,
+    departmentId: normalizeString(raw.departmentId, fallbackDepartmentId),
+    departmentName: normalizeString(raw.departmentName, fallbackDepartmentName),
+    createdAt,
+    updatedAt,
+    metadata,
+  }
+}
+
 function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord {
   const timestamp = raw.createdAt ?? now()
   return {
@@ -76,6 +126,7 @@ function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord
     timeline: Array.isArray(raw.timeline) && raw.timeline.length > 0
       ? raw.timeline
       : [timeline('Project record created.', timestamp)],
+    businessAsset: normalizeBusinessAsset(raw.businessAsset, raw.departmentId ?? '', raw.departmentName ?? 'Unassigned Department', timestamp),
   }
 }
 
@@ -156,6 +207,7 @@ export const projectStore = {
       createdAt: timestamp,
       updatedAt: timestamp,
       timeline: [timeline(`Project created for ${input.businessCode}.`, timestamp)],
+      businessAsset: normalizeBusinessAsset(input.businessAsset, input.departmentId, input.departmentName, timestamp),
     }
 
     persist([project, ...state])
@@ -174,6 +226,9 @@ export const projectStore = {
           managerName: updates.managerName ?? project.managerName,
           progress: updates.progress === undefined ? project.progress : clampProgress(updates.progress),
           notes: updates.notes ?? project.notes,
+          businessAsset: updates.businessAsset === undefined
+            ? project.businessAsset
+            : normalizeBusinessAsset(updates.businessAsset, updates.departmentId ?? project.departmentId, updates.departmentName ?? project.departmentName, project.createdAt),
           updatedAt: timestamp,
           timeline: [timeline('Project record updated.', timestamp), ...project.timeline],
         }

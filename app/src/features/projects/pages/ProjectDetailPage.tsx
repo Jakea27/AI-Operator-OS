@@ -4,9 +4,14 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { useBusinessStore } from '@/src/core/businesses'
 import { DepartmentRecord, useCompanyStructureStore } from '@/src/core/companyStructure'
 import {
+  BusinessAssetProfile,
+  BusinessAssetType,
   ProjectPriority,
   ProjectRecord,
   ProjectStatus,
+  businessAssetProductionStages,
+  businessAssetProductionStatuses,
+  businessAssetTypes,
   projectPriorities,
   projectStatuses,
   useProjectStore,
@@ -88,6 +93,15 @@ export function ProjectDetailPage() {
   }
 
   function save(projectRecord: ProjectRecord, draftRecord: ProjectRecord) {
+    const businessAsset = draftRecord.businessAsset?.enabled
+      ? {
+        ...draftRecord.businessAsset,
+        departmentId: draftRecord.departmentId,
+        departmentName: draftRecord.departmentName,
+        updatedAt: new Date().toISOString(),
+      }
+      : undefined
+
     projectStore.updateProject(projectRecord.id, {
       name: draftRecord.name,
       description: draftRecord.description,
@@ -105,6 +119,46 @@ export function ProjectDetailPage() {
       startDate: draftRecord.startDate,
       targetDate: draftRecord.targetDate,
       notes: draftRecord.notes,
+      businessAsset,
+    })
+  }
+
+  function defaultBusinessAsset(record: ProjectRecord): BusinessAssetProfile {
+    const timestamp = new Date().toISOString()
+    return {
+      enabled: true,
+      assetType: 'YouTube Video',
+      platform: 'YouTube',
+      topic: '',
+      goal: '',
+      targetAudience: '',
+      tone: '',
+      targetLength: '',
+      additionalNotes: '',
+      currentProductionStage: 'Intake',
+      productionStatus: 'Planning',
+      departmentId: record.departmentId,
+      departmentName: record.departmentName,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {},
+    }
+  }
+
+  function updateBusinessAsset(updates: Partial<BusinessAssetProfile>) {
+    setDraft((current) => {
+      if (!current) return current
+      const currentBusinessAsset = current.businessAsset ?? defaultBusinessAsset(current)
+      const nextAssetType = updates.assetType ?? currentBusinessAsset.assetType
+      return {
+        ...current,
+        businessAsset: {
+          ...currentBusinessAsset,
+          ...updates,
+          platform: updates.platform ?? (nextAssetType === 'YouTube Video' ? 'YouTube' : currentBusinessAsset.platform),
+          updatedAt: new Date().toISOString(),
+        },
+      }
     })
   }
 
@@ -208,6 +262,82 @@ export function ProjectDetailPage() {
                 <input type="date" value={draft.targetDate} onChange={(event) => setDraft({ ...draft, targetDate: event.target.value })} className="field" />
               </label>
             </div>
+          </Section>
+
+          <Section title="Business Asset" eyebrow="Reusable creative production profile">
+            <label className="flex items-start gap-3 rounded-2xl border border-line bg-ink/35 p-4">
+              <input
+                type="checkbox"
+                checked={Boolean(draft.businessAsset?.enabled)}
+                onChange={(event) => {
+                  setDraft({
+                    ...draft,
+                    businessAsset: event.target.checked ? draft.businessAsset ?? defaultBusinessAsset(draft) : undefined,
+                  })
+                }}
+                className="mt-1 h-4 w-4 accent-lime"
+              />
+              <span>
+                <span className="block text-sm font-semibold text-white">Enable Business Asset profile</span>
+                <span className="mt-1 block text-sm leading-6 text-muted">
+                  Business Assets extend this Project record. YouTube Video is the first supported asset type; future types can reuse this profile without a new Project system.
+                </span>
+              </span>
+            </label>
+
+            {draft.businessAsset?.enabled ? (
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Asset Type</span>
+                  <select value={draft.businessAsset.assetType} onChange={(event) => updateBusinessAsset({ assetType: event.target.value as BusinessAssetType })} className="field">
+                    {businessAssetTypes.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                <Info label="Platform" value={draft.businessAsset.platform} />
+                <label className="space-y-2 md:col-span-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Topic</span>
+                  <input value={draft.businessAsset.topic} onChange={(event) => updateBusinessAsset({ topic: event.target.value })} className="field" placeholder="What should this asset be about?" />
+                </label>
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Goal</span>
+                  <input value={draft.businessAsset.goal} onChange={(event) => updateBusinessAsset({ goal: event.target.value })} className="field" />
+                </label>
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Audience</span>
+                  <input value={draft.businessAsset.targetAudience} onChange={(event) => updateBusinessAsset({ targetAudience: event.target.value })} className="field" />
+                </label>
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Tone</span>
+                  <input value={draft.businessAsset.tone} onChange={(event) => updateBusinessAsset({ tone: event.target.value })} className="field" />
+                </label>
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Length</span>
+                  <input value={draft.businessAsset.targetLength} onChange={(event) => updateBusinessAsset({ targetLength: event.target.value })} className="field" />
+                </label>
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Production Stage</span>
+                  <select value={draft.businessAsset.currentProductionStage} onChange={(event) => updateBusinessAsset({ currentProductionStage: event.target.value as BusinessAssetProfile['currentProductionStage'] })} className="field">
+                    {businessAssetProductionStages.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                <label className="space-y-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Production Status</span>
+                  <select value={draft.businessAsset.productionStatus} onChange={(event) => updateBusinessAsset({ productionStatus: event.target.value as BusinessAssetProfile['productionStatus'] })} className="field">
+                    {businessAssetProductionStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                <Info label="Department" value={draft.departmentName} />
+                <Info label="Business Asset Created" value={formatDate(draft.businessAsset.createdAt)} />
+                <label className="space-y-2 md:col-span-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Additional Notes</span>
+                  <textarea value={draft.businessAsset.additionalNotes} onChange={(event) => updateBusinessAsset({ additionalNotes: event.target.value })} className="field min-h-[100px]" />
+                </label>
+              </div>
+            ) : (
+              <Placeholder text="This is a normal Project. Enable the Business Asset profile to prepare it for Creative Production Engine workflows." />
+            )}
+
+            <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Business Asset</button>
           </Section>
 
           <Section title="Notes" eyebrow="CEO context">
