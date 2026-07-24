@@ -8,7 +8,7 @@
 - Recorded behavioral QA evidence: Ollama 0.32.1, local endpoint `http://127.0.0.1:11434`, qwen2.5:7b installed/discovered, provider state Available/Healthy/Configured/Enabled, persistence after restart, and prompt smoke test `SUCCESS`.
 - Confirmed no cloud provider, secrets, chat UI, autonomous behavior, or Sprint 014 implementation was added.
 - Activated Sprint 014 - Early Revenue Foundation for planning only.
-- Created the Sprint 014 planning summary with YouTube Content Production MVP as the recommended first prototype for planning.
+- Created the Sprint 014 planning summary with the Creative Production Engine as the approved mission, with YouTube as the first supported creative asset type.
 - Regenerated the AI Operator Startup Bundle.
 
 # Sprint 013 Task 8 - Final Integration, QA, Documentation, and Sprint Closeout Preparation

@@ -1269,7 +1269,7 @@ Final CEO QA passed after the CEO completed this walkthrough.
 
 The authoritative roadmap names AO-014 as Early Revenue Foundation.
 
-Recommended first business prototype for future planning: YouTube Content Production MVP.
+Recommended first business prototype for future planning: Creative Production Engine with YouTube as the first supported creative asset type.
 
 Possible future scope:
 
@@ -1357,7 +1357,7 @@ Sprint 013 delivered:
 
 Sprint 014 - Early Revenue Foundation is active for planning only.
 
-Recommended first prototype: YouTube Content Production MVP.
+Recommended first prototype: Creative Production Engine with YouTube as the first supported creative asset type.
 
 Planning-only possible scope:
 

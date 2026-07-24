@@ -65,7 +65,7 @@ Sprint 013 Task 8 completed final integration validation and closeout preparatio
 
 Task 8 validated Provider Store ownership, Provider Manager recommendation/execution coordination, Capability Resolver routing ownership, Ollama adapter boundaries, Provider Dashboard visibility, provider/model persistence, security boundaries, and the continued rule that Execution Core remains provider-independent. Sprint 013 final CEO QA passed. Sprint 013 is officially closed.
 
-Sprint 014 - Early Revenue Foundation is active for planning only. The authoritative roadmap names AO-014 as Early Revenue Foundation. The recommended first future prototype for planning is YouTube Content Production MVP, but no YouTube integration, video generation, YouTube API upload, autonomous Content Department execution, or Sprint 014 implementation has started.
+Sprint 014 - Early Revenue Foundation is active for planning only. The authoritative roadmap names AO-014 as Early Revenue Foundation. The approved Sprint 014 mission is the Creative Production Engine, with YouTube as the first supported creative asset type. No YouTube integration, video generation, YouTube API upload, autonomous Content Department execution, or Sprint 014 implementation has started.
 
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
