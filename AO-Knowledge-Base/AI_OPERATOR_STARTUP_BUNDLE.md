@@ -4,7 +4,7 @@
 
 ## Bundle Metadata
 
-- Bundle generation date: 2026-07-23
+- Bundle generation date: 2026-07-24
 - Continuity System Version: 1.1
 - Project Version: 0.1.0-alpha
 - Current Sprint: Sprint 014 - Early Revenue Foundation
@@ -409,6 +409,18 @@ The operating system manages information, structure, workflows, and context. The
 ### Profit Over Complexity
 
 Complexity is justified only when it creates business value, revenue, risk reduction, or meaningful CEO leverage.
+
+## Creative Department
+
+The Creative Department owns the Creative Production Engine.
+
+Businesses request creative assets from the Creative Department. The Creative Department owns the production workflows that transform a business idea, brief, or opportunity into CEO-approved, export-ready creative assets.
+
+Creative assets should be reusable across multiple businesses where appropriate. The production engine is business-independent and should support multiple asset types over time without requiring separate systems for each business or channel.
+
+Future businesses should reuse the same Creative Production Engine instead of creating duplicate production workflows for YouTube content, TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, or other marketing assets.
+
+The first planned validation path is YouTube content, but YouTube is only the first supported asset type. The architecture should remain generic enough for future creative workflows.
 
 ## Strategic Business Model
 
@@ -1514,11 +1526,11 @@ To be defined after Sprint 014 planning.
 
 ## Current Objective
 
-Create and approve the Sprint 014 implementation plan before Sprint 014 Task 1.
+Create and approve the Sprint 014 Creative Production Engine implementation plan before Sprint 014 Task 1.
 
 ## Roadmap Planning Note
 
-AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO-013 is AI Provider Integration and will add Provider Manager, provider abstraction, local/cloud provider support, provider health, and worker capability routing after deterministic execution infrastructure is proven.
+AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO-013 is AI Provider Integration and added provider-independent AI capability through Provider Manager, provider abstraction, Ollama support, local prompt execution, and Provider Dashboard visibility. AO-014 is Early Revenue Foundation and will establish the Creative Production Engine: a reusable department workflow for transforming business ideas into CEO-approved, export-ready creative assets. YouTube content is the first supported asset type; future asset types remain documentation-only until approved.
 
 ## Next Required Action
 
@@ -1867,6 +1879,9 @@ Sprint 013 - AI Provider Integration.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
 - Create and approve the Sprint 014 implementation plan before beginning Sprint 014 Task 1.
+- Align Sprint 014 around the Creative Production Engine rather than a YouTube-specific workflow.
+- Treat YouTube content as the first supported asset type inside a reusable creative asset production architecture.
+- Keep future asset types documented only until explicitly authorized.
 
 ## Known Risks
 
@@ -1881,6 +1896,9 @@ Sprint 013 - AI Provider Integration.
 - Sprint 013 - AI Provider Integration is closed.
 - Sprint 014 - Early Revenue Foundation is active for planning only.
 - Sprint 014 must preserve Architecture v2, approval-first operation, provider independence, local-first persistence, and the separation of infrastructure from intelligence.
+- Sprint 014 now establishes the Creative Production Engine as a reusable department workflow for CEO-approved, export-ready creative assets.
+- YouTube remains the first implementation target, but future asset types should reuse the same production engine rather than creating duplicate systems.
+- Future reusable asset types may include TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, and other marketing assets; these remain documentation-only until specifically approved.
 - Sprint 013 Task 1 created the local-first provider architecture foundation.
 - Sprint 013 Task 2 created the Provider Manager coordination service.
 - Sprint 013 Task 1, Task 2, and Task 3 passed CEO QA and are committed and pushed.
@@ -2188,11 +2206,14 @@ The authoritative roadmap names AO-014 as Early Revenue Foundation.
 
 Sprint 014 - Early Revenue Foundation is active for planning only.
 
-Recommended first prototype: YouTube Content Production MVP.
+Sprint 014 mission: build the Creative Production Engine, the first reusable department workflow capable of transforming a business idea into one or more CEO-approved, export-ready creative assets.
+
+Recommended first prototype: Creative Production Engine with YouTube content as the first supported asset type.
 
 Planning-only possible scope:
 
 - Topic input.
+- Creative brief intake.
 - AI topic development.
 - Title options.
 - Hook generation.
@@ -2205,6 +2226,12 @@ Planning-only possible scope:
 - Saved content package.
 - Cost tracking.
 - Execution history.
+- Export-ready asset package structure.
+- Reusable production states.
+- Reusable creative asset metadata.
+- Future asset-type extension points.
+
+Future asset types such as TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, and other marketing assets are documented only. Do not implement them without explicit approval.
 
 Do not implement during planning:
 
@@ -2251,11 +2278,19 @@ ACTIVE - PLANNING READY / IMPLEMENTATION NOT STARTED.
 
 Sprint 014 Planning - Early Revenue Foundation.
 
+## Mission Statement
+
+Build the Creative Production Engine, the first reusable department workflow capable of transforming a business idea into one or more CEO-approved, export-ready creative assets.
+
+The initial implementation will support YouTube content, while the architecture is designed to support future asset types such as TikTok, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, and other marketing assets without requiring a redesign.
+
 ## Objective
 
 Create and approve the Sprint 014 implementation plan before beginning Sprint 014 Task 1.
 
-Sprint 014 is intended to begin turning the AI Operator OS foundation into early revenue-producing business workflows while preserving the approved architecture.
+Sprint 014 is intended to establish the Creative Production Engine as a reusable early-revenue workflow foundation while preserving the approved architecture.
+
+Future asset types are documented for architectural direction only. They are not implemented during Task 0.
 
 ## Current Context
 
@@ -2265,23 +2300,27 @@ Sprint 014 begins from the approved roadmap direction:
 
 - AO-012 proved Execution Infrastructure.
 - AO-013 integrated AI providers without coupling the OS to a single vendor.
-- AO-014 focuses on Early Revenue Foundation.
+- AO-014 focuses on Early Revenue Foundation through reusable creative production.
 - Separate infrastructure from intelligence remains permanent architecture.
 - Provider Manager selects providers.
 - Departments and workers request capabilities.
 - CEO approval remains required for risky, public, money-impacting, client-impacting, or external-service actions.
+- Creative production should be generic enough to serve multiple businesses and asset types over time.
 
 ## Recommended First Prototype
 
-YouTube Content Production MVP.
+Creative Production Engine with YouTube content as the first supported asset type.
 
-This prototype is recommended because it can test AI-assisted revenue workflows without requiring external posting, autonomous publishing, payment processing, client delivery, or cloud provider dependency.
+This prototype is recommended because YouTube content can test AI-assisted creative production without requiring external posting, autonomous publishing, payment processing, client delivery, or cloud provider dependency.
 
-## Planning-Only Possible Scope
+YouTube is not the architecture. YouTube is the first asset type used to validate the reusable production engine.
+
+## Planning Scope
 
 The Sprint 014 plan may evaluate:
 
 - Topic input.
+- Creative brief intake.
 - AI topic development.
 - Title options.
 - Hook generation.
@@ -2294,6 +2333,12 @@ The Sprint 014 plan may evaluate:
 - Saved content package.
 - Cost tracking.
 - Execution history.
+- Export-ready asset package structure.
+- Reusable production states.
+- Reusable creative asset metadata.
+- Future asset-type extension points.
+
+Future asset types are documentation only during Task 0. Future examples include TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, and other marketing assets.
 
 ## Explicitly Out of Scope Until Approved
 
@@ -2321,6 +2366,21 @@ Do not implement during planning:
 - No worker autonomy beyond approved architecture.
 - No money-impacting or public action without CEO approval.
 - Execution records, provider records, approval records, and business records must retain existing ownership boundaries.
+- The Creative Production Engine should be business-independent.
+- Businesses request creative assets; they do not own duplicate production engines.
+- Creative workflows should remain reusable across future businesses and asset types.
+- YouTube-specific implementation details must not be hardcoded in a way that prevents future asset types from using the same engine.
+- Future creative asset types must not be implemented until specifically authorized.
+
+## Architectural Decision
+
+The Creative Production Engine is intentionally generic.
+
+YouTube is only the first supported asset type because it is a practical early-revenue workflow to validate topic development, script production, CEO review, asset packaging, cost tracking, and execution history.
+
+Future creative asset types should reuse the same production engine instead of creating separate systems for TikTok, dropshipping ads, product pages, website copy, emails, blogs, affiliate content, or other marketing assets.
+
+This decision prevents duplicate creative workflows and keeps AI Operator OS aligned with the principle that architecture comes before UI or channel-specific implementation.
 
 ## Current Task Status
 

@@ -45,6 +45,9 @@ Sprint 013 - AI Provider Integration.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
 - Create and approve the Sprint 014 implementation plan before beginning Sprint 014 Task 1.
+- Align Sprint 014 around the Creative Production Engine rather than a YouTube-specific workflow.
+- Treat YouTube content as the first supported asset type inside a reusable creative asset production architecture.
+- Keep future asset types documented only until explicitly authorized.
 
 ## Known Risks
 
@@ -59,6 +62,9 @@ Sprint 013 - AI Provider Integration.
 - Sprint 013 - AI Provider Integration is closed.
 - Sprint 014 - Early Revenue Foundation is active for planning only.
 - Sprint 014 must preserve Architecture v2, approval-first operation, provider independence, local-first persistence, and the separation of infrastructure from intelligence.
+- Sprint 014 now establishes the Creative Production Engine as a reusable department workflow for CEO-approved, export-ready creative assets.
+- YouTube remains the first implementation target, but future asset types should reuse the same production engine rather than creating duplicate systems.
+- Future reusable asset types may include TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, and other marketing assets; these remain documentation-only until specifically approved.
 - Sprint 013 Task 1 created the local-first provider architecture foundation.
 - Sprint 013 Task 2 created the Provider Manager coordination service.
 - Sprint 013 Task 1, Task 2, and Task 3 passed CEO QA and are committed and pushed.
@@ -366,11 +372,14 @@ The authoritative roadmap names AO-014 as Early Revenue Foundation.
 
 Sprint 014 - Early Revenue Foundation is active for planning only.
 
-Recommended first prototype: YouTube Content Production MVP.
+Sprint 014 mission: build the Creative Production Engine, the first reusable department workflow capable of transforming a business idea into one or more CEO-approved, export-ready creative assets.
+
+Recommended first prototype: Creative Production Engine with YouTube content as the first supported asset type.
 
 Planning-only possible scope:
 
 - Topic input.
+- Creative brief intake.
 - AI topic development.
 - Title options.
 - Hook generation.
@@ -383,6 +392,12 @@ Planning-only possible scope:
 - Saved content package.
 - Cost tracking.
 - Execution history.
+- Export-ready asset package structure.
+- Reusable production states.
+- Reusable creative asset metadata.
+- Future asset-type extension points.
+
+Future asset types such as TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, and other marketing assets are documented only. Do not implement them without explicit approval.
 
 Do not implement during planning:
 

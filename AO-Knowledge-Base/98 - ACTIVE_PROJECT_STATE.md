@@ -44,11 +44,11 @@ To be defined after Sprint 014 planning.
 
 ## Current Objective
 
-Create and approve the Sprint 014 implementation plan before Sprint 014 Task 1.
+Create and approve the Sprint 014 Creative Production Engine implementation plan before Sprint 014 Task 1.
 
 ## Roadmap Planning Note
 
-AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO-013 is AI Provider Integration and will add Provider Manager, provider abstraction, local/cloud provider support, provider health, and worker capability routing after deterministic execution infrastructure is proven.
+AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO-013 is AI Provider Integration and added provider-independent AI capability through Provider Manager, provider abstraction, Ollama support, local prompt execution, and Provider Dashboard visibility. AO-014 is Early Revenue Foundation and will establish the Creative Production Engine: a reusable department workflow for transforming business ideas into CEO-approved, export-ready creative assets. YouTube content is the first supported asset type; future asset types remain documentation-only until approved.
 
 ## Next Required Action
 

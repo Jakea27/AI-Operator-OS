@@ -109,6 +109,18 @@ The operating system manages information, structure, workflows, and context. The
 
 Complexity is justified only when it creates business value, revenue, risk reduction, or meaningful CEO leverage.
 
+## Creative Department
+
+The Creative Department owns the Creative Production Engine.
+
+Businesses request creative assets from the Creative Department. The Creative Department owns the production workflows that transform a business idea, brief, or opportunity into CEO-approved, export-ready creative assets.
+
+Creative assets should be reusable across multiple businesses where appropriate. The production engine is business-independent and should support multiple asset types over time without requiring separate systems for each business or channel.
+
+Future businesses should reuse the same Creative Production Engine instead of creating duplicate production workflows for YouTube content, TikTok content, dropshipping advertisements, product pages, website copy, emails, blogs, affiliate content, or other marketing assets.
+
+The first planned validation path is YouTube content, but YouTube is only the first supported asset type. The architecture should remain generic enough for future creative workflows.
+
 ## Strategic Business Model
 
 The current strategy is:
