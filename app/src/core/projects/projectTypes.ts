@@ -55,6 +55,31 @@ export type ProjectKnowledgeWorkspace = {
   metadata: Record<string, string>
 }
 
+export type ProductionBlueprintType = 'YouTube Video Blueprint'
+
+export type ProductionBlueprintDeliverableName = 'Title' | 'Hook' | 'Script' | 'Description' | 'Tags' | 'Thumbnail Concept'
+
+export type ProductionBlueprintDeliverableStatus = 'Not Started' | 'Draft' | 'Complete'
+
+export type ProductionBlueprintDeliverable = {
+  id: string
+  name: ProductionBlueprintDeliverableName
+  status: ProductionBlueprintDeliverableStatus
+  content: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
+export type ProductionBlueprint = {
+  enabled: boolean
+  blueprintType: ProductionBlueprintType
+  assetType: BusinessAssetType
+  deliverables: ProductionBlueprintDeliverable[]
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
 export type ProjectRecord = {
   id: string
   projectId: string
@@ -81,6 +106,7 @@ export type ProjectRecord = {
   timeline: ProjectTimelineItem[]
   businessAsset?: BusinessAssetProfile
   knowledgeWorkspace?: ProjectKnowledgeWorkspace
+  productionBlueprint?: ProductionBlueprint
 }
 
 export type ProjectInput = {
@@ -102,6 +128,7 @@ export type ProjectInput = {
   notes: string
   businessAsset?: BusinessAssetProfile
   knowledgeWorkspace?: ProjectKnowledgeWorkspace
+  productionBlueprint?: ProductionBlueprint
 }
 
 export type ProjectUpdate = Partial<Pick<
@@ -124,6 +151,7 @@ export type ProjectUpdate = Partial<Pick<
   | 'notes'
   | 'businessAsset'
   | 'knowledgeWorkspace'
+  | 'productionBlueprint'
 >>
 
 export const businessAssetTypes: BusinessAssetType[] = ['YouTube Video']
@@ -133,3 +161,9 @@ export const businessAssetProductionStatuses: BusinessAssetProductionStatus[] = 
 export const businessAssetProductionStages: BusinessAssetProductionStage[] = ['Intake', 'Brief', 'Research', 'Production Planning', 'Drafting', 'Review', 'Approved', 'Packaged']
 
 export const projectKnowledgeSections: ProjectKnowledgeSection[] = ['Research Notes', 'Reference Links', 'Keywords', 'Competitor Research', 'CEO Notes', 'Ideas', 'Source References']
+
+export const productionBlueprintTypes: ProductionBlueprintType[] = ['YouTube Video Blueprint']
+
+export const productionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = ['Title', 'Hook', 'Script', 'Description', 'Tags', 'Thumbnail Concept']
+
+export const productionBlueprintDeliverableStatuses: ProductionBlueprintDeliverableStatus[] = ['Not Started', 'Draft', 'Complete']

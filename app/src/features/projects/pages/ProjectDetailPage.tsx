@@ -6,6 +6,9 @@ import { DepartmentRecord, useCompanyStructureStore } from '@/src/core/companySt
 import {
   BusinessAssetProfile,
   BusinessAssetType,
+  ProductionBlueprint,
+  ProductionBlueprintDeliverable,
+  ProductionBlueprintDeliverableStatus,
   ProjectKnowledgeEntry,
   ProjectKnowledgeSection,
   ProjectKnowledgeWorkspace,
@@ -15,6 +18,8 @@ import {
   businessAssetProductionStages,
   businessAssetProductionStatuses,
   businessAssetTypes,
+  productionBlueprintDeliverableNames,
+  productionBlueprintDeliverableStatuses,
   projectKnowledgeSections,
   projectPriorities,
   projectStatuses,
@@ -130,6 +135,7 @@ export function ProjectDetailPage() {
       notes: draftRecord.notes,
       businessAsset,
       knowledgeWorkspace: draftRecord.knowledgeWorkspace,
+      productionBlueprint: businessAsset ? draftRecord.productionBlueprint : undefined,
     })
   }
 
@@ -252,6 +258,69 @@ export function ProjectDetailPage() {
       entries: entries.filter((entry) => entry.section === section),
     }))
   }, [draft?.knowledgeWorkspace?.entries])
+
+  function defaultProductionBlueprint(record: ProjectRecord): ProductionBlueprint {
+    const timestamp = new Date().toISOString()
+    return {
+      enabled: true,
+      blueprintType: 'YouTube Video Blueprint',
+      assetType: record.businessAsset?.assetType ?? 'YouTube Video',
+      deliverables: productionBlueprintDeliverableNames.map((name) => ({
+        id: `blueprint-${Date.now()}-${name.toLowerCase().replace(/\s+/g, '-')}`,
+        name,
+        status: 'Not Started',
+        content: '',
+        updatedAt: timestamp,
+        metadata: {},
+      })),
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {},
+    }
+  }
+
+  function updateProductionBlueprint(updates: Partial<ProductionBlueprint>) {
+    setDraft((current) => {
+      if (!current) return current
+      const blueprint = current.productionBlueprint ?? defaultProductionBlueprint(current)
+      return {
+        ...current,
+        productionBlueprint: {
+          ...blueprint,
+          ...updates,
+          assetType: current.businessAsset?.assetType ?? blueprint.assetType,
+          updatedAt: new Date().toISOString(),
+        },
+      }
+    })
+  }
+
+  function updateBlueprintDeliverable(deliverableId: string, updates: Partial<ProductionBlueprintDeliverable>) {
+    if (!draft) return
+    const blueprint = draft.productionBlueprint ?? defaultProductionBlueprint(draft)
+    updateProductionBlueprint({
+      deliverables: blueprint.deliverables.map((deliverable) =>
+        deliverable.id === deliverableId
+          ? {
+            ...deliverable,
+            ...updates,
+            updatedAt: new Date().toISOString(),
+          }
+          : deliverable,
+      ),
+    })
+  }
+
+  const blueprintCompletion = useMemo(() => {
+    const deliverables = draft?.productionBlueprint?.deliverables ?? []
+    if (deliverables.length === 0) return { complete: 0, total: 0, percent: 0 }
+    const complete = deliverables.filter((deliverable) => deliverable.status === 'Complete').length
+    return {
+      complete,
+      total: deliverables.length,
+      percent: Math.round((complete / deliverables.length) * 100),
+    }
+  }, [draft?.productionBlueprint?.deliverables])
 
   return (
     <div className="space-y-6">
@@ -521,6 +590,63 @@ export function ProjectDetailPage() {
             </Section>
           ) : null}
 
+          {draft.businessAsset?.enabled ? (
+            <Section title="Production Blueprint" eyebrow="Reusable production contract">
+              <p className="m-0 mb-4 text-sm leading-6 text-muted">
+                Define what this Business Asset must produce. The Blueprint is a planning contract only; it does not generate, execute, export, or publish content.
+              </p>
+
+              <label className="mb-4 flex items-start gap-3 rounded-2xl border border-line bg-ink/35 p-4">
+                <input
+                  type="checkbox"
+                  checked={Boolean(draft.productionBlueprint?.enabled)}
+                  onChange={(event) => {
+                    setDraft({
+                      ...draft,
+                      productionBlueprint: event.target.checked ? draft.productionBlueprint ?? defaultProductionBlueprint(draft) : undefined,
+                    })
+                  }}
+                  className="mt-1 h-4 w-4 accent-lime"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-white">Enable Production Blueprint</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted">
+                    YouTube Video Blueprint is the first supported blueprint type. Future asset types can reuse this contract pattern without a separate store.
+                  </span>
+                </span>
+              </label>
+
+              {draft.productionBlueprint?.enabled ? (
+                <div className="space-y-5">
+                  <div className="grid gap-3 md:grid-cols-4">
+                    <Info label="Blueprint Type" value={draft.productionBlueprint.blueprintType} />
+                    <Info label="Asset Type" value={draft.productionBlueprint.assetType} />
+                    <Info label="Complete" value={`${blueprintCompletion.complete}/${blueprintCompletion.total}`} />
+                    <Info label="Progress" value={`${blueprintCompletion.percent}%`} />
+                  </div>
+
+                  <div className="h-3 overflow-hidden rounded-full bg-white/[0.06]">
+                    <div className="h-full rounded-full bg-lime" style={{ width: `${blueprintCompletion.percent}%` }} />
+                  </div>
+
+                  <div className="grid gap-4">
+                    {draft.productionBlueprint.deliverables.map((deliverable) => (
+                      <BlueprintDeliverableEditor
+                        key={deliverable.id}
+                        deliverable={deliverable}
+                        onUpdate={(updates) => updateBlueprintDeliverable(deliverable.id, updates)}
+                      />
+                    ))}
+                  </div>
+
+                  <button onClick={() => save(project, draft)} className="btn-primary">Save Production Blueprint</button>
+                </div>
+              ) : (
+                <Placeholder text="Enable the Production Blueprint to define the Title, Hook, Script, Description, Tags, and Thumbnail Concept required for this YouTube Business Asset." />
+              )}
+            </Section>
+          ) : null}
+
           <Section title="Notes" eyebrow="CEO context">
             <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} className="field min-h-[120px]" />
             <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Project</button>
@@ -597,6 +723,41 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
       <p className="m-0 mt-2 text-sm font-semibold text-white">{value || 'Not assigned'}</p>
     </div>
+  )
+}
+
+function BlueprintDeliverableEditor({
+  deliverable,
+  onUpdate,
+}: {
+  deliverable: ProductionBlueprintDeliverable
+  onUpdate: (updates: Partial<ProductionBlueprintDeliverable>) => void
+}) {
+  return (
+    <article className="rounded-xl border border-line bg-ink/40 p-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="eyebrow mb-1">Deliverable</p>
+          <h4 className="m-0 font-display text-base font-semibold text-white">{deliverable.name}</h4>
+        </div>
+        <label className="min-w-[180px] space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Status</span>
+          <select value={deliverable.status} onChange={(event) => onUpdate({ status: event.target.value as ProductionBlueprintDeliverableStatus })} className="field">
+            {productionBlueprintDeliverableStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+          </select>
+        </label>
+      </div>
+      <label className="space-y-2">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Placeholder Content</span>
+        <textarea
+          value={deliverable.content}
+          onChange={(event) => onUpdate({ content: event.target.value })}
+          className="field min-h-[110px]"
+          placeholder={`Draft ${deliverable.name.toLowerCase()} requirements here.`}
+        />
+      </label>
+      <p className="m-0 mt-3 text-xs text-muted">Updated {formatDate(deliverable.updatedAt)}</p>
+    </article>
   )
 }
 

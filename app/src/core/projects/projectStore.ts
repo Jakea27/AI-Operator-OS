@@ -4,8 +4,13 @@ import {
   businessAssetProductionStages,
   businessAssetProductionStatuses,
   businessAssetTypes,
+  ProductionBlueprint,
+  ProductionBlueprintDeliverable,
   ProjectKnowledgeEntry,
   ProjectKnowledgeWorkspace,
+  productionBlueprintDeliverableNames,
+  productionBlueprintDeliverableStatuses,
+  productionBlueprintTypes,
   projectKnowledgeSections,
   ProjectInput,
   ProjectPriority,
@@ -152,8 +157,73 @@ function normalizeKnowledgeWorkspace(raw: unknown, projectCreatedAt: string): Pr
   }
 }
 
+function defaultBlueprintDeliverables(updatedAt: string): ProductionBlueprintDeliverable[] {
+  return productionBlueprintDeliverableNames.map((name) => ({
+    id: id('blueprint-deliverable'),
+    name,
+    status: 'Not Started',
+    content: '',
+    updatedAt,
+    metadata: {},
+  }))
+}
+
+function normalizeBlueprintDeliverable(raw: unknown, fallbackName: ProductionBlueprintDeliverable['name'], updatedAt: string): ProductionBlueprintDeliverable {
+  const source = isRecord(raw) ? raw : {}
+  const name = productionBlueprintDeliverableNames.includes(source.name as ProductionBlueprintDeliverable['name'])
+    ? source.name as ProductionBlueprintDeliverable['name']
+    : fallbackName
+  const status = productionBlueprintDeliverableStatuses.includes(source.status as ProductionBlueprintDeliverable['status'])
+    ? source.status as ProductionBlueprintDeliverable['status']
+    : 'Not Started'
+  const metadata = isRecord(source.metadata)
+    ? Object.fromEntries(Object.entries(source.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+
+  return {
+    id: normalizeString(source.id, id('blueprint-deliverable')),
+    name,
+    status,
+    content: normalizeString(source.content),
+    updatedAt: normalizeString(source.updatedAt, updatedAt),
+    metadata,
+  }
+}
+
+function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, assetType?: BusinessAssetProfile['assetType']): ProductionBlueprint | undefined {
+  if (!isRecord(raw) || raw.enabled !== true) return undefined
+
+  const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
+  const updatedAt = normalizeString(raw.updatedAt, createdAt)
+  const blueprintType = productionBlueprintTypes.includes(raw.blueprintType as ProductionBlueprint['blueprintType'])
+    ? raw.blueprintType as ProductionBlueprint['blueprintType']
+    : 'YouTube Video Blueprint'
+  const normalizedAssetType = businessAssetTypes.includes(raw.assetType as BusinessAssetProfile['assetType'])
+    ? raw.assetType as BusinessAssetProfile['assetType']
+    : assetType ?? 'YouTube Video'
+  const metadata = isRecord(raw.metadata)
+    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+  const rawDeliverables = Array.isArray(raw.deliverables) ? raw.deliverables : []
+  const deliverables = productionBlueprintDeliverableNames.map((name) => {
+    const matching = rawDeliverables.find((item) => isRecord(item) && item.name === name)
+    return normalizeBlueprintDeliverable(matching, name, updatedAt)
+  })
+
+  return {
+    enabled: true,
+    blueprintType,
+    assetType: normalizedAssetType,
+    deliverables,
+    createdAt,
+    updatedAt,
+    metadata,
+  }
+}
+
 function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord {
   const timestamp = raw.createdAt ?? now()
+  const businessAsset = normalizeBusinessAsset(raw.businessAsset, raw.departmentId ?? '', raw.departmentName ?? 'Unassigned Department', timestamp)
   return {
     id: raw.id ?? id('project'),
     projectId: raw.projectId ?? fallbackProjectCode(index),
@@ -180,8 +250,9 @@ function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord
     timeline: Array.isArray(raw.timeline) && raw.timeline.length > 0
       ? raw.timeline
       : [timeline('Project record created.', timestamp)],
-    businessAsset: normalizeBusinessAsset(raw.businessAsset, raw.departmentId ?? '', raw.departmentName ?? 'Unassigned Department', timestamp),
+    businessAsset,
     knowledgeWorkspace: normalizeKnowledgeWorkspace(raw.knowledgeWorkspace, timestamp),
+    productionBlueprint: normalizeProductionBlueprint(raw.productionBlueprint, timestamp, businessAsset?.assetType),
   }
 }
 
@@ -264,6 +335,7 @@ export const projectStore = {
       timeline: [timeline(`Project created for ${input.businessCode}.`, timestamp)],
       businessAsset: normalizeBusinessAsset(input.businessAsset, input.departmentId, input.departmentName, timestamp),
       knowledgeWorkspace: normalizeKnowledgeWorkspace(input.knowledgeWorkspace, timestamp),
+      productionBlueprint: normalizeProductionBlueprint(input.productionBlueprint, timestamp, input.businessAsset?.assetType),
     }
 
     persist([project, ...state])
@@ -288,6 +360,9 @@ export const projectStore = {
           knowledgeWorkspace: updates.knowledgeWorkspace === undefined
             ? project.knowledgeWorkspace
             : normalizeKnowledgeWorkspace(updates.knowledgeWorkspace, project.createdAt),
+          productionBlueprint: updates.productionBlueprint === undefined
+            ? project.productionBlueprint
+            : normalizeProductionBlueprint(updates.productionBlueprint, project.createdAt, updates.businessAsset?.assetType ?? project.businessAsset?.assetType),
           updatedAt: timestamp,
           timeline: [timeline('Project record updated.', timestamp), ...project.timeline],
         }
