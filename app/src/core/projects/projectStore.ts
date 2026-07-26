@@ -4,6 +4,9 @@ import {
   businessAssetProductionStages,
   businessAssetProductionStatuses,
   businessAssetTypes,
+  ProjectKnowledgeEntry,
+  ProjectKnowledgeWorkspace,
+  projectKnowledgeSections,
   ProjectInput,
   ProjectPriority,
   ProjectRecord,
@@ -98,6 +101,57 @@ function normalizeBusinessAsset(raw: unknown, fallbackDepartmentId: string, fall
   }
 }
 
+function normalizeStringArray(value: unknown) {
+  if (!Array.isArray(value)) return []
+  return value.filter((item): item is string => typeof item === 'string')
+}
+
+function normalizeKnowledgeEntry(raw: unknown, workspaceCreatedAt: string): ProjectKnowledgeEntry | undefined {
+  if (!isRecord(raw)) return undefined
+
+  const section = projectKnowledgeSections.includes(raw.section as ProjectKnowledgeEntry['section'])
+    ? raw.section as ProjectKnowledgeEntry['section']
+    : 'Research Notes'
+  const createdAt = normalizeString(raw.createdAt, workspaceCreatedAt)
+  const updatedAt = normalizeString(raw.updatedAt, createdAt)
+  const metadata = isRecord(raw.metadata)
+    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+
+  return {
+    id: normalizeString(raw.id, id('knowledge-entry')),
+    section,
+    title: normalizeString(raw.title, 'Untitled Knowledge Entry'),
+    content: normalizeString(raw.content),
+    url: normalizeString(raw.url),
+    tags: normalizeStringArray(raw.tags),
+    createdAt,
+    updatedAt,
+    metadata,
+  }
+}
+
+function normalizeKnowledgeWorkspace(raw: unknown, projectCreatedAt: string): ProjectKnowledgeWorkspace | undefined {
+  if (!isRecord(raw) || raw.enabled !== true) return undefined
+
+  const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
+  const updatedAt = normalizeString(raw.updatedAt, createdAt)
+  const metadata = isRecord(raw.metadata)
+    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+  const entries = Array.isArray(raw.entries)
+    ? raw.entries.map((entry) => normalizeKnowledgeEntry(entry, createdAt)).filter((entry): entry is ProjectKnowledgeEntry => Boolean(entry))
+    : []
+
+  return {
+    enabled: true,
+    entries,
+    createdAt,
+    updatedAt,
+    metadata,
+  }
+}
+
 function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord {
   const timestamp = raw.createdAt ?? now()
   return {
@@ -127,6 +181,7 @@ function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord
       ? raw.timeline
       : [timeline('Project record created.', timestamp)],
     businessAsset: normalizeBusinessAsset(raw.businessAsset, raw.departmentId ?? '', raw.departmentName ?? 'Unassigned Department', timestamp),
+    knowledgeWorkspace: normalizeKnowledgeWorkspace(raw.knowledgeWorkspace, timestamp),
   }
 }
 
@@ -208,6 +263,7 @@ export const projectStore = {
       updatedAt: timestamp,
       timeline: [timeline(`Project created for ${input.businessCode}.`, timestamp)],
       businessAsset: normalizeBusinessAsset(input.businessAsset, input.departmentId, input.departmentName, timestamp),
+      knowledgeWorkspace: normalizeKnowledgeWorkspace(input.knowledgeWorkspace, timestamp),
     }
 
     persist([project, ...state])
@@ -229,6 +285,9 @@ export const projectStore = {
           businessAsset: updates.businessAsset === undefined
             ? project.businessAsset
             : normalizeBusinessAsset(updates.businessAsset, updates.departmentId ?? project.departmentId, updates.departmentName ?? project.departmentName, project.createdAt),
+          knowledgeWorkspace: updates.knowledgeWorkspace === undefined
+            ? project.knowledgeWorkspace
+            : normalizeKnowledgeWorkspace(updates.knowledgeWorkspace, project.createdAt),
           updatedAt: timestamp,
           timeline: [timeline('Project record updated.', timestamp), ...project.timeline],
         }

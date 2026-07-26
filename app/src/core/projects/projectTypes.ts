@@ -33,6 +33,28 @@ export type BusinessAssetProfile = {
   metadata: Record<string, string>
 }
 
+export type ProjectKnowledgeSection = 'Research Notes' | 'Reference Links' | 'Keywords' | 'Competitor Research' | 'CEO Notes' | 'Ideas' | 'Source References'
+
+export type ProjectKnowledgeEntry = {
+  id: string
+  section: ProjectKnowledgeSection
+  title: string
+  content: string
+  url: string
+  tags: string[]
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
+export type ProjectKnowledgeWorkspace = {
+  enabled: boolean
+  entries: ProjectKnowledgeEntry[]
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
 export type ProjectRecord = {
   id: string
   projectId: string
@@ -58,6 +80,7 @@ export type ProjectRecord = {
   updatedAt: string
   timeline: ProjectTimelineItem[]
   businessAsset?: BusinessAssetProfile
+  knowledgeWorkspace?: ProjectKnowledgeWorkspace
 }
 
 export type ProjectInput = {
@@ -78,6 +101,7 @@ export type ProjectInput = {
   targetDate: string
   notes: string
   businessAsset?: BusinessAssetProfile
+  knowledgeWorkspace?: ProjectKnowledgeWorkspace
 }
 
 export type ProjectUpdate = Partial<Pick<
@@ -99,6 +123,7 @@ export type ProjectUpdate = Partial<Pick<
   | 'targetDate'
   | 'notes'
   | 'businessAsset'
+  | 'knowledgeWorkspace'
 >>
 
 export const businessAssetTypes: BusinessAssetType[] = ['YouTube Video']
@@ -106,3 +131,5 @@ export const businessAssetTypes: BusinessAssetType[] = ['YouTube Video']
 export const businessAssetProductionStatuses: BusinessAssetProductionStatus[] = ['Planning', 'Ready', 'In Production', 'Review', 'Approved', 'Packaged', 'Archived']
 
 export const businessAssetProductionStages: BusinessAssetProductionStage[] = ['Intake', 'Brief', 'Research', 'Production Planning', 'Drafting', 'Review', 'Approved', 'Packaged']
+
+export const projectKnowledgeSections: ProjectKnowledgeSection[] = ['Research Notes', 'Reference Links', 'Keywords', 'Competitor Research', 'CEO Notes', 'Ideas', 'Source References']

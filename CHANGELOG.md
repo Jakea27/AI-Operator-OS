@@ -1,5 +1,18 @@
 # Changelog
 
+# Sprint 014 Task 2 - Knowledge Workspace Foundation
+
+- Extended existing Project records with an optional reusable Knowledge Workspace.
+- Added structured sections for Research Notes, Reference Links, Keywords, Competitor Research, CEO Notes, Ideas, and Source References.
+- Added local Project Detail UI for adding, editing, deleting, and organizing knowledge entries by section.
+- Confirmed the existing Project Store remains the persistence owner.
+- Confirmed no Knowledge Store, Research Store, Notes Store, duplicate persistence key, duplicate route, provider change, execution change, approval change, or cloud provider was added.
+- `npm.cmd run build` passed.
+- Task 2 internal QA passed.
+- Task 2 CEO QA passed.
+- Task 2 repository verification is pending.
+- Sprint 014 Task 3 - Production Pipeline Foundation is now authorized.
+
 # Sprint 014 Task 1 - Business Asset Foundation
 
 - Extended the existing Project system with an optional Business Asset profile.

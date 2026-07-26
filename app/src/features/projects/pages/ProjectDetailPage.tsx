@@ -6,12 +6,16 @@ import { DepartmentRecord, useCompanyStructureStore } from '@/src/core/companySt
 import {
   BusinessAssetProfile,
   BusinessAssetType,
+  ProjectKnowledgeEntry,
+  ProjectKnowledgeSection,
+  ProjectKnowledgeWorkspace,
   ProjectPriority,
   ProjectRecord,
   ProjectStatus,
   businessAssetProductionStages,
   businessAssetProductionStatuses,
   businessAssetTypes,
+  projectKnowledgeSections,
   projectPriorities,
   projectStatuses,
   useProjectStore,
@@ -41,6 +45,11 @@ export function ProjectDetailPage() {
   const project = projectStore.projects.find((item) => item.id === projectId)
   const [draft, setDraft] = useState<ProjectRecord | undefined>(project)
   const [showWorkItemForm, setShowWorkItemForm] = useState(false)
+  const [knowledgeSection, setKnowledgeSection] = useState<ProjectKnowledgeSection>('Research Notes')
+  const [knowledgeTitle, setKnowledgeTitle] = useState('')
+  const [knowledgeContent, setKnowledgeContent] = useState('')
+  const [knowledgeUrl, setKnowledgeUrl] = useState('')
+  const [knowledgeTags, setKnowledgeTags] = useState('')
 
   useEffect(() => {
     setDraft(project)
@@ -120,6 +129,7 @@ export function ProjectDetailPage() {
       targetDate: draftRecord.targetDate,
       notes: draftRecord.notes,
       businessAsset,
+      knowledgeWorkspace: draftRecord.knowledgeWorkspace,
     })
   }
 
@@ -161,6 +171,87 @@ export function ProjectDetailPage() {
       }
     })
   }
+
+  function defaultKnowledgeWorkspace(record: ProjectRecord): ProjectKnowledgeWorkspace {
+    const timestamp = new Date().toISOString()
+    return {
+      enabled: true,
+      entries: record.knowledgeWorkspace?.entries ?? [],
+      createdAt: record.knowledgeWorkspace?.createdAt ?? timestamp,
+      updatedAt: timestamp,
+      metadata: record.knowledgeWorkspace?.metadata ?? {},
+    }
+  }
+
+  function updateKnowledgeWorkspace(updates: Partial<ProjectKnowledgeWorkspace>) {
+    setDraft((current) => {
+      if (!current) return current
+      const workspace = current.knowledgeWorkspace ?? defaultKnowledgeWorkspace(current)
+      return {
+        ...current,
+        knowledgeWorkspace: {
+          ...workspace,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        },
+      }
+    })
+  }
+
+  function addKnowledgeEntry() {
+    if (!draft) return
+    const workspace = draft.knowledgeWorkspace ?? defaultKnowledgeWorkspace(draft)
+    const timestamp = new Date().toISOString()
+    const entry: ProjectKnowledgeEntry = {
+      id: `knowledge-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      section: knowledgeSection,
+      title: knowledgeTitle.trim() || `${knowledgeSection} entry`,
+      content: knowledgeContent.trim(),
+      url: knowledgeUrl.trim(),
+      tags: knowledgeTags.split(',').map((tag) => tag.trim()).filter(Boolean),
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {},
+    }
+
+    updateKnowledgeWorkspace({
+      entries: [entry, ...workspace.entries],
+    })
+    setKnowledgeTitle('')
+    setKnowledgeContent('')
+    setKnowledgeUrl('')
+    setKnowledgeTags('')
+  }
+
+  function updateKnowledgeEntry(entryId: string, updates: Partial<ProjectKnowledgeEntry>) {
+    if (!draft?.knowledgeWorkspace) return
+    updateKnowledgeWorkspace({
+      entries: draft.knowledgeWorkspace.entries.map((entry) =>
+        entry.id === entryId
+          ? {
+            ...entry,
+            ...updates,
+            updatedAt: new Date().toISOString(),
+          }
+          : entry,
+      ),
+    })
+  }
+
+  function deleteKnowledgeEntry(entryId: string) {
+    if (!draft?.knowledgeWorkspace) return
+    updateKnowledgeWorkspace({
+      entries: draft.knowledgeWorkspace.entries.filter((entry) => entry.id !== entryId),
+    })
+  }
+
+  const knowledgeEntriesBySection = useMemo(() => {
+    const entries = draft?.knowledgeWorkspace?.entries ?? []
+    return projectKnowledgeSections.map((section) => ({
+      section,
+      entries: entries.filter((entry) => entry.section === section),
+    }))
+  }, [draft?.knowledgeWorkspace?.entries])
 
   return (
     <div className="space-y-6">
@@ -340,6 +431,96 @@ export function ProjectDetailPage() {
             <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Business Asset</button>
           </Section>
 
+          {draft.businessAsset?.enabled ? (
+            <Section title="Knowledge Workspace" eyebrow="Structured production knowledge">
+              <p className="m-0 mb-4 text-sm leading-6 text-muted">
+                Store project knowledge for this Business Asset. Task 2 keeps this local, structured, and reusable for future departments without adding a separate knowledge store.
+              </p>
+
+              <label className="mb-4 flex items-start gap-3 rounded-2xl border border-line bg-ink/35 p-4">
+                <input
+                  type="checkbox"
+                  checked={Boolean(draft.knowledgeWorkspace?.enabled)}
+                  onChange={(event) => {
+                    setDraft({
+                      ...draft,
+                      knowledgeWorkspace: event.target.checked ? draft.knowledgeWorkspace ?? defaultKnowledgeWorkspace(draft) : undefined,
+                    })
+                  }}
+                  className="mt-1 h-4 w-4 accent-lime"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-white">Enable Knowledge Workspace</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted">
+                    Knowledge entries are stored on this Project record and organized by reusable sections.
+                  </span>
+                </span>
+              </label>
+
+              {draft.knowledgeWorkspace?.enabled ? (
+                <div className="space-y-5">
+                  <div className="rounded-2xl border border-line bg-ink/35 p-4">
+                    <p className="eyebrow mb-3">Add Knowledge</p>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <label className="space-y-2">
+                        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Section</span>
+                        <select value={knowledgeSection} onChange={(event) => setKnowledgeSection(event.target.value as ProjectKnowledgeSection)} className="field">
+                          {projectKnowledgeSections.map((section) => <option key={section} value={section}>{section}</option>)}
+                        </select>
+                      </label>
+                      <label className="space-y-2">
+                        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Title</span>
+                        <input value={knowledgeTitle} onChange={(event) => setKnowledgeTitle(event.target.value)} className="field" placeholder="Audience insight, source, keyword..." />
+                      </label>
+                      <label className="space-y-2 md:col-span-2">
+                        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Content</span>
+                        <textarea value={knowledgeContent} onChange={(event) => setKnowledgeContent(event.target.value)} className="field min-h-[92px]" placeholder="What did we learn?" />
+                      </label>
+                      <label className="space-y-2">
+                        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Reference URL</span>
+                        <input value={knowledgeUrl} onChange={(event) => setKnowledgeUrl(event.target.value)} className="field" placeholder="https://..." />
+                      </label>
+                      <label className="space-y-2">
+                        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Tags</span>
+                        <input value={knowledgeTags} onChange={(event) => setKnowledgeTags(event.target.value)} className="field" placeholder="Comma-separated tags" />
+                      </label>
+                    </div>
+                    <button onClick={addKnowledgeEntry} className="btn-primary mt-4">Add Knowledge Entry</button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {knowledgeEntriesBySection.map(({ section, entries }) => (
+                      <div key={section} className="rounded-2xl border border-line bg-white/[0.02] p-4">
+                        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                          <h4 className="m-0 font-display text-base font-semibold text-white">{section}</h4>
+                          <span className="rounded-full border border-line px-3 py-1 text-xs text-muted">{entries.length} entries</span>
+                        </div>
+                        {entries.length > 0 ? (
+                          <div className="space-y-3">
+                            {entries.map((entry) => (
+                              <KnowledgeEntryEditor
+                                key={entry.id}
+                                entry={entry}
+                                onUpdate={(updates) => updateKnowledgeEntry(entry.id, updates)}
+                                onDelete={() => deleteKnowledgeEntry(entry.id)}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="m-0 text-sm leading-6 text-muted">No {section.toLowerCase()} recorded yet.</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <button onClick={() => save(project, draft)} className="btn-primary">Save Knowledge Workspace</button>
+                </div>
+              ) : (
+                <Placeholder text="Enable the Knowledge Workspace to collect structured research, references, keywords, CEO notes, and ideas for this Business Asset." />
+              )}
+            </Section>
+          ) : null}
+
           <Section title="Notes" eyebrow="CEO context">
             <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} className="field min-h-[120px]" />
             <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Project</button>
@@ -416,6 +597,49 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
       <p className="m-0 mt-2 text-sm font-semibold text-white">{value || 'Not assigned'}</p>
     </div>
+  )
+}
+
+function KnowledgeEntryEditor({
+  entry,
+  onUpdate,
+  onDelete,
+}: {
+  entry: ProjectKnowledgeEntry
+  onUpdate: (updates: Partial<ProjectKnowledgeEntry>) => void
+  onDelete: () => void
+}) {
+  return (
+    <article className="rounded-xl border border-line bg-ink/40 p-4">
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Section</span>
+          <select value={entry.section} onChange={(event) => onUpdate({ section: event.target.value as ProjectKnowledgeSection })} className="field">
+            {projectKnowledgeSections.map((section) => <option key={section} value={section}>{section}</option>)}
+          </select>
+        </label>
+        <label className="space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Title</span>
+          <input value={entry.title} onChange={(event) => onUpdate({ title: event.target.value })} className="field" />
+        </label>
+        <label className="space-y-2 md:col-span-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Content</span>
+          <textarea value={entry.content} onChange={(event) => onUpdate({ content: event.target.value })} className="field min-h-[88px]" />
+        </label>
+        <label className="space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Reference URL</span>
+          <input value={entry.url} onChange={(event) => onUpdate({ url: event.target.value })} className="field" />
+        </label>
+        <label className="space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Tags</span>
+          <input value={entry.tags.join(', ')} onChange={(event) => onUpdate({ tags: event.target.value.split(',').map((tag) => tag.trim()).filter(Boolean) })} className="field" />
+        </label>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="m-0 text-xs text-muted">Updated {formatDate(entry.updatedAt)}</p>
+        <button onClick={onDelete} className="btn-secondary text-rose-200 hover:text-white">Delete Entry</button>
+      </div>
+    </article>
   )
 }
 
