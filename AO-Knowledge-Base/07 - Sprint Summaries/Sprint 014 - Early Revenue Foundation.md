@@ -6,11 +6,11 @@ ACTIVE - TASK 5 COMPLETE / TASK 6 READY.
 
 ## Phase
 
-Sprint 014 Task 6.
+Sprint 014 Task 6 - Provider Execution Foundation.
 
 ## Current Task
 
-Sprint 014 Task 6.
+Sprint 014 Task 6 - Provider Execution Foundation.
 
 ## Mission Statement
 
@@ -20,7 +20,7 @@ The initial implementation will support YouTube content, while the architecture 
 
 ## Objective
 
-Begin Sprint 014 Task 6.
+Begin Sprint 014 Task 6 - Provider Execution Foundation.
 
 Sprint 014 is intended to establish the Creative Production Engine as a reusable early-revenue workflow foundation while preserving the approved architecture.
 
@@ -710,11 +710,14 @@ Task 3 does not add:
 - Sprint 014 Task 5 Startup Verification: PASS.
 - Sprint 014 Task 5 Transition Gate: READY.
 - Sprint 014 Task 5 Status: COMPLETE.
+- Sprint 014 Task 6 Name: Provider Execution Foundation.
+- Sprint 014 Task 6 Objective: Prove one complete provider-independent execution path using existing Work Order, Execution Request, Execution Core, Capability Resolver, Provider Manager, Provider Store, and local Ollama provider architecture.
+- Sprint 014 Task 6 Approved Flow: Work Order -> Execution Request -> Execution Core -> Capability Resolver -> Provider Manager -> Existing Local Ollama Provider -> Structured Execution Result.
 - Sprint 014 Task 6 Status: READY.
 
 ## Next Required Action
 
-Begin Sprint 014 Task 6.
+Begin Sprint 014 Task 6 - Provider Execution Foundation.
 
 ## Task 5 - Execution Lifecycle Foundation
 
@@ -849,3 +852,66 @@ Task 5 did not add:
 - Startup Verification: PASS.
 - Transition Gate: READY.
 - Task Status: COMPLETE.
+
+## Task 6 - Provider Execution Foundation
+
+### Objective
+
+Prove one complete provider-independent execution path using the existing architecture.
+
+Task 6 remains intentionally narrow. It connects one existing Work Order / Execution Request lifecycle to the approved provider execution path and captures a structured execution result.
+
+### Authoritative Execution Path
+
+```text
+Work Order
+↓
+Execution Request
+↓
+Execution Core
+↓
+Capability Resolver
+↓
+Provider Manager
+↓
+Existing Local Ollama Provider
+↓
+Structured Execution Result
+```
+
+### Ownership
+
+- Work Item Store owns Work Orders.
+- Project Store owns Business Assets, Knowledge Workspace, Production Blueprint, and deliverables.
+- Execution Request owns request metadata and references.
+- Execution Core owns lifecycle, execution records, logs, timing, failures, and structured results.
+- Capability Resolver owns provider-independent capability routing.
+- Provider Manager owns provider coordination.
+- Provider Store owns provider, model, and configuration persistence.
+- Ollama Adapter owns communication with local Ollama only.
+- Approval Queue ownership is unchanged.
+
+### Explicit Exclusions
+
+Task 6 does not add:
+
+- Assignment.
+- Worker.
+- Worker Resolver.
+- Scheduler.
+- Orchestrator.
+- Workflow Engine.
+- Request Queue.
+- Execution Queue.
+- Retry Manager.
+- Background execution.
+- Autonomous execution.
+- Streaming.
+- Cloud providers.
+- Blueprint updates.
+- CEO approval changes.
+- Duplicate execution systems.
+
+### Implementation Authorization
+
+Implementation is authorized after this documentation alignment because Sprint 014 Task 5 is complete, repository verification passed, startup verification passed, and Task 6 is the documented current task.
