@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { capabilityResolver, providerManager, type ProviderCapability } from '../providers'
 import type { ExecutionQueueRecord } from '../executionQueue'
 import type { WorkItemRecord } from '../workItems'
 import {
@@ -33,6 +34,7 @@ import {
   ExecutionLog,
   ExecutionLogCategory,
   ExecutionLogLevel,
+  ExecutionProviderRunResult,
   ExecutionRecord,
   ExecutionRequestLifecycleTransitionInput,
   ExecutionRequestLifecycleTransitionResult,
@@ -170,6 +172,8 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
       blueprintDeliverableId: raw.executionRequest.blueprintDeliverableId ?? '',
       blueprintDeliverableName: raw.executionRequest.blueprintDeliverableName ?? '',
       knowledgeReferenceIds: Array.isArray(raw.executionRequest.knowledgeReferenceIds) ? raw.executionRequest.knowledgeReferenceIds : [],
+      instructions: raw.executionRequest.instructions ?? '',
+      outputRequirements: raw.executionRequest.outputRequirements ?? '',
       createdAt: raw.executionRequest.createdAt ?? timestamp,
     } : undefined,
     requestLifecycle: raw.requestLifecycle ? {
@@ -296,6 +300,70 @@ function appendEvent(execution: ExecutionRecord, message: string, eventType: Exe
       }),
       ...execution.events,
     ],
+  }
+}
+
+function providerExecutionMetadata(execution: ExecutionRecord) {
+  return {
+    executionRecordId: execution.id,
+    executionId: execution.executionId,
+    executionRequestId: execution.executionRequest?.requestId,
+    workItemId: execution.workItem.workItemId,
+    workOrderId: execution.workOrder?.workOrderId,
+    blueprintDeliverableId: execution.executionRequest?.blueprintDeliverableId,
+  }
+}
+
+function executionRequestPrompt(execution: ExecutionRecord) {
+  const request = execution.executionRequest
+  if (!request) return ''
+
+  return [
+    request.instructions,
+    '',
+    'Output Requirements:',
+    request.outputRequirements,
+  ].join('\n').trim()
+}
+
+function resultFromProviderExecution(
+  execution: ExecutionRecord,
+  providerResult: Awaited<ReturnType<typeof providerManager.executePrompt>>,
+): ExecutionResult {
+  const timestamp = providerResult.completedAt
+  return {
+    id: id('execution-result'),
+    resultId: `EXR-${Date.now()}`,
+    executionRecordId: execution.id,
+    executionId: execution.executionId,
+    status: 'Recorded',
+    summary: providerResult.success
+      ? providerResult.response
+      : providerResult.errorMessage,
+    success: providerResult.success,
+    failure: !providerResult.success,
+    provider: providerResult.provider ? {
+      providerId: providerResult.provider.providerId,
+      providerRecordId: providerResult.provider.providerRecordId,
+      name: providerResult.provider.name,
+    } : undefined,
+    model: providerResult.model ? {
+      modelId: providerResult.model.modelId,
+      modelRecordId: providerResult.model.modelRecordId,
+      name: providerResult.model.name,
+    } : undefined,
+    responseText: providerResult.response,
+    latencyMs: providerResult.latencyMs,
+    startedAt: providerResult.startedAt,
+    completedAt: providerResult.completedAt,
+    lifecycleState: providerResult.success ? 'Completed' : 'Failed',
+    errorMessage: providerResult.success ? undefined : providerResult.errorMessage,
+    artifactRefs: [],
+    recommendedNextAction: providerResult.success
+      ? 'Review the structured execution result. Blueprint deliverables remain unchanged until a later approved task applies results.'
+      : 'Review provider execution failure details before retrying in a later approved workflow.',
+    createdAt: timestamp,
+    updatedAt: timestamp,
   }
 }
 
@@ -485,6 +553,8 @@ export const executionStore = {
         blueprintDeliverableId: executionRequest.blueprintDeliverableId,
         blueprintDeliverableName: executionRequest.blueprintDeliverableName,
         knowledgeReferenceIds: executionRequest.knowledgeReferenceIds,
+        instructions: executionRequest.instructions,
+        outputRequirements: executionRequest.outputRequirements,
         createdAt: executionRequest.createdAt,
       },
       requestLifecycle,
@@ -531,6 +601,256 @@ export const executionStore = {
 
     persist([execution, ...state])
     return execution
+  },
+
+  async executeProviderRequest(executionRecordId: string): Promise<ExecutionProviderRunResult | undefined> {
+    const initialExecution = state.find((execution) => execution.id === executionRecordId)
+
+    if (!initialExecution?.executionRequest) {
+      return undefined
+    }
+
+    const request = initialExecution.executionRequest
+    const prompt = executionRequestPrompt(initialExecution)
+    const startedAt = now()
+
+    if (!prompt) {
+      return undefined
+    }
+
+    function replaceExecution(nextExecution: ExecutionRecord) {
+      persist(state.map((execution) => execution.id === nextExecution.id ? nextExecution : execution))
+      return nextExecution
+    }
+
+    function latestExecution() {
+      return state.find((execution) => execution.id === executionRecordId)
+    }
+
+    let working = initialExecution
+    const currentLifecycle = working.requestLifecycle?.status ?? 'Pending'
+
+    if (currentLifecycle === 'Completed' || currentLifecycle === 'Failed') {
+      return {
+        success: false,
+        execution: working,
+        responseText: '',
+        startedAt,
+        completedAt: startedAt,
+        lifecycleState: currentLifecycle,
+        errorMessage: `Execution Request lifecycle is already terminal: ${currentLifecycle}.`,
+      }
+    }
+
+    if (currentLifecycle === 'Pending') {
+      const accepted = transitionExecutionRequestLifecycleRecord(working, {
+        toStatus: 'Accepted',
+        actor: 'Execution Core',
+        reason: 'Execution Request accepted for provider-independent execution.',
+        createdAt: startedAt,
+      })
+
+      if (!accepted.success) {
+        return {
+          success: false,
+          execution: working,
+          responseText: '',
+          startedAt,
+          completedAt: startedAt,
+          lifecycleState: working.requestLifecycle?.status ?? 'Pending',
+          errorMessage: accepted.message,
+        }
+      }
+
+      working = replaceExecution(accepted.execution)
+    }
+
+    if ((working.requestLifecycle?.status ?? 'Pending') === 'Accepted') {
+      const executing = transitionExecutionRequestLifecycleRecord(working, {
+        toStatus: 'Executing',
+        actor: 'Execution Core',
+        reason: 'Provider-independent execution path started.',
+        createdAt: startedAt,
+      })
+
+      if (!executing.success) {
+        return {
+          success: false,
+          execution: working,
+          responseText: '',
+          startedAt,
+          completedAt: startedAt,
+          lifecycleState: working.requestLifecycle?.status ?? 'Accepted',
+          errorMessage: executing.message,
+        }
+      }
+
+      working = replaceExecution({
+        ...executing.execution,
+        timing: {
+          ...executing.execution.timing,
+          startedAt: executing.execution.timing.startedAt ?? startedAt,
+        },
+      })
+    }
+
+    const capabilityRequest = {
+      requestId: request.requestId,
+      requestedCapability: request.requestedCapability as ProviderCapability,
+      requestingEntity: {
+        entityType: 'Workflow' as const,
+        entityId: request.workItemRecordId,
+        displayName: request.blueprintDeliverableName,
+      },
+      workItemId: request.workItemId,
+      executionId: working.executionId,
+      requiredInputModalities: ['Text' as const],
+      requiredOutputModalities: ['Text' as const],
+      localOnly: true,
+      cloudAllowed: false,
+      fallbackAllowed: false,
+      requestedAt: startedAt,
+      metadata: {
+        workOrderId: working.workOrder?.workOrderId,
+        blueprintDeliverableId: request.blueprintDeliverableId,
+        projectCode: request.projectCode,
+      },
+    }
+
+    const routing = capabilityResolver.resolveCapabilityRequest(capabilityRequest)
+
+    const providerResult = routing.status === 'Routed'
+      ? await providerManager.executePrompt({
+        capabilityRequest,
+        prompt,
+        systemPrompt: 'You are AI Operator OS executing one approved local provider request. Return only draft content for CEO review. Do not publish, approve, or update final deliverables.',
+        temperature: 0.2,
+        maxTokens: request.blueprintDeliverableName === 'Script' ? 1200 : 240,
+        metadata: providerExecutionMetadata(working),
+      })
+      : undefined
+
+    const completedAt = providerResult?.completedAt ?? now()
+    const latest = latestExecution() ?? working
+    const finalLifecycle = providerResult?.success ? 'Completed' : 'Failed'
+    const lifecycleTransition = transitionExecutionRequestLifecycleRecord(latest, {
+      toStatus: finalLifecycle,
+      actor: 'Execution Core',
+      reason: providerResult?.success
+        ? 'Provider-independent execution path completed with a structured result.'
+        : routing.status === 'Routed'
+          ? providerResult?.errorMessage ?? 'Provider execution failed.'
+          : `Capability routing failed: ${routing.failureCodes.join(', ')}.`,
+      createdAt: completedAt,
+    })
+    const transitioned = lifecycleTransition.success ? lifecycleTransition.execution : latest
+    const failureMessage = providerResult?.success
+      ? undefined
+      : routing.status === 'Routed'
+        ? providerResult?.errorMessage ?? 'Provider execution failed.'
+        : `Capability routing failed: ${routing.failureCodes.join(', ')}.`
+    const executionResult = providerResult
+      ? resultFromProviderExecution(transitioned, providerResult)
+      : {
+        id: id('execution-result'),
+        resultId: `EXR-${Date.now()}`,
+        executionRecordId: transitioned.id,
+        executionId: transitioned.executionId,
+        status: 'Recorded' as const,
+        summary: failureMessage ?? 'Provider execution failed.',
+        success: false,
+        failure: true,
+        responseText: '',
+        startedAt,
+        completedAt,
+        lifecycleState: 'Failed' as const,
+        errorMessage: failureMessage,
+        artifactRefs: [],
+        recommendedNextAction: 'Review capability routing failures before attempting provider execution again.',
+        createdAt: completedAt,
+        updatedAt: completedAt,
+      }
+    const providerReference = providerResult?.provider
+      ? {
+        providerId: providerResult.provider.providerId,
+        name: providerResult.provider.name,
+        category: providerResult.provider.runtime,
+        model: providerResult.model?.name,
+      }
+      : undefined
+    const resultLog = createExecutionLog({
+      sequence: transitioned.logs.length + 1,
+      level: executionResult.success ? 'Audit' : 'Error',
+      category: executionResult.success ? 'Result' : 'Failure',
+      message: executionResult.success
+        ? `Provider execution completed using ${executionResult.provider?.name ?? 'selected provider'} / ${executionResult.model?.name ?? 'selected model'}.`
+        : `Provider execution failed: ${executionResult.errorMessage}`,
+      source: 'Execution Core',
+      metadata: {
+        provider: executionResult.provider?.name ?? null,
+        model: executionResult.model?.name ?? null,
+        latencyMs: executionResult.latencyMs ?? null,
+        lifecycleState: executionResult.lifecycleState ?? null,
+      },
+      createdAt: completedAt,
+    })
+    const failureRecord: FailureRecord | undefined = executionResult.success ? undefined : {
+      id: id('execution-failure'),
+      failureId: `EXFAIL-${String(transitioned.failures.length + 1).padStart(4, '0')}`,
+      severity: 'Moderate',
+      message: executionResult.errorMessage ?? 'Provider execution failed.',
+      cause: routing.status === 'Routed' ? providerResult?.failures.join(', ') : routing.failureCodes.join(', '),
+      createdAt: completedAt,
+    }
+    const durationMs = Date.parse(completedAt) - Date.parse(startedAt)
+    const finalExecution: ExecutionRecord = {
+      ...transitioned,
+      selectedProviders: providerReference
+        ? [providerReference, ...transitioned.selectedProviders.filter((provider) => provider.providerId !== providerReference.providerId)]
+        : transitioned.selectedProviders,
+      timing: {
+        ...transitioned.timing,
+        startedAt: transitioned.timing.startedAt ?? startedAt,
+        completedAt: executionResult.success ? completedAt : transitioned.timing.completedAt,
+        failedAt: executionResult.success ? transitioned.timing.failedAt : completedAt,
+        durationMs: Number.isFinite(durationMs) ? Math.max(0, durationMs) : transitioned.timing.durationMs,
+      },
+      actualCost: executionResult.provider ? transitioned.actualCost : transitioned.actualCost,
+      result: executionResult,
+      resultRef: executionResult.resultId,
+      logs: [resultLog, ...transitioned.logs],
+      failures: failureRecord ? [failureRecord, ...transitioned.failures] : transitioned.failures,
+      updatedAt: completedAt,
+    }
+
+    replaceExecution(finalExecution)
+
+    if (executionResult.success) {
+      return {
+        success: true,
+        execution: finalExecution,
+        provider: executionResult.provider?.name ?? 'Selected Provider',
+        model: executionResult.model?.name ?? 'Selected Model',
+        responseText: executionResult.responseText ?? '',
+        latencyMs: executionResult.latencyMs ?? 0,
+        startedAt: executionResult.startedAt ?? startedAt,
+        completedAt: executionResult.completedAt ?? completedAt,
+        lifecycleState: executionResult.lifecycleState ?? 'Completed',
+      }
+    }
+
+    return {
+      success: false,
+      execution: finalExecution,
+      provider: executionResult.provider?.name,
+      model: executionResult.model?.name,
+      responseText: '',
+      latencyMs: executionResult.latencyMs,
+      startedAt: executionResult.startedAt ?? startedAt,
+      completedAt: executionResult.completedAt ?? completedAt,
+      lifecycleState: executionResult.lifecycleState ?? 'Failed',
+      errorMessage: executionResult.errorMessage ?? 'Provider execution failed.',
+    }
   },
 
   transitionExecution(executionRecordId: string, input: ExecutionLifecycleTransitionInput): ExecutionLifecycleTransitionResult | undefined {
@@ -984,6 +1304,7 @@ export function useExecutionStore() {
     createExecution: executionStore.createExecution,
     createExecutionFromQueueItem: executionStore.createExecutionFromQueueItem,
     createExecutionFromWorkOrder: executionStore.createExecutionFromWorkOrder,
+    executeProviderRequest: executionStore.executeProviderRequest,
     transitionExecution: executionStore.transitionExecution,
     transitionExecutionRequestLifecycle: executionStore.transitionExecutionRequestLifecycle,
     pauseExecution: executionStore.pauseExecution,

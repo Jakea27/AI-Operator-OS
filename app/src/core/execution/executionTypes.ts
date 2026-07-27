@@ -131,6 +131,8 @@ export type ExecutionRequestReferenceSnapshot = {
   blueprintDeliverableId: string
   blueprintDeliverableName: string
   knowledgeReferenceIds: string[]
+  instructions: string
+  outputRequirements: string
   createdAt: ISODateTimeString
 }
 
@@ -248,6 +250,24 @@ export type ExecutionResult = {
   executionId: string
   status: ExecutionResultStatus
   summary: string
+  success?: boolean
+  failure?: boolean
+  provider?: {
+    providerId: string
+    providerRecordId: string
+    name: string
+  }
+  model?: {
+    modelId: string
+    modelRecordId: string
+    name: string
+  }
+  responseText?: string
+  latencyMs?: number
+  startedAt?: ISODateTimeString
+  completedAt?: ISODateTimeString
+  lifecycleState?: ExecutionRequestLifecycleStatus
+  errorMessage?: string
   artifactRefs: string[]
   recommendedNextAction?: string
   createdAt: ISODateTimeString
@@ -529,6 +549,31 @@ export type ExecutionRequestLifecycleTransitionResult =
     execution: ExecutionRecord
     message: string
     allowedTransitions: ExecutionRequestLifecycleStatus[]
+  }
+
+export type ExecutionProviderRunResult =
+  | {
+    success: true
+    execution: ExecutionRecord
+    provider: string
+    model: string
+    responseText: string
+    latencyMs: number
+    startedAt: ISODateTimeString
+    completedAt: ISODateTimeString
+    lifecycleState: ExecutionRequestLifecycleStatus
+  }
+  | {
+    success: false
+    execution: ExecutionRecord
+    provider?: string
+    model?: string
+    responseText: ''
+    latencyMs?: number
+    startedAt: ISODateTimeString
+    completedAt: ISODateTimeString
+    lifecycleState: ExecutionRequestLifecycleStatus
+    errorMessage: string
   }
 
 export type ExecutionReadinessBlocker = {

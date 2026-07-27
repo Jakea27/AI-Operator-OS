@@ -58,6 +58,7 @@ export function ProjectDetailPage() {
   const [knowledgeUrl, setKnowledgeUrl] = useState('')
   const [knowledgeTags, setKnowledgeTags] = useState('')
   const [executionRequestNotice, setExecutionRequestNotice] = useState('')
+  const [executingExecutionId, setExecutingExecutionId] = useState<string | undefined>()
 
   useEffect(() => {
     setDraft(project)
@@ -354,6 +355,26 @@ export function ProjectDetailPage() {
     }
 
     setExecutionRequestNotice(`Execution Core lifecycle ${execution.executionId} established for ${execution.executionRequest?.requestId ?? workItem.workItemId}. No provider execution started.`)
+  }
+
+  async function executeProviderPath(execution: ExecutionRecord) {
+    setExecutingExecutionId(execution.id)
+    setExecutionRequestNotice(`Executing provider-independent path for ${execution.executionId}.`)
+
+    try {
+      const result = await executionStore.executeProviderRequest(execution.id)
+
+      if (!result) {
+        setExecutionRequestNotice('Provider execution blocked: no valid Execution Request lifecycle record was found.')
+        return
+      }
+
+      setExecutionRequestNotice(result.success
+        ? `Provider execution completed for ${result.execution.executionId} using ${result.provider} / ${result.model}.`
+        : `Provider execution failed for ${result.execution.executionId}: ${result.errorMessage}`)
+    } finally {
+      setExecutingExecutionId(undefined)
+    }
   }
 
   return (
@@ -704,9 +725,11 @@ export function ProjectDetailPage() {
                       deliverable={deliverable}
                       workOrder={workOrder}
                       execution={execution}
+                      executing={executingExecutionId === execution?.id}
                       onCreate={() => createWorkOrder(deliverable)}
                       onBuildRequest={() => workOrder ? buildExecutionRequest(workOrder) : undefined}
                       onCreateLifecycle={() => workOrder ? createExecutionLifecycle(workOrder) : undefined}
+                      onExecuteProviderPath={() => execution ? executeProviderPath(execution) : undefined}
                     />
                   )
                 })}
@@ -797,18 +820,24 @@ function WorkOrderBlueprintRow({
   deliverable,
   workOrder,
   execution,
+  executing,
   onCreate,
   onBuildRequest,
   onCreateLifecycle,
+  onExecuteProviderPath,
 }: {
   deliverable: ProductionBlueprintDeliverable
   workOrder?: WorkItemRecord
   execution?: ExecutionRecord
+  executing?: boolean
   onCreate: () => void
   onBuildRequest: () => void
   onCreateLifecycle: () => void
+  onExecuteProviderPath: () => void
 }) {
   const executionRequest = workOrder?.workOrder?.executionRequest
+  const lifecycleState = execution?.requestLifecycle?.status
+  const canExecuteProviderPath = Boolean(execution && lifecycleState !== 'Completed' && lifecycleState !== 'Failed')
 
   return (
     <article className="rounded-xl border border-line bg-ink/40 p-4">
@@ -826,6 +855,17 @@ function WorkOrderBlueprintRow({
             {executionRequest ? (
               <button onClick={onCreateLifecycle} className="btn-secondary" disabled={Boolean(execution)}>
                 {execution ? 'Lifecycle Established' : 'Create Lifecycle'}
+              </button>
+            ) : null}
+            {execution ? (
+              <button onClick={onExecuteProviderPath} className="btn-primary" disabled={!canExecuteProviderPath || executing}>
+                {executing
+                  ? 'Executing...'
+                  : lifecycleState === 'Completed'
+                    ? 'Provider Result Recorded'
+                    : lifecycleState === 'Failed'
+                      ? 'Provider Execution Failed'
+                      : 'Execute Provider Path'}
               </button>
             ) : null}
           </div>
@@ -862,6 +902,21 @@ function WorkOrderBlueprintRow({
               <Info label="Execution Record" value={execution.executionId} />
               <Info label="Lifecycle State" value={execution.requestLifecycle?.status ?? 'Pending'} />
               <Info label="Source" value={execution.sourceType} />
+              <Info label="Provider" value={execution.result?.provider?.name ?? execution.selectedProviders[0]?.name ?? 'Not selected'} />
+              <Info label="Model" value={execution.result?.model?.name ?? execution.selectedProviders[0]?.model ?? 'Not selected'} />
+              <Info label="Result" value={execution.result?.success ? 'Success' : execution.result?.failure ? 'Failed' : 'Not recorded'} />
+            </div>
+          ) : null}
+          {execution?.result?.responseText ? (
+            <div className="mt-3 rounded-xl border border-line bg-ink/40 p-3">
+              <p className="eyebrow mb-2">Structured Execution Result</p>
+              <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-white">{execution.result.responseText}</p>
+            </div>
+          ) : null}
+          {execution?.result?.errorMessage ? (
+            <div className="mt-3 rounded-xl border border-rose-400/25 bg-rose-400/[0.06] p-3">
+              <p className="eyebrow mb-2 text-rose-200">Execution Failure</p>
+              <p className="m-0 text-sm leading-6 text-rose-100">{execution.result.errorMessage}</p>
             </div>
           ) : null}
         </div>
