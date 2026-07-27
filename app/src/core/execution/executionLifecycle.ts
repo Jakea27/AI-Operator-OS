@@ -2,6 +2,11 @@ import {
   ExecutionLifecycleTransitionInput,
   ExecutionLifecycleTransitionResult,
   ExecutionRecord,
+  ExecutionRequestLifecycle,
+  ExecutionRequestLifecycleHistoryItem,
+  ExecutionRequestLifecycleStatus,
+  ExecutionRequestLifecycleTransitionInput,
+  ExecutionRequestLifecycleTransitionResult,
   ExecutionStatus,
   ExecutionTiming,
   ExecutionTransitionHistoryItem,
@@ -21,6 +26,14 @@ export const executionAllowedTransitions: Record<ExecutionStatus, ExecutionStatu
   Failed: ['Requires Human Intervention', 'Ready', 'Cancelled'],
   Cancelled: [],
   'Requires Human Intervention': ['Awaiting Capability Review', 'Awaiting Approval', 'Ready', 'Cancelled'],
+}
+
+export const executionRequestLifecycleAllowedTransitions: Record<ExecutionRequestLifecycleStatus, ExecutionRequestLifecycleStatus[]> = {
+  Pending: ['Accepted'],
+  Accepted: ['Executing', 'Failed'],
+  Executing: ['Completed', 'Failed'],
+  Completed: [],
+  Failed: [],
 }
 
 function id(prefix: string) {
@@ -62,6 +75,25 @@ function timingForTransition(execution: ExecutionRecord, toStatus: ExecutionStat
   }
 }
 
+function requestLifecycleTiming(
+  lifecycle: ExecutionRequestLifecycle,
+  toStatus: ExecutionRequestLifecycleStatus,
+  createdAt: string,
+): ExecutionRequestLifecycle {
+  switch (toStatus) {
+    case 'Accepted':
+      return { ...lifecycle, acceptedAt: lifecycle.acceptedAt ?? createdAt }
+    case 'Executing':
+      return { ...lifecycle, executingAt: lifecycle.executingAt ?? createdAt }
+    case 'Completed':
+      return { ...lifecycle, completedAt: createdAt }
+    case 'Failed':
+      return { ...lifecycle, failedAt: createdAt }
+    default:
+      return lifecycle
+  }
+}
+
 export function getAllowedExecutionTransitions(status: ExecutionStatus) {
   return executionAllowedTransitions[status]
 }
@@ -73,6 +105,31 @@ export function canTransitionExecution(fromStatus: ExecutionStatus, toStatus: Ex
 export function assertCanTransitionExecution(fromStatus: ExecutionStatus, toStatus: ExecutionStatus) {
   if (!canTransitionExecution(fromStatus, toStatus)) {
     throw new Error(`Invalid execution transition: ${fromStatus} -> ${toStatus}`)
+  }
+}
+
+export function getAllowedExecutionRequestLifecycleTransitions(status: ExecutionRequestLifecycleStatus) {
+  return executionRequestLifecycleAllowedTransitions[status]
+}
+
+export function canTransitionExecutionRequestLifecycle(
+  fromStatus: ExecutionRequestLifecycleStatus,
+  toStatus: ExecutionRequestLifecycleStatus,
+) {
+  return executionRequestLifecycleAllowedTransitions[fromStatus].includes(toStatus)
+}
+
+export function initialExecutionRequestLifecycle(createdAt = now()): ExecutionRequestLifecycle {
+  return {
+    status: 'Pending',
+    history: [{
+      id: id('execution-request-lifecycle'),
+      toStatus: 'Pending',
+      actor: 'Execution Core',
+      reason: 'Execution Request lifecycle established. No provider execution started.',
+      valid: true,
+      createdAt,
+    }],
   }
 }
 
@@ -132,6 +189,75 @@ export function transitionExecutionRecord(
     success: true,
     execution: nextExecution,
     message: `Execution transitioned from ${execution.status} to ${input.toStatus}.`,
+  }
+}
+
+export function transitionExecutionRequestLifecycleRecord(
+  execution: ExecutionRecord,
+  input: ExecutionRequestLifecycleTransitionInput,
+): ExecutionRequestLifecycleTransitionResult {
+  const lifecycle = execution.requestLifecycle ?? initialExecutionRequestLifecycle(execution.createdAt)
+  const actor = input.actor?.trim() || 'Execution Core'
+  const reason = input.reason?.trim() || `Execution Request lifecycle transition requested from ${lifecycle.status} to ${input.toStatus}.`
+  const createdAt = input.createdAt ?? now()
+  const allowedTransitions = getAllowedExecutionRequestLifecycleTransitions(lifecycle.status)
+  const valid = canTransitionExecutionRequestLifecycle(lifecycle.status, input.toStatus)
+
+  if (!valid) {
+    return {
+      success: false,
+      execution,
+      message: `Invalid Execution Request lifecycle transition: ${lifecycle.status} -> ${input.toStatus}.`,
+      allowedTransitions,
+    }
+  }
+
+  const historyItem: ExecutionRequestLifecycleHistoryItem = {
+    id: id('execution-request-lifecycle'),
+    fromStatus: lifecycle.status,
+    toStatus: input.toStatus,
+    actor,
+    reason,
+    valid,
+    createdAt,
+  }
+
+  const nextLifecycle = requestLifecycleTiming(
+    {
+      ...lifecycle,
+      status: input.toStatus,
+      history: [historyItem, ...lifecycle.history],
+    },
+    input.toStatus,
+    createdAt,
+  )
+
+  const nextExecution: ExecutionRecord = {
+    ...execution,
+    requestLifecycle: nextLifecycle,
+    events: [
+      {
+        id: id('execution-event'),
+        eventType: 'Lifecycle Transition',
+        message: `Execution Request lifecycle ${lifecycle.status} -> ${input.toStatus}: ${reason}`,
+        source: 'Execution Core',
+        metadata: {
+          fromStatus: lifecycle.status,
+          toStatus: input.toStatus,
+          actor,
+          executionRequestId: execution.executionRequest?.requestId ?? null,
+        },
+        createdAt,
+      },
+      ...execution.events,
+    ],
+    updatedAt: createdAt,
+  }
+
+  return {
+    success: true,
+    execution: nextExecution,
+    message: `Execution Request lifecycle transitioned from ${lifecycle.status} to ${input.toStatus}.`,
   }
 }
 

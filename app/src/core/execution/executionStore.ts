@@ -1,10 +1,13 @@
 import { useSyncExternalStore } from 'react'
 import type { ExecutionQueueRecord } from '../executionQueue'
+import type { WorkItemRecord } from '../workItems'
 import {
+  initialExecutionRequestLifecycle,
   pauseExecutionRecord,
   recordFailureForExecution,
   recordRetryForExecution,
   resumeExecutionRecord,
+  transitionExecutionRequestLifecycleRecord,
   transitionExecutionRecord,
 } from './executionLifecycle'
 import {
@@ -31,6 +34,8 @@ import {
   ExecutionLogCategory,
   ExecutionLogLevel,
   ExecutionRecord,
+  ExecutionRequestLifecycleTransitionInput,
+  ExecutionRequestLifecycleTransitionResult,
   ExecutionResult,
   ExecutionReadinessReport,
   ExecutionRiskLevel,
@@ -124,6 +129,7 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
     title: raw.title?.trim() || 'Untitled Execution',
     description: raw.description?.trim() || 'Execution foundation record. No execution behavior is implemented yet.',
     status: raw.status ?? 'Prepared',
+    sourceType: raw.sourceType ?? (raw.executionRequest ? 'Execution Request' : 'Execution Queue'),
     priority: raw.priority ?? 'Medium',
     executionType: raw.executionType ?? 'Manual',
     riskLevel: raw.riskLevel ?? 'Low',
@@ -136,12 +142,44 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
       businessId: raw.workItem?.businessId ?? '',
       businessCode: raw.workItem?.businessCode ?? 'BIZ-0000',
     },
-    queueItem: {
-      queueRecordId: raw.queueItem?.queueRecordId ?? '',
-      queueId: raw.queueItem?.queueId ?? 'EQ-0000',
-      sourceWorkItemRecordId: raw.queueItem?.sourceWorkItemRecordId ?? '',
-      sourceWorkItemId: raw.queueItem?.sourceWorkItemId ?? 'WI-0000',
-    },
+    queueItem: raw.queueItem ? {
+      queueRecordId: raw.queueItem.queueRecordId ?? '',
+      queueId: raw.queueItem.queueId ?? 'EQ-0000',
+      sourceWorkItemRecordId: raw.queueItem.sourceWorkItemRecordId ?? '',
+      sourceWorkItemId: raw.queueItem.sourceWorkItemId ?? 'WI-0000',
+    } : undefined,
+    workOrder: raw.workOrder ? {
+      workOrderId: raw.workOrder.workOrderId ?? '',
+      workOrderType: raw.workOrder.workOrderType ?? 'Work Order',
+      workOrderStatus: raw.workOrder.workOrderStatus ?? 'Prepared',
+      assetType: raw.workOrder.assetType ?? '',
+      platform: raw.workOrder.platform ?? '',
+      businessAssetProjectId: raw.workOrder.businessAssetProjectId ?? raw.projectId ?? '',
+      blueprintDeliverableId: raw.workOrder.blueprintDeliverableId ?? '',
+      blueprintDeliverableName: raw.workOrder.blueprintDeliverableName ?? '',
+    } : undefined,
+    executionRequest: raw.executionRequest ? {
+      requestId: raw.executionRequest.requestId ?? '',
+      status: raw.executionRequest.status ?? 'Built',
+      requestedCapability: raw.executionRequest.requestedCapability ?? '',
+      workItemRecordId: raw.executionRequest.workItemRecordId ?? raw.workItem?.workItemRecordId ?? '',
+      workItemId: raw.executionRequest.workItemId ?? raw.workItem?.workItemId ?? 'WI-0000',
+      projectId: raw.executionRequest.projectId ?? raw.projectId ?? raw.workItem?.projectId ?? '',
+      projectCode: raw.executionRequest.projectCode ?? raw.projectCode ?? raw.workItem?.projectCode ?? 'PROJ-0000',
+      businessAssetProjectId: raw.executionRequest.businessAssetProjectId ?? raw.projectId ?? '',
+      blueprintDeliverableId: raw.executionRequest.blueprintDeliverableId ?? '',
+      blueprintDeliverableName: raw.executionRequest.blueprintDeliverableName ?? '',
+      knowledgeReferenceIds: Array.isArray(raw.executionRequest.knowledgeReferenceIds) ? raw.executionRequest.knowledgeReferenceIds : [],
+      createdAt: raw.executionRequest.createdAt ?? timestamp,
+    } : undefined,
+    requestLifecycle: raw.requestLifecycle ? {
+      status: raw.requestLifecycle.status ?? 'Pending',
+      acceptedAt: raw.requestLifecycle.acceptedAt,
+      executingAt: raw.requestLifecycle.executingAt,
+      completedAt: raw.requestLifecycle.completedAt,
+      failedAt: raw.requestLifecycle.failedAt,
+      history: Array.isArray(raw.requestLifecycle.history) ? raw.requestLifecycle.history : [],
+    } : (raw.executionRequest ? initialExecutionRequestLifecycle(timestamp) : undefined),
     capabilityPlan: raw.capabilityPlan,
     selectedCapabilities: Array.isArray(raw.selectedCapabilities) ? raw.selectedCapabilities : [],
     selectedTools: Array.isArray(raw.selectedTools) ? raw.selectedTools : [],
@@ -270,6 +308,7 @@ export const executionStore = {
       title: input.title.trim() || 'Untitled Execution',
       description: input.description.trim() || 'Execution foundation record. No execution behavior is implemented yet.',
       status: 'Prepared',
+      sourceType: 'Execution Queue',
       priority: input.priority,
       executionType: input.executionType,
       riskLevel: input.riskLevel,
@@ -317,7 +356,7 @@ export const executionStore = {
   },
 
   createExecutionFromQueueItem(queueItem: ExecutionQueueRecord) {
-    const existing = state.find((execution) => execution.queueItem.queueRecordId === queueItem.id)
+    const existing = state.find((execution) => execution.queueItem?.queueRecordId === queueItem.id)
 
     if (existing) {
       return existing
@@ -330,6 +369,7 @@ export const executionStore = {
       title: `${queueItem.sourceWorkItemId} execution record`,
       description: `Execution infrastructure record for ${queueItem.workItemTitle}. This record stores references only and does not execute work.`,
       status: 'Prepared',
+      sourceType: 'Execution Queue',
       priority: queueItem.priority,
       executionType: queueItem.executionType,
       riskLevel: queueItem.requiresApproval ? 'High' : 'Low',
@@ -380,6 +420,114 @@ export const executionStore = {
       createdAt: timestamp,
       updatedAt: timestamp,
     })
+
+    persist([execution, ...state])
+    return execution
+  },
+
+  createExecutionFromWorkOrder(workItem: WorkItemRecord) {
+    const workOrder = workItem.workOrder
+    const executionRequest = workOrder?.executionRequest
+
+    if (!workOrder?.enabled || !executionRequest) {
+      return undefined
+    }
+
+    const existing = state.find((execution) =>
+      execution.executionRequest?.requestId === executionRequest.requestId ||
+      execution.workOrder?.workOrderId === workOrder.workOrderId,
+    )
+
+    if (existing) {
+      return existing
+    }
+
+    const timestamp = now()
+    const requestLifecycle = initialExecutionRequestLifecycle(timestamp)
+    const execution: ExecutionRecord = {
+      id: id('execution'),
+      executionId: generateExecutionCode(state),
+      title: `${workOrder.workOrderId} execution lifecycle`,
+      description: `Execution lifecycle record for ${executionRequest.requestId}. This record establishes lifecycle ownership only and does not execute providers or update Blueprint deliverables.`,
+      status: 'Prepared',
+      sourceType: 'Execution Request',
+      priority: workItem.priority,
+      executionType: 'Future AI',
+      riskLevel: 'Medium',
+      workItem: {
+        workItemRecordId: workItem.id,
+        workItemId: workItem.workItemId,
+        title: workItem.title,
+        projectId: workItem.projectId,
+        projectCode: workItem.projectCode,
+        businessId: workItem.businessId,
+        businessCode: workItem.businessCode,
+      },
+      workOrder: {
+        workOrderId: workOrder.workOrderId,
+        workOrderType: workOrder.workOrderType,
+        workOrderStatus: workOrder.status,
+        assetType: workOrder.assetType,
+        platform: workOrder.platform,
+        businessAssetProjectId: workOrder.businessAssetProjectId,
+        blueprintDeliverableId: workOrder.blueprintDeliverableId,
+        blueprintDeliverableName: workOrder.blueprintDeliverableName,
+      },
+      executionRequest: {
+        requestId: executionRequest.requestId,
+        status: executionRequest.status,
+        requestedCapability: executionRequest.requestedCapability,
+        workItemRecordId: executionRequest.workItemRecordId,
+        workItemId: executionRequest.workItemId,
+        projectId: executionRequest.projectId,
+        projectCode: executionRequest.projectCode,
+        businessAssetProjectId: executionRequest.businessAssetProjectId,
+        blueprintDeliverableId: executionRequest.blueprintDeliverableId,
+        blueprintDeliverableName: executionRequest.blueprintDeliverableName,
+        knowledgeReferenceIds: executionRequest.knowledgeReferenceIds,
+        createdAt: executionRequest.createdAt,
+      },
+      requestLifecycle,
+      selectedCapabilities: [{
+        capabilityId: executionRequest.requestedCapability,
+        name: executionRequest.requestedCapability,
+        category: 'Execution Request Capability',
+      }],
+      selectedTools: [],
+      selectedProviders: [],
+      businessId: workItem.businessId,
+      businessCode: workItem.businessCode,
+      businessName: workItem.businessName,
+      projectId: workItem.projectId,
+      projectCode: workItem.projectCode,
+      projectName: workItem.projectName,
+      departmentId: workItem.departmentId,
+      departmentCode: workItem.departmentCode,
+      departmentName: workItem.departmentName,
+      managerId: workItem.assignedManagerId,
+      managerName: workItem.assignedManagerName || 'Unassigned',
+      operatorId: workItem.assignedOperatorId,
+      operatorCode: workItem.assignedOperatorCode,
+      operatorName: workItem.assignedOperatorName || 'Unassigned',
+      timing: {
+        preparedAt: timestamp,
+      },
+      estimatedCost: 0,
+      actualCost: 0,
+      costRecords: [],
+      result: undefined,
+      resultRef: undefined,
+      events: [
+        event(`Execution Request lifecycle established for ${executionRequest.requestId}. No provider execution started.`, timestamp),
+      ],
+      transitionHistory: [],
+      logs: [],
+      retryHistory: [],
+      failures: [],
+      notes: workItem.notes,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
 
     persist([execution, ...state])
     return execution
@@ -785,15 +933,42 @@ export const executionStore = {
   },
 
   getExecutionsForQueueItem(queueRecordId: string) {
-    return state.filter((execution) => execution.queueItem.queueRecordId === queueRecordId)
+    return state.filter((execution) => execution.queueItem?.queueRecordId === queueRecordId)
   },
 
   getExecutionForQueueItem(queueRecordId: string) {
-    return state.find((execution) => execution.queueItem.queueRecordId === queueRecordId)
+    return state.find((execution) => execution.queueItem?.queueRecordId === queueRecordId)
+  },
+
+  getExecutionForExecutionRequest(requestId: string) {
+    return state.find((execution) => execution.executionRequest?.requestId === requestId)
+  },
+
+  getExecutionsForWorkOrder(workOrderId: string) {
+    return state.filter((execution) => execution.workOrder?.workOrderId === workOrderId)
   },
 
   getExecutionsForWorkItem(workItemRecordId: string) {
     return state.filter((execution) => execution.workItem.workItemRecordId === workItemRecordId)
+  },
+
+  transitionExecutionRequestLifecycle(
+    executionRecordId: string,
+    input: ExecutionRequestLifecycleTransitionInput,
+  ): ExecutionRequestLifecycleTransitionResult | undefined {
+    let result: ExecutionRequestLifecycleTransitionResult | undefined
+
+    const next = state.map((execution) => {
+      if (execution.id !== executionRecordId) return execution
+      result = transitionExecutionRequestLifecycleRecord(execution, input)
+      return result.success ? result.execution : execution
+    })
+
+    if (result?.success) {
+      persist(next)
+    }
+
+    return result
   },
 
   validateExecutionAudit(executionRecordId: string) {
@@ -808,7 +983,9 @@ export function useExecutionStore() {
     executions,
     createExecution: executionStore.createExecution,
     createExecutionFromQueueItem: executionStore.createExecutionFromQueueItem,
+    createExecutionFromWorkOrder: executionStore.createExecutionFromWorkOrder,
     transitionExecution: executionStore.transitionExecution,
+    transitionExecutionRequestLifecycle: executionStore.transitionExecutionRequestLifecycle,
     pauseExecution: executionStore.pauseExecution,
     resumeExecution: executionStore.resumeExecution,
     recordExecutionFailure: executionStore.recordExecutionFailure,
@@ -826,6 +1003,8 @@ export function useExecutionStore() {
     attachResult: executionStore.attachResult,
     getExecutionForQueueItem: executionStore.getExecutionForQueueItem,
     getExecutionsForQueueItem: executionStore.getExecutionsForQueueItem,
+    getExecutionForExecutionRequest: executionStore.getExecutionForExecutionRequest,
+    getExecutionsForWorkOrder: executionStore.getExecutionsForWorkOrder,
     getExecutionsForWorkItem: executionStore.getExecutionsForWorkItem,
     validateExecutionAudit: executionStore.validateExecutionAudit,
   }

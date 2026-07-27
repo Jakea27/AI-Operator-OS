@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useBusinessStore } from '@/src/core/businesses'
 import { DepartmentRecord, useCompanyStructureStore } from '@/src/core/companyStructure'
+import { ExecutionRecord, useExecutionStore } from '@/src/core/execution'
 import {
   BusinessAssetProfile,
   BusinessAssetType,
@@ -45,6 +46,7 @@ export function ProjectDetailPage() {
   const { projectId } = useParams()
   const projectStore = useProjectStore()
   const workItemStore = useWorkItemStore()
+  const executionStore = useExecutionStore()
   const businessStore = useBusinessStore()
   const companyStructure = useCompanyStructureStore()
   const project = projectStore.projects.find((item) => item.id === projectId)
@@ -342,6 +344,16 @@ export function ProjectDetailPage() {
     workItemStore.attachExecutionRequest(workItem.id, result.request)
     const warningText = result.warnings.length > 0 ? ` ${result.warnings.join(' ')}` : ''
     setExecutionRequestNotice(`Execution Request ${result.request.requestId} built for ${workItem.workOrder?.workOrderId ?? workItem.workItemId}.${warningText}`)
+  }
+
+  function createExecutionLifecycle(workItem: WorkItemRecord) {
+    const execution = executionStore.createExecutionFromWorkOrder(workItem)
+    if (!execution) {
+      setExecutionRequestNotice('Execution lifecycle blocked: build an Execution Request before creating the lifecycle record.')
+      return
+    }
+
+    setExecutionRequestNotice(`Execution Core lifecycle ${execution.executionId} established for ${execution.executionRequest?.requestId ?? workItem.workItemId}. No provider execution started.`)
   }
 
   return (
@@ -684,13 +696,17 @@ export function ProjectDetailPage() {
               <div className="grid gap-4">
                 {draft.productionBlueprint.deliverables.map((deliverable) => {
                   const workOrder = projectWorkOrders.find((item) => item.workOrder?.blueprintDeliverableId === deliverable.id)
+                  const executionRequest = workOrder?.workOrder?.executionRequest
+                  const execution = executionRequest ? executionStore.executions.find((record) => record.executionRequest?.requestId === executionRequest.requestId) : undefined
                   return (
                     <WorkOrderBlueprintRow
                       key={deliverable.id}
                       deliverable={deliverable}
                       workOrder={workOrder}
+                      execution={execution}
                       onCreate={() => createWorkOrder(deliverable)}
                       onBuildRequest={() => workOrder ? buildExecutionRequest(workOrder) : undefined}
+                      onCreateLifecycle={() => workOrder ? createExecutionLifecycle(workOrder) : undefined}
                     />
                   )
                 })}
@@ -780,13 +796,17 @@ function Info({ label, value }: { label: string; value: string }) {
 function WorkOrderBlueprintRow({
   deliverable,
   workOrder,
+  execution,
   onCreate,
   onBuildRequest,
+  onCreateLifecycle,
 }: {
   deliverable: ProductionBlueprintDeliverable
   workOrder?: WorkItemRecord
+  execution?: ExecutionRecord
   onCreate: () => void
   onBuildRequest: () => void
+  onCreateLifecycle: () => void
 }) {
   const executionRequest = workOrder?.workOrder?.executionRequest
 
@@ -799,9 +819,16 @@ function WorkOrderBlueprintRow({
           <p className="m-0 mt-2 text-sm leading-6 text-muted">Blueprint status: {deliverable.status}</p>
         </div>
         {workOrder ? (
-          <button onClick={onBuildRequest} className="btn-secondary" disabled={Boolean(executionRequest)}>
-            {executionRequest ? 'Execution Request Built' : 'Build Execution Request'}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={onBuildRequest} className="btn-secondary" disabled={Boolean(executionRequest)}>
+              {executionRequest ? 'Execution Request Built' : 'Build Execution Request'}
+            </button>
+            {executionRequest ? (
+              <button onClick={onCreateLifecycle} className="btn-secondary" disabled={Boolean(execution)}>
+                {execution ? 'Lifecycle Established' : 'Create Lifecycle'}
+              </button>
+            ) : null}
+          </div>
         ) : (
           <button onClick={onCreate} className="btn-primary">Create Work Order</button>
         )}
@@ -815,6 +842,8 @@ function WorkOrderBlueprintRow({
           <Info label="Type" value={workOrder.workOrder?.workOrderType ?? 'Not assigned'} />
           <Info label="Capability" value={executionRequest?.requestedCapability ?? 'Not built'} />
           <Info label="Execution Request" value={executionRequest?.requestId ?? 'Not built'} />
+          <Info label="Execution Lifecycle" value={execution?.requestLifecycle?.status ?? 'Not established'} />
+          <Info label="Execution Core" value={execution?.executionId ?? 'Not linked'} />
         </div>
       ) : (
         <div className="mt-4">
@@ -828,6 +857,13 @@ function WorkOrderBlueprintRow({
           <p className="m-0 text-sm leading-6 text-muted">
             {executionRequest.requestId} references {executionRequest.workItemId}, {executionRequest.projectCode}, {executionRequest.blueprintDeliverableName}, and {executionRequest.knowledgeReferenceIds.length} Knowledge entries. It is read-only here and does not execute work.
           </p>
+          {execution ? (
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              <Info label="Execution Record" value={execution.executionId} />
+              <Info label="Lifecycle State" value={execution.requestLifecycle?.status ?? 'Pending'} />
+              <Info label="Source" value={execution.sourceType} />
+            </div>
+          ) : null}
         </div>
       ) : null}
     </article>

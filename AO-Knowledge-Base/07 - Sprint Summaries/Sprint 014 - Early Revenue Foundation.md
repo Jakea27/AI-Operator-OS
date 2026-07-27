@@ -6,11 +6,11 @@ ACTIVE - TASK 4 COMPLETE / TASK 5 READY.
 
 ## Phase
 
-Sprint 014 Task 5.
+Sprint 014 Task 5 - Execution Lifecycle Foundation.
 
 ## Current Task
 
-Sprint 014 Task 5.
+Sprint 014 Task 5 - Execution Lifecycle Foundation.
 
 ## Mission Statement
 
@@ -20,7 +20,7 @@ The initial implementation will support YouTube content, while the architecture 
 
 ## Objective
 
-Begin Sprint 014 Task 5.
+Begin Sprint 014 Task 5 - Execution Lifecycle Foundation implementation.
 
 Sprint 014 is intended to establish the Creative Production Engine as a reusable early-revenue workflow foundation while preserving the approved architecture.
 
@@ -696,7 +696,83 @@ Task 3 does not add:
 - Sprint 014 Task 4 Commit: COMPLETE.
 - Sprint 014 Task 4 Push: COMPLETE.
 - Sprint 014 Task 4 Status: COMPLETE.
+- Sprint 014 Task 5 Name: Execution Lifecycle Foundation.
+- Sprint 014 Task 5 Business Concept: Execution Lifecycle defines the progression of work after a Work Order has produced an Execution Request and before execution results are applied back to the business layer.
+- Sprint 014 Task 5 Initial Lifecycle: Pending -> Accepted -> Executing -> Completed or Failed.
+- Sprint 014 Task 5 Architecture Status: DEFINED / ARCHITECTURE FREEZE RECOMMENDED.
 
 ## Next Required Action
 
-Begin Sprint 014 Task 5.
+Begin Sprint 014 Task 5 - Execution Lifecycle Foundation implementation.
+
+## Task 5 - Execution Lifecycle Foundation
+
+### Objective
+
+Integrate the completed Work Order and Execution Request Foundation with the existing Execution Core by defining the first Sprint 014 execution lifecycle boundary.
+
+Task 5 manages the lifecycle of work after a Work Order has produced an Execution Request and before execution results are applied back to the business layer.
+
+The first Sprint 014 use case begins when an approved Execution Request is accepted by the Execution Core.
+
+The lifecycle ends when execution reaches a terminal state.
+
+### Business Concept
+
+An Execution Lifecycle defines the progression of work after a Work Order has been created.
+
+The lifecycle belongs to the existing Execution Core. Task 5 must not create a duplicate lifecycle owner, duplicate execution store, duplicate request queue, scheduler, orchestrator, workflow engine, or autonomous execution system.
+
+### Initial Lifecycle
+
+The approved initial lifecycle is:
+
+```text
+Pending
+↓
+Accepted
+↓
+Executing
+↓
+Completed
+
+or
+
+Failed
+```
+
+The lifecycle states are architectural guidance for the Sprint 014 Work Order and Execution Request path. They do not authorize scheduling, retries, orchestration, autonomous behavior, provider execution, approval bypass, or execution-result application to the Production Blueprint.
+
+### Ownership
+
+Execution Core owns:
+
+- Lifecycle.
+- Execution progress.
+- Operational state.
+- Failures.
+- Completion.
+- Operational execution history.
+
+Execution Request owns:
+
+- Request metadata.
+- Capability.
+- Context references.
+
+Work Order owns:
+
+- Business request.
+- User-visible work status.
+
+Production Blueprint owns:
+
+- Final deliverable content.
+
+Ownership must not move during Task 5.
+
+### Architecture Recommendation
+
+Architecture Freeze is recommended before implementation.
+
+Task 5 should extend the existing Execution Core and existing Work Item / Work Order relationship by reference. It should not introduce a new architectural concept unless future documentation proves the existing Execution Core cannot safely represent the lifecycle.

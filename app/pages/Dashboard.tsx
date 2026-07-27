@@ -436,7 +436,7 @@ function buildAttentionActions({
         severity: 'High' as const,
         title: `${execution.executionId}: approval required`,
         why: 'This execution record is waiting on CEO approval before it can move toward readiness.',
-        blocked: execution.queueItem.queueId,
+        blocked: execution.queueItem?.queueId ?? execution.executionRequest?.requestId ?? execution.workItem.workItemId,
         to: `/executions/${execution.id}`,
       })),
     ...executionsRequiringHumanIntervention.map((execution) => ({
@@ -462,7 +462,7 @@ function buildAttentionActions({
       severity: 'Medium' as const,
       title: `${execution.executionId}: capability readiness blocked`,
       why: 'Capability requirements are missing or not approved, so the execution cannot move forward.',
-      blocked: execution.capabilityPlan?.capabilityPlanId || execution.queueItem.queueId,
+      blocked: execution.capabilityPlan?.capabilityPlanId || execution.queueItem?.queueId || execution.executionRequest?.requestId || execution.workItem.workItemId,
       to: execution.capabilityPlan?.capabilityPlanRecordId
         ? `/capability-planning/${execution.capabilityPlan.capabilityPlanRecordId}`
         : `/executions/${execution.id}`,

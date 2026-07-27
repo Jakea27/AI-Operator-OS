@@ -40,7 +40,7 @@ export function ExecutionQueueDetailPage() {
   const executionCore = useExecutionStore()
   const queueItem = executionQueue.queueItems.find((item) => item.id === queueItemId || item.queueId === queueItemId)
   const capabilityPlan = queueItem ? capabilityPlanning.capabilityPlans.find((plan) => plan.sourceQueueItemId === queueItem.id) : undefined
-  const execution = queueItem ? executionCore.executions.find((record) => record.queueItem.queueRecordId === queueItem.id) : undefined
+  const execution = queueItem ? executionCore.executions.find((record) => record.queueItem?.queueRecordId === queueItem.id) : undefined
   const readiness = execution ? executionCore.evaluateReadiness(execution.id) : undefined
   const [draft, setDraft] = useState<ExecutionQueueRecord | undefined>(queueItem)
   const [showCapabilityPlanForm, setShowCapabilityPlanForm] = useState(false)

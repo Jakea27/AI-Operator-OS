@@ -15,6 +15,10 @@ export type ExecutionPriority = 'Low' | 'Medium' | 'High' | 'Critical'
 
 export type ExecutionType = 'Manual' | 'Draft' | 'Review' | 'Future AI' | 'Future Automation'
 
+export type ExecutionSourceType = 'Execution Queue' | 'Execution Request'
+
+export type ExecutionRequestLifecycleStatus = 'Pending' | 'Accepted' | 'Executing' | 'Completed' | 'Failed'
+
 export type ExecutionRiskLevel = 'Low' | 'Medium' | 'High' | 'Critical'
 
 export type ExecutionLogLevel = 'Info' | 'Warning' | 'Error' | 'Audit'
@@ -88,6 +92,72 @@ export type ExecutionQueueItemReference = {
   queueId: string
   sourceWorkItemRecordId: string
   sourceWorkItemId: string
+}
+
+/**
+ * Purpose: Reference the business-facing Work Order that requested execution.
+ * Fields: Stores Work Order IDs, type/status, and Blueprint deliverable references only.
+ * Relationships: Owned by Work Item/Project modules; Execution Store only references it.
+ * Ownership: Work Order business request state remains on the specialized Work Item profile.
+ * Future extensibility: Other asset types can add metadata by reference without a duplicate Work Order store.
+ */
+export type ExecutionWorkOrderReference = {
+  workOrderId: string
+  workOrderType: string
+  workOrderStatus: string
+  assetType: string
+  platform: string
+  businessAssetProjectId: string
+  blueprintDeliverableId: string
+  blueprintDeliverableName: string
+}
+
+/**
+ * Purpose: Snapshot the provider-independent Execution Request accepted by the Execution Core.
+ * Fields: Stores request ID/status/capability and source context references.
+ * Relationships: Built from a Work Order; provider selection and execution remain outside the request.
+ * Ownership: Execution Request metadata remains part of the Work Order profile; Execution Store references it for lifecycle ownership.
+ * Future extensibility: Can route through provider-independent execution without exposing provider adapters to business modules.
+ */
+export type ExecutionRequestReferenceSnapshot = {
+  requestId: string
+  status: string
+  requestedCapability: string
+  workItemRecordId: string
+  workItemId: string
+  projectId: string
+  projectCode: string
+  businessAssetProjectId: string
+  blueprintDeliverableId: string
+  blueprintDeliverableName: string
+  knowledgeReferenceIds: string[]
+  createdAt: ISODateTimeString
+}
+
+export type ExecutionRequestLifecycleHistoryItem = {
+  id: string
+  fromStatus?: ExecutionRequestLifecycleStatus
+  toStatus: ExecutionRequestLifecycleStatus
+  actor: string
+  reason: string
+  valid: boolean
+  createdAt: ISODateTimeString
+}
+
+/**
+ * Purpose: Own the Sprint 014 Work Order / Execution Request lifecycle inside the existing Execution Core.
+ * Fields: Stores lifecycle state, lifecycle timestamps, and immutable-style lifecycle history.
+ * Relationships: Relates an Execution Request to operational execution state without executing providers.
+ * Ownership: Execution Core owns this lifecycle; Work Order and Production Blueprint ownership do not move.
+ * Future extensibility: Future automation can read this lifecycle without introducing a duplicate lifecycle store.
+ */
+export type ExecutionRequestLifecycle = {
+  status: ExecutionRequestLifecycleStatus
+  acceptedAt?: ISODateTimeString
+  executingAt?: ISODateTimeString
+  completedAt?: ISODateTimeString
+  failedAt?: ISODateTimeString
+  history: ExecutionRequestLifecycleHistoryItem[]
 }
 
 /**
@@ -322,11 +392,15 @@ export type ExecutionRecord = {
   title: string
   description: string
   status: ExecutionStatus
+  sourceType: ExecutionSourceType
   priority: ExecutionPriority
   executionType: ExecutionType
   riskLevel: ExecutionRiskLevel
   workItem: ExecutionWorkItemReference
-  queueItem: ExecutionQueueItemReference
+  queueItem?: ExecutionQueueItemReference
+  workOrder?: ExecutionWorkOrderReference
+  executionRequest?: ExecutionRequestReferenceSnapshot
+  requestLifecycle?: ExecutionRequestLifecycle
   capabilityPlan?: CapabilityPlanReference
   selectedCapabilities: CapabilityReference[]
   selectedTools: ToolReference[]
@@ -435,6 +509,26 @@ export type ExecutionLifecycleTransitionResult =
     execution: ExecutionRecord
     message: string
     allowedTransitions: ExecutionStatus[]
+  }
+
+export type ExecutionRequestLifecycleTransitionInput = {
+  toStatus: ExecutionRequestLifecycleStatus
+  actor?: string
+  reason?: string
+  createdAt?: ISODateTimeString
+}
+
+export type ExecutionRequestLifecycleTransitionResult =
+  | {
+    success: true
+    execution: ExecutionRecord
+    message: string
+  }
+  | {
+    success: false
+    execution: ExecutionRecord
+    message: string
+    allowedTransitions: ExecutionRequestLifecycleStatus[]
   }
 
 export type ExecutionReadinessBlocker = {

@@ -47,6 +47,7 @@ export function ExecutionDetailPage() {
   }
 
   const pauseResumeHistory = execution.transitionHistory.filter((item) => item.toStatus === 'Paused' || item.fromStatus === 'Paused')
+  const requestLifecycleHistory = execution.requestLifecycle?.history ?? []
 
   return (
     <div className="space-y-6">
@@ -83,7 +84,7 @@ export function ExecutionDetailPage() {
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
           <Info label="Execution ID" value={execution.executionId} />
           <Info label="Work Item" value={`${execution.workItem.workItemId} · ${execution.workItem.title}`} />
-          <Info label="Queue Item" value={execution.queueItem.queueId} />
+          <Info label="Source" value={execution.queueItem?.queueId ?? execution.executionRequest?.requestId ?? execution.sourceType} />
           <Info label="Created" value={formatDate(execution.createdAt)} />
           <Info label="Updated" value={formatDate(execution.updatedAt)} />
           <Info label="Execution Type" value={execution.executionType} />
@@ -95,6 +96,7 @@ export function ExecutionDetailPage() {
           <Section title="Lifecycle" eyebrow="State and timing">
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
               <Info label="Current State" value={execution.status} />
+              <Info label="Request Lifecycle" value={execution.requestLifecycle?.status ?? 'Not established'} />
               <Info label="Prepared" value={formatDate(execution.timing.preparedAt)} />
               <Info label="Ready" value={formatDate(execution.timing.readyAt)} />
               <Info label="Started" value={formatDate(execution.timing.startedAt)} />
@@ -151,6 +153,12 @@ export function ExecutionDetailPage() {
                 meta: `${item.actor} · ${formatDate(item.createdAt)}`,
                 copy: item.reason,
               }))} emptyTitle="No lifecycle transitions" emptyCopy="This execution has not moved beyond its initial state." />
+              <Timeline title="Execution Request Lifecycle" items={requestLifecycleHistory.map((item) => ({
+                id: item.id,
+                title: `${item.fromStatus ?? 'Created'} → ${item.toStatus}`,
+                meta: `${item.actor} · ${formatDate(item.createdAt)}`,
+                copy: item.reason,
+              }))} emptyTitle="No request lifecycle" emptyCopy="No Execution Request lifecycle has been established for this record." />
               <Timeline title="Pause / Resume History" items={pauseResumeHistory.map((item) => ({
                 id: item.id,
                 title: `${item.fromStatus} → ${item.toStatus}`,
@@ -194,7 +202,15 @@ export function ExecutionDetailPage() {
           <Section title="Relationships" eyebrow="Source records">
             <div className="space-y-3">
               <Relationship label="Work Item" value={`${execution.workItem.workItemId} · ${execution.workItem.title}`} to={`/work-items/${execution.workItem.workItemRecordId}`} />
-              <Relationship label="Execution Queue Item" value={execution.queueItem.queueId} to={`/execution-queue/${execution.queueItem.queueRecordId}`} />
+              {execution.queueItem ? (
+                <Relationship label="Execution Queue Item" value={execution.queueItem.queueId} to={`/execution-queue/${execution.queueItem.queueRecordId}`} />
+              ) : null}
+              {execution.workOrder ? (
+                <Relationship label="Work Order" value={`${execution.workOrder.workOrderId} · ${execution.workOrder.blueprintDeliverableName}`} to={`/work-items/${execution.workItem.workItemRecordId}`} />
+              ) : null}
+              {execution.executionRequest ? (
+                <Relationship label="Execution Request" value={`${execution.executionRequest.requestId} · ${execution.executionRequest.requestedCapability}`} />
+              ) : null}
               <Relationship label="Capability Plan" value={execution.capabilityPlan?.capabilityPlanId || 'Missing'} to={execution.capabilityPlan?.capabilityPlanRecordId ? `/capability-planning/${execution.capabilityPlan.capabilityPlanRecordId}` : undefined} />
               <Relationship label="Approval Record" value={execution.approval?.approvalId || 'Missing'} to={execution.approval ? '/approval' : undefined} />
             </div>

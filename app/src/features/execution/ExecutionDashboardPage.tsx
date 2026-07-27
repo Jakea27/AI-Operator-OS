@@ -203,11 +203,13 @@ export function ExecutionDashboardPage() {
 }
 
 function ExecutionListCard({ execution }: { execution: ExecutionRecord }) {
+  const sourceLabel = execution.queueItem?.queueId ?? execution.executionRequest?.requestId ?? execution.sourceType
+
   return (
     <article className="record-card">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
-          <p className="eyebrow mb-2">{execution.executionId} · {execution.queueItem.queueId}</p>
+          <p className="eyebrow mb-2">{execution.executionId} · {sourceLabel}</p>
           <h3 className="m-0 font-display text-lg font-semibold text-white">{execution.workItem.title}</h3>
           <p className="m-0 mt-2 text-sm leading-6 text-muted">
             {execution.workItem.workItemId} · {execution.projectCode} · {execution.businessCode}
@@ -237,7 +239,9 @@ function ExecutionListCard({ execution }: { execution: ExecutionRecord }) {
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Link to={`/executions/${execution.id}`} className="btn-primary">Open Execution</Link>
-        <Link to={`/execution-queue/${execution.queueItem.queueRecordId}`} className="btn-secondary">Open Queue Item</Link>
+        {execution.queueItem ? (
+          <Link to={`/execution-queue/${execution.queueItem.queueRecordId}`} className="btn-secondary">Open Queue Item</Link>
+        ) : null}
         <Link to={`/work-items/${execution.workItem.workItemRecordId}`} className="btn-secondary">Open Work Item</Link>
       </div>
     </article>

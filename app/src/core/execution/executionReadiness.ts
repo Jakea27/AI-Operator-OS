@@ -68,6 +68,8 @@ function resolveCapabilityPlan(execution: ExecutionRecord) {
     return capabilityPlanningStore.getCapabilityPlan(execution.capabilityPlan.capabilityPlanId)
   }
 
+  if (!execution.queueItem?.queueRecordId) return undefined
+
   return capabilityPlanningStore.getCapabilityPlanForQueueItem(execution.queueItem.queueRecordId)
 }
 
@@ -80,8 +82,8 @@ function resolveApproval(execution: ExecutionRecord) {
   }
 
   return approvals.find((approval) =>
-    approval.sourceQueueItemId === execution.queueItem.queueRecordId ||
-    approval.sourceQueueCode === execution.queueItem.queueId ||
+    approval.sourceQueueItemId === execution.queueItem?.queueRecordId ||
+    approval.sourceQueueCode === execution.queueItem?.queueId ||
     approval.sourceWorkItemId === execution.workItem.workItemId,
   )
 }
