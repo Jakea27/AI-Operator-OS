@@ -192,6 +192,16 @@ Control whether consequential work may proceed. Approval Queue records CEO decis
 - Source and downstream records should be linked where useful, such as Opportunity to Business, Business to Project, Work Item to Execution Queue, and Execution Queue to Approval Queue.
 - The running application must be verified from the active source launch path before assuming a feature is missing.
 
+### Future Experience Layer
+
+The future AI Operator OS Experience Layer is a presentation layer only.
+
+It may eventually support view modes, navigation priority, themes, typography settings, layout presets, dashboard presets, interface density, and AI presentation style. These settings may change visibility, navigation priority, wording, and visual presentation.
+
+They must not change system truth, business logic, approval rules, provider selection, execution behavior, persistence ownership, routing ownership, or source data.
+
+Simple View, Standard View, and Full View must all use the same underlying codebase, stores, components, routes, workflows, and data sources. They must not become separate applications, separate product versions, duplicate pages, duplicate stores, or isolated sources of truth.
+
 ## 9. Approval and Human-Control Rules
 
 - Jake is the CEO and final approver.
@@ -289,3 +299,5 @@ The next architecture layer should strengthen human control before increasing au
 28. Separate infrastructure from intelligence. Execution Infrastructure must never depend on a specific AI provider. AO-012 proves deterministic end-to-end execution without AI providers; AO-013 adds AI Provider Integration after that foundation is stable.
 29. Departments never choose providers. Departments and workers request capabilities. Provider Manager selects providers based on capability, cost, speed, availability, and business rules.
 30. Provider independence is permanent. AI Operator OS must never become tied to one AI vendor. Local models, OpenAI, Codex, Claude, Gemini, and future providers are interchangeable resources behind the operating system's workflow.
+31. Experience is separate from system truth. Future customization may change presentation, visibility, navigation priority, density, layout, theme, typography, or wording, but it must not change business logic, approval rules, provider selection, execution behavior, persistence ownership, or authoritative data.
+32. One interface architecture serves all views. Simple, Standard, and Full views must share one codebase, one routing system, shared components, shared stores, and the same source of truth. They must not become duplicate applications or duplicate modules.

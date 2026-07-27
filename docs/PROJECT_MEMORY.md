@@ -67,6 +67,8 @@ Task 8 validated Provider Store ownership, Provider Manager recommendation/execu
 
 Sprint 014 - Early Revenue Foundation is active for planning only. The authoritative roadmap names AO-014 as Early Revenue Foundation. The approved Sprint 014 mission is the Creative Production Engine, with YouTube as the first supported creative asset type. No YouTube integration, video generation, YouTube API upload, autonomous Content Department execution, or Sprint 014 implementation has started.
 
+Future roadmap note: the Master Plan now preserves a Future - Unscheduled milestone titled AI Operator OS Experience Layer. This is a presentation and customization layer only. It may eventually support Simple, Standard, and Full views, navigation priority, controlled themes, typography, layout presets, dashboard presets, interface density, and AI presentation style. It must not change system truth, business logic, data ownership, execution behavior, provider selection, approval rules, persistence, routing ownership, or the active revenue and execution roadmap.
+
 Dashboard, Money, CEO, Development, Settings, and the application shell share a typed local operating store in `app/src/services/operatingStore.ts`. Revenue, expenses, approvals, projects, tasks, sprint progress, and briefing snapshots persist there.
 
 Financial metrics and charts are derived from actual local records. The application starts empty and displays zero values and empty states until the operator adds data. Optional sample records are available only through the clearly labeled **Load sample data** action in Settings.

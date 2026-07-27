@@ -305,3 +305,15 @@ It should help the CEO keep operational workload as close to constant as possibl
 AI Operator OS is not a chatbot.
 
 It is a business operating system that hires artificial intelligence to perform work while keeping human leadership at the center of every important decision.
+
+## 13. Experience Layer Philosophy
+
+AI Operator OS should eventually support a customizable experience layer without changing the underlying operating system.
+
+The CEO surface should be simpler than the system, but the full system should remain accessible. Capabilities should remain visible and discoverable even when they are not part of the daily workflow.
+
+Navigation priority should reflect frequency of use rather than whether a capability exists. Daily workflows should be easiest to reach, while operational, advanced, and system capabilities remain available through the same architecture.
+
+The operating system should remain powerful. The experience should remain personal.
+
+Customization must change presentation, not system truth or behavior. Simple, Standard, and Full views must all use the same underlying architecture, stores, routes, workflows, and source of truth.
