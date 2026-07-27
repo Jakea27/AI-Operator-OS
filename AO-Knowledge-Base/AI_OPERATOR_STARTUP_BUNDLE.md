@@ -4,7 +4,7 @@
 
 ## Bundle Metadata
 
-- Bundle generation date: 2026-07-26
+- Bundle generation date: 2026-07-27
 - Continuity System Version: 1.1
 - Project Version: 0.1.0-alpha
 - Current Sprint: Sprint 014 - Early Revenue Foundation
@@ -1090,6 +1090,14 @@ Organize business initiatives. Projects group future Work Items and provide exec
 
 Define a specific executable unit of work. Work Items do not execute themselves.
 
+### Work Order
+
+Sprint 014 introduces Work Order as a business-language concept for requested work. Work Order should reuse or extend the existing Work Item architecture as a specialized Work Item profile and business-language view, not as a duplicate work-management system.
+
+A Work Order may reference Business Asset, Knowledge Workspace, Production Blueprint, and specific Blueprint deliverables. It should preserve references instead of copying authoritative Project or Blueprint data.
+
+If a separate Work Order record is ever proposed, it must be justified as reference-only before implementation and must not duplicate Project, Work Item, Execution Queue, Execution Core, Capability Planning, or Approval ownership.
+
 ### Execution Queue
 
 Prepare Work Items for future execution. Queue records preserve source context, priority, execution type, approval requirement, and status.
@@ -1108,6 +1116,7 @@ Control whether consequential work may proceed. Approval Queue records CEO decis
 - Operators belong to Departments and may be assigned to Managers.
 - Projects belong to Businesses.
 - Work Items belong to Projects.
+- Work Orders should be represented through the existing Work Item architecture unless explicitly justified as reference-only.
 - Execution Queue records originate from Work Items.
 - Approval Queue records may originate from Execution Queue records that require approval.
 - No module should duplicate another module's source data when a stable reference is enough.
@@ -1510,11 +1519,11 @@ Sprint 014 - Early Revenue Foundation
 
 ## Sprint Status
 
-ACTIVE - TASK 3 COMPLETE / TASK 4 READY.
+ACTIVE - TASK 4 COMPLETE / REPOSITORY VERIFICATION READY.
 
 ## Current Phase
 
-Sprint 014 Task 4 Ready.
+Sprint 014 Task 4 - Work Order and Execution Request Foundation.
 
 ## Last Completed Sprint
 
@@ -1526,7 +1535,7 @@ To be defined after Sprint 014 planning.
 
 ## Current Objective
 
-Prepare Sprint 014 Task 4 after Sprint 014 Task 3 repository verification.
+Complete Sprint 014 Task 4 Repository Verification.
 
 ## Roadmap Planning Note
 
@@ -1534,7 +1543,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Repository verification for Sprint 014 Task 3 - Production Blueprint Foundation.
+Sprint 014 Task 4 Repository Verification.
 
 ## Blocking Issues
 
@@ -1546,20 +1555,20 @@ main
 
 ## Last QA Result
 
-Sprint 014 Task 3 internal QA and CEO QA passed. Repository verification is pending.
+Sprint 014 Task 4 implementation, automated QA, QA test data preparation, and CEO QA passed. Repository verification is ready.
 
 ## Last Build Result
 
-`npm.cmd run build` passed during Sprint 014 Task 3 implementation. Existing Vite large-chunk warning remains non-blocking.
+`npm.cmd run build` passed during Sprint 014 Task 4 implementation. Existing Vite large-chunk warning remains non-blocking.
 
 ## Last Updated
 
-2026-07-23
+2026-07-26
 
 ## Current Sprint Verification
 
 - Sprint: Sprint 014
-- Status: ACTIVE - TASK 3 COMPLETE / TASK 4 READY
+- Status: ACTIVE - TASK 4 CORRECTED ARCHITECTURE ALIGNMENT / FREEZE VERIFICATION READY
 - Previous Sprint: Sprint 012 CLOSED
 - Sprint 012 Implementation: COMPLETE
 - Sprint 012 Internal QA: PASS
@@ -1634,7 +1643,7 @@ Sprint 014 Task 3 internal QA and CEO QA passed. Repository verification is pend
 - Sprint 013 Git Push: PUSHED
 - Sprint 013 Closeout: COMPLETE
 - Sprint 013 Status: CLOSED
-- Sprint 014 Status: ACTIVE - TASK 3 COMPLETE / TASK 4 READY
+- Sprint 014 Status: ACTIVE - TASK 4 COMPLETE / REPOSITORY VERIFICATION READY
 - Sprint 014 Task 1 Implementation: COMPLETE
 - Sprint 014 Task 1 Internal QA: PASS
 - Sprint 014 Task 1 CEO QA: PASS
@@ -1653,7 +1662,19 @@ Sprint 014 Task 3 internal QA and CEO QA passed. Repository verification is pend
 - Sprint 014 Task 3 Documentation: COMPLETE
 - Sprint 014 Task 3 Repository Verification: PENDING
 - Sprint 014 Task 3 Status: COMPLETE
-- Sprint 014 Task 4 Status: READY
+- Sprint 014 Task 4 Name: Work Order and Execution Request Foundation
+- Sprint 014 Task 4 Architecture Alignment: CORRECTED
+- Sprint 014 Task 4 Work Item Relationship: Work Order should be implemented as a specialized Work Item profile and business-language view over existing Work Item architecture unless later documentation proves a separate reference-only record is required
+- Sprint 014 Task 4 Step 1.4B Architecture Freeze: PASS
+- Sprint 014 Task 4 Architecture Status: FROZEN
+- Sprint 014 Task 4 Step 1.5 Implementation: COMPLETE
+- Sprint 014 Task 4 Automated QA: PASS
+- Sprint 014 Task 4 QA Test Data Preparation: PASS
+- Sprint 014 Task 4 Build Verification: PASS - `npm.cmd run build`
+- Sprint 014 Task 4 CEO QA: PASS
+- Sprint 014 Task 4 Documentation: COMPLETE
+- Sprint 014 Task 4 Repository Verification: READY
+- Sprint 014 Task 4 Status: COMPLETE
 
 ## Continuity Document Pointers
 
@@ -1732,15 +1753,15 @@ Command used:
 
 ## Current Status
 
-Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is active. Sprint 014 Task 1 - Business Asset Foundation is complete, internal QA passed, CEO QA passed, and repository verification passed. Sprint 014 Task 2 - Knowledge Workspace Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 3 - Production Blueprint Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 4 is ready.
+Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is active. Sprint 014 Task 1 - Business Asset Foundation is complete, internal QA passed, CEO QA passed, and repository verification passed. Sprint 014 Task 2 - Knowledge Workspace Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 3 - Production Blueprint Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 4 - Work Order and Execution Request Foundation implementation is complete, automated QA passed, QA test data preparation passed, CEO QA passed, documentation is complete, and repository verification is ready.
 
 ## Next Phase
 
-Sprint 014 Task 4 Ready.
+Sprint 014 Task 4 - Work Order and Execution Request Foundation.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 through Task 8 implementation/closeout preparation, internal QA, documentation, commit, and push are COMPLETE. Sprint 013 final CEO QA is PASS. Sprint 013 is CLOSED. Sprint 014 Task 1 implementation, internal QA, CEO QA, documentation, and repository verification are COMPLETE. Sprint 014 Task 2 implementation, internal QA, CEO QA, and documentation are COMPLETE. Sprint 014 Task 2 repository verification is PENDING. Sprint 014 Task 3 implementation, internal QA, CEO QA, and documentation are COMPLETE. Sprint 014 Task 3 repository verification is PENDING. Sprint 014 Task 4 is READY.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 through Task 8 implementation/closeout preparation, internal QA, documentation, commit, and push are COMPLETE. Sprint 013 final CEO QA is PASS. Sprint 013 is CLOSED. Sprint 014 Task 1 implementation, internal QA, CEO QA, documentation, and repository verification are COMPLETE. Sprint 014 Task 2 implementation, internal QA, CEO QA, and documentation are COMPLETE. Sprint 014 Task 2 repository verification is PENDING. Sprint 014 Task 3 implementation, internal QA, CEO QA, and documentation are COMPLETE. Sprint 014 Task 3 repository verification is PENDING. Sprint 014 Task 4 - Work Order and Execution Request Foundation corrected architecture alignment is COMPLETE, Step 1.4B Corrected Architecture Freeze Verification is PASS, Step 1.5 Implementation is COMPLETE, automated QA is PASS, QA test data preparation is PASS, CEO QA is PASS, documentation is COMPLETE, and repository verification is READY.
 
 ## Current Sprint QA Status
 
@@ -1889,9 +1910,9 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 014 Task 4 readiness after Sprint 014 Task 3 - Production Blueprint Foundation.
+The current focus is Sprint 014 Task 4 - Work Order and Execution Request Foundation repository verification.
 
-Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is active. Sprint 014 Task 1 - Business Asset Foundation is complete, internal QA passed, CEO QA passed, and repository verification passed. Sprint 014 Task 2 - Knowledge Workspace Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 3 - Production Blueprint Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 4 is ready.
+Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is active. Sprint 014 Task 1 - Business Asset Foundation is complete, internal QA passed, CEO QA passed, and repository verification passed. Sprint 014 Task 2 - Knowledge Workspace Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 3 - Production Blueprint Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 4 is officially named Work Order and Execution Request Foundation, corrected architecture freeze verification passed, architecture is frozen, implementation is complete, automated QA passed, QA test data preparation passed, CEO QA passed, documentation is complete, and repository verification is ready.
 
 ## Last Completed Sprint
 
@@ -1925,7 +1946,7 @@ Sprint 013 - AI Provider Integration.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Prepare Sprint 014 Task 4 after Sprint 014 Task 3 repository verification.
+- Complete Sprint 014 Task 4 Repository Verification.
 - Align Sprint 014 around the Creative Production Engine rather than a YouTube-specific workflow.
 - Treat YouTube content as the first supported asset type inside a reusable creative asset production architecture.
 - Keep future asset types documented only until explicitly authorized.
@@ -1970,7 +1991,14 @@ Sprint 013 - AI Provider Integration.
 - Sprint 014 Task 3 internal QA passed.
 - Sprint 014 Task 3 CEO QA passed.
 - Sprint 014 Task 3 repository verification is pending.
-- Sprint 014 Task 4 is ready.
+- Sprint 014 Task 4 is officially named Work Order and Execution Request Foundation.
+- Work Order is the business-language concept for requested work and should be implemented as a specialized Work Item profile/business-language view over existing Work Item architecture unless later documentation proves a separate reference-only record is required.
+- Execution Request is the provider-independent technical transport created from a Work Order.
+- Execution Request Builder is a stateless coordination service that translates Work Orders into validated Execution Requests.
+- Sprint 014 Task 4 reuses the existing Work Item architecture, Execution Core, Capability Resolver, Provider Manager, Provider Store, and Approval Queue.
+- Sprint 014 Task 4 does not create a duplicate Work Order store, work-management system, AI engine, Prompt Engine, Provider Manager, Capability Resolver, execution store, provider-selection layer, or approval system.
+- Sprint 014 Task 4 first use case processes YouTube Production Blueprint deliverables.
+- Sprint 014 Task 4 does not authorize autonomous execution, background execution, cloud providers, worker autonomy, streaming, or chat UI.
 
 ## Current Handoff
 
@@ -2313,7 +2341,7 @@ Task 3 - Production Blueprint Foundation extends existing Project records with a
 
 Task 3 status: COMPLETE. Internal QA PASS. CEO QA PASS. Repository verification PENDING.
 
-Next required action: Repository verification for Sprint 014 Task 3 - Production Blueprint Foundation.
+Next required action: Sprint 014 Task 4 Repository Verification.
 
 ## User Workflow Preferences
 
@@ -2341,11 +2369,11 @@ Next required action: Repository verification for Sprint 014 Task 3 - Production
 
 ## Status
 
-ACTIVE - TASK 3 COMPLETE / TASK 4 READY.
+ACTIVE - TASK 4 ARCHITECTURE ALIGNMENT / FREEZE VERIFICATION READY.
 
 ## Phase
 
-Sprint 014 Task 4 Ready.
+Sprint 014 Task 4 - Work Order and Execution Request Foundation.
 
 ## Mission Statement
 
@@ -2355,7 +2383,7 @@ The initial implementation will support YouTube content, while the architecture 
 
 ## Objective
 
-Prepare Sprint 014 Task 4 after Sprint 014 Task 3 repository verification.
+Complete Sprint 014 Task 4 Repository Verification.
 
 Sprint 014 is intended to establish the Creative Production Engine as a reusable early-revenue workflow foundation while preserving the approved architecture.
 
@@ -2659,6 +2687,241 @@ Task 2 does not add:
 - Repository Verification: PENDING.
 - Task Status: COMPLETE.
 
+## Task 4 - Work Order and Execution Request Foundation
+
+### Objective
+
+Establish the Work Order and Execution Request Foundation as the layered bridge between Production Blueprint deliverables and the existing AI execution architecture.
+
+A Work Order is the CEO- and department-facing business-language concept for requested work.
+
+An Execution Request is the provider-independent technical transport object created from a Work Order.
+
+The Execution Request Builder is the stateless translation layer that turns an approved Work Order into a validated Execution Request for the existing execution architecture.
+
+The first use case processes YouTube Production Blueprint deliverables, including Title, Hook, Script, Description, Tags, and Thumbnail Concept.
+
+Future request capabilities may include Generate, Rewrite, Summarize, Analyze, Translate, Critique, and Transform. These remain architectural direction only and are not implemented during pre-implementation documentation alignment.
+
+### Architectural Decision
+
+Task 4 is not an AI Generation Engine and does not create a second work-management system.
+
+The approved layered model is:
+
+```text
+Business Asset
+↓
+Knowledge Workspace
+↓
+Production Blueprint
+↓
+Work Order
+↓
+Execution Request Builder
+↓
+Execution Request
+↓
+Existing Execution Core
+↓
+Existing Capability Resolver
+↓
+Existing Provider Manager
+↓
+Approved provider execution
+↓
+Structured Execution Result
+↓
+Work Order completion state
+↓
+Production Blueprint deliverable
+```
+
+### Existing Work Item Relationship
+
+Architecture v2 defines Work Items as the executable units inside Projects. Execution Queue records originate from Work Items.
+
+Because a Work Order represents requested business work, Task 4 should reuse or extend the existing Work Item architecture rather than create a duplicate work-management system.
+
+Documented implementation direction:
+
+- Work Order should be implemented as a specialized Work Item profile and business-language view over existing Work Item architecture.
+- Work Order may reference Business Asset, Knowledge Workspace, Production Blueprint, and specific Blueprint deliverables.
+- Work Order should preserve references instead of copying authoritative Project or Blueprint data.
+- A separate Work Order store is not authorized unless later documentation proves the existing Work Item system cannot safely represent the Work Order concept.
+- If a separate reference-only record is ever proposed, it must include explicit ownership justification before implementation.
+
+### Ownership Boundaries
+
+Project Store owns:
+
+- Project records.
+- Business Asset metadata.
+- Knowledge Workspace.
+- Production Blueprint.
+- Final Blueprint deliverable content and status.
+
+Production Blueprint owns:
+
+- Required deliverables.
+- Deliverable status.
+- Deliverable content.
+- Deliverable metadata.
+
+Existing Work Item system owns:
+
+- Existing work definitions.
+- Work Item records.
+- Any approved specialized Work Item profile used to represent Work Orders.
+
+Work Order owns:
+
+- The business-language request for one unit of work.
+- Requested work intent.
+- Business Asset, Knowledge Workspace, Production Blueprint, and deliverable references.
+- Work preparation state where authorized.
+
+Execution Request Builder owns:
+
+- Stateless translation and validation only.
+- Resolving referenced Project and Production Blueprint context.
+- Resolving selected Knowledge Workspace references.
+- Creating validated provider-independent Execution Requests.
+- Preserving references rather than copying authoritative records.
+- Handing the request to the existing approved execution path.
+
+Execution Request owns:
+
+- Provider-independent request transport data.
+- Requested capability.
+- Context references.
+- Input instructions.
+- Output requirements.
+- Correlation references.
+
+Execution Core owns:
+
+- Execution records.
+- Lifecycle.
+- Attempts.
+- Logs.
+- Costs.
+- Failures.
+- Retries.
+- Result references.
+
+Capability Resolver owns:
+
+- Provider-independent capability routing.
+
+Provider Manager owns:
+
+- Provider recommendation and provider execution coordination.
+
+Provider Store owns:
+
+- Provider and model records.
+- Provider health and configuration metadata.
+- Provider persistence.
+
+Approval Queue owns:
+
+- Approval decisions and approval records.
+
+### Explicit Exclusions
+
+Task 4 does not authorize:
+
+- A duplicate Work Order store.
+- A duplicate work-management system.
+- A second Execution Core.
+- An AI Generation Engine.
+- A Prompt Engine.
+- A second Provider Manager.
+- Duplicate provider-selection logic.
+- Duplicate Capability Resolver logic.
+- Duplicate execution persistence.
+- Duplicate approval logic.
+- Autonomous execution.
+- Background execution.
+- Cloud provider connection.
+- Worker autonomy.
+- Streaming.
+- Chat UI.
+
+Execution Request Builder must not:
+
+- Own persistence.
+- Execute providers.
+- Select providers independently.
+- Duplicate Capability Resolver behavior.
+- Duplicate Provider Manager behavior.
+- Own execution lifecycle.
+- Own execution attempts.
+- Own logs or costs.
+- Own approval decisions.
+- Automatically update business records without an approved result-application path.
+
+### Governance
+
+CEO governance remains preserved. Task 4 may prepare Work Orders and Execution Requests, but it must not bypass approval architecture or create autonomous work behavior.
+
+### Step Status
+
+- Corrected Architecture Alignment: COMPLETE.
+- Step 1.4B - Corrected Architecture Freeze Verification: PASS.
+- Architecture Freeze: COMPLETE.
+- Step 1.5 - Implementation: COMPLETE.
+- Automated QA: PASS.
+- QA Test Data Preparation: PASS.
+- CEO QA: PASS.
+- Documentation: COMPLETE.
+- Repository Verification: READY.
+- Task Status: COMPLETE.
+
+### Implementation Summary
+
+Task 4 implemented Work Orders by extending the existing Work Item architecture with an optional Work Order profile. No Work Order store, duplicate work-management system, duplicate persistence key, route, dashboard, provider system, approval system, or execution pipeline was created.
+
+Task 4 added a stateless Execution Request Builder in the Work Item domain. The builder resolves Project, Business Asset, Production Blueprint, Blueprint deliverable, and Knowledge Workspace references, then produces a provider-independent Execution Request reference. The builder does not execute providers, select providers, own persistence, own lifecycle, own retries, own logs, own costs, own approvals, or update final Blueprint content.
+
+Project Detail now exposes Work Orders inside Business Asset Projects. The CEO can create one Work Order per Blueprint deliverable and build a read-only Execution Request relationship for that Work Order. Normal Work Items remain available and existing Project workflows continue to function.
+
+### Implementation Verification
+
+- Existing Project Store remains the owner of Business Asset, Knowledge Workspace, and Production Blueprint data.
+- Existing Work Item Store remains the owner of Work Item records and now owns the Work Order specialization.
+- Execution Requests are stored as Work Order metadata on the existing Work Item record.
+- Existing Execution Core remains unchanged and provider-independent.
+- Existing Capability Resolver remains unchanged.
+- Existing Provider Manager and Provider Store remain unchanged.
+- Existing Approval Queue remains unchanged.
+- No AI execution was added.
+- No provider execution was added.
+- No duplicate stores, routes, dashboards, persistence keys, or execution systems were introduced.
+- `npm.cmd run build` PASS.
+- TypeScript PASS.
+- Vite production build PASS.
+- Existing Vite large-chunk warning remains non-blocking.
+
+### QA Summary
+
+- Automated QA: PASS.
+- QA Test Data Preparation: PASS.
+- CEO Manual QA: PASS.
+- Valid QA Business Asset Project exists with Business Asset, Knowledge Workspace, Production Blueprint, and Work Orders visible.
+- Six Blueprint deliverables were verified: Title, Hook, Script, Description, Tags, and Thumbnail Concept.
+- One Work Order was created for each Blueprint deliverable.
+- One provider-independent Execution Request metadata record was built for each Work Order.
+- Work Orders persisted after graceful Electron restart.
+- Execution Request metadata persisted after graceful Electron restart.
+- Blueprint remained intact after restart.
+- Knowledge Workspace remained intact after restart.
+- No provider execution occurred.
+- No AI execution occurred.
+- No approvals were bypassed.
+- No Execution records were created for these Work Orders.
+
 ## Task 3 - Production Blueprint Foundation
 
 ### Objective
@@ -2779,11 +3042,23 @@ Task 3 does not add:
 - Sprint 014 Task 3 Documentation: COMPLETE.
 - Sprint 014 Task 3 Repository Verification: PENDING.
 - Sprint 014 Task 3 Status: COMPLETE.
-- Sprint 014 Task 4 Status: READY.
+- Sprint 014 Task 4 Name: Work Order and Execution Request Foundation.
+- Sprint 014 Task 4 Corrected Architecture Alignment: COMPLETE.
+- Sprint 014 Task 4 Work Item Relationship: Work Order should be implemented as a specialized Work Item profile and business-language view over existing Work Item architecture unless later documentation proves a separate reference-only record is required.
+- Sprint 014 Task 4 Step 1.4B Architecture Freeze: PASS.
+- Sprint 014 Task 4 Architecture Status: FROZEN.
+- Sprint 014 Task 4 Step 1.5 Implementation: COMPLETE.
+- Sprint 014 Task 4 Automated QA: PASS.
+- Sprint 014 Task 4 QA Test Data Preparation: PASS.
+- Sprint 014 Task 4 Build Verification: PASS - `npm.cmd run build`.
+- Sprint 014 Task 4 CEO QA: PASS.
+- Sprint 014 Task 4 Documentation: COMPLETE.
+- Sprint 014 Task 4 Repository Verification: READY.
+- Sprint 014 Task 4 Status: COMPLETE.
 
 ## Next Required Action
 
-Repository verification for Sprint 014 Task 3 - Production Blueprint Foundation.
+Sprint 014 Task 4 Repository Verification.
 
 ---
 

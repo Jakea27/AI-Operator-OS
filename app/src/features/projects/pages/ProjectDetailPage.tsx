@@ -25,7 +25,7 @@ import {
   projectStatuses,
   useProjectStore,
 } from '@/src/core/projects'
-import { useWorkItemStore } from '@/src/core/workItems'
+import { buildExecutionRequestFromWorkOrder, WorkItemRecord, useWorkItemStore } from '@/src/core/workItems'
 import { WorkItemCard } from '@/src/features/workItems/WorkItemCard'
 import { WorkItemForm } from '@/src/features/workItems/WorkItemForm'
 import { ProjectLifecycle } from '../components/ProjectLifecycle'
@@ -55,6 +55,7 @@ export function ProjectDetailPage() {
   const [knowledgeContent, setKnowledgeContent] = useState('')
   const [knowledgeUrl, setKnowledgeUrl] = useState('')
   const [knowledgeTags, setKnowledgeTags] = useState('')
+  const [executionRequestNotice, setExecutionRequestNotice] = useState('')
 
   useEffect(() => {
     setDraft(project)
@@ -73,6 +74,8 @@ export function ProjectDetailPage() {
     workItem.projectId === project.id ||
     workItem.projectCode === project.projectId,
   )
+  const projectWorkOrders = projectWorkItems.filter((workItem) => workItem.workOrder?.enabled)
+  const regularProjectWorkItems = projectWorkItems.filter((workItem) => !workItem.workOrder?.enabled)
 
   function selectBusiness(nextBusinessId: string) {
     const business = businessStore.businesses.find((item) => item.id === nextBusinessId)
@@ -321,6 +324,25 @@ export function ProjectDetailPage() {
       percent: Math.round((complete / deliverables.length) * 100),
     }
   }, [draft?.productionBlueprint?.deliverables])
+
+  function createWorkOrder(deliverable: ProductionBlueprintDeliverable) {
+    if (!project) return
+    const workOrder = workItemStore.createWorkOrderFromBlueprintDeliverable(project, deliverable)
+    setExecutionRequestNotice(`${workOrder.workOrder?.workOrderId ?? workOrder.workItemId} is prepared for ${deliverable.name}.`)
+  }
+
+  function buildExecutionRequest(workItem: WorkItemRecord) {
+    if (!project) return
+    const result = buildExecutionRequestFromWorkOrder(workItem, project)
+    if (!result.success) {
+      setExecutionRequestNotice(`Execution Request blocked: ${result.errors.join(' ')}`)
+      return
+    }
+
+    workItemStore.attachExecutionRequest(workItem.id, result.request)
+    const warningText = result.warnings.length > 0 ? ` ${result.warnings.join(' ')}` : ''
+    setExecutionRequestNotice(`Execution Request ${result.request.requestId} built for ${workItem.workOrder?.workOrderId ?? workItem.workItemId}.${warningText}`)
+  }
 
   return (
     <div className="space-y-6">
@@ -647,6 +669,35 @@ export function ProjectDetailPage() {
             </Section>
           ) : null}
 
+          {draft.businessAsset?.enabled && draft.productionBlueprint?.enabled ? (
+            <Section title="Work Orders" eyebrow="Blueprint deliverable requests">
+              <p className="m-0 mb-4 text-sm leading-6 text-muted">
+                Work Orders are specialized Work Items for one requested Blueprint deliverable. Execution Requests are provider-independent request records and do not execute providers, route providers, or update final Blueprint content.
+              </p>
+
+              {executionRequestNotice ? (
+                <div className="mb-4 rounded-xl border border-lime/20 bg-lime/[0.06] p-3 text-sm text-lime">
+                  {executionRequestNotice}
+                </div>
+              ) : null}
+
+              <div className="grid gap-4">
+                {draft.productionBlueprint.deliverables.map((deliverable) => {
+                  const workOrder = projectWorkOrders.find((item) => item.workOrder?.blueprintDeliverableId === deliverable.id)
+                  return (
+                    <WorkOrderBlueprintRow
+                      key={deliverable.id}
+                      deliverable={deliverable}
+                      workOrder={workOrder}
+                      onCreate={() => createWorkOrder(deliverable)}
+                      onBuildRequest={() => workOrder ? buildExecutionRequest(workOrder) : undefined}
+                    />
+                  )
+                })}
+              </div>
+            </Section>
+          ) : null}
+
           <Section title="Notes" eyebrow="CEO context">
             <textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} className="field min-h-[120px]" />
             <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Project</button>
@@ -675,9 +726,9 @@ export function ProjectDetailPage() {
               />
             ) : null}
 
-            {projectWorkItems.length > 0 ? (
+            {regularProjectWorkItems.length > 0 ? (
               <div className="grid gap-4">
-                {projectWorkItems.map((workItem) => (
+                {regularProjectWorkItems.map((workItem) => (
                   <WorkItemCard key={workItem.id} workItem={workItem} />
                 ))}
               </div>
@@ -723,6 +774,63 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
       <p className="m-0 mt-2 text-sm font-semibold text-white">{value || 'Not assigned'}</p>
     </div>
+  )
+}
+
+function WorkOrderBlueprintRow({
+  deliverable,
+  workOrder,
+  onCreate,
+  onBuildRequest,
+}: {
+  deliverable: ProductionBlueprintDeliverable
+  workOrder?: WorkItemRecord
+  onCreate: () => void
+  onBuildRequest: () => void
+}) {
+  const executionRequest = workOrder?.workOrder?.executionRequest
+
+  return (
+    <article className="rounded-xl border border-line bg-ink/40 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow mb-1">Blueprint Deliverable</p>
+          <h4 className="m-0 font-display text-base font-semibold text-white">{deliverable.name}</h4>
+          <p className="m-0 mt-2 text-sm leading-6 text-muted">Blueprint status: {deliverable.status}</p>
+        </div>
+        {workOrder ? (
+          <button onClick={onBuildRequest} className="btn-secondary" disabled={Boolean(executionRequest)}>
+            {executionRequest ? 'Execution Request Built' : 'Build Execution Request'}
+          </button>
+        ) : (
+          <button onClick={onCreate} className="btn-primary">Create Work Order</button>
+        )}
+      </div>
+
+      {workOrder ? (
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <Info label="Work Order" value={workOrder.workOrder?.workOrderId ?? workOrder.workItemId} />
+          <Info label="Work Item" value={workOrder.workItemId} />
+          <Info label="Status" value={workOrder.workOrder?.status ?? workOrder.status} />
+          <Info label="Type" value={workOrder.workOrder?.workOrderType ?? 'Not assigned'} />
+          <Info label="Capability" value={executionRequest?.requestedCapability ?? 'Not built'} />
+          <Info label="Execution Request" value={executionRequest?.requestId ?? 'Not built'} />
+        </div>
+      ) : (
+        <div className="mt-4">
+          <Placeholder text="No Work Order exists yet for this Blueprint deliverable." />
+        </div>
+      )}
+
+      {executionRequest ? (
+        <div className="mt-4 rounded-xl border border-line bg-white/[0.025] p-4">
+          <p className="eyebrow mb-2">Execution Request Relationship</p>
+          <p className="m-0 text-sm leading-6 text-muted">
+            {executionRequest.requestId} references {executionRequest.workItemId}, {executionRequest.projectCode}, {executionRequest.blueprintDeliverableName}, and {executionRequest.knowledgeReferenceIds.length} Knowledge entries. It is read-only here and does not execute work.
+          </p>
+        </div>
+      ) : null}
+    </article>
   )
 }
 

@@ -499,6 +499,24 @@ Execution Core
 
 Sprint 012 Tasks 5-7 added read-only execution dashboard, cost/logging polish, and Command Center visibility.
 
+## Sprint 014 Work Order and Execution Request Boundary
+
+Sprint 014 Task 4 planning introduces Work Orders and Execution Requests as pre-execution request architecture.
+
+Work Orders are business-language requests for work and should reuse or extend the existing Work Item architecture as a specialized Work Item profile/business-language view unless later documentation proves a separate reference-only record is required.
+
+Execution Requests are provider-independent technical transport objects created from Work Orders by a stateless Execution Request Builder.
+
+Execution Requests do not replace:
+
+- Work Items.
+- Execution Queue records.
+- Capability Plans.
+- Approval records.
+- Execution Core records.
+
+Execution Request Builder must not own persistence, execution lifecycle, execution attempts, logs, costs, approval decisions, provider selection, or provider execution. It may validate and translate references for the existing approved execution path only.
+
 ## Safety Rules
 
 - Execution Core must not execute work.

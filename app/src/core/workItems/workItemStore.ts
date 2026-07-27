@@ -1,11 +1,17 @@
 import { useSyncExternalStore } from 'react'
+import type { ProductionBlueprintDeliverable, ProjectRecord } from '../projects'
 import {
+  ExecutionRequestReference,
   WorkItemInput,
   WorkItemPriority,
   WorkItemRecord,
   WorkItemStatus,
   WorkItemTimelineItem,
   WorkItemUpdate,
+  WorkOrderProfile,
+  WorkOrderType,
+  workOrderStatuses,
+  workOrderTypes,
 } from './workItemTypes'
 
 const STORAGE_KEY = 'ai-operator-os-work-items-v1'
@@ -48,6 +54,77 @@ function normalizeHours(value: unknown) {
   return Math.max(0, Math.round(numeric * 10) / 10)
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function normalizeString(value: unknown, fallback = '') {
+  return typeof value === 'string' ? value : fallback
+}
+
+function normalizeStringArray(value: unknown) {
+  if (!Array.isArray(value)) return []
+  return value.filter((item): item is string => typeof item === 'string')
+}
+
+function normalizeMetadata(value: unknown) {
+  return isRecord(value)
+    ? Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+}
+
+function normalizeExecutionRequest(raw: unknown): ExecutionRequestReference | undefined {
+  if (!isRecord(raw)) return undefined
+
+  return {
+    requestId: normalizeString(raw.requestId, id('ER')),
+    status: raw.status === 'Invalid' ? 'Invalid' : 'Built',
+    requestedCapability: normalizeString(raw.requestedCapability, 'Text Generation'),
+    workItemRecordId: normalizeString(raw.workItemRecordId),
+    workItemId: normalizeString(raw.workItemId, 'WI-0000'),
+    projectId: normalizeString(raw.projectId),
+    projectCode: normalizeString(raw.projectCode, 'PROJ-0000'),
+    businessAssetProjectId: normalizeString(raw.businessAssetProjectId),
+    blueprintDeliverableId: normalizeString(raw.blueprintDeliverableId),
+    blueprintDeliverableName: normalizeString(raw.blueprintDeliverableName),
+    knowledgeReferenceIds: normalizeStringArray(raw.knowledgeReferenceIds),
+    instructions: normalizeString(raw.instructions),
+    outputRequirements: normalizeString(raw.outputRequirements),
+    correlationMetadata: normalizeMetadata(raw.correlationMetadata),
+    createdAt: normalizeString(raw.createdAt, now()),
+  }
+}
+
+function normalizeWorkOrder(raw: unknown, workItemCreatedAt: string): WorkOrderProfile | undefined {
+  if (!isRecord(raw) || raw.enabled !== true) return undefined
+
+  const workOrderType = workOrderTypes.includes(raw.workOrderType as WorkOrderType)
+    ? raw.workOrderType as WorkOrderType
+    : 'Generate Title'
+  const status = workOrderStatuses.includes(raw.status as WorkOrderProfile['status'])
+    ? raw.status as WorkOrderProfile['status']
+    : 'Prepared'
+  const createdAt = normalizeString(raw.createdAt, workItemCreatedAt)
+
+  return {
+    enabled: true,
+    workOrderId: normalizeString(raw.workOrderId, `WO-${Date.now()}`),
+    workOrderType,
+    status,
+    assetType: normalizeString(raw.assetType, 'YouTube Video'),
+    platform: normalizeString(raw.platform, 'YouTube'),
+    businessAssetProjectId: normalizeString(raw.businessAssetProjectId),
+    productionBlueprintType: normalizeString(raw.productionBlueprintType, 'YouTube Video Blueprint'),
+    blueprintDeliverableId: normalizeString(raw.blueprintDeliverableId),
+    blueprintDeliverableName: normalizeString(raw.blueprintDeliverableName),
+    knowledgeReferenceIds: normalizeStringArray(raw.knowledgeReferenceIds),
+    executionRequest: normalizeExecutionRequest(raw.executionRequest),
+    createdAt,
+    updatedAt: normalizeString(raw.updatedAt, createdAt),
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
 function normalizeWorkItem(raw: Partial<WorkItemRecord>, index = 0): WorkItemRecord {
   const timestamp = raw.createdAt ?? now()
   return {
@@ -81,6 +158,7 @@ function normalizeWorkItem(raw: Partial<WorkItemRecord>, index = 0): WorkItemRec
     timeline: Array.isArray(raw.timeline) && raw.timeline.length > 0
       ? raw.timeline
       : [timeline('Work Item record created.', timestamp)],
+    workOrder: normalizeWorkOrder(raw.workOrder, timestamp),
   }
 }
 
@@ -134,6 +212,33 @@ function getSnapshot() {
   return state
 }
 
+function generateWorkOrderCode(existing: WorkItemRecord[]) {
+  const max = existing.reduce((highest, workItem) => {
+    const match = workItem.workOrder?.workOrderId?.match(/^WO-(\d+)$/)
+    if (!match) return highest
+    return Math.max(highest, Number(match[1]))
+  }, 0)
+
+  return `WO-${String(max + 1).padStart(4, '0')}`
+}
+
+function workOrderTypeForDeliverable(deliverable: ProductionBlueprintDeliverable): WorkOrderType {
+  switch (deliverable.name) {
+    case 'Title':
+      return 'Generate Title'
+    case 'Hook':
+      return 'Generate Hook'
+    case 'Script':
+      return 'Generate Script'
+    case 'Description':
+      return 'Generate Description'
+    case 'Tags':
+      return 'Generate Tags'
+    case 'Thumbnail Concept':
+      return 'Generate Thumbnail Concept'
+  }
+}
+
 export const workItemStore = {
   createWorkItem(input: WorkItemInput) {
     const timestamp = now()
@@ -166,10 +271,100 @@ export const workItemStore = {
       createdAt: timestamp,
       updatedAt: timestamp,
       timeline: [timeline(`Work Item created for ${input.projectCode}.`, timestamp)],
+      workOrder: normalizeWorkOrder(input.workOrder, timestamp),
     }
 
     persist([workItem, ...state])
     return workItem
+  },
+
+  createWorkOrderFromBlueprintDeliverable(project: ProjectRecord, deliverable: ProductionBlueprintDeliverable) {
+    const existing = state.find((workItem) =>
+      workItem.workOrder?.businessAssetProjectId === project.id &&
+      workItem.workOrder?.blueprintDeliverableId === deliverable.id,
+    )
+
+    if (existing) return existing
+
+    const timestamp = now()
+    const workOrderType = workOrderTypeForDeliverable(deliverable)
+    const workOrder: WorkOrderProfile = {
+      enabled: true,
+      workOrderId: generateWorkOrderCode(state),
+      workOrderType,
+      status: 'Prepared',
+      assetType: project.businessAsset?.assetType ?? 'YouTube Video',
+      platform: project.businessAsset?.platform ?? 'YouTube',
+      businessAssetProjectId: project.id,
+      productionBlueprintType: project.productionBlueprint?.blueprintType ?? 'YouTube Video Blueprint',
+      blueprintDeliverableId: deliverable.id,
+      blueprintDeliverableName: deliverable.name,
+      knowledgeReferenceIds: project.knowledgeWorkspace?.entries.map((entry) => entry.id) ?? [],
+      executionRequest: undefined,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {
+        source: 'Production Blueprint',
+        blueprintDeliverableStatus: deliverable.status,
+      },
+    }
+
+    const workItem: WorkItemRecord = {
+      id: id('work-item'),
+      workItemId: generateWorkItemCode(state),
+      title: `${workOrderType}: ${project.name}`,
+      description: `Work Order for ${deliverable.name} deliverable in ${project.projectId}. This record prepares a provider-independent Execution Request and does not execute work.`,
+      status: 'Planning',
+      priority: project.priority,
+      businessId: project.businessId,
+      businessCode: project.businessCode,
+      businessName: project.businessName,
+      projectId: project.id,
+      projectCode: project.projectId,
+      projectName: project.name,
+      departmentId: project.departmentId,
+      departmentCode: project.departmentCode,
+      departmentName: project.departmentName,
+      assignedManagerId: project.managerId,
+      assignedManagerName: project.managerName || 'Unassigned',
+      assignedOperatorId: undefined,
+      assignedOperatorCode: undefined,
+      assignedOperatorName: 'Unassigned',
+      estimatedHours: 0,
+      dueDate: project.targetDate,
+      notes: `Prepared from Production Blueprint deliverable: ${deliverable.name}.`,
+      placeholderMetrics: 'Work Order metrics are not connected yet.',
+      placeholderNotes: 'Execution Request relationship is read-only until execution infrastructure consumes the request.',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      timeline: [timeline(`Work Order ${workOrder.workOrderId} created for ${deliverable.name}.`, timestamp)],
+      workOrder,
+    }
+
+    persist([workItem, ...state])
+    return workItem
+  },
+
+  attachExecutionRequest(workItemRecordId: string, executionRequest: ExecutionRequestReference) {
+    const timestamp = now()
+    let updated: WorkItemRecord | undefined
+    persist(state.map((workItem) => {
+      if (workItem.id !== workItemRecordId || !workItem.workOrder) return workItem
+      updated = {
+        ...workItem,
+        status: 'Ready',
+        updatedAt: timestamp,
+        timeline: [timeline(`Execution Request ${executionRequest.requestId} built for ${workItem.workOrder.workOrderId}.`, timestamp), ...workItem.timeline],
+        workOrder: {
+          ...workItem.workOrder,
+          status: 'Request Built',
+          executionRequest,
+          updatedAt: timestamp,
+        },
+      }
+      return updated
+    }))
+    return updated
   },
 
   updateWorkItem(workItemRecordId: string, updates: WorkItemUpdate) {
@@ -184,6 +379,7 @@ export const workItemStore = {
           assignedOperatorName: updates.assignedOperatorName ?? workItem.assignedOperatorName,
           estimatedHours: updates.estimatedHours === undefined ? workItem.estimatedHours : normalizeHours(updates.estimatedHours),
           notes: updates.notes ?? workItem.notes,
+          workOrder: updates.workOrder === undefined ? workItem.workOrder : normalizeWorkOrder(updates.workOrder, workItem.createdAt),
           updatedAt: timestamp,
           timeline: [timeline('Work Item record updated.', timestamp), ...workItem.timeline],
         }
@@ -205,6 +401,8 @@ export function useWorkItemStore() {
   return {
     workItems,
     createWorkItem: workItemStore.createWorkItem,
+    createWorkOrderFromBlueprintDeliverable: workItemStore.createWorkOrderFromBlueprintDeliverable,
+    attachExecutionRequest: workItemStore.attachExecutionRequest,
     updateWorkItem: workItemStore.updateWorkItem,
   }
 }

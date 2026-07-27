@@ -131,6 +131,14 @@ Organize business initiatives. Projects group future Work Items and provide exec
 
 Define a specific executable unit of work. Work Items do not execute themselves.
 
+### Work Order
+
+Sprint 014 introduces Work Order as a business-language concept for requested work. Work Order should reuse or extend the existing Work Item architecture as a specialized Work Item profile and business-language view, not as a duplicate work-management system.
+
+A Work Order may reference Business Asset, Knowledge Workspace, Production Blueprint, and specific Blueprint deliverables. It should preserve references instead of copying authoritative Project or Blueprint data.
+
+If a separate Work Order record is ever proposed, it must be justified as reference-only before implementation and must not duplicate Project, Work Item, Execution Queue, Execution Core, Capability Planning, or Approval ownership.
+
 ### Execution Queue
 
 Prepare Work Items for future execution. Queue records preserve source context, priority, execution type, approval requirement, and status.
@@ -149,6 +157,7 @@ Control whether consequential work may proceed. Approval Queue records CEO decis
 - Operators belong to Departments and may be assigned to Managers.
 - Projects belong to Businesses.
 - Work Items belong to Projects.
+- Work Orders should be represented through the existing Work Item architecture unless explicitly justified as reference-only.
 - Execution Queue records originate from Work Items.
 - Approval Queue records may originate from Execution Queue records that require approval.
 - No module should duplicate another module's source data when a stable reference is enough.
