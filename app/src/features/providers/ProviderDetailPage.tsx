@@ -107,6 +107,17 @@ export function ProviderDetailPage() {
     setActionState({ tone: 'good', message: `${providerView.provider.name} enabled. This only changes stored availability metadata.` })
   }
 
+  function toggleModel(modelRecordId: string, enabled: boolean, displayName: string) {
+    if (enabled) {
+      providerStore.disableModel(modelRecordId)
+      setActionState({ tone: 'neutral', message: `${displayName} disabled. No provider execution was triggered.` })
+      return
+    }
+
+    providerStore.enableModel(modelRecordId)
+    setActionState({ tone: 'good', message: `${displayName} enabled for provider recommendations. No prompt was executed.` })
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -201,10 +212,15 @@ export function ProviderDetailPage() {
                         <h4 className="m-0 text-sm font-semibold text-white">{model.displayName}</h4>
                         <p className="m-0 mt-1 text-xs text-muted">{model.modelName}</p>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        <StatusBadge label={model.enabled ? 'Enabled' : 'Disabled'} tone={model.enabled ? 'good' : 'muted'} />
-                        <StatusBadge label={model.availability} tone={providerStatusTone(model.availability)} />
-                        <StatusBadge label={model.health} tone={providerStatusTone(model.health)} />
+                      <div className="flex flex-col items-start gap-2 md:items-end">
+                        <div className="flex flex-wrap gap-2">
+                          <StatusBadge label={model.enabled ? 'Enabled' : 'Disabled'} tone={model.enabled ? 'good' : 'muted'} />
+                          <StatusBadge label={model.availability} tone={providerStatusTone(model.availability)} />
+                          <StatusBadge label={model.health} tone={providerStatusTone(model.health)} />
+                        </div>
+                        <button type="button" className="btn-secondary" onClick={() => toggleModel(model.id, model.enabled, model.displayName)}>
+                          {model.enabled ? 'Disable Model' : 'Enable Model'}
+                        </button>
                       </div>
                     </div>
                     <p className="m-0 mt-3 text-sm leading-6 text-muted">

@@ -113,6 +113,7 @@ export function buildProviderViewModels(state: ProviderStoreState): ProviderView
       ...(!configured ? ['Provider configuration is not ready.'] : []),
       ...(['Unavailable', 'Misconfigured', 'Error', 'Disabled'].includes(healthStatus) ? [`Provider health is ${healthStatus}.`] : []),
       ...(models.length === 0 ? ['No model records are registered.'] : []),
+      ...(models.length > 0 && compatibleModelCount === 0 ? ['No enabled compatible model records are available.'] : []),
     ]
 
     return {

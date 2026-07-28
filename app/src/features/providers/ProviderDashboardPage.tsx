@@ -164,6 +164,17 @@ export function ProviderDashboardPage() {
     setActionState({ providerId: provider.provider.id, tone: 'good', message: `${provider.provider.name} enabled. This only changes stored availability metadata.` })
   }
 
+  function toggleModel(provider: ProviderViewModel, modelRecordId: string, enabled: boolean, displayName: string) {
+    if (enabled) {
+      providerStore.disableModel(modelRecordId)
+      setActionState({ providerId: provider.provider.id, tone: 'neutral', message: `${displayName} disabled. No provider execution was triggered.` })
+      return
+    }
+
+    providerStore.enableModel(modelRecordId)
+    setActionState({ providerId: provider.provider.id, tone: 'good', message: `${displayName} enabled for provider recommendations. No prompt was executed.` })
+  }
+
   return (
     <div className="space-y-7">
       <PageIntro
@@ -248,6 +259,7 @@ export function ProviderDashboardPage() {
                   onDiscover={() => discoverModels(provider)}
                   onApplyPlan={() => applyPlan(provider)}
                   onToggle={() => toggleProvider(provider)}
+                  onToggleModel={(modelRecordId, enabled, displayName) => toggleModel(provider, modelRecordId, enabled, displayName)}
                 />
               ))}
             </div>
@@ -267,6 +279,7 @@ function ProviderCard({
   onDiscover,
   onApplyPlan,
   onToggle,
+  onToggleModel,
 }: {
   provider: ProviderViewModel
   plan?: ModelRegistrationPlan
@@ -276,6 +289,7 @@ function ProviderCard({
   onDiscover: () => void
   onApplyPlan: () => void
   onToggle: () => void
+  onToggleModel: (modelRecordId: string, enabled: boolean, displayName: string) => void
 }) {
   const ollama = isOllamaProvider(provider.provider)
 
@@ -316,6 +330,31 @@ function ProviderCard({
           <ul className="mb-0 mt-2 space-y-1 pl-4 text-sm leading-6 text-muted">
             {provider.attentionReasons.slice(0, 4).map((reason) => <li key={reason}>{reason}</li>)}
           </ul>
+        </div>
+      ) : null}
+
+      {provider.models.length > 0 ? (
+        <div className="mt-4 rounded-xl border border-line bg-white/[0.025] p-4">
+          <p className="eyebrow mb-3">Registered Models</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            {provider.models.map((model) => (
+              <div key={model.id} className="rounded-xl border border-line bg-ink/35 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="m-0 text-sm font-semibold text-white">{model.displayName}</p>
+                    <p className="m-0 mt-1 text-xs text-muted">{model.modelName}</p>
+                  </div>
+                  <StatusBadge label={model.enabled ? 'Enabled' : 'Disabled'} tone={model.enabled ? 'good' : 'muted'} />
+                </div>
+                <p className="m-0 mt-2 text-xs leading-5 text-muted">
+                  {model.supportedCapabilities.length ? model.supportedCapabilities.join(', ') : 'No capabilities recorded.'}
+                </p>
+                <button type="button" className="btn-secondary mt-3" onClick={() => onToggleModel(model.id, model.enabled, model.displayName)}>
+                  {model.enabled ? 'Disable Model' : 'Enable Model'}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       ) : null}
 

@@ -508,6 +508,14 @@ export const providerStore = {
     return true
   },
 
+  enableModel(modelRecordId: string) {
+    return this.updateModel(modelRecordId, { enabled: true })
+  },
+
+  disableModel(modelRecordId: string) {
+    return this.updateModel(modelRecordId, { enabled: false })
+  },
+
   upsertConfiguration(input: ProviderConfigurationInput) {
     const provider = providerByRecordId(input.providerRecordId)
     if (!provider) return undefined
@@ -612,6 +620,8 @@ export function useProviderStore() {
     addModel: providerStore.addModel,
     updateModel: providerStore.updateModel,
     removeModel: providerStore.removeModel.bind(providerStore),
+    enableModel: providerStore.enableModel.bind(providerStore),
+    disableModel: providerStore.disableModel.bind(providerStore),
     upsertConfiguration: providerStore.upsertConfiguration,
     recordHealth: providerStore.recordHealth,
     recordUsage: providerStore.recordUsage,
