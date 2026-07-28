@@ -14,7 +14,7 @@ import {
 
 export const OLLAMA_PROVIDER_NAME = 'Ollama'
 export const OLLAMA_DEFAULT_ENDPOINT = 'http://127.0.0.1:11434'
-export const OLLAMA_DEFAULT_TIMEOUT_MS = 5000
+export const OLLAMA_DEFAULT_TIMEOUT_MS = 30000
 
 export type OllamaErrorCode =
   | 'Invalid Endpoint'

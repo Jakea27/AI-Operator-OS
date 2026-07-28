@@ -170,6 +170,11 @@ function normalizeModel(raw: Partial<ProviderModelRecord>, providers: ProviderRe
 function normalizeConfiguration(raw: Partial<ProviderConfigurationRecord>, providers: ProviderRecord[], index = 0): ProviderConfigurationRecord {
   const timestamp = raw.createdAt ?? now()
   const provider = providers.find((item) => item.id === raw.providerRecordId || item.providerId === raw.providerId)
+  const timeoutMs = positiveNumber(raw.connectionTimeoutMs, 30000)
+  const connectionTimeoutMs = provider?.name.trim().toLowerCase() === 'ollama' && provider.runtime === 'Local'
+    ? Math.max(timeoutMs, 30000)
+    : timeoutMs
+
   return {
     id: raw.id ?? id('provider-config'),
     configurationId: raw.configurationId ?? fallbackRecordCode('PROVCFG', index),
@@ -180,7 +185,7 @@ function normalizeConfiguration(raw: Partial<ProviderConfigurationRecord>, provi
     configured: Boolean(raw.configured),
     localHost: raw.localHost?.trim(),
     environmentVariableReference: raw.environmentVariableReference?.trim(),
-    connectionTimeoutMs: positiveNumber(raw.connectionTimeoutMs, 30000),
+    connectionTimeoutMs,
     preferredModelId: raw.preferredModelId,
     validationStatus: raw.validationStatus ?? 'Not Configured',
     lastValidatedAt: raw.lastValidatedAt,

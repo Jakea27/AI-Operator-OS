@@ -201,10 +201,13 @@ async function fetchJsonWithTimeout<T>(url: string, timeoutMs: number): Promise<
   } catch (error) {
     const endedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
     const latencyMs = Math.max(0, Math.round(endedAt - startedAt))
-    const message = error instanceof Error ? error.message : 'Ollama request failed.'
+    const aborted = controller.signal.aborted || (error instanceof Error && error.name === 'AbortError')
+    const message = aborted
+      ? `Local Ollama request timed out after ${timeoutMs} ms.`
+      : error instanceof Error ? error.message : 'Ollama request failed.'
     return {
       latencyMs,
-      errorCode: message.toLowerCase().includes('abort') ? 'Request Timeout' : 'Connection Refused',
+      errorCode: aborted ? 'Request Timeout' : 'Connection Refused',
       message,
     }
   } finally {
@@ -257,10 +260,13 @@ async function postJsonWithTimeout<T>(
   } catch (error) {
     const endedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
     const latencyMs = Math.max(0, Math.round(endedAt - startedAt))
-    const message = error instanceof Error ? error.message : 'Ollama prompt request failed.'
+    const aborted = controller.signal.aborted || (error instanceof Error && error.name === 'AbortError')
+    const message = aborted
+      ? `Local Ollama request timed out after ${timeoutMs} ms.`
+      : error instanceof Error ? error.message : 'Ollama prompt request failed.'
     return {
       latencyMs,
-      errorCode: message.toLowerCase().includes('abort') ? 'Request Timeout' : 'Connection Refused',
+      errorCode: aborted ? 'Request Timeout' : 'Connection Refused',
       message,
     }
   } finally {
