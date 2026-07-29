@@ -61,11 +61,45 @@ export type ProductionBlueprintDeliverableName = 'Title' | 'Hook' | 'Script' | '
 
 export type ProductionBlueprintDeliverableStatus = 'Not Started' | 'Draft' | 'Complete'
 
+export type ProductionBlueprintDeliverableReviewStatus = 'Not Ready' | 'Draft' | 'Approved' | 'Needs Revision' | 'Rejected'
+
+export type ProductionBlueprintDeliverableReviewDecision = 'Draft Applied' | 'Approved' | 'Needs Revision' | 'Rejected'
+
+export type ProductionBlueprintDeliverableReviewHistoryItem = {
+  id: string
+  decision: ProductionBlueprintDeliverableReviewDecision
+  actor: string
+  note: string
+  createdAt: string
+  executionRecordId?: string
+  executionId?: string
+  executionRequestId?: string
+  resultId?: string
+  workItemId?: string
+  workOrderId?: string
+  approvalId?: string
+}
+
 export type ProductionBlueprintDeliverable = {
   id: string
   name: ProductionBlueprintDeliverableName
   status: ProductionBlueprintDeliverableStatus
   content: string
+  reviewStatus: ProductionBlueprintDeliverableReviewStatus
+  activeReview: boolean
+  draftContent: string
+  approvedContent: string
+  appliedExecutionRecordId?: string
+  appliedExecutionId?: string
+  appliedExecutionRequestId?: string
+  appliedResultId?: string
+  appliedWorkItemId?: string
+  appliedWorkOrderId?: string
+  reviewApprovalId?: string
+  reviewFeedback?: string
+  rejectionReason?: string
+  reviewedAt?: string
+  reviewHistory: ProductionBlueprintDeliverableReviewHistoryItem[]
   updatedAt: string
   metadata: Record<string, string>
 }
@@ -167,3 +201,5 @@ export const productionBlueprintTypes: ProductionBlueprintType[] = ['YouTube Vid
 export const productionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = ['Title', 'Hook', 'Script', 'Description', 'Tags', 'Thumbnail Concept']
 
 export const productionBlueprintDeliverableStatuses: ProductionBlueprintDeliverableStatus[] = ['Not Started', 'Draft', 'Complete']
+
+export const productionBlueprintDeliverableReviewStatuses: ProductionBlueprintDeliverableReviewStatus[] = ['Not Ready', 'Draft', 'Approved', 'Needs Revision', 'Rejected']

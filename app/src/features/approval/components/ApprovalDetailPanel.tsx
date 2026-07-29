@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Approval } from '../types/approvalTypes'
 
 export function ApprovalDetailPanel({
@@ -24,11 +25,24 @@ export function ApprovalDetailPanel({
         {approval.sourceWorkItemId ? <Info label="Source Work Item" value={approval.relatedIssue || approval.sourceWorkItemId} /> : null}
         {approval.sourceProjectId ? <Info label="Source Project" value={approval.sourceProjectId} /> : null}
         {approval.sourceBusinessId ? <Info label="Source Business" value={approval.sourceBusinessId} /> : null}
+        {approval.sourceBlueprintDeliverableName ? <Info label="Deliverable" value={approval.sourceBlueprintDeliverableName} /> : null}
+        {approval.sourceExecutionId ? <Info label="Execution" value={approval.sourceExecutionId} /> : null}
+        {approval.sourceExecutionRequestId ? <Info label="Execution Request" value={approval.sourceExecutionRequestId} /> : null}
+        {approval.sourceReviewStatus ? <Info label="Review Status" value={approval.sourceReviewStatus} /> : null}
         <Info label="Operator" value={approval.operator} />
         <Info label="Department" value={approval.department} />
         <Info label="Risk" value={approval.risk} />
         <Info label="Effort" value={approval.effort} />
       </div>
+
+      {approval.sourceProjectId ? (
+        <div className="mt-4 rounded-xl border border-lime/20 bg-lime/[0.05] p-3">
+          <p className="m-0 text-sm leading-6 text-lime">
+            CEO review is completed from the source Project Detail page.{' '}
+            <Link to={`/projects/${approval.sourceProjectId}`} className="font-semibold text-white hover:text-lime">Open source project</Link>
+          </p>
+        </div>
+      ) : null}
 
       <div className="mt-5 grid gap-4">
         <TextBlock label="Full Recommendation Context" value={approval.description} />

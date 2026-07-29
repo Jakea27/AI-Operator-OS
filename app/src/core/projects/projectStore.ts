@@ -6,9 +6,11 @@ import {
   businessAssetTypes,
   ProductionBlueprint,
   ProductionBlueprintDeliverable,
+  ProductionBlueprintDeliverableReviewHistoryItem,
   ProjectKnowledgeEntry,
   ProjectKnowledgeWorkspace,
   productionBlueprintDeliverableNames,
+  productionBlueprintDeliverableReviewStatuses,
   productionBlueprintDeliverableStatuses,
   productionBlueprintTypes,
   projectKnowledgeSections,
@@ -163,9 +165,37 @@ function defaultBlueprintDeliverables(updatedAt: string): ProductionBlueprintDel
     name,
     status: 'Not Started',
     content: '',
+    reviewStatus: 'Not Ready',
+    activeReview: false,
+    draftContent: '',
+    approvedContent: '',
+    reviewHistory: [],
     updatedAt,
     metadata: {},
   }))
+}
+
+function normalizeReviewHistoryItem(raw: unknown): ProductionBlueprintDeliverableReviewHistoryItem | undefined {
+  if (!isRecord(raw)) return undefined
+  const decision = ['Draft Applied', 'Approved', 'Needs Revision', 'Rejected'].includes(String(raw.decision))
+    ? raw.decision as ProductionBlueprintDeliverableReviewHistoryItem['decision']
+    : undefined
+  if (!decision) return undefined
+
+  return {
+    id: normalizeString(raw.id, id('blueprint-review-history')),
+    decision,
+    actor: normalizeString(raw.actor, 'AI Operator OS'),
+    note: normalizeString(raw.note),
+    createdAt: normalizeString(raw.createdAt, now()),
+    executionRecordId: normalizeString(raw.executionRecordId) || undefined,
+    executionId: normalizeString(raw.executionId) || undefined,
+    executionRequestId: normalizeString(raw.executionRequestId) || undefined,
+    resultId: normalizeString(raw.resultId) || undefined,
+    workItemId: normalizeString(raw.workItemId) || undefined,
+    workOrderId: normalizeString(raw.workOrderId) || undefined,
+    approvalId: normalizeString(raw.approvalId) || undefined,
+  }
 }
 
 function normalizeBlueprintDeliverable(raw: unknown, fallbackName: ProductionBlueprintDeliverable['name'], updatedAt: string): ProductionBlueprintDeliverable {
@@ -176,15 +206,36 @@ function normalizeBlueprintDeliverable(raw: unknown, fallbackName: ProductionBlu
   const status = productionBlueprintDeliverableStatuses.includes(source.status as ProductionBlueprintDeliverable['status'])
     ? source.status as ProductionBlueprintDeliverable['status']
     : 'Not Started'
+  const reviewStatus = productionBlueprintDeliverableReviewStatuses.includes(source.reviewStatus as ProductionBlueprintDeliverable['reviewStatus'])
+    ? source.reviewStatus as ProductionBlueprintDeliverable['reviewStatus']
+    : 'Not Ready'
   const metadata = isRecord(source.metadata)
     ? Object.fromEntries(Object.entries(source.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
     : {}
+  const reviewHistory = Array.isArray(source.reviewHistory)
+    ? source.reviewHistory.map(normalizeReviewHistoryItem).filter((item): item is ProductionBlueprintDeliverableReviewHistoryItem => Boolean(item))
+    : []
 
   return {
     id: normalizeString(source.id, id('blueprint-deliverable')),
     name,
     status,
     content: normalizeString(source.content),
+    reviewStatus,
+    activeReview: source.activeReview === true,
+    draftContent: normalizeString(source.draftContent),
+    approvedContent: normalizeString(source.approvedContent),
+    appliedExecutionRecordId: normalizeString(source.appliedExecutionRecordId) || undefined,
+    appliedExecutionId: normalizeString(source.appliedExecutionId) || undefined,
+    appliedExecutionRequestId: normalizeString(source.appliedExecutionRequestId) || undefined,
+    appliedResultId: normalizeString(source.appliedResultId) || undefined,
+    appliedWorkItemId: normalizeString(source.appliedWorkItemId) || undefined,
+    appliedWorkOrderId: normalizeString(source.appliedWorkOrderId) || undefined,
+    reviewApprovalId: normalizeString(source.reviewApprovalId) || undefined,
+    reviewFeedback: normalizeString(source.reviewFeedback) || undefined,
+    rejectionReason: normalizeString(source.rejectionReason) || undefined,
+    reviewedAt: normalizeString(source.reviewedAt) || undefined,
+    reviewHistory,
     updatedAt: normalizeString(source.updatedAt, updatedAt),
     metadata,
   }

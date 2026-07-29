@@ -36,6 +36,13 @@ export type Approval = {
   sourceWorkItemId?: string
   sourceProjectId?: string
   sourceBusinessId?: string
+  sourceExecutionRecordId?: string
+  sourceExecutionId?: string
+  sourceExecutionRequestId?: string
+  sourceBlueprintDeliverableId?: string
+  sourceBlueprintDeliverableName?: string
+  sourceResultId?: string
+  sourceReviewStatus?: string
   decisionHistory: ApprovalDecisionHistoryItem[]
 }
 

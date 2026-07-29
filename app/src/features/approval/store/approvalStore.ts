@@ -43,6 +43,13 @@ function normalizeApproval(raw: Partial<Approval>): Approval {
     sourceWorkItemId: raw.sourceWorkItemId,
     sourceProjectId: raw.sourceProjectId,
     sourceBusinessId: raw.sourceBusinessId,
+    sourceExecutionRecordId: raw.sourceExecutionRecordId,
+    sourceExecutionId: raw.sourceExecutionId,
+    sourceExecutionRequestId: raw.sourceExecutionRequestId,
+    sourceBlueprintDeliverableId: raw.sourceBlueprintDeliverableId,
+    sourceBlueprintDeliverableName: raw.sourceBlueprintDeliverableName,
+    sourceResultId: raw.sourceResultId,
+    sourceReviewStatus: raw.sourceReviewStatus,
     decisionHistory: Array.isArray(raw.decisionHistory) ? raw.decisionHistory : [],
   }
 }

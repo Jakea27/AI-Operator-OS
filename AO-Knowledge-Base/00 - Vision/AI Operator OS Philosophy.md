@@ -92,6 +92,39 @@ A workflow should not become automatic simply because automation is possible. It
 
 The system must always support manual operation even after automation exists.
 
+## 5.1. Prove Before Autonomy
+
+AI Operator OS treats AI operators like newly trained employees.
+
+Every operator begins under supervision.
+
+Trust requires sustained, measurable performance, not isolated success or a percentage based on too few tasks.
+
+A high percentage from a tiny sample is not meaningful proof.
+
+An operator must complete a meaningful minimum number of reviewed tasks before autonomy can be considered.
+
+Future autonomy eligibility policy examples may include:
+
+- At least 100 reviewed tasks.
+- At least a 90% approval rate.
+- No unacceptable critical-error history.
+- Stable performance over time.
+- Final CEO authorization.
+
+These values are future configurable policy examples, not current implementation requirements.
+
+Autonomy must be:
+
+- Earned through proof.
+- Evaluated by task or capability where appropriate.
+- Recommended by AI Operator OS.
+- Explicitly granted by the CEO.
+
+The system must not treat a single successful AI result as permission for autonomous operation.
+
+Trust scoring, autonomy thresholds, operator report cards, and autonomous workflow behavior require future explicit architecture and CEO authorization before implementation.
+
 ## 6. Local First
 
 Business knowledge belongs to the business owner.

@@ -27,9 +27,16 @@ import {
   useProjectStore,
 } from '@/src/core/projects'
 import { buildExecutionRequestFromWorkOrder, WorkItemRecord, useWorkItemStore } from '@/src/core/workItems'
+import { useApprovalStore } from '@/src/features/approval/store/approvalStore'
+import { Approval } from '@/src/features/approval/types/approvalTypes'
 import { WorkItemCard } from '@/src/features/workItems/WorkItemCard'
 import { WorkItemForm } from '@/src/features/workItems/WorkItemForm'
 import { ProjectLifecycle } from '../components/ProjectLifecycle'
+
+type ReviewModalState = {
+  type: 'Needs Revision' | 'Fully Reject'
+  deliverableId: string
+}
 
 function formatDate(value: string) {
   if (!value) return 'Not set'
@@ -42,11 +49,16 @@ function formatDate(value: string) {
   }).format(new Date(value))
 }
 
+function reviewHistoryId() {
+  return `blueprint-review-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
 export function ProjectDetailPage() {
   const { projectId } = useParams()
   const projectStore = useProjectStore()
   const workItemStore = useWorkItemStore()
   const executionStore = useExecutionStore()
+  const approvalStore = useApprovalStore()
   const businessStore = useBusinessStore()
   const companyStructure = useCompanyStructureStore()
   const project = projectStore.projects.find((item) => item.id === projectId)
@@ -59,6 +71,8 @@ export function ProjectDetailPage() {
   const [knowledgeTags, setKnowledgeTags] = useState('')
   const [executionRequestNotice, setExecutionRequestNotice] = useState('')
   const [executingExecutionId, setExecutingExecutionId] = useState<string | undefined>()
+  const [reviewModal, setReviewModal] = useState<ReviewModalState | undefined>()
+  const [reviewNote, setReviewNote] = useState('')
 
   useEffect(() => {
     setDraft(project)
@@ -73,9 +87,11 @@ export function ProjectDetailPage() {
     return <Navigate to="/projects" replace />
   }
 
+  const activeProject = project
+  const activeDraft = draft
   const projectWorkItems = workItemStore.workItems.filter((workItem) =>
-    workItem.projectId === project.id ||
-    workItem.projectCode === project.projectId,
+    workItem.projectId === activeProject.id ||
+    workItem.projectCode === activeProject.projectId,
   )
   const projectWorkOrders = projectWorkItems.filter((workItem) => workItem.workOrder?.enabled)
   const regularProjectWorkItems = projectWorkItems.filter((workItem) => !workItem.workOrder?.enabled)
@@ -276,6 +292,11 @@ export function ProjectDetailPage() {
         name,
         status: 'Not Started',
         content: '',
+        reviewStatus: 'Not Ready',
+        activeReview: false,
+        draftContent: '',
+        approvedContent: '',
+        reviewHistory: [],
         updatedAt: timestamp,
         metadata: {},
       })),
@@ -315,6 +336,229 @@ export function ProjectDetailPage() {
           : deliverable,
       ),
     })
+  }
+
+  function persistBlueprintDeliverable(deliverableId: string, updates: Partial<ProductionBlueprintDeliverable>) {
+    const currentProject = projectStore.projects.find((item) => item.id === activeProject.id) ?? activeDraft
+    if (!currentProject) return undefined
+    const blueprint = currentProject.productionBlueprint ?? defaultProductionBlueprint(currentProject)
+    const timestamp = new Date().toISOString()
+    const nextBlueprint: ProductionBlueprint = {
+      ...blueprint,
+      updatedAt: timestamp,
+      deliverables: blueprint.deliverables.map((deliverable) =>
+        deliverable.id === deliverableId
+          ? {
+            ...deliverable,
+            ...updates,
+            updatedAt: timestamp,
+          }
+          : deliverable,
+      ),
+    }
+
+    projectStore.updateProject(currentProject.id, { productionBlueprint: nextBlueprint })
+    setDraft({ ...currentProject, productionBlueprint: nextBlueprint, updatedAt: timestamp })
+    return nextBlueprint.deliverables.find((deliverable) => deliverable.id === deliverableId)
+  }
+
+  function findReviewApproval(deliverable: ProductionBlueprintDeliverable, execution?: ExecutionRecord) {
+    return approvalStore.approvals.find((approval) =>
+      approval.id === deliverable.reviewApprovalId ||
+      (
+      approval.sourceProjectId === activeProject.id &&
+        approval.sourceBlueprintDeliverableId === deliverable.id &&
+        approval.sourceResultId === execution?.result?.resultId
+      ) ||
+      (
+        approval.sourceProjectId === activeProject.id &&
+        approval.sourceBlueprintDeliverableId === deliverable.id &&
+        approval.sourceExecutionRecordId === execution?.id
+      ),
+    )
+  }
+
+  function createDraftReviewApproval(deliverable: ProductionBlueprintDeliverable, workOrder: WorkItemRecord | undefined, execution: ExecutionRecord) {
+    const existingApproval = findReviewApproval(deliverable, execution)
+    if (existingApproval) return existingApproval
+
+    return approvalStore.addApproval({
+      title: `Review ${deliverable.name} draft for ${activeProject.name}`,
+      description: [
+        `A provider execution completed successfully and produced a draft ${deliverable.name} for CEO review.`,
+        '',
+        `Project: ${activeProject.projectId} · ${activeProject.name}`,
+        `Blueprint Deliverable: ${deliverable.name}`,
+        `Work Order: ${workOrder?.workOrder?.workOrderId ?? workOrder?.workItemId ?? execution.workOrder?.workOrderId ?? 'Not linked'}`,
+        `Execution Request: ${execution.executionRequest?.requestId ?? 'Not linked'}`,
+        `Execution Record: ${execution.executionId}`,
+        `Provider: ${execution.result?.provider?.name ?? 'Not recorded'}`,
+        `Model: ${execution.result?.model?.name ?? 'Not recorded'}`,
+      ].join('\n'),
+      submittedBy: 'AI Operator OS',
+      operator: 'System',
+      department: activeProject.departmentName,
+      relatedIssue: workOrder?.workItemId ?? execution.executionRequest?.workItemId ?? execution.executionId,
+      recommendationId: '',
+      priority: activeProject.priority,
+      effort: 'Medium',
+      risk: 'Low',
+      status: 'Pending',
+      requiresCEOApproval: true,
+      submittedAt: new Date().toISOString(),
+      businessValue: 'CEO review is required before this draft can become an approved Blueprint deliverable.',
+      supportingEvidence: [
+        `Project: ${activeProject.projectId}`,
+        `Deliverable: ${deliverable.name}`,
+        `Execution Record: ${execution.executionId}`,
+        `Execution Result: ${execution.result?.resultId ?? 'Not recorded'}`,
+        'No publishing, sending, or external action is triggered by this review.',
+      ],
+      recommendedNextAction: `Open project ${activeProject.projectId}, review the ${deliverable.name} draft, then choose Approve, Needs Revision, or Fully Reject.`,
+      sourceWorkItemId: workOrder?.id ?? execution.executionRequest?.workItemRecordId,
+      sourceProjectId: activeProject.id,
+      sourceBusinessId: activeProject.businessId,
+      sourceExecutionRecordId: execution.id,
+      sourceExecutionId: execution.executionId,
+      sourceExecutionRequestId: execution.executionRequest?.requestId,
+      sourceBlueprintDeliverableId: deliverable.id,
+      sourceBlueprintDeliverableName: deliverable.name,
+      sourceResultId: execution.result?.resultId,
+      sourceReviewStatus: 'Draft',
+    })
+  }
+
+  function applyDraftForReview(deliverable: ProductionBlueprintDeliverable, workOrder: WorkItemRecord | undefined, execution: ExecutionRecord | undefined) {
+    const responseText = execution?.result?.responseText ?? ''
+    if (!execution?.result?.success || !responseText.trim()) {
+      setExecutionRequestNotice('Draft review blocked: a successful structured execution result is required before applying a draft.')
+      return
+    }
+
+    if (deliverable.appliedResultId === execution.result.resultId) {
+      setExecutionRequestNotice(`${deliverable.name} already references this execution result. No duplicate draft application or review item was created.`)
+      return
+    }
+
+    const approval = createDraftReviewApproval(deliverable, workOrder, execution)
+    const timestamp = new Date().toISOString()
+    persistBlueprintDeliverable(deliverable.id, {
+      status: 'Draft',
+      content: responseText,
+      reviewStatus: 'Draft',
+      activeReview: true,
+      draftContent: responseText,
+      approvedContent: deliverable.approvedContent,
+      appliedExecutionRecordId: execution.id,
+      appliedExecutionId: execution.executionId,
+      appliedExecutionRequestId: execution.executionRequest?.requestId,
+      appliedResultId: execution.result.resultId,
+      appliedWorkItemId: workOrder?.id ?? execution.executionRequest?.workItemRecordId,
+      appliedWorkOrderId: workOrder?.workOrder?.workOrderId ?? execution.workOrder?.workOrderId,
+      reviewApprovalId: approval.id,
+      reviewFeedback: undefined,
+      rejectionReason: undefined,
+      reviewedAt: undefined,
+      reviewHistory: [
+        {
+          id: reviewHistoryId(),
+          decision: 'Draft Applied',
+          actor: 'AI Operator OS',
+          note: `Draft applied from ${execution.executionId} and queued for CEO review.`,
+          createdAt: timestamp,
+          executionRecordId: execution.id,
+          executionId: execution.executionId,
+          executionRequestId: execution.executionRequest?.requestId,
+          resultId: execution.result.resultId,
+          workItemId: workOrder?.id ?? execution.executionRequest?.workItemRecordId,
+          workOrderId: workOrder?.workOrder?.workOrderId ?? execution.workOrder?.workOrderId,
+          approvalId: approval.id,
+        },
+        ...deliverable.reviewHistory,
+      ],
+    })
+    setExecutionRequestNotice(`${deliverable.name} draft applied and CEO notification created in the Approval Queue.`)
+  }
+
+  function recordReviewDecision(deliverable: ProductionBlueprintDeliverable, decision: 'Approved' | 'Needs Revision' | 'Rejected', note = '') {
+    if (!deliverable.activeReview && deliverable.reviewStatus !== 'Draft') {
+      setExecutionRequestNotice(`Review decision blocked: ${deliverable.name} does not have an active draft review.`)
+      return
+    }
+
+    const timestamp = new Date().toISOString()
+    const reviewApproval = findReviewApproval(deliverable)
+    if (reviewApproval) {
+      approvalStore.updateStatus(
+        reviewApproval.id,
+        decision === 'Approved' ? 'Approved' : decision === 'Needs Revision' ? 'Changes Requested' : 'Rejected',
+        note,
+      )
+    }
+
+    persistBlueprintDeliverable(deliverable.id, {
+      status: decision === 'Approved' ? 'Complete' : 'Draft',
+      content: deliverable.draftContent || deliverable.content,
+      reviewStatus: decision,
+      activeReview: false,
+      approvedContent: decision === 'Approved' ? (deliverable.draftContent || deliverable.content) : deliverable.approvedContent,
+      reviewFeedback: decision === 'Needs Revision' ? note : deliverable.reviewFeedback,
+      rejectionReason: decision === 'Rejected' ? note : deliverable.rejectionReason,
+      reviewedAt: timestamp,
+      reviewHistory: [
+        {
+          id: reviewHistoryId(),
+          decision,
+          actor: 'CEO',
+          note: note || (decision === 'Approved'
+            ? 'Approved by CEO.'
+            : decision === 'Rejected'
+              ? 'Fully rejected by CEO.'
+              : 'Revision requested by CEO.'),
+          createdAt: timestamp,
+          executionRecordId: deliverable.appliedExecutionRecordId,
+          executionId: deliverable.appliedExecutionId,
+          executionRequestId: deliverable.appliedExecutionRequestId,
+          resultId: deliverable.appliedResultId,
+          workItemId: deliverable.appliedWorkItemId,
+          workOrderId: deliverable.appliedWorkOrderId,
+          approvalId: reviewApproval?.id ?? deliverable.reviewApprovalId,
+        },
+        ...deliverable.reviewHistory,
+      ],
+    })
+
+    const decisionLabel = decision === 'Rejected' ? 'Fully Reject' : decision
+    setExecutionRequestNotice(`${deliverable.name} review decision recorded: ${decisionLabel}.`)
+  }
+
+  function openReviewModal(type: ReviewModalState['type'], deliverable: ProductionBlueprintDeliverable) {
+    setReviewModal({ type, deliverableId: deliverable.id })
+    setReviewNote('')
+  }
+
+  function closeReviewModal() {
+    setReviewModal(undefined)
+    setReviewNote('')
+  }
+
+  function submitReviewModal() {
+    if (!reviewModal) return
+    const deliverable = activeDraft.productionBlueprint?.deliverables.find((item) => item.id === reviewModal.deliverableId)
+    if (!deliverable) {
+      setExecutionRequestNotice('Review decision blocked: Blueprint deliverable is no longer available.')
+      closeReviewModal()
+      return
+    }
+
+    const note = reviewNote.trim()
+    if (reviewModal.type === 'Needs Revision' && note.length === 0) {
+      setExecutionRequestNotice('Needs Revision requires written feedback before it can be submitted.')
+      return
+    }
+
+    recordReviewDecision(deliverable, reviewModal.type === 'Needs Revision' ? 'Needs Revision' : 'Rejected', note)
+    closeReviewModal()
   }
 
   const blueprintCompletion = useMemo(() => {
@@ -725,11 +969,16 @@ export function ProjectDetailPage() {
                       deliverable={deliverable}
                       workOrder={workOrder}
                       execution={execution}
+                      reviewApproval={findReviewApproval(deliverable, execution)}
                       executing={executingExecutionId === execution?.id}
                       onCreate={() => createWorkOrder(deliverable)}
                       onBuildRequest={() => workOrder ? buildExecutionRequest(workOrder) : undefined}
                       onCreateLifecycle={() => workOrder ? createExecutionLifecycle(workOrder) : undefined}
                       onExecuteProviderPath={() => execution ? executeProviderPath(execution) : undefined}
+                      onApplyDraft={() => applyDraftForReview(deliverable, workOrder, execution)}
+                      onApproveDraft={() => recordReviewDecision(deliverable, 'Approved')}
+                      onNeedsRevision={() => openReviewModal('Needs Revision', deliverable)}
+                      onFullyReject={() => openReviewModal('Fully Reject', deliverable)}
                     />
                   )
                 })}
@@ -793,6 +1042,15 @@ export function ProjectDetailPage() {
           </Section>
         </div>
       </div>
+      {reviewModal ? (
+        <ReviewDecisionModal
+          type={reviewModal.type}
+          note={reviewNote}
+          onChangeNote={setReviewNote}
+          onCancel={closeReviewModal}
+          onSubmit={submitReviewModal}
+        />
+      ) : null}
     </div>
   )
 }
@@ -820,24 +1078,36 @@ function WorkOrderBlueprintRow({
   deliverable,
   workOrder,
   execution,
+  reviewApproval,
   executing,
   onCreate,
   onBuildRequest,
   onCreateLifecycle,
   onExecuteProviderPath,
+  onApplyDraft,
+  onApproveDraft,
+  onNeedsRevision,
+  onFullyReject,
 }: {
   deliverable: ProductionBlueprintDeliverable
   workOrder?: WorkItemRecord
   execution?: ExecutionRecord
+  reviewApproval?: Approval
   executing?: boolean
   onCreate: () => void
   onBuildRequest: () => void
   onCreateLifecycle: () => void
   onExecuteProviderPath: () => void
+  onApplyDraft: () => void
+  onApproveDraft: () => void
+  onNeedsRevision: () => void
+  onFullyReject: () => void
 }) {
   const executionRequest = workOrder?.workOrder?.executionRequest
   const lifecycleState = execution?.requestLifecycle?.status
   const canExecuteProviderPath = Boolean(execution && lifecycleState !== 'Completed' && lifecycleState !== 'Failed')
+  const canApplyDraft = Boolean(execution?.result?.success && execution.result.responseText?.trim() && deliverable.appliedResultId !== execution.result.resultId)
+  const canReviewDraft = deliverable.activeReview && deliverable.reviewStatus === 'Draft'
 
   return (
     <article className="rounded-xl border border-line bg-ink/40 p-4">
@@ -845,7 +1115,9 @@ function WorkOrderBlueprintRow({
         <div>
           <p className="eyebrow mb-1">Blueprint Deliverable</p>
           <h4 className="m-0 font-display text-base font-semibold text-white">{deliverable.name}</h4>
-          <p className="m-0 mt-2 text-sm leading-6 text-muted">Blueprint status: {deliverable.status}</p>
+          <p className="m-0 mt-2 text-sm leading-6 text-muted">
+            Blueprint status: {deliverable.status} · Review status: {deliverable.reviewStatus}
+          </p>
         </div>
         {workOrder ? (
           <div className="flex flex-wrap gap-2">
@@ -868,6 +1140,11 @@ function WorkOrderBlueprintRow({
                       : 'Execute Provider Path'}
               </button>
             ) : null}
+            {execution?.result?.success ? (
+              <button onClick={onApplyDraft} className="btn-secondary" disabled={!canApplyDraft}>
+                {canApplyDraft ? 'Apply Draft for Review' : 'Draft Applied'}
+              </button>
+            ) : null}
           </div>
         ) : (
           <button onClick={onCreate} className="btn-primary">Create Work Order</button>
@@ -884,6 +1161,8 @@ function WorkOrderBlueprintRow({
           <Info label="Execution Request" value={executionRequest?.requestId ?? 'Not built'} />
           <Info label="Execution Lifecycle" value={execution?.requestLifecycle?.status ?? 'Not established'} />
           <Info label="Execution Core" value={execution?.executionId ?? 'Not linked'} />
+          <Info label="Review Status" value={deliverable.reviewStatus} />
+          <Info label="CEO Notification" value={reviewApproval ? reviewApproval.status : 'Not queued'} />
         </div>
       ) : (
         <div className="mt-4">
@@ -913,6 +1192,51 @@ function WorkOrderBlueprintRow({
               <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-white">{execution.result.responseText}</p>
             </div>
           ) : null}
+          {deliverable.reviewStatus !== 'Not Ready' ? (
+            <div className="mt-3 rounded-xl border border-lime/20 bg-lime/[0.04] p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="eyebrow mb-2">CEO Review</p>
+                  <p className="m-0 text-sm leading-6 text-[#d7e2dc]">
+                    {deliverable.activeReview
+                      ? 'Draft is ready for CEO review. Approve it, request written revisions, or fully reject it.'
+                      : `Latest review decision: ${deliverable.reviewStatus}.`}
+                  </p>
+                  {reviewApproval ? (
+                    <p className="m-0 mt-2 text-xs text-muted">
+                      Approval Queue item: {reviewApproval.id} · {reviewApproval.status} · <Link to="/approval" className="text-lime hover:text-white">Open Approval Queue</Link>
+                    </p>
+                  ) : (
+                    <p className="m-0 mt-2 text-xs text-muted">No active Approval Queue notification is linked.</p>
+                  )}
+                  {deliverable.reviewFeedback ? <p className="m-0 mt-2 text-xs leading-5 text-orange-200">Revision feedback: {deliverable.reviewFeedback}</p> : null}
+                  {deliverable.rejectionReason ? <p className="m-0 mt-2 text-xs leading-5 text-rose-200">Rejection reason: {deliverable.rejectionReason}</p> : null}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={onApproveDraft} className="btn-primary" disabled={!canReviewDraft}>Approve</button>
+                  <button onClick={onNeedsRevision} className="btn-secondary" disabled={!canReviewDraft}>Needs Revision</button>
+                  <button onClick={onFullyReject} className="rounded-lg border border-rose-400/30 px-3 py-2 text-xs text-rose-200 hover:border-rose-400/70 disabled:cursor-not-allowed disabled:opacity-50" disabled={!canReviewDraft}>Fully Reject</button>
+                </div>
+              </div>
+              {deliverable.reviewHistory.length > 0 ? (
+                <div className="mt-3 border-t border-line pt-3">
+                  <p className="eyebrow mb-2">Persistent Decision History</p>
+                  <div className="space-y-2">
+                    {deliverable.reviewHistory.slice(0, 3).map((item) => (
+                      <div key={item.id} className="rounded-lg border border-line bg-ink/35 p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="m-0 text-sm font-semibold text-white">{item.decision}</p>
+                          <span className="text-[10px] uppercase tracking-[0.12em] text-muted">{formatDate(item.createdAt)}</span>
+                        </div>
+                        <p className="m-0 mt-1 text-xs text-muted">Actor: {item.actor}</p>
+                        {item.note ? <p className="m-0 mt-2 text-xs leading-5 text-[#c3cbc7]">{item.note}</p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
           {execution?.result?.errorMessage ? (
             <div className="mt-3 rounded-xl border border-rose-400/25 bg-rose-400/[0.06] p-3">
               <p className="eyebrow mb-2 text-rose-200">Execution Failure</p>
@@ -922,6 +1246,59 @@ function WorkOrderBlueprintRow({
         </div>
       ) : null}
     </article>
+  )
+}
+
+function ReviewDecisionModal({
+  type,
+  note,
+  onChangeNote,
+  onCancel,
+  onSubmit,
+}: {
+  type: ReviewModalState['type']
+  note: string
+  onChangeNote: (value: string) => void
+  onCancel: () => void
+  onSubmit: () => void
+}) {
+  const isRevision = type === 'Needs Revision'
+  const title = isRevision ? 'Needs Revision' : 'Fully Reject Draft'
+  const helperText = isRevision
+    ? 'What needs to be changed? Written revision instructions are required and no AI rerun will start automatically.'
+    : 'This draft will not be revised or used. You can optionally record why it was fully rejected.'
+  const label = isRevision ? 'What needs to be changed?' : 'Optional rejection reason'
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-ink/80 p-4 backdrop-blur-sm">
+      <section className="w-full max-w-xl rounded-2xl border border-line bg-[#101714] p-5 shadow-2xl">
+        <p className="eyebrow mb-2">CEO Review Decision</p>
+        <h3 className="m-0 font-display text-xl font-semibold text-white">{title}</h3>
+        <p className="mt-2 text-sm leading-6 text-muted">{helperText}</p>
+
+        <label className="mt-4 block space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">{label}</span>
+          <textarea
+            value={note}
+            onChange={(event) => onChangeNote(event.target.value)}
+            className="field min-h-[120px]"
+            placeholder={isRevision ? 'Describe the required changes before another draft is produced.' : 'Optional: explain why this draft is rejected.'}
+          />
+        </label>
+
+        <div className="mt-4 flex flex-wrap justify-end gap-2">
+          <button onClick={onCancel} className="btn-secondary" type="button">Cancel</button>
+          <button
+            onClick={onSubmit}
+            className={isRevision ? 'btn-primary' : 'rounded-lg border border-rose-400/30 px-4 py-2 text-sm font-semibold text-rose-200 hover:border-rose-400/70 disabled:cursor-not-allowed disabled:opacity-50'}
+            type="button"
+            disabled={isRevision && note.trim().length === 0}
+          >
+            {isRevision ? 'Submit Revision Request' : 'Fully Reject'}
+          </button>
+        </div>
+      </section>
+    </div>
   )
 }
 
@@ -938,6 +1315,7 @@ function BlueprintDeliverableEditor({
         <div>
           <p className="eyebrow mb-1">Deliverable</p>
           <h4 className="m-0 font-display text-base font-semibold text-white">{deliverable.name}</h4>
+          <p className="m-0 mt-2 text-sm leading-6 text-muted">Review status: {deliverable.reviewStatus}</p>
         </div>
         <label className="min-w-[180px] space-y-2">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Status</span>
@@ -955,7 +1333,12 @@ function BlueprintDeliverableEditor({
           placeholder={`Draft ${deliverable.name.toLowerCase()} requirements here.`}
         />
       </label>
-      <p className="m-0 mt-3 text-xs text-muted">Updated {formatDate(deliverable.updatedAt)}</p>
+      {deliverable.reviewFeedback ? <p className="m-0 mt-3 text-xs leading-5 text-orange-200">Revision feedback: {deliverable.reviewFeedback}</p> : null}
+      {deliverable.rejectionReason ? <p className="m-0 mt-3 text-xs leading-5 text-rose-200">Rejection reason: {deliverable.rejectionReason}</p> : null}
+      <p className="m-0 mt-3 text-xs text-muted">
+        Updated {formatDate(deliverable.updatedAt)}
+        {deliverable.reviewedAt ? ` · Reviewed ${formatDate(deliverable.reviewedAt)}` : ''}
+      </p>
     </article>
   )
 }
