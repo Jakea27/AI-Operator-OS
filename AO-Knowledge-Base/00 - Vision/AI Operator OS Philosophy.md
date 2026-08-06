@@ -125,6 +125,20 @@ The system must not treat a single successful AI result as permission for autono
 
 Trust scoring, autonomy thresholds, operator report cards, and autonomous workflow behavior require future explicit architecture and CEO authorization before implementation.
 
+## 5.2. Capabilities Are Earned, Not Granted
+
+AI Operator OS must treat operational capability as something earned over time, not granted globally by default.
+
+Operators should eventually unlock individual capabilities through reviewed work history, demonstrated reliability, and CEO-approved policy.
+
+Autonomy is not a single switch.
+
+Future capability eligibility may be scoped by task, workflow, capability, operator, department, asset type, or another approved boundary.
+
+This philosophy is architectural guidance only until a future sprint explicitly authorizes capability unlocking implementation.
+
+No sprint may implement capability unlocking, trust scoring, autonomous permissions, or self-improving operator authority unless current authoritative documentation explicitly approves that work.
+
 ## 6. Local First
 
 Business knowledge belongs to the business owner.

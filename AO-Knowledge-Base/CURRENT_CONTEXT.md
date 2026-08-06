@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 014 Task 8 - Architecture Discussion and Definition.
+The current focus is Sprint 014 Task 8 - Revision Execution Foundation.
 
 Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is active. Sprint 014 Task 1 - Business Asset Foundation is complete, internal QA passed, CEO QA passed, and repository verification passed. Sprint 014 Task 2 - Knowledge Workspace Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 3 - Production Blueprint Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 4 is officially named Work Order and Execution Request Foundation, corrected architecture freeze verification passed, architecture is frozen, implementation is complete, automated QA passed, QA test data preparation passed, CEO QA passed, documentation is complete, repository verification passed, commit is complete, and push is complete. Sprint 014 Task 5 - Execution Lifecycle Foundation implementation is complete, automated QA passed, QA test data passed, CEO QA passed, documentation is complete, repository verification passed, commit is complete, push is complete, startup verification passed, transition gate is ready, and task status is complete. Sprint 014 Task 6 - Provider Execution Foundation is complete after proving the provider-independent Work Order -> Execution Request -> Execution Core -> Capability Resolver -> Provider Manager -> Local Ollama -> Structured Execution Result path, verifying persistence and restart persistence, preserving ownership boundaries, and introducing no duplicate execution architecture. Sprint 014 Task 7 - Human Review Foundation is complete after implementing draft application, CEO notification through Approval Queue, Approve / Needs Revision / Fully Reject decisions, persistent decision history, persistence verification, restart verification, and CEO QA PASS.
 
@@ -45,7 +45,7 @@ Sprint 013 - AI Provider Integration.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 014 Task 8 architecture discussion and definition.
+- Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 - Preserve the completed Sprint 014 Task 6 provider-independent execution path through the existing Work Order, Execution Request, Execution Core, Capability Resolver, Provider Manager, Provider Store, and local Ollama provider architecture.
 - Preserve the completed Task 7 human review boundary: Execution Completed -> Draft Applied to Deliverable -> CEO Notification -> CEO Review -> Approve / Needs Revision / Fully Reject -> Persistent Decision History.
 - Align Sprint 014 around the Creative Production Engine rather than a YouTube-specific workflow.
@@ -75,7 +75,12 @@ Sprint 013 - AI Provider Integration.
 - Task 7 reuses Project Store / Production Blueprint for deliverable draft, review status, approved content, and metadata; Execution Core for raw result and execution history; Approval Queue for human review decisions and decision history; and existing attention routing for simple CEO notification.
 - Task 7 CEO QA passed. QA verified Approve, Needs Revision, Fully Reject, notification navigation, persistence, restart persistence, no duplicate notifications for the same draft result, and no unrelated production data modification.
 - Task 7 did not add automatic AI revisions, retries, publishing, sending, external platform actions, trust scoring, executable autonomy thresholds, operator report cards, department managers, priority notification tiers, notification batching, AI self-learning, new orchestration abstractions, duplicate stores, or autonomous behavior.
-- Sprint 014 Task 8 has not been formally defined in the authoritative roadmap. The next action is Task 8 architecture discussion and definition before implementation.
+- Sprint 014 Task 8 is formally defined as Revision Execution Foundation. It transforms a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability.
+- Task 8 revision execution is MANUAL ONLY. Implementation is not authorized until architecture freeze verification passes.
+- Task 8 must reuse Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core / Execution Store, Approval Queue, existing persistence, and existing notification routing.
+- Task 8 must not create new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, cross-department automation, multi-agent orchestration, or duplicate workflows.
+- Task 8 lineage must remain reconstructable: original draft, original execution, original review, revision instructions, revision Work Order, revision Execution Request, revision execution, revised draft, and later review decisions must be linked by reference.
+- Prove Before Autonomy and Capabilities Are Earned, Not Granted remain authoritative. Capability unlocking is intentionally deferred.
 - Sprint 013 Task 1 created the local-first provider architecture foundation.
 - Sprint 013 Task 2 created the Provider Manager coordination service.
 - Sprint 013 Task 1, Task 2, and Task 3 passed CEO QA and are committed and pushed.
@@ -502,7 +507,11 @@ Persistent Decision History
 
 Task 7 CEO QA passed. Persistence and restart persistence were verified. No publishing, autonomy, automatic revision, or duplicate architecture was added.
 
-Next required action: Begin Sprint 014 Task 8 architecture discussion and definition.
+Task 8 - Revision Execution Foundation is documentation-aligned.
+
+Task 8 current policy: manual execution only.
+
+Task 8 next required action: Perform architecture freeze verification before implementation.
 
 ## User Workflow Preferences
 

@@ -6,11 +6,11 @@ ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY.
 
 ## Phase
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Current Task
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Mission Statement
 
@@ -20,7 +20,7 @@ The initial implementation will support YouTube content, while the architecture 
 
 ## Objective
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Begin Sprint 014 Task 8 implementation only after documentation alignment, architecture freeze verification, repository refresh, and CEO authorization.
 
 Sprint 014 is intended to establish the Creative Production Engine as a reusable early-revenue workflow foundation while preserving the approved architecture.
 
@@ -735,12 +735,19 @@ Task 3 does not add:
 - Sprint 014 Task 7 Persistence Verification: PASS.
 - Sprint 014 Task 7 Restart Verification: PASS.
 - Sprint 014 Task 7 Status: COMPLETE.
-- Sprint 014 Task 8 Status: NOT DEFINED.
-- Sprint 014 Task 8 Next Action: Architecture discussion and definition required before implementation.
+- Sprint 014 Task 8 Name: Revision Execution Foundation.
+- Sprint 014 Task 8 Objective: Transform a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability.
+- Sprint 014 Task 8 Policy: MANUAL EXECUTION ONLY.
+- Sprint 014 Task 8 Architecture: Reuse existing Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core, Approval Queue, existing persistence, and existing notification routing.
+- Sprint 014 Task 8 Lineage Rule: Original draft, original execution, original review, revision instructions, revision Work Order, revision Execution Request, revision execution, revised draft, and later review decisions must remain reconstructable by reference.
+- Sprint 014 Task 8 History Rule: Revision history must never overwrite prior history. Original Execution Core records remain immutable. New revision attempts become new Work Orders and Execution Requests linked to the originals.
+- Sprint 014 Task 8 Exclusions: No new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, or duplicate workflows.
+- Sprint 014 Task 8 Status: DOCUMENTATION ALIGNED / IMPLEMENTATION NOT AUTHORIZED.
+- Sprint 014 Task 8 Next Action: Architecture freeze verification before implementation.
 
 ## Next Required Action
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Task 5 - Execution Lifecycle Foundation
 
@@ -976,8 +983,8 @@ Task 6 verified that:
 - CEO QA: PASS.
 - Documentation: COMPLETE.
 - Task Status: COMPLETE.
-- Current Task: Sprint 014 Task 8 - Architecture Discussion and Definition.
-- Next Required Action: Begin Sprint 014 Task 8 architecture discussion and definition.
+- Current Task: Sprint 014 Task 8 - Revision Execution Foundation.
+- Next Required Action: Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Task 7 - Human Review Foundation
 
@@ -1280,5 +1287,186 @@ Task 7 explicitly did not add:
 
 ### Current Handoff
 
-- Current Task: Sprint 014 Task 8 - Architecture Discussion and Definition.
-- Next Required Action: Begin Sprint 014 Task 8 architecture discussion and definition.
+- Current Task: Sprint 014 Task 8 - Revision Execution Foundation.
+- Next Required Action: Perform Sprint 014 Task 8 architecture freeze verification before implementation.
+
+## Task 8 - Revision Execution Foundation
+
+### Official Objective
+
+Design the architecture required to transform a CEO Needs Revision decision into a controlled revision execution while preserving complete execution history, review history, and deliverable lineage.
+
+Revision execution is manual only during Task 8.
+
+Task 8 must remain fully human-controlled and must not introduce autonomous behavior.
+
+### Approved Revision Workflow
+
+```text
+Draft Deliverable
+↓
+CEO selects Needs Revision
+↓
+CEO provides revision instructions
+↓
+Revision Execution Request created
+↓
+Revision Execution performed manually
+↓
+Revised Draft created
+↓
+CEO receives a new review notification
+↓
+Approve / Needs Revision / Reject
+```
+
+### Architecture Reuse Decision
+
+Task 8 must reuse existing architecture:
+
+- Project Store.
+- Production Blueprint.
+- Work Item Store.
+- Work Orders.
+- Execution Request Builder.
+- Execution Requests.
+- Execution Core / Execution Store.
+- Approval Queue.
+- Existing local-first persistence.
+- Existing notification / attention routing.
+
+Task 8 must not create:
+
+- Revision Store.
+- Workflow Store.
+- Execution Store replacement.
+- New workflow engine.
+- New execution engine.
+- Scheduler.
+- Orchestrator.
+- Request Queue.
+- Execution Queue.
+- Duplicate notification routing.
+- Duplicate approval workflow.
+
+### Ownership Boundaries
+
+Project Store / Production Blueprint owns:
+
+- Deliverable content.
+- Draft content.
+- Approved content.
+- Review status.
+- Deliverable review history.
+- Deliverable lineage references.
+
+Work Item Store owns:
+
+- Original Work Orders.
+- Revision Work Orders.
+- Business-facing work status.
+
+Execution Request owns:
+
+- Provider-independent request metadata.
+- Capability.
+- Context references.
+- Revision source references.
+
+Execution Core owns:
+
+- Original execution records.
+- Revision execution records.
+- Lifecycle.
+- Timing.
+- Logs.
+- Failures.
+- Structured execution results.
+- Execution history.
+
+Approval Queue owns:
+
+- CEO review surface.
+- Original review decisions.
+- Needs Revision feedback.
+- Rejection decisions.
+- Approval state.
+- Decision history.
+
+Existing notification routing owns:
+
+- CEO attention routing for revised drafts.
+- Links to the correct review item.
+
+### Revision Lineage Rules
+
+Revision lineage must remain reconstructable from documentation and persisted records.
+
+Task 8 must preserve:
+
+- Original draft.
+- Original execution.
+- Original review.
+- Revision instructions.
+- Revision Work Order.
+- Revision Execution Request.
+- Revision execution.
+- Revised draft.
+- Complete review history.
+- Complete execution history.
+
+No history may be overwritten.
+
+Original Execution Core records remain immutable.
+
+Every revision attempt must become a new Work Order and a new Execution Request linked to the original draft, original review decision, and original execution record.
+
+### Execution Policy
+
+Current execution policy:
+
+- Manual execution only.
+
+Future execution policies may include trusted operators or autonomous departments, but Task 8 must not implement them.
+
+Task 8 may preserve architecture hooks that allow future policy evaluation by task, workflow, capability, operator, department, or asset type, but capability unlocking remains intentionally deferred.
+
+### Permanent Philosophy
+
+Task 8 must preserve Prove Before Autonomy.
+
+AI operators begin under supervision. Trust must be earned through documented performance and sufficient reviewed task history.
+
+Task 8 must also preserve Capabilities Are Earned, Not Granted.
+
+Operators may eventually unlock individual capabilities over time, but Task 8 must not implement capability unlocking.
+
+Autonomy is not a single switch.
+
+### Explicit Non-Goals
+
+Task 8 does not authorize:
+
+- Trust scoring.
+- Capability unlocking.
+- Self-improvement.
+- Automatic revisions.
+- Autonomous behavior.
+- Publishing.
+- Scheduling.
+- Background workers.
+- Cross-department automation.
+- Multi-agent orchestration.
+- New stores.
+- New workflow engines.
+- New execution engines.
+- Scheduler.
+- Orchestration changes.
+- Duplicate workflows.
+
+### Architecture Status
+
+- Documentation Alignment: COMPLETE.
+- Architecture Review: PASS.
+- Architecture Freeze Verification: REQUIRED BEFORE IMPLEMENTATION.
+- Implementation: NOT AUTHORIZED until architecture freeze verification passes.

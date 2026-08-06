@@ -28,15 +28,15 @@ Sprint 014 - Early Revenue Foundation
 
 ## Sprint Status
 
-ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY.
+ACTIVE - TASK 8 DOCUMENTATION ALIGNED / ARCHITECTURE FREEZE READY.
 
 ## Current Phase
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Current Task
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Last Completed Sprint
 
@@ -48,7 +48,7 @@ To be defined after Sprint 014 planning.
 
 ## Current Objective
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Roadmap Planning Note
 
@@ -56,7 +56,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Blocking Issues
 
@@ -76,12 +76,12 @@ Sprint 014 Task 7 - Human Review Foundation is COMPLETE. CEO QA passed after con
 
 ## Last Updated
 
-2026-07-29
+2026-08-02
 
 ## Current Sprint Verification
 
 - Sprint: Sprint 014
-- Status: ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY
+- Status: ACTIVE - TASK 8 DOCUMENTATION ALIGNED / ARCHITECTURE FREEZE READY
 - Previous Sprint: Sprint 012 CLOSED
 - Sprint 012 Implementation: COMPLETE
 - Sprint 012 Internal QA: PASS
@@ -156,7 +156,7 @@ Sprint 014 Task 7 - Human Review Foundation is COMPLETE. CEO QA passed after con
 - Sprint 013 Git Push: PUSHED
 - Sprint 013 Closeout: COMPLETE
 - Sprint 013 Status: CLOSED
-- Sprint 014 Status: ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY
+- Sprint 014 Status: ACTIVE - TASK 8 DOCUMENTATION ALIGNED / ARCHITECTURE FREEZE READY
 - Sprint 014 Task 1 Implementation: COMPLETE
 - Sprint 014 Task 1 Internal QA: PASS
 - Sprint 014 Task 1 CEO QA: PASS
@@ -246,8 +246,19 @@ Sprint 014 Task 7 - Human Review Foundation is COMPLETE. CEO QA passed after con
 - Sprint 014 Task 7 QA Cleanup: Temporary deterministic `QA-T7` records were used for CEO QA and may be removed after review if desired; no repository cleanup is required
 - Sprint 014 Task 7 Known Limitations: Automatic revision after Needs Revision, publishing/export packaging, trust scoring, autonomy eligibility logic, and operator report cards remain deferred future work requiring explicit CEO authorization
 - Sprint 014 Task 7 Status: COMPLETE
-- Sprint 014 Task 8 Status: NOT DEFINED
-- Sprint 014 Task 8 Next Action: Architecture discussion and definition required before implementation
+- Sprint 014 Task 8 Name: Revision Execution Foundation
+- Sprint 014 Task 8 Objective: Transform a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability
+- Sprint 014 Task 8 Revision Policy: MANUAL EXECUTION ONLY
+- Sprint 014 Task 8 Architecture Reuse: Existing Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core / Execution Store, Approval Queue, existing persistence, and existing notification routing must be reused
+- Sprint 014 Task 8 Ownership: Project Store / Production Blueprint owns deliverable content, draft content, approved content, review status, deliverable review history, and lineage references; Work Item Store owns original and revision Work Orders; Execution Request owns provider-independent request metadata, capability, context references, and revision source references; Execution Core owns original/revision execution records, lifecycle, timing, logs, failures, structured results, and execution history; Approval Queue owns CEO review surface, review decisions, revision feedback, rejection decisions, approval state, and decision history; existing notification routing owns CEO attention routing
+- Sprint 014 Task 8 Lineage Rule: Original draft, original execution, original review, revision instructions, revision Work Order, revision Execution Request, revision execution, revised draft, later review decisions, and all references must remain reconstructable
+- Sprint 014 Task 8 History Rule: Revision history must never overwrite prior history. Original Execution Core records remain immutable. New revision attempts become new Work Orders and Execution Requests linked to the originals.
+- Sprint 014 Task 8 Exclusions: No new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, cross-department automation, multi-agent orchestration, or duplicate workflows
+- Sprint 014 Task 8 Philosophy: Prove Before Autonomy and Capabilities Are Earned, Not Granted remain authoritative; capability unlocking is intentionally deferred
+- Sprint 014 Task 8 Documentation Alignment: COMPLETE
+- Sprint 014 Task 8 Implementation: NOT AUTHORIZED
+- Sprint 014 Task 8 Status: ARCHITECTURE FREEZE READY
+- Sprint 014 Task 8 Next Action: Architecture freeze verification before implementation
 
 ## Continuity Document Pointers
 

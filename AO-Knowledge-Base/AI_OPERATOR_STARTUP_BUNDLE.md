@@ -4,7 +4,7 @@
 
 ## Bundle Metadata
 
-- Bundle generation date: 2026-07-29
+- Bundle generation date: 2026-08-03
 - Continuity System Version: 1.1
 - Project Version: 0.1.0-alpha
 - Current Sprint: Sprint 014 - Early Revenue Foundation
@@ -884,6 +884,20 @@ The system must not treat a single successful AI result as permission for autono
 
 Trust scoring, autonomy thresholds, operator report cards, and autonomous workflow behavior require future explicit architecture and CEO authorization before implementation.
 
+## 5.2. Capabilities Are Earned, Not Granted
+
+AI Operator OS must treat operational capability as something earned over time, not granted globally by default.
+
+Operators should eventually unlock individual capabilities through reviewed work history, demonstrated reliability, and CEO-approved policy.
+
+Autonomy is not a single switch.
+
+Future capability eligibility may be scoped by task, workflow, capability, operator, department, asset type, or another approved boundary.
+
+This philosophy is architectural guidance only until a future sprint explicitly authorizes capability unlocking implementation.
+
+No sprint may implement capability unlocking, trust scoring, autonomous permissions, or self-improving operator authority unless current authoritative documentation explicitly approves that work.
+
 ## 6. Local First
 
 Business knowledge belongs to the business owner.
@@ -1499,6 +1513,16 @@ Autonomy must be recommended by the operating system and explicitly granted by t
 
 No task may implement trust scoring, executable autonomy thresholds, operator report cards, self-learning autonomy, or autonomous workflow behavior unless those concepts are explicitly authorized by current sprint documentation.
 
+## Capabilities Are Earned, Not Granted
+
+Operators must not receive broad autonomous capability by default.
+
+Future operator capability expansion should be earned through reviewed work history, sustained performance, bounded scope, and explicit CEO authorization.
+
+Autonomy is not a single switch. Future policies may evaluate autonomy by task, workflow, capability, operator, department, asset type, or another approved boundary.
+
+Capability unlocking remains deferred future work. Current tasks may preserve architecture hooks for future capability policies, but must not implement capability unlocking unless current sprint documentation explicitly authorizes it.
+
 ## Future Evolution
 
 This file should eventually include automation safety levels, approval requirements, execution rules, monitoring standards, and rollback expectations.
@@ -1713,15 +1737,15 @@ Sprint 014 - Early Revenue Foundation
 
 ## Sprint Status
 
-ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY.
+ACTIVE - TASK 8 DOCUMENTATION ALIGNED / ARCHITECTURE FREEZE READY.
 
 ## Current Phase
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Current Task
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Last Completed Sprint
 
@@ -1733,7 +1757,7 @@ To be defined after Sprint 014 planning.
 
 ## Current Objective
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Roadmap Planning Note
 
@@ -1741,7 +1765,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Blocking Issues
 
@@ -1761,12 +1785,12 @@ Sprint 014 Task 7 - Human Review Foundation is COMPLETE. CEO QA passed after con
 
 ## Last Updated
 
-2026-07-29
+2026-08-02
 
 ## Current Sprint Verification
 
 - Sprint: Sprint 014
-- Status: ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY
+- Status: ACTIVE - TASK 8 DOCUMENTATION ALIGNED / ARCHITECTURE FREEZE READY
 - Previous Sprint: Sprint 012 CLOSED
 - Sprint 012 Implementation: COMPLETE
 - Sprint 012 Internal QA: PASS
@@ -1841,7 +1865,7 @@ Sprint 014 Task 7 - Human Review Foundation is COMPLETE. CEO QA passed after con
 - Sprint 013 Git Push: PUSHED
 - Sprint 013 Closeout: COMPLETE
 - Sprint 013 Status: CLOSED
-- Sprint 014 Status: ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY
+- Sprint 014 Status: ACTIVE - TASK 8 DOCUMENTATION ALIGNED / ARCHITECTURE FREEZE READY
 - Sprint 014 Task 1 Implementation: COMPLETE
 - Sprint 014 Task 1 Internal QA: PASS
 - Sprint 014 Task 1 CEO QA: PASS
@@ -1931,8 +1955,19 @@ Sprint 014 Task 7 - Human Review Foundation is COMPLETE. CEO QA passed after con
 - Sprint 014 Task 7 QA Cleanup: Temporary deterministic `QA-T7` records were used for CEO QA and may be removed after review if desired; no repository cleanup is required
 - Sprint 014 Task 7 Known Limitations: Automatic revision after Needs Revision, publishing/export packaging, trust scoring, autonomy eligibility logic, and operator report cards remain deferred future work requiring explicit CEO authorization
 - Sprint 014 Task 7 Status: COMPLETE
-- Sprint 014 Task 8 Status: NOT DEFINED
-- Sprint 014 Task 8 Next Action: Architecture discussion and definition required before implementation
+- Sprint 014 Task 8 Name: Revision Execution Foundation
+- Sprint 014 Task 8 Objective: Transform a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability
+- Sprint 014 Task 8 Revision Policy: MANUAL EXECUTION ONLY
+- Sprint 014 Task 8 Architecture Reuse: Existing Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core / Execution Store, Approval Queue, existing persistence, and existing notification routing must be reused
+- Sprint 014 Task 8 Ownership: Project Store / Production Blueprint owns deliverable content, draft content, approved content, review status, deliverable review history, and lineage references; Work Item Store owns original and revision Work Orders; Execution Request owns provider-independent request metadata, capability, context references, and revision source references; Execution Core owns original/revision execution records, lifecycle, timing, logs, failures, structured results, and execution history; Approval Queue owns CEO review surface, review decisions, revision feedback, rejection decisions, approval state, and decision history; existing notification routing owns CEO attention routing
+- Sprint 014 Task 8 Lineage Rule: Original draft, original execution, original review, revision instructions, revision Work Order, revision Execution Request, revision execution, revised draft, later review decisions, and all references must remain reconstructable
+- Sprint 014 Task 8 History Rule: Revision history must never overwrite prior history. Original Execution Core records remain immutable. New revision attempts become new Work Orders and Execution Requests linked to the originals.
+- Sprint 014 Task 8 Exclusions: No new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, cross-department automation, multi-agent orchestration, or duplicate workflows
+- Sprint 014 Task 8 Philosophy: Prove Before Autonomy and Capabilities Are Earned, Not Granted remain authoritative; capability unlocking is intentionally deferred
+- Sprint 014 Task 8 Documentation Alignment: COMPLETE
+- Sprint 014 Task 8 Implementation: NOT AUTHORIZED
+- Sprint 014 Task 8 Status: ARCHITECTURE FREEZE READY
+- Sprint 014 Task 8 Next Action: Architecture freeze verification before implementation
 
 ## Continuity Document Pointers
 
@@ -2015,13 +2050,13 @@ Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Found
 
 ## Next Phase
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Current Sprint Implementation Status
 
 Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 Task 1 through Task 8 implementation/closeout preparation, internal QA, documentation, commit, and push are COMPLETE. Sprint 013 final CEO QA is PASS. Sprint 013 is CLOSED. Sprint 014 Task 1 implementation, internal QA, CEO QA, documentation, and repository verification are COMPLETE. Sprint 014 Task 2 implementation, internal QA, CEO QA, and documentation are COMPLETE. Sprint 014 Task 2 repository verification is PENDING. Sprint 014 Task 3 implementation, internal QA, CEO QA, and documentation are COMPLETE. Sprint 014 Task 3 repository verification is PENDING. Sprint 014 Task 4 - Work Order and Execution Request Foundation corrected architecture alignment is COMPLETE, Step 1.4B Corrected Architecture Freeze Verification is PASS, Step 1.5 Implementation is COMPLETE, automated QA is PASS, QA test data preparation is PASS, CEO QA is PASS, documentation is COMPLETE, repository verification is PASS, commit is COMPLETE, and push is COMPLETE. Sprint 014 Task 5 - Execution Lifecycle Foundation implementation is COMPLETE, automated QA is PASS, QA test data is PASS, CEO QA is PASS, documentation is COMPLETE, repository verification is PASS, commit is COMPLETE, push is COMPLETE, startup verification is PASS, transition gate is READY, and task status is COMPLETE. Sprint 014 Task 6 - Provider Execution Foundation implementation is COMPLETE, automated QA is PASS, QA test data is PASS, CEO QA is PASS, documentation is COMPLETE, persistence verification is PASS, restart persistence verification is PASS, duplicate execution architecture verification is PASS, ownership boundary verification is PASS, and task status is COMPLETE. Sprint 014 Task 7 - Human Review Foundation implementation is COMPLETE, build verification is PASS, CEO QA is PASS, documentation is COMPLETE, persistence verification is PASS, restart persistence verification is PASS, notification navigation verification is PASS, duplicate notification prevention verification is PASS, and task status is COMPLETE.
 
-Sprint 014 Task 8 - Architecture Discussion and Definition is the next phase. Task 7 is complete and preserved the supervised human review boundary after provider execution.
+Sprint 014 Task 8 - Revision Execution Foundation is the next phase. Task 7 is complete and preserved the supervised human review boundary after provider execution. Task 8 is documentation-aligned and requires architecture freeze verification before implementation.
 
 Task 6 proved one complete provider-independent execution path through existing architecture only:
 
@@ -2038,6 +2073,22 @@ Task 7 should reuse existing architecture only. Execution Core owns raw executio
 Task 7 must not add automatic AI revisions, automatic retries, publishing, sending, external platform actions, trust scoring, executable autonomy thresholds, operator report cards, department managers, priority notification tiers, notification batching, AI self-learning, new orchestration abstractions, duplicate stores, or autonomous operation.
 
 Task 7 architecture freeze is COMPLETE. Task 7 implementation is COMPLETE. Task 7 CEO QA is PASS.
+
+Task 8 official objective:
+
+Transform a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability.
+
+Task 8 revision workflow:
+
+Draft Deliverable -> CEO selects Needs Revision -> CEO provides revision instructions -> Revision Execution Request created -> Revision Execution performed manually -> Revised Draft created -> CEO receives a new review notification -> Approve / Needs Revision / Reject.
+
+Task 8 must reuse the existing Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core / Execution Store, Approval Queue, existing persistence, and existing notification routing.
+
+Task 8 must not add new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, cross-department automation, multi-agent orchestration, or duplicate workflows.
+
+Task 8 lineage must remain reconstructable by reference. Revision history must never overwrite prior history. Original Execution Core records remain immutable. New revision attempts become new Work Orders and Execution Requests linked to the originals.
+
+Task 8 implementation is NOT AUTHORIZED until architecture freeze verification passes.
 
 ## Current Sprint QA Status
 
@@ -2225,7 +2276,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 014 Task 8 - Architecture Discussion and Definition.
+The current focus is Sprint 014 Task 8 - Revision Execution Foundation.
 
 Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is active. Sprint 014 Task 1 - Business Asset Foundation is complete, internal QA passed, CEO QA passed, and repository verification passed. Sprint 014 Task 2 - Knowledge Workspace Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 3 - Production Blueprint Foundation is complete, internal QA passed, CEO QA passed, and repository verification is pending. Sprint 014 Task 4 is officially named Work Order and Execution Request Foundation, corrected architecture freeze verification passed, architecture is frozen, implementation is complete, automated QA passed, QA test data preparation passed, CEO QA passed, documentation is complete, repository verification passed, commit is complete, and push is complete. Sprint 014 Task 5 - Execution Lifecycle Foundation implementation is complete, automated QA passed, QA test data passed, CEO QA passed, documentation is complete, repository verification passed, commit is complete, push is complete, startup verification passed, transition gate is ready, and task status is complete. Sprint 014 Task 6 - Provider Execution Foundation is complete after proving the provider-independent Work Order -> Execution Request -> Execution Core -> Capability Resolver -> Provider Manager -> Local Ollama -> Structured Execution Result path, verifying persistence and restart persistence, preserving ownership boundaries, and introducing no duplicate execution architecture. Sprint 014 Task 7 - Human Review Foundation is complete after implementing draft application, CEO notification through Approval Queue, Approve / Needs Revision / Fully Reject decisions, persistent decision history, persistence verification, restart verification, and CEO QA PASS.
 
@@ -2262,7 +2313,7 @@ Sprint 013 - AI Provider Integration.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 014 Task 8 architecture discussion and definition.
+- Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 - Preserve the completed Sprint 014 Task 6 provider-independent execution path through the existing Work Order, Execution Request, Execution Core, Capability Resolver, Provider Manager, Provider Store, and local Ollama provider architecture.
 - Preserve the completed Task 7 human review boundary: Execution Completed -> Draft Applied to Deliverable -> CEO Notification -> CEO Review -> Approve / Needs Revision / Fully Reject -> Persistent Decision History.
 - Align Sprint 014 around the Creative Production Engine rather than a YouTube-specific workflow.
@@ -2292,7 +2343,12 @@ Sprint 013 - AI Provider Integration.
 - Task 7 reuses Project Store / Production Blueprint for deliverable draft, review status, approved content, and metadata; Execution Core for raw result and execution history; Approval Queue for human review decisions and decision history; and existing attention routing for simple CEO notification.
 - Task 7 CEO QA passed. QA verified Approve, Needs Revision, Fully Reject, notification navigation, persistence, restart persistence, no duplicate notifications for the same draft result, and no unrelated production data modification.
 - Task 7 did not add automatic AI revisions, retries, publishing, sending, external platform actions, trust scoring, executable autonomy thresholds, operator report cards, department managers, priority notification tiers, notification batching, AI self-learning, new orchestration abstractions, duplicate stores, or autonomous behavior.
-- Sprint 014 Task 8 has not been formally defined in the authoritative roadmap. The next action is Task 8 architecture discussion and definition before implementation.
+- Sprint 014 Task 8 is formally defined as Revision Execution Foundation. It transforms a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability.
+- Task 8 revision execution is MANUAL ONLY. Implementation is not authorized until architecture freeze verification passes.
+- Task 8 must reuse Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core / Execution Store, Approval Queue, existing persistence, and existing notification routing.
+- Task 8 must not create new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, cross-department automation, multi-agent orchestration, or duplicate workflows.
+- Task 8 lineage must remain reconstructable: original draft, original execution, original review, revision instructions, revision Work Order, revision Execution Request, revision execution, revised draft, and later review decisions must be linked by reference.
+- Prove Before Autonomy and Capabilities Are Earned, Not Granted remain authoritative. Capability unlocking is intentionally deferred.
 - Sprint 013 Task 1 created the local-first provider architecture foundation.
 - Sprint 013 Task 2 created the Provider Manager coordination service.
 - Sprint 013 Task 1, Task 2, and Task 3 passed CEO QA and are committed and pushed.
@@ -2719,7 +2775,11 @@ Persistent Decision History
 
 Task 7 CEO QA passed. Persistence and restart persistence were verified. No publishing, autonomy, automatic revision, or duplicate architecture was added.
 
-Next required action: Begin Sprint 014 Task 8 architecture discussion and definition.
+Task 8 - Revision Execution Foundation is documentation-aligned.
+
+Task 8 current policy: manual execution only.
+
+Task 8 next required action: Perform architecture freeze verification before implementation.
 
 ## User Workflow Preferences
 
@@ -2751,11 +2811,11 @@ ACTIVE - TASK 7 COMPLETE / TASK 8 DEFINITION READY.
 
 ## Phase
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Current Task
 
-Sprint 014 Task 8 - Architecture Discussion and Definition.
+Sprint 014 Task 8 - Revision Execution Foundation.
 
 ## Mission Statement
 
@@ -2765,7 +2825,7 @@ The initial implementation will support YouTube content, while the architecture 
 
 ## Objective
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Begin Sprint 014 Task 8 implementation only after documentation alignment, architecture freeze verification, repository refresh, and CEO authorization.
 
 Sprint 014 is intended to establish the Creative Production Engine as a reusable early-revenue workflow foundation while preserving the approved architecture.
 
@@ -3480,12 +3540,19 @@ Task 3 does not add:
 - Sprint 014 Task 7 Persistence Verification: PASS.
 - Sprint 014 Task 7 Restart Verification: PASS.
 - Sprint 014 Task 7 Status: COMPLETE.
-- Sprint 014 Task 8 Status: NOT DEFINED.
-- Sprint 014 Task 8 Next Action: Architecture discussion and definition required before implementation.
+- Sprint 014 Task 8 Name: Revision Execution Foundation.
+- Sprint 014 Task 8 Objective: Transform a CEO Needs Revision decision into a controlled manual revision execution while preserving complete execution history, review history, deliverable lineage, and original execution immutability.
+- Sprint 014 Task 8 Policy: MANUAL EXECUTION ONLY.
+- Sprint 014 Task 8 Architecture: Reuse existing Project Store, Production Blueprint, Work Item Store / Work Orders, Execution Request Builder, Execution Requests, Execution Core, Approval Queue, existing persistence, and existing notification routing.
+- Sprint 014 Task 8 Lineage Rule: Original draft, original execution, original review, revision instructions, revision Work Order, revision Execution Request, revision execution, revised draft, and later review decisions must remain reconstructable by reference.
+- Sprint 014 Task 8 History Rule: Revision history must never overwrite prior history. Original Execution Core records remain immutable. New revision attempts become new Work Orders and Execution Requests linked to the originals.
+- Sprint 014 Task 8 Exclusions: No new stores, workflow engines, execution engines, scheduler, orchestration changes, automatic revisions, autonomous behavior, capability unlocking, trust scoring, publishing, background workers, or duplicate workflows.
+- Sprint 014 Task 8 Status: DOCUMENTATION ALIGNED / IMPLEMENTATION NOT AUTHORIZED.
+- Sprint 014 Task 8 Next Action: Architecture freeze verification before implementation.
 
 ## Next Required Action
 
-Begin Sprint 014 Task 8 architecture discussion and definition.
+Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Task 5 - Execution Lifecycle Foundation
 
@@ -3721,8 +3788,8 @@ Task 6 verified that:
 - CEO QA: PASS.
 - Documentation: COMPLETE.
 - Task Status: COMPLETE.
-- Current Task: Sprint 014 Task 8 - Architecture Discussion and Definition.
-- Next Required Action: Begin Sprint 014 Task 8 architecture discussion and definition.
+- Current Task: Sprint 014 Task 8 - Revision Execution Foundation.
+- Next Required Action: Perform Sprint 014 Task 8 architecture freeze verification before implementation.
 
 ## Task 7 - Human Review Foundation
 
@@ -4025,8 +4092,189 @@ Task 7 explicitly did not add:
 
 ### Current Handoff
 
-- Current Task: Sprint 014 Task 8 - Architecture Discussion and Definition.
-- Next Required Action: Begin Sprint 014 Task 8 architecture discussion and definition.
+- Current Task: Sprint 014 Task 8 - Revision Execution Foundation.
+- Next Required Action: Perform Sprint 014 Task 8 architecture freeze verification before implementation.
+
+## Task 8 - Revision Execution Foundation
+
+### Official Objective
+
+Design the architecture required to transform a CEO Needs Revision decision into a controlled revision execution while preserving complete execution history, review history, and deliverable lineage.
+
+Revision execution is manual only during Task 8.
+
+Task 8 must remain fully human-controlled and must not introduce autonomous behavior.
+
+### Approved Revision Workflow
+
+```text
+Draft Deliverable
+↓
+CEO selects Needs Revision
+↓
+CEO provides revision instructions
+↓
+Revision Execution Request created
+↓
+Revision Execution performed manually
+↓
+Revised Draft created
+↓
+CEO receives a new review notification
+↓
+Approve / Needs Revision / Reject
+```
+
+### Architecture Reuse Decision
+
+Task 8 must reuse existing architecture:
+
+- Project Store.
+- Production Blueprint.
+- Work Item Store.
+- Work Orders.
+- Execution Request Builder.
+- Execution Requests.
+- Execution Core / Execution Store.
+- Approval Queue.
+- Existing local-first persistence.
+- Existing notification / attention routing.
+
+Task 8 must not create:
+
+- Revision Store.
+- Workflow Store.
+- Execution Store replacement.
+- New workflow engine.
+- New execution engine.
+- Scheduler.
+- Orchestrator.
+- Request Queue.
+- Execution Queue.
+- Duplicate notification routing.
+- Duplicate approval workflow.
+
+### Ownership Boundaries
+
+Project Store / Production Blueprint owns:
+
+- Deliverable content.
+- Draft content.
+- Approved content.
+- Review status.
+- Deliverable review history.
+- Deliverable lineage references.
+
+Work Item Store owns:
+
+- Original Work Orders.
+- Revision Work Orders.
+- Business-facing work status.
+
+Execution Request owns:
+
+- Provider-independent request metadata.
+- Capability.
+- Context references.
+- Revision source references.
+
+Execution Core owns:
+
+- Original execution records.
+- Revision execution records.
+- Lifecycle.
+- Timing.
+- Logs.
+- Failures.
+- Structured execution results.
+- Execution history.
+
+Approval Queue owns:
+
+- CEO review surface.
+- Original review decisions.
+- Needs Revision feedback.
+- Rejection decisions.
+- Approval state.
+- Decision history.
+
+Existing notification routing owns:
+
+- CEO attention routing for revised drafts.
+- Links to the correct review item.
+
+### Revision Lineage Rules
+
+Revision lineage must remain reconstructable from documentation and persisted records.
+
+Task 8 must preserve:
+
+- Original draft.
+- Original execution.
+- Original review.
+- Revision instructions.
+- Revision Work Order.
+- Revision Execution Request.
+- Revision execution.
+- Revised draft.
+- Complete review history.
+- Complete execution history.
+
+No history may be overwritten.
+
+Original Execution Core records remain immutable.
+
+Every revision attempt must become a new Work Order and a new Execution Request linked to the original draft, original review decision, and original execution record.
+
+### Execution Policy
+
+Current execution policy:
+
+- Manual execution only.
+
+Future execution policies may include trusted operators or autonomous departments, but Task 8 must not implement them.
+
+Task 8 may preserve architecture hooks that allow future policy evaluation by task, workflow, capability, operator, department, or asset type, but capability unlocking remains intentionally deferred.
+
+### Permanent Philosophy
+
+Task 8 must preserve Prove Before Autonomy.
+
+AI operators begin under supervision. Trust must be earned through documented performance and sufficient reviewed task history.
+
+Task 8 must also preserve Capabilities Are Earned, Not Granted.
+
+Operators may eventually unlock individual capabilities over time, but Task 8 must not implement capability unlocking.
+
+Autonomy is not a single switch.
+
+### Explicit Non-Goals
+
+Task 8 does not authorize:
+
+- Trust scoring.
+- Capability unlocking.
+- Self-improvement.
+- Automatic revisions.
+- Autonomous behavior.
+- Publishing.
+- Scheduling.
+- Background workers.
+- Cross-department automation.
+- Multi-agent orchestration.
+- New stores.
+- New workflow engines.
+- New execution engines.
+- Scheduler.
+- Orchestration changes.
+- Duplicate workflows.
+
+### Architecture Status
+
+- Documentation Alignment: COMPLETE.
+- Architecture Review: PASS.
+- Architecture Freeze Verification: REQUIRED BEFORE IMPLEMENTATION.
+- Implementation: NOT AUTHORIZED until architecture freeze verification passes.
 
 ---
 

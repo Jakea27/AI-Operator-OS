@@ -44,6 +44,16 @@ Autonomy must be recommended by the operating system and explicitly granted by t
 
 No task may implement trust scoring, executable autonomy thresholds, operator report cards, self-learning autonomy, or autonomous workflow behavior unless those concepts are explicitly authorized by current sprint documentation.
 
+## Capabilities Are Earned, Not Granted
+
+Operators must not receive broad autonomous capability by default.
+
+Future operator capability expansion should be earned through reviewed work history, sustained performance, bounded scope, and explicit CEO authorization.
+
+Autonomy is not a single switch. Future policies may evaluate autonomy by task, workflow, capability, operator, department, asset type, or another approved boundary.
+
+Capability unlocking remains deferred future work. Current tasks may preserve architecture hooks for future capability policies, but must not implement capability unlocking unless current sprint documentation explicitly authorizes it.
+
 ## Future Evolution
 
 This file should eventually include automation safety levels, approval requirements, execution rules, monitoring standards, and rollback expectations.
