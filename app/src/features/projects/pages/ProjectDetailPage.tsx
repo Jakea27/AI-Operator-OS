@@ -38,6 +38,11 @@ type ReviewModalState = {
   deliverableId: string
 }
 
+type RevisionWorkOrderView = {
+  workOrder: WorkItemRecord
+  execution?: ExecutionRecord
+}
+
 function formatDate(value: string) {
   if (!value) return 'Not set'
   return new Intl.DateTimeFormat(undefined, {
@@ -363,29 +368,31 @@ export function ProjectDetailPage() {
   }
 
   function findReviewApproval(deliverable: ProductionBlueprintDeliverable, execution?: ExecutionRecord) {
-    return approvalStore.approvals.find((approval) =>
-      approval.id === deliverable.reviewApprovalId ||
-      (
-      approval.sourceProjectId === activeProject.id &&
-        approval.sourceBlueprintDeliverableId === deliverable.id &&
-        approval.sourceResultId === execution?.result?.resultId
-      ) ||
-      (
+    if (execution) {
+      return approvalStore.approvals.find((approval) =>
         approval.sourceProjectId === activeProject.id &&
         approval.sourceBlueprintDeliverableId === deliverable.id &&
-        approval.sourceExecutionRecordId === execution?.id
-      ),
-    )
+        (
+          approval.sourceResultId === execution.result?.resultId ||
+          approval.sourceExecutionRecordId === execution.id ||
+          approval.sourceExecutionRequestId === execution.executionRequest?.requestId
+        ),
+      )
+    }
+
+    return approvalStore.approvals.find((approval) => approval.id === deliverable.reviewApprovalId)
   }
 
   function createDraftReviewApproval(deliverable: ProductionBlueprintDeliverable, workOrder: WorkItemRecord | undefined, execution: ExecutionRecord) {
     const existingApproval = findReviewApproval(deliverable, execution)
     if (existingApproval) return existingApproval
+    const correlationMetadata = execution.executionRequest?.correlationMetadata ?? {}
+    const isRevision = correlationMetadata.isRevision === 'true'
 
     return approvalStore.addApproval({
-      title: `Review ${deliverable.name} draft for ${activeProject.name}`,
+      title: `Review ${isRevision ? 'revised ' : ''}${deliverable.name} draft for ${activeProject.name}`,
       description: [
-        `A provider execution completed successfully and produced a draft ${deliverable.name} for CEO review.`,
+        `A provider execution completed successfully and produced a ${isRevision ? 'revised ' : ''}draft ${deliverable.name} for CEO review.`,
         '',
         `Project: ${activeProject.projectId} · ${activeProject.name}`,
         `Blueprint Deliverable: ${deliverable.name}`,
@@ -394,6 +401,12 @@ export function ProjectDetailPage() {
         `Execution Record: ${execution.executionId}`,
         `Provider: ${execution.result?.provider?.name ?? 'Not recorded'}`,
         `Model: ${execution.result?.model?.name ?? 'Not recorded'}`,
+        ...(isRevision ? [
+          '',
+          `Revision Attempt: ${correlationMetadata.revisionAttempt ?? 'Not recorded'}`,
+          `Revision Instructions: ${correlationMetadata.revisionInstructions ?? 'Not recorded'}`,
+          `Original Execution: ${correlationMetadata.originalExecutionId ?? correlationMetadata.originalExecutionRecordId ?? 'Not recorded'}`,
+        ] : []),
       ].join('\n'),
       submittedBy: 'AI Operator OS',
       operator: 'System',
@@ -412,9 +425,14 @@ export function ProjectDetailPage() {
         `Deliverable: ${deliverable.name}`,
         `Execution Record: ${execution.executionId}`,
         `Execution Result: ${execution.result?.resultId ?? 'Not recorded'}`,
+        ...(isRevision ? [
+          `Revision Attempt: ${correlationMetadata.revisionAttempt ?? 'Not recorded'}`,
+          `Original Review: ${correlationMetadata.revisionSourceReviewHistoryId ?? 'Not recorded'}`,
+          `Original Execution: ${correlationMetadata.originalExecutionId ?? correlationMetadata.originalExecutionRecordId ?? 'Not recorded'}`,
+        ] : []),
         'No publishing, sending, or external action is triggered by this review.',
       ],
-      recommendedNextAction: `Open project ${activeProject.projectId}, review the ${deliverable.name} draft, then choose Approve, Needs Revision, or Fully Reject.`,
+      recommendedNextAction: `Open project ${activeProject.projectId}, review the ${isRevision ? 'revised ' : ''}${deliverable.name} draft, then choose Approve, Needs Revision, or Fully Reject.`,
       sourceWorkItemId: workOrder?.id ?? execution.executionRequest?.workItemRecordId,
       sourceProjectId: activeProject.id,
       sourceBusinessId: activeProject.businessId,
@@ -424,7 +442,7 @@ export function ProjectDetailPage() {
       sourceBlueprintDeliverableId: deliverable.id,
       sourceBlueprintDeliverableName: deliverable.name,
       sourceResultId: execution.result?.resultId,
-      sourceReviewStatus: 'Draft',
+      sourceReviewStatus: isRevision ? 'Revision Draft' : 'Draft',
     })
   }
 
@@ -440,6 +458,8 @@ export function ProjectDetailPage() {
       return
     }
 
+    const correlationMetadata = execution.executionRequest?.correlationMetadata ?? {}
+    const isRevision = correlationMetadata.isRevision === 'true'
     const approval = createDraftReviewApproval(deliverable, workOrder, execution)
     const timestamp = new Date().toISOString()
     persistBlueprintDeliverable(deliverable.id, {
@@ -459,12 +479,20 @@ export function ProjectDetailPage() {
       reviewFeedback: undefined,
       rejectionReason: undefined,
       reviewedAt: undefined,
+      metadata: {
+        ...deliverable.metadata,
+        latestDraftExecutionRecordId: execution.id,
+        latestDraftExecutionId: execution.executionId,
+        latestDraftResultId: execution.result.resultId,
+        latestDraftIsRevision: isRevision ? 'true' : 'false',
+        latestRevisionAttempt: isRevision ? correlationMetadata.revisionAttempt ?? '' : deliverable.metadata.latestRevisionAttempt ?? '',
+      },
       reviewHistory: [
         {
           id: reviewHistoryId(),
           decision: 'Draft Applied',
           actor: 'AI Operator OS',
-          note: `Draft applied from ${execution.executionId} and queued for CEO review.`,
+          note: `${isRevision ? 'Revised draft' : 'Draft'} applied from ${execution.executionId} and queued for CEO review.`,
           createdAt: timestamp,
           executionRecordId: execution.id,
           executionId: execution.executionId,
@@ -473,11 +501,16 @@ export function ProjectDetailPage() {
           workItemId: workOrder?.id ?? execution.executionRequest?.workItemRecordId,
           workOrderId: workOrder?.workOrder?.workOrderId ?? execution.workOrder?.workOrderId,
           approvalId: approval.id,
+          metadata: {
+            ...correlationMetadata,
+            draftContentSnapshot: responseText,
+            reviewApprovalId: approval.id,
+          },
         },
         ...deliverable.reviewHistory,
       ],
     })
-    setExecutionRequestNotice(`${deliverable.name} draft applied and CEO notification created in the Approval Queue.`)
+    setExecutionRequestNotice(`${deliverable.name} ${isRevision ? 'revised ' : ''}draft applied and CEO notification created in the Approval Queue.`)
   }
 
   function recordReviewDecision(deliverable: ProductionBlueprintDeliverable, decision: 'Approved' | 'Needs Revision' | 'Rejected', note = '') {
@@ -523,6 +556,10 @@ export function ProjectDetailPage() {
           workItemId: deliverable.appliedWorkItemId,
           workOrderId: deliverable.appliedWorkOrderId,
           approvalId: reviewApproval?.id ?? deliverable.reviewApprovalId,
+          metadata: {
+            reviewedDraftContent: deliverable.draftContent || deliverable.content,
+            sourceReviewStatus: deliverable.reviewStatus,
+          },
         },
         ...deliverable.reviewHistory,
       ],
@@ -576,6 +613,48 @@ export function ProjectDetailPage() {
     if (!project) return
     const workOrder = workItemStore.createWorkOrderFromBlueprintDeliverable(project, deliverable)
     setExecutionRequestNotice(`${workOrder.workOrder?.workOrderId ?? workOrder.workItemId} is prepared for ${deliverable.name}.`)
+  }
+
+  function createRevisionWorkOrder(deliverable: ProductionBlueprintDeliverable) {
+    if (!project) return
+    const revisionWorkOrder = workItemStore.createRevisionWorkOrderFromNeedsRevision(project, deliverable)
+    if (!revisionWorkOrder) {
+      setExecutionRequestNotice('Revision Work Order blocked: a completed Needs Revision decision with written feedback is required.')
+      return
+    }
+
+    const sourceReviewHistoryId = revisionWorkOrder.workOrder?.metadata.revisionSourceReviewHistoryId
+    const alreadyRecorded = Boolean(sourceReviewHistoryId && deliverable.reviewHistory.some((item) =>
+      item.decision === 'Revision Work Order Created' &&
+      item.metadata?.revisionSourceReviewHistoryId === sourceReviewHistoryId,
+    ))
+
+    if (!alreadyRecorded) {
+      persistBlueprintDeliverable(deliverable.id, {
+        metadata: {
+          ...deliverable.metadata,
+          activeRevisionWorkItemId: revisionWorkOrder.id,
+          activeRevisionWorkOrderId: revisionWorkOrder.workOrder?.workOrderId ?? '',
+          activeRevisionSourceReviewHistoryId: sourceReviewHistoryId ?? '',
+        },
+        reviewHistory: [
+          {
+            id: reviewHistoryId(),
+            decision: 'Revision Work Order Created',
+            actor: 'AI Operator OS',
+            note: `Manual revision Work Order ${revisionWorkOrder.workOrder?.workOrderId ?? revisionWorkOrder.workItemId} created from CEO Needs Revision feedback.`,
+            createdAt: new Date().toISOString(),
+            workItemId: revisionWorkOrder.id,
+            workOrderId: revisionWorkOrder.workOrder?.workOrderId,
+            approvalId: revisionWorkOrder.workOrder?.metadata.revisionSourceApprovalId,
+            metadata: revisionWorkOrder.workOrder?.metadata ?? {},
+          },
+          ...deliverable.reviewHistory,
+        ],
+      })
+    }
+
+    setExecutionRequestNotice(`${revisionWorkOrder.workOrder?.workOrderId ?? revisionWorkOrder.workItemId} is prepared for manual revision of ${deliverable.name}.`)
   }
 
   function buildExecutionRequest(workItem: WorkItemRecord) {
@@ -960,22 +1039,43 @@ export function ProjectDetailPage() {
 
               <div className="grid gap-4">
                 {draft.productionBlueprint.deliverables.map((deliverable) => {
-                  const workOrder = projectWorkOrders.find((item) => item.workOrder?.blueprintDeliverableId === deliverable.id)
+                  const workOrder = projectWorkOrders.find((item) =>
+                    item.workOrder?.blueprintDeliverableId === deliverable.id &&
+                    item.workOrder?.metadata.isRevision !== 'true',
+                  )
                   const executionRequest = workOrder?.workOrder?.executionRequest
                   const execution = executionRequest ? executionStore.executions.find((record) => record.executionRequest?.requestId === executionRequest.requestId) : undefined
+                  const revisionWorkOrders: RevisionWorkOrderView[] = projectWorkOrders
+                    .filter((item) =>
+                      item.workOrder?.blueprintDeliverableId === deliverable.id &&
+                      item.workOrder?.metadata.isRevision === 'true',
+                    )
+                    .map((item) => {
+                      const revisionRequest = item.workOrder?.executionRequest
+                      return {
+                        workOrder: item,
+                        execution: revisionRequest ? executionStore.executions.find((record) => record.executionRequest?.requestId === revisionRequest.requestId) : undefined,
+                      }
+                    })
                   return (
                     <WorkOrderBlueprintRow
                       key={deliverable.id}
                       deliverable={deliverable}
                       workOrder={workOrder}
                       execution={execution}
-                      reviewApproval={findReviewApproval(deliverable, execution)}
-                      executing={executingExecutionId === execution?.id}
+                      revisionWorkOrders={revisionWorkOrders}
+                      reviewApproval={findReviewApproval(deliverable)}
+                      executing={executingExecutionId === execution?.id || revisionWorkOrders.some((item) => item.execution?.id === executingExecutionId)}
                       onCreate={() => createWorkOrder(deliverable)}
                       onBuildRequest={() => workOrder ? buildExecutionRequest(workOrder) : undefined}
                       onCreateLifecycle={() => workOrder ? createExecutionLifecycle(workOrder) : undefined}
                       onExecuteProviderPath={() => execution ? executeProviderPath(execution) : undefined}
                       onApplyDraft={() => applyDraftForReview(deliverable, workOrder, execution)}
+                      onCreateRevisionWorkOrder={() => createRevisionWorkOrder(deliverable)}
+                      onBuildRevisionRequest={(revisionWorkOrder) => buildExecutionRequest(revisionWorkOrder)}
+                      onCreateRevisionLifecycle={(revisionWorkOrder) => createExecutionLifecycle(revisionWorkOrder)}
+                      onExecuteRevisionProviderPath={(revisionExecution) => executeProviderPath(revisionExecution)}
+                      onApplyRevisionDraft={(revisionWorkOrder, revisionExecution) => applyDraftForReview(deliverable, revisionWorkOrder, revisionExecution)}
                       onApproveDraft={() => recordReviewDecision(deliverable, 'Approved')}
                       onNeedsRevision={() => openReviewModal('Needs Revision', deliverable)}
                       onFullyReject={() => openReviewModal('Fully Reject', deliverable)}
@@ -1078,6 +1178,7 @@ function WorkOrderBlueprintRow({
   deliverable,
   workOrder,
   execution,
+  revisionWorkOrders,
   reviewApproval,
   executing,
   onCreate,
@@ -1085,6 +1186,11 @@ function WorkOrderBlueprintRow({
   onCreateLifecycle,
   onExecuteProviderPath,
   onApplyDraft,
+  onCreateRevisionWorkOrder,
+  onBuildRevisionRequest,
+  onCreateRevisionLifecycle,
+  onExecuteRevisionProviderPath,
+  onApplyRevisionDraft,
   onApproveDraft,
   onNeedsRevision,
   onFullyReject,
@@ -1092,6 +1198,7 @@ function WorkOrderBlueprintRow({
   deliverable: ProductionBlueprintDeliverable
   workOrder?: WorkItemRecord
   execution?: ExecutionRecord
+  revisionWorkOrders: RevisionWorkOrderView[]
   reviewApproval?: Approval
   executing?: boolean
   onCreate: () => void
@@ -1099,6 +1206,11 @@ function WorkOrderBlueprintRow({
   onCreateLifecycle: () => void
   onExecuteProviderPath: () => void
   onApplyDraft: () => void
+  onCreateRevisionWorkOrder: () => void
+  onBuildRevisionRequest: (workOrder: WorkItemRecord) => void
+  onCreateRevisionLifecycle: (workOrder: WorkItemRecord) => void
+  onExecuteRevisionProviderPath: (execution: ExecutionRecord) => void
+  onApplyRevisionDraft: (workOrder: WorkItemRecord, execution: ExecutionRecord) => void
   onApproveDraft: () => void
   onNeedsRevision: () => void
   onFullyReject: () => void
@@ -1108,6 +1220,11 @@ function WorkOrderBlueprintRow({
   const canExecuteProviderPath = Boolean(execution && lifecycleState !== 'Completed' && lifecycleState !== 'Failed')
   const canApplyDraft = Boolean(execution?.result?.success && execution.result.responseText?.trim() && deliverable.appliedResultId !== execution.result.resultId)
   const canReviewDraft = deliverable.activeReview && deliverable.reviewStatus === 'Draft'
+  const canCreateRevisionWorkOrder = deliverable.reviewStatus === 'Needs Revision' && !deliverable.activeReview && Boolean(deliverable.reviewFeedback?.trim())
+  const activeRevisionWorkOrder = revisionWorkOrders.find(({ workOrder: revisionWorkOrder }) =>
+    revisionWorkOrder.workOrder?.metadata.revisionSourceApprovalId === deliverable.reviewApprovalId ||
+    revisionWorkOrder.workOrder?.metadata.revisionSourceReviewHistoryId === deliverable.metadata.activeRevisionSourceReviewHistoryId,
+  )
 
   return (
     <article className="rounded-xl border border-line bg-ink/40 p-4">
@@ -1162,7 +1279,7 @@ function WorkOrderBlueprintRow({
           <Info label="Execution Lifecycle" value={execution?.requestLifecycle?.status ?? 'Not established'} />
           <Info label="Execution Core" value={execution?.executionId ?? 'Not linked'} />
           <Info label="Review Status" value={deliverable.reviewStatus} />
-          <Info label="CEO Notification" value={reviewApproval ? reviewApproval.status : 'Not queued'} />
+          <Info label="Current CEO Review" value={reviewApproval ? reviewApproval.status : 'Not queued'} />
         </div>
       ) : (
         <div className="mt-4">
@@ -1204,7 +1321,7 @@ function WorkOrderBlueprintRow({
                   </p>
                   {reviewApproval ? (
                     <p className="m-0 mt-2 text-xs text-muted">
-                      Approval Queue item: {reviewApproval.id} · {reviewApproval.status} · <Link to="/approval" className="text-lime hover:text-white">Open Approval Queue</Link>
+                      Current Approval Queue item: {reviewApproval.id} · {reviewApproval.status} · <Link to="/approval" className="text-lime hover:text-white">Open Approval Queue</Link>
                     </p>
                   ) : (
                     <p className="m-0 mt-2 text-xs text-muted">No active Approval Queue notification is linked.</p>
@@ -1233,6 +1350,102 @@ function WorkOrderBlueprintRow({
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {canCreateRevisionWorkOrder || revisionWorkOrders.length > 0 ? (
+            <div className="mt-3 rounded-xl border border-orange-300/20 bg-orange-300/[0.04] p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="eyebrow mb-2">Revision Execution</p>
+                  <p className="m-0 text-sm leading-6 text-[#d7e2dc]">
+                    Needs Revision creates a separate manual revision Work Order and Execution Request. The original draft, execution, and review history stay intact.
+                  </p>
+                  {deliverable.reviewFeedback ? <p className="m-0 mt-2 text-xs leading-5 text-orange-200">CEO instructions: {deliverable.reviewFeedback}</p> : null}
+                </div>
+                <button
+                  onClick={onCreateRevisionWorkOrder}
+                  className="btn-secondary"
+                  disabled={!canCreateRevisionWorkOrder || Boolean(activeRevisionWorkOrder)}
+                >
+                  {activeRevisionWorkOrder ? 'Revision Work Order Created' : 'Create Revision Work Order'}
+                </button>
+              </div>
+
+              {revisionWorkOrders.length > 0 ? (
+                <div className="mt-4 space-y-3">
+                  {revisionWorkOrders.map(({ workOrder: revisionWorkOrder, execution: revisionExecution }) => {
+                    const revisionRequest = revisionWorkOrder.workOrder?.executionRequest
+                    const revisionLifecycle = revisionExecution?.requestLifecycle?.status
+                    const revisionCanExecute = Boolean(revisionExecution && revisionLifecycle !== 'Completed' && revisionLifecycle !== 'Failed')
+                    const revisionCanApply = Boolean(
+                      revisionExecution?.result?.success &&
+                      revisionExecution.result.responseText?.trim() &&
+                      deliverable.appliedResultId !== revisionExecution.result.resultId,
+                    )
+
+                    return (
+                      <div key={revisionWorkOrder.id} className="rounded-xl border border-line bg-ink/35 p-3">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <p className="m-0 text-sm font-semibold text-white">{revisionWorkOrder.workOrder?.workOrderId ?? revisionWorkOrder.workItemId}</p>
+                            <p className="m-0 mt-1 text-xs leading-5 text-muted">
+                              Manual revision attempt {revisionWorkOrder.workOrder?.metadata.revisionAttempt ?? '1'}.
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <button onClick={() => onBuildRevisionRequest(revisionWorkOrder)} className="btn-secondary" disabled={Boolean(revisionRequest)}>
+                              {revisionRequest ? 'Revision Request Built' : 'Build Revision Request'}
+                            </button>
+                            {revisionRequest ? (
+                              <button onClick={() => onCreateRevisionLifecycle(revisionWorkOrder)} className="btn-secondary" disabled={Boolean(revisionExecution)}>
+                                {revisionExecution ? 'Revision Lifecycle Established' : 'Create Revision Lifecycle'}
+                              </button>
+                            ) : null}
+                            {revisionExecution ? (
+                              <button onClick={() => onExecuteRevisionProviderPath(revisionExecution)} className="btn-primary" disabled={!revisionCanExecute || executing}>
+                                {executing
+                                  ? 'Executing...'
+                                  : revisionLifecycle === 'Completed'
+                                    ? 'Revision Result Recorded'
+                                    : revisionLifecycle === 'Failed'
+                                      ? 'Revision Failed'
+                                      : 'Execute Revision Manually'}
+                              </button>
+                            ) : null}
+                            {revisionExecution?.result?.success ? (
+                              <button onClick={() => onApplyRevisionDraft(revisionWorkOrder, revisionExecution)} className="btn-secondary" disabled={!revisionCanApply}>
+                                {revisionCanApply ? 'Apply Revised Draft for Review' : 'Revised Draft Applied'}
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        <div className="mt-3 grid gap-3 md:grid-cols-3">
+                          <Info label="Revision Request" value={revisionRequest?.requestId ?? 'Not built'} />
+                          <Info label="Revision Execution" value={revisionExecution?.executionId ?? 'Not linked'} />
+                          <Info label="Lifecycle" value={revisionLifecycle ?? 'Not established'} />
+                          <Info label="Result" value={revisionExecution?.result?.success ? 'Success' : revisionExecution?.result?.failure ? 'Failed' : 'Not recorded'} />
+                          <Info label="Original Execution" value={revisionWorkOrder.workOrder?.metadata.originalExecutionId ?? revisionWorkOrder.workOrder?.metadata.originalExecutionRecordId ?? 'Not recorded'} />
+                          <Info label="Source Review" value={revisionWorkOrder.workOrder?.metadata.revisionSourceReviewHistoryId ?? 'Not recorded'} />
+                        </div>
+
+                        {revisionWorkOrder.workOrder?.metadata.revisionInstructions ? (
+                          <p className="m-0 mt-3 text-xs leading-5 text-orange-100">
+                            Instructions: {revisionWorkOrder.workOrder.metadata.revisionInstructions}
+                          </p>
+                        ) : null}
+
+                        {revisionExecution?.result?.responseText ? (
+                          <div className="mt-3 rounded-xl border border-line bg-ink/40 p-3">
+                            <p className="eyebrow mb-2">Revised Structured Result</p>
+                            <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-white">{revisionExecution.result.responseText}</p>
+                          </div>
+                        ) : null}
+                      </div>
+                    )
+                  })}
                 </div>
               ) : null}
             </div>

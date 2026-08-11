@@ -113,6 +113,12 @@ function normalizeStringArray(value: unknown) {
   return value.filter((item): item is string => typeof item === 'string')
 }
 
+function normalizeMetadata(value: unknown) {
+  return isRecord(value)
+    ? Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+}
+
 function normalizeKnowledgeEntry(raw: unknown, workspaceCreatedAt: string): ProjectKnowledgeEntry | undefined {
   if (!isRecord(raw)) return undefined
 
@@ -121,9 +127,7 @@ function normalizeKnowledgeEntry(raw: unknown, workspaceCreatedAt: string): Proj
     : 'Research Notes'
   const createdAt = normalizeString(raw.createdAt, workspaceCreatedAt)
   const updatedAt = normalizeString(raw.updatedAt, createdAt)
-  const metadata = isRecord(raw.metadata)
-    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
-    : {}
+  const metadata = normalizeMetadata(raw.metadata)
 
   return {
     id: normalizeString(raw.id, id('knowledge-entry')),
@@ -143,9 +147,7 @@ function normalizeKnowledgeWorkspace(raw: unknown, projectCreatedAt: string): Pr
 
   const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
   const updatedAt = normalizeString(raw.updatedAt, createdAt)
-  const metadata = isRecord(raw.metadata)
-    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
-    : {}
+  const metadata = normalizeMetadata(raw.metadata)
   const entries = Array.isArray(raw.entries)
     ? raw.entries.map((entry) => normalizeKnowledgeEntry(entry, createdAt)).filter((entry): entry is ProjectKnowledgeEntry => Boolean(entry))
     : []
@@ -177,7 +179,7 @@ function defaultBlueprintDeliverables(updatedAt: string): ProductionBlueprintDel
 
 function normalizeReviewHistoryItem(raw: unknown): ProductionBlueprintDeliverableReviewHistoryItem | undefined {
   if (!isRecord(raw)) return undefined
-  const decision = ['Draft Applied', 'Approved', 'Needs Revision', 'Rejected'].includes(String(raw.decision))
+  const decision = ['Draft Applied', 'Revision Work Order Created', 'Approved', 'Needs Revision', 'Rejected'].includes(String(raw.decision))
     ? raw.decision as ProductionBlueprintDeliverableReviewHistoryItem['decision']
     : undefined
   if (!decision) return undefined
@@ -195,6 +197,7 @@ function normalizeReviewHistoryItem(raw: unknown): ProductionBlueprintDeliverabl
     workItemId: normalizeString(raw.workItemId) || undefined,
     workOrderId: normalizeString(raw.workOrderId) || undefined,
     approvalId: normalizeString(raw.approvalId) || undefined,
+    metadata: normalizeMetadata(raw.metadata),
   }
 }
 
@@ -209,9 +212,7 @@ function normalizeBlueprintDeliverable(raw: unknown, fallbackName: ProductionBlu
   const reviewStatus = productionBlueprintDeliverableReviewStatuses.includes(source.reviewStatus as ProductionBlueprintDeliverable['reviewStatus'])
     ? source.reviewStatus as ProductionBlueprintDeliverable['reviewStatus']
     : 'Not Ready'
-  const metadata = isRecord(source.metadata)
-    ? Object.fromEntries(Object.entries(source.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
-    : {}
+  const metadata = normalizeMetadata(source.metadata)
   const reviewHistory = Array.isArray(source.reviewHistory)
     ? source.reviewHistory.map(normalizeReviewHistoryItem).filter((item): item is ProductionBlueprintDeliverableReviewHistoryItem => Boolean(item))
     : []
@@ -252,9 +253,7 @@ function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, as
   const normalizedAssetType = businessAssetTypes.includes(raw.assetType as BusinessAssetProfile['assetType'])
     ? raw.assetType as BusinessAssetProfile['assetType']
     : assetType ?? 'YouTube Video'
-  const metadata = isRecord(raw.metadata)
-    ? Object.fromEntries(Object.entries(raw.metadata).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
-    : {}
+  const metadata = normalizeMetadata(raw.metadata)
   const rawDeliverables = Array.isArray(raw.deliverables) ? raw.deliverables : []
   const deliverables = productionBlueprintDeliverableNames.map((name) => {
     const matching = rawDeliverables.find((item) => isRecord(item) && item.name === name)

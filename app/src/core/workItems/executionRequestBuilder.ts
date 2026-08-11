@@ -83,6 +83,36 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
   const capability = workOrderCapabilityMap[workOrder.workOrderType]
   const knowledgeReferenceIds = project.knowledgeWorkspace?.entries.map((entry) => entry.id) ?? []
   const asset = project.businessAsset
+  const isRevision = workOrder.metadata.isRevision === 'true'
+  const revisionInstructions = workOrder.metadata.revisionInstructions ?? ''
+  const originalDraftContent = workOrder.metadata.originalDraftContent ?? deliverable.draftContent ?? deliverable.content
+  const baseInstructions = isRevision
+    ? [
+      `Revise the existing ${deliverable.name} draft using the CEO revision instructions.`,
+      `Deliverable: ${deliverable.name}`,
+      `Topic: ${asset?.topic || 'Not specified'}`,
+      `Goal: ${asset?.goal || 'Not specified'}`,
+      `Audience: ${asset?.targetAudience || 'Not specified'}`,
+      `Tone: ${asset?.tone || 'Not specified'}`,
+      `Target Length: ${asset?.targetLength || 'Not specified'}`,
+      '',
+      'Current Draft:',
+      originalDraftContent || 'No current draft content recorded.',
+      '',
+      'CEO Revision Instructions:',
+      revisionInstructions || 'No revision instructions recorded.',
+      '',
+      'Preserve the intent of the original draft while applying only the requested revision. Return revised draft content only.',
+    ]
+    : [
+      deliverableInstructionName(deliverable.name),
+      `Topic: ${asset?.topic || 'Not specified'}`,
+      `Goal: ${asset?.goal || 'Not specified'}`,
+      `Audience: ${asset?.targetAudience || 'Not specified'}`,
+      `Tone: ${asset?.tone || 'Not specified'}`,
+      `Target Length: ${asset?.targetLength || 'Not specified'}`,
+      `Existing Blueprint Placeholder: ${deliverable.content || 'Empty'}`,
+    ]
   const request: ExecutionRequestReference = {
     requestId: id('ER'),
     status: 'Built',
@@ -95,16 +125,10 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
     blueprintDeliverableId: deliverable.id,
     blueprintDeliverableName: deliverable.name,
     knowledgeReferenceIds,
-    instructions: [
-      deliverableInstructionName(deliverable.name),
-      `Topic: ${asset?.topic || 'Not specified'}`,
-      `Goal: ${asset?.goal || 'Not specified'}`,
-      `Audience: ${asset?.targetAudience || 'Not specified'}`,
-      `Tone: ${asset?.tone || 'Not specified'}`,
-      `Target Length: ${asset?.targetLength || 'Not specified'}`,
-      `Existing Blueprint Placeholder: ${deliverable.content || 'Empty'}`,
-    ].join('\n'),
-    outputRequirements: outputRequirements(deliverable.name),
+    instructions: baseInstructions.join('\n'),
+    outputRequirements: isRevision
+      ? `${outputRequirements(deliverable.name)} This is a manual revision attempt. Do not approve, publish, send, or start another revision.`
+      : outputRequirements(deliverable.name),
     correlationMetadata: {
       workOrderId: workOrder.workOrderId,
       workOrderType: workOrder.workOrderType,
@@ -114,6 +138,7 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
       assetType: asset?.assetType ?? workOrder.assetType,
       platform: asset?.platform ?? workOrder.platform,
       productionBlueprintType: project.productionBlueprint?.blueprintType ?? workOrder.productionBlueprintType,
+      ...workOrder.metadata,
     },
     createdAt: timestamp,
   }

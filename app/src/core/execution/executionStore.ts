@@ -120,6 +120,12 @@ function normalizeLog(raw: Partial<ExecutionLog>, index = 0): ExecutionLog {
   }
 }
 
+function normalizeMetadata(value: unknown) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string'))
+    : {}
+}
+
 function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): ExecutionRecord {
   const timestamp = raw.createdAt ?? now()
   const recordId = raw.id ?? id('execution')
@@ -159,6 +165,7 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
       businessAssetProjectId: raw.workOrder.businessAssetProjectId ?? raw.projectId ?? '',
       blueprintDeliverableId: raw.workOrder.blueprintDeliverableId ?? '',
       blueprintDeliverableName: raw.workOrder.blueprintDeliverableName ?? '',
+      metadata: normalizeMetadata(raw.workOrder.metadata),
     } : undefined,
     executionRequest: raw.executionRequest ? {
       requestId: raw.executionRequest.requestId ?? '',
@@ -174,6 +181,7 @@ function normalizeExecution(raw: Partial<ExecutionRecord>, index = 0): Execution
       knowledgeReferenceIds: Array.isArray(raw.executionRequest.knowledgeReferenceIds) ? raw.executionRequest.knowledgeReferenceIds : [],
       instructions: raw.executionRequest.instructions ?? '',
       outputRequirements: raw.executionRequest.outputRequirements ?? '',
+      correlationMetadata: normalizeMetadata(raw.executionRequest.correlationMetadata),
       createdAt: raw.executionRequest.createdAt ?? timestamp,
     } : undefined,
     requestLifecycle: raw.requestLifecycle ? {
@@ -311,6 +319,7 @@ function providerExecutionMetadata(execution: ExecutionRecord) {
     workItemId: execution.workItem.workItemId,
     workOrderId: execution.workOrder?.workOrderId,
     blueprintDeliverableId: execution.executionRequest?.blueprintDeliverableId,
+    ...execution.executionRequest?.correlationMetadata,
   }
 }
 
@@ -540,6 +549,7 @@ export const executionStore = {
         businessAssetProjectId: workOrder.businessAssetProjectId,
         blueprintDeliverableId: workOrder.blueprintDeliverableId,
         blueprintDeliverableName: workOrder.blueprintDeliverableName,
+        metadata: workOrder.metadata,
       },
       executionRequest: {
         requestId: executionRequest.requestId,
@@ -555,6 +565,7 @@ export const executionStore = {
         knowledgeReferenceIds: executionRequest.knowledgeReferenceIds,
         instructions: executionRequest.instructions,
         outputRequirements: executionRequest.outputRequirements,
+        correlationMetadata: executionRequest.correlationMetadata,
         createdAt: executionRequest.createdAt,
       },
       requestLifecycle,
@@ -588,7 +599,7 @@ export const executionStore = {
       result: undefined,
       resultRef: undefined,
       events: [
-        event(`Execution Request lifecycle established for ${executionRequest.requestId}. No provider execution started.`, timestamp),
+        event(`${workOrder.metadata.isRevision === 'true' ? 'Revision ' : ''}Execution Request lifecycle established for ${executionRequest.requestId}. No provider execution started.`, timestamp),
       ],
       transitionHistory: [],
       logs: [],

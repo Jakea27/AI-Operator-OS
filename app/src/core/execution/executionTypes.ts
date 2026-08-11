@@ -110,6 +110,7 @@ export type ExecutionWorkOrderReference = {
   businessAssetProjectId: string
   blueprintDeliverableId: string
   blueprintDeliverableName: string
+  metadata?: Record<string, string>
 }
 
 /**
@@ -133,6 +134,7 @@ export type ExecutionRequestReferenceSnapshot = {
   knowledgeReferenceIds: string[]
   instructions: string
   outputRequirements: string
+  correlationMetadata: Record<string, string>
   createdAt: ISODateTimeString
 }
 

@@ -281,7 +281,8 @@ export const workItemStore = {
   createWorkOrderFromBlueprintDeliverable(project: ProjectRecord, deliverable: ProductionBlueprintDeliverable) {
     const existing = state.find((workItem) =>
       workItem.workOrder?.businessAssetProjectId === project.id &&
-      workItem.workOrder?.blueprintDeliverableId === deliverable.id,
+      workItem.workOrder?.blueprintDeliverableId === deliverable.id &&
+      workItem.workOrder?.metadata.isRevision !== 'true',
     )
 
     if (existing) return existing
@@ -338,6 +339,104 @@ export const workItemStore = {
       createdAt: timestamp,
       updatedAt: timestamp,
       timeline: [timeline(`Work Order ${workOrder.workOrderId} created for ${deliverable.name}.`, timestamp)],
+      workOrder,
+    }
+
+    persist([workItem, ...state])
+    return workItem
+  },
+
+  createRevisionWorkOrderFromNeedsRevision(project: ProjectRecord, deliverable: ProductionBlueprintDeliverable) {
+    const revisionInstructions = deliverable.reviewFeedback?.trim() ?? ''
+    const sourceReview = deliverable.reviewHistory.find((item) =>
+      item.decision === 'Needs Revision' &&
+      (item.approvalId === deliverable.reviewApprovalId || !deliverable.reviewApprovalId)
+    ) ?? deliverable.reviewHistory.find((item) => item.decision === 'Needs Revision')
+
+    if (deliverable.reviewStatus !== 'Needs Revision' || deliverable.activeReview || revisionInstructions.length === 0 || !sourceReview) {
+      return undefined
+    }
+
+    const existing = state.find((workItem) =>
+      workItem.workOrder?.businessAssetProjectId === project.id &&
+      workItem.workOrder?.blueprintDeliverableId === deliverable.id &&
+      workItem.workOrder?.metadata.isRevision === 'true' &&
+      workItem.workOrder?.metadata.revisionSourceReviewHistoryId === sourceReview.id &&
+      workItem.workOrder?.status !== 'Cancelled',
+    )
+
+    if (existing) return existing
+
+    const timestamp = now()
+    const workOrderType = workOrderTypeForDeliverable(deliverable)
+    const revisionAttempt = String(
+      state.filter((workItem) =>
+        workItem.workOrder?.businessAssetProjectId === project.id &&
+        workItem.workOrder?.blueprintDeliverableId === deliverable.id &&
+        workItem.workOrder?.metadata.isRevision === 'true',
+      ).length + 1,
+    )
+    const workOrder: WorkOrderProfile = {
+      enabled: true,
+      workOrderId: generateWorkOrderCode(state),
+      workOrderType,
+      status: 'Prepared',
+      assetType: project.businessAsset?.assetType ?? 'YouTube Video',
+      platform: project.businessAsset?.platform ?? 'YouTube',
+      businessAssetProjectId: project.id,
+      productionBlueprintType: project.productionBlueprint?.blueprintType ?? 'YouTube Video Blueprint',
+      blueprintDeliverableId: deliverable.id,
+      blueprintDeliverableName: deliverable.name,
+      knowledgeReferenceIds: project.knowledgeWorkspace?.entries.map((entry) => entry.id) ?? [],
+      executionRequest: undefined,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {
+        source: 'Needs Revision Review',
+        isRevision: 'true',
+        revisionAttempt,
+        revisionInstructions,
+        revisionSourceReviewHistoryId: sourceReview.id,
+        revisionSourceApprovalId: sourceReview.approvalId ?? deliverable.reviewApprovalId ?? '',
+        originalWorkItemId: sourceReview.workItemId ?? deliverable.appliedWorkItemId ?? '',
+        originalWorkOrderId: sourceReview.workOrderId ?? deliverable.appliedWorkOrderId ?? '',
+        originalExecutionRecordId: sourceReview.executionRecordId ?? deliverable.appliedExecutionRecordId ?? '',
+        originalExecutionId: sourceReview.executionId ?? deliverable.appliedExecutionId ?? '',
+        originalExecutionRequestId: sourceReview.executionRequestId ?? deliverable.appliedExecutionRequestId ?? '',
+        originalResultId: sourceReview.resultId ?? deliverable.appliedResultId ?? '',
+        originalDraftContent: deliverable.draftContent || deliverable.content,
+      },
+    }
+
+    const workItem: WorkItemRecord = {
+      id: id('work-item'),
+      workItemId: generateWorkItemCode(state),
+      title: `Revise ${deliverable.name}: ${project.name}`,
+      description: `Revision Work Order for ${deliverable.name} deliverable in ${project.projectId}. This record uses CEO Needs Revision instructions and remains manual-only.`,
+      status: 'Planning',
+      priority: project.priority,
+      businessId: project.businessId,
+      businessCode: project.businessCode,
+      businessName: project.businessName,
+      projectId: project.id,
+      projectCode: project.projectId,
+      projectName: project.name,
+      departmentId: project.departmentId,
+      departmentCode: project.departmentCode,
+      departmentName: project.departmentName,
+      assignedManagerId: project.managerId,
+      assignedManagerName: project.managerName || 'Unassigned',
+      assignedOperatorId: undefined,
+      assignedOperatorCode: undefined,
+      assignedOperatorName: 'Unassigned',
+      estimatedHours: 0,
+      dueDate: project.targetDate,
+      notes: `Manual revision requested for ${deliverable.name}.\n\nCEO revision instructions:\n${revisionInstructions}`,
+      placeholderMetrics: 'Revision Work Order metrics are not connected yet.',
+      placeholderNotes: 'Revision execution remains manual-only and uses the existing Execution Core path.',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      timeline: [timeline(`Revision Work Order ${workOrder.workOrderId} created for ${deliverable.name}.`, timestamp)],
       workOrder,
     }
 
@@ -402,6 +501,7 @@ export function useWorkItemStore() {
     workItems,
     createWorkItem: workItemStore.createWorkItem,
     createWorkOrderFromBlueprintDeliverable: workItemStore.createWorkOrderFromBlueprintDeliverable,
+    createRevisionWorkOrderFromNeedsRevision: workItemStore.createRevisionWorkOrderFromNeedsRevision,
     attachExecutionRequest: workItemStore.attachExecutionRequest,
     updateWorkItem: workItemStore.updateWorkItem,
   }

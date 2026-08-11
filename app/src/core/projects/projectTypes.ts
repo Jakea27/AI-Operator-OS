@@ -63,7 +63,12 @@ export type ProductionBlueprintDeliverableStatus = 'Not Started' | 'Draft' | 'Co
 
 export type ProductionBlueprintDeliverableReviewStatus = 'Not Ready' | 'Draft' | 'Approved' | 'Needs Revision' | 'Rejected'
 
-export type ProductionBlueprintDeliverableReviewDecision = 'Draft Applied' | 'Approved' | 'Needs Revision' | 'Rejected'
+export type ProductionBlueprintDeliverableReviewDecision =
+  | 'Draft Applied'
+  | 'Revision Work Order Created'
+  | 'Approved'
+  | 'Needs Revision'
+  | 'Rejected'
 
 export type ProductionBlueprintDeliverableReviewHistoryItem = {
   id: string
@@ -78,6 +83,7 @@ export type ProductionBlueprintDeliverableReviewHistoryItem = {
   workItemId?: string
   workOrderId?: string
   approvalId?: string
+  metadata?: Record<string, string>
 }
 
 export type ProductionBlueprintDeliverable = {
