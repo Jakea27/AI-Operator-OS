@@ -278,6 +278,79 @@ export const workItemStore = {
     return workItem
   },
 
+  createCreativeConceptWorkOrder(project: ProjectRecord) {
+    const existing = state.find((workItem) =>
+      workItem.workOrder?.businessAssetProjectId === project.id &&
+      workItem.workOrder?.workOrderType === 'Develop Creative Concepts' &&
+      workItem.workOrder?.status !== 'Cancelled' &&
+      !workItem.workOrder.executionRequest,
+    )
+
+    if (existing) return existing
+
+    const timestamp = now()
+    const selectedKnowledgeEntryIds = project.creativeBrief?.selectedKnowledgeEntryIds ?? []
+    const workOrder: WorkOrderProfile = {
+      enabled: true,
+      workOrderId: generateWorkOrderCode(state),
+      workOrderType: 'Develop Creative Concepts',
+      status: 'Prepared',
+      assetType: project.businessAsset?.assetType ?? 'YouTube Video',
+      platform: project.businessAsset?.platform ?? 'YouTube',
+      businessAssetProjectId: project.id,
+      productionBlueprintType: project.productionBlueprint?.blueprintType ?? '',
+      blueprintDeliverableId: '',
+      blueprintDeliverableName: 'Creative Concept Development',
+      knowledgeReferenceIds: selectedKnowledgeEntryIds,
+      executionRequest: undefined,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {
+        source: 'Creative Brief',
+        workOrderKind: 'Creative Concept Development',
+        creativeBriefId: project.creativeBrief?.briefId ?? '',
+        selectedKnowledgeEntryIds: selectedKnowledgeEntryIds.join(','),
+        candidateCount: '4',
+        executionPolicy: 'Manual',
+      },
+    }
+
+    const workItem: WorkItemRecord = {
+      id: id('work-item'),
+      workItemId: generateWorkItemCode(state),
+      title: `Develop Creative Concepts: ${project.name}`,
+      description: `Work Order for bounded creative topic/concept development in ${project.projectId}. This record prepares a provider-independent Execution Request and does not modify Blueprint deliverables.`,
+      status: 'Planning',
+      priority: project.priority,
+      businessId: project.businessId,
+      businessCode: project.businessCode,
+      businessName: project.businessName,
+      projectId: project.id,
+      projectCode: project.projectId,
+      projectName: project.name,
+      departmentId: project.departmentId,
+      departmentCode: project.departmentCode,
+      departmentName: project.departmentName,
+      assignedManagerId: project.managerId,
+      assignedManagerName: project.managerName || 'Unassigned',
+      assignedOperatorId: undefined,
+      assignedOperatorCode: undefined,
+      assignedOperatorName: 'Unassigned',
+      estimatedHours: 0,
+      dueDate: project.targetDate,
+      notes: 'Manual creative concept development request. Produces exactly 4 structured candidates for CEO planning review.',
+      placeholderMetrics: 'Creative concept metrics are not connected yet.',
+      placeholderNotes: 'Concept generation uses existing Execution Core and Provider Manager. Selection is planning-only.',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      timeline: [timeline(`Creative Concept Work Order ${workOrder.workOrderId} created.`, timestamp)],
+      workOrder,
+    }
+
+    persist([workItem, ...state])
+    return workItem
+  },
+
   createWorkOrderFromBlueprintDeliverable(project: ProjectRecord, deliverable: ProductionBlueprintDeliverable) {
     const existing = state.find((workItem) =>
       workItem.workOrder?.businessAssetProjectId === project.id &&
@@ -501,6 +574,7 @@ export function useWorkItemStore() {
     workItems,
     createWorkItem: workItemStore.createWorkItem,
     createWorkOrderFromBlueprintDeliverable: workItemStore.createWorkOrderFromBlueprintDeliverable,
+    createCreativeConceptWorkOrder: workItemStore.createCreativeConceptWorkOrder,
     createRevisionWorkOrderFromNeedsRevision: workItemStore.createRevisionWorkOrderFromNeedsRevision,
     attachExecutionRequest: workItemStore.attachExecutionRequest,
     updateWorkItem: workItemStore.updateWorkItem,

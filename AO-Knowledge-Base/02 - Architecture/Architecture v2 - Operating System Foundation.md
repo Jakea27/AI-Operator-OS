@@ -139,6 +139,112 @@ A Work Order may reference Business Asset, Knowledge Workspace, Production Bluep
 
 If a separate Work Order record is ever proposed, it must be justified as reference-only before implementation and must not duplicate Project, Work Item, Execution Queue, Execution Core, Capability Planning, or Approval ownership.
 
+### Creative Brief
+
+Sprint 014 Task 10 defines Creative Brief as upstream production context for the Creative Production Engine.
+
+A Creative Brief converts a Business Asset / business idea into clear production context before Production Blueprint deliverables, Work Orders, Execution Requests, AI execution, CEO review, revision, approval, and Creative Asset Packaging.
+
+Task 10 reuses existing architecture. Project Store owns the optional Creative Brief profile on the existing Project record as `creativeBrief?: CreativeBriefProfile`.
+
+Existing Project persistence remains `ai-operator-os-projects-v1`. No Creative Brief Store and no new persistence key are authorized.
+
+Production Blueprint does not own the Creative Brief. Knowledge Workspace does not own the Creative Brief. Creative Brief composes production context from existing authoritative systems.
+
+Creative Brief must not duplicate Business Asset topic, goal/objective, target audience, tone, target length, platform, asset type, Project name/description, Project/Business/Department references, Production Blueprint deliverable definitions, or Knowledge Workspace entry content.
+
+Approved Creative Brief-specific fields are enabled, briefId, status Draft/Ready, selectedKnowledgeEntryIds, offerContext, keyMessage, callToAction, constraints, requiredInclusions, prohibitedContent, platformInstructions, assetInstructions, createdAt, updatedAt, and metadata only where consistent with existing Project Store extension-container patterns.
+
+Business Asset context is inherited. Editing authoritative Business Asset fields updates Business Asset, not Creative Brief duplicates. Task 10 does not introduce brief-specific overrides.
+
+Creative Brief references Knowledge Workspace entries by selectedKnowledgeEntryIds only. Knowledge Workspace content is not copied into the Creative Brief.
+
+Task 10 does not create a Creative Brief versioning engine. It uses createdAt and updatedAt only.
+
+Creative Brief does not execute AI work, create Work Orders automatically, create Production Blueprints automatically, publish, upload, trigger external integrations, bypass CEO review, or introduce autonomy.
+
+No Creative Brief Store, duplicate Project Store, new persistence key, workflow engine, scheduler, orchestrator, execution engine, approval system, provider system, trust engine, learning engine, capability unlocking system, or external publishing system is authorized by this concept.
+
+### Creative Concept / Topic Development
+
+Sprint 014 Task 11 defines Creative Concept / Topic Development as reusable AI-assisted ideation for the Creative Production Engine.
+
+Generated topic/concept candidates are Project / Business Asset creative planning records owned by the existing Project Store. The approved conceptual model is `creativeConcepts?: CreativeConcept[]` or an equivalent Project-owned typed record collection.
+
+Creative Concepts are derived from Business Asset authoritative context, Creative Brief-specific production direction, selected Knowledge Workspace references, and Project context. They must not duplicate Business Asset fields, Creative Brief fields, Knowledge Workspace content, Production Blueprint deliverable definitions, or execution records as competing sources of truth.
+
+Task 11 must reuse the existing execution path:
+
+```text
+Work Item / Work Order
+↓
+Execution Request
+↓
+Execution Core
+↓
+Capability Resolver
+↓
+Provider Manager
+↓
+Provider execution
+↓
+Execution Result
+```
+
+Provider output may be parsed into Project-owned Creative Concept records only after a successful provider-independent execution result. Malformed output should preserve the raw Execution Result and record a clear failure/warning without creating invalid concept records or retrying automatically.
+
+Creative Concept selection is a planning decision only. It does not create a Production Blueprint, mutate Blueprint deliverables, generate titles/hooks/scripts, create downstream Work Orders, execute AI again, publish, upload, or trigger external actions.
+
+No Topic Store, Idea Store, Prompt Store, Generation Store, Context Store, new persistence key, new execution engine, new provider system, duplicate Approval Queue, scheduler, orchestrator, automatic regeneration, automatic ranking, autonomy, trust scoring, capability unlocking, learning engine, Task 9 package/export change, or Task 10 Creative Brief UI redesign is authorized by this concept.
+
+### Creative Cost Visibility
+
+Sprint 014 Task 12 defines Creative Cost Visibility as read-only Project-level visibility into creative-production execution cost, timing, provider/model usage, Work Order breakdowns, revision execution, and topic-development execution.
+
+Execution Core remains the owner of execution records, execution attempts, estimated execution cost, actual execution cost, Cost Records, provider/model execution metadata, timing, lifecycle, success/failure, and Work Order / Execution Request lineage.
+
+Money Department remains the owner of business financial records, budgets, operating commitments, financial reporting, and financial truth outside execution-specific usage records.
+
+Project Store remains the owner of Project records, Business Asset context, and Project relationships.
+
+Task 12 owns no authoritative cost records. It may provide only read-only derived aggregation, read-only view logic, and Project-level Creative Cost visibility.
+
+Task 12 does not authorize a CreativeCostStore, ProductionCostStore, UsageCostStore, ProviderCostStore, CostLedger, AnalyticsStore, duplicate Money records, duplicate execution cost records, new persistence key, new ledger, or persisted derived summaries.
+
+Task 12 must distinguish Actual Recorded Execution Cost, Estimated Execution Cost, No Cost Recorded / Unknown, and Local Provider Direct Cost. Local provider direct $0.00 cost must not be presented as true total cost, total business cost, or complete operating cost.
+
+Task 12 aggregation should follow stable references:
+
+```text
+Project / Business Asset
+â†“
+Work Item / Work Order
+â†“
+Execution Request
+â†“
+Execution Record
+â†“
+Cost Records / Result / Provider / Timing
+```
+
+Task 12 must not use loose name/string matching when stable IDs exist.
+
+The preferred UI surface is a narrow read-only Creative Cost summary inside existing Project Detail / Business Asset context. No new top-level route, Creative Cost Dashboard, analytics module, or separate reporting application is authorized.
+
+Task 12 must not write or mutate Execution Records, Cost Records, Provider records, Money records, Work Orders, Execution Requests, or Project financial records.
+
+Task 12 remains generic to creative asset type. It must not hardcode cost architecture around YouTube, scripts, thumbnails, topic concepts, or any specific platform.
+
+### Creative Asset Package
+
+Sprint 014 Task 9 introduces Creative Asset Package as the export-ready snapshot of final CEO-approved Creative Production Engine deliverables.
+
+Creative Asset Packages should be owned by the existing Project Store as Project / Business Asset artifacts. Production Blueprint owns package composition and deliverable references. Deliverables own final approved content. Execution Core, Work Item Store, Execution Requests, and Approval Queue remain authoritative for their own histories and should be referenced rather than copied as competing sources of truth.
+
+Creative Asset Packages must remain local-first, versioned, and reconstructable. Package creation prepares approved work for real-world use; it does not publish, upload, schedule, send, trigger external platform actions, execute providers, or bypass CEO approval.
+
+No Creative Asset Package Store, Export Store, publishing system, workflow engine, execution engine, duplicate Project Store, duplicate Production Blueprint Store, duplicate Approval Queue, or duplicate Provider architecture is authorized by this concept.
+
 ### Execution Queue
 
 Prepare Work Items for future execution. Queue records preserve source context, priority, execution type, approval requirement, and status.
@@ -158,6 +264,16 @@ Control whether consequential work may proceed. Approval Queue records CEO decis
 - Projects belong to Businesses.
 - Work Items belong to Projects.
 - Work Orders should be represented through the existing Work Item architecture unless explicitly justified as reference-only.
+- Creative Brief belongs to the existing Project Store as an optional Project profile.
+- Creative Briefs should avoid duplicating Business Asset, Project, Blueprint, or Knowledge Workspace data when a stable reference is enough.
+- Creative Brief may reference Knowledge Workspace entries by ID; Knowledge Workspace remains the owner of knowledge content.
+- Creative Concepts belong to the existing Project Store as Project / Business Asset creative planning records.
+- Creative Concepts should reference Project, Business Asset, Creative Brief, selected Knowledge entries, Work Order, Execution Request, Execution Record, Execution Result, and provider/capability metadata where available instead of copying source records.
+- Creative Concept selection must not move Production Blueprint, Execution Core, Provider Manager, or Approval Queue ownership.
+- Creative Cost Visibility is read-only derived aggregation. Execution Core owns execution-specific costs and attempts; Money Department owns financial truth; Project Store owns Project and Business Asset context.
+- Creative Cost Visibility must not create a cost store, financial ledger, duplicate Money record, duplicate execution cost record, new persistence key, or persisted derived summary.
+- Creative Asset Packages belong to Projects / Business Assets and should be represented through the existing Project Store and Production Blueprint architecture.
+- Creative Asset Packages may snapshot approved deliverable content, but source execution, review, revision, Work Order, and Execution Request history must remain referenced to their authoritative owners.
 - Execution Queue records originate from Work Items.
 - Approval Queue records may originate from Execution Queue records that require approval.
 - No module should duplicate another module's source data when a stable reference is enough.

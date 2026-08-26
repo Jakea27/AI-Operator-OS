@@ -4,6 +4,13 @@ import {
   businessAssetProductionStages,
   businessAssetProductionStatuses,
   businessAssetTypes,
+  CreativeBriefProfile,
+  creativeBriefStatuses,
+  CreativeAssetPackage,
+  CreativeAssetPackageDeliverable,
+  CreativeConcept,
+  creativeConceptStatuses,
+  creativeAssetPackageStatuses,
   ProductionBlueprint,
   ProductionBlueprintDeliverable,
   ProductionBlueprintDeliverableReviewHistoryItem,
@@ -161,6 +168,76 @@ function normalizeKnowledgeWorkspace(raw: unknown, projectCreatedAt: string): Pr
   }
 }
 
+function normalizeCreativeBrief(raw: unknown, projectCreatedAt: string): CreativeBriefProfile | undefined {
+  if (!isRecord(raw)) return undefined
+
+  const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
+  const updatedAt = normalizeString(raw.updatedAt, createdAt)
+  const status = creativeBriefStatuses.includes(raw.status as CreativeBriefProfile['status'])
+    ? raw.status as CreativeBriefProfile['status']
+    : 'Draft'
+
+  return {
+    enabled: raw.enabled === true,
+    briefId: normalizeString(raw.briefId, id('CB')),
+    status,
+    selectedKnowledgeEntryIds: normalizeStringArray(raw.selectedKnowledgeEntryIds),
+    offerContext: normalizeString(raw.offerContext),
+    keyMessage: normalizeString(raw.keyMessage),
+    callToAction: normalizeString(raw.callToAction),
+    constraints: normalizeString(raw.constraints),
+    requiredInclusions: normalizeString(raw.requiredInclusions),
+    prohibitedContent: normalizeString(raw.prohibitedContent),
+    platformInstructions: normalizeString(raw.platformInstructions),
+    assetInstructions: normalizeString(raw.assetInstructions),
+    createdAt,
+    updatedAt,
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
+function normalizeCreativeConcept(raw: unknown, projectRecordId: string, projectId: string, businessAssetProjectId: string, createdAt: string): CreativeConcept | undefined {
+  if (!isRecord(raw)) return undefined
+
+  const conceptCreatedAt = normalizeString(raw.createdAt, createdAt)
+  const sourceReferences = isRecord(raw.sourceReferences) ? raw.sourceReferences : {}
+  const status = creativeConceptStatuses.includes(raw.status as CreativeConcept['status'])
+    ? raw.status as CreativeConcept['status']
+    : raw.selected === true ? 'Selected' : 'Generated'
+
+  return {
+    conceptId: normalizeString(raw.conceptId, id('CC')),
+    title: normalizeString(raw.title),
+    summary: normalizeString(raw.summary),
+    angle: normalizeString(raw.angle),
+    rationale: normalizeString(raw.rationale),
+    audienceValue: normalizeString(raw.audienceValue),
+    hookDirection: normalizeString(raw.hookDirection),
+    status,
+    selected: status === 'Selected' || raw.selected === true,
+    sourceReferences: {
+      projectRecordId: normalizeString(sourceReferences.projectRecordId, projectRecordId),
+      projectId: normalizeString(sourceReferences.projectId, projectId),
+      businessAssetProjectId: normalizeString(sourceReferences.businessAssetProjectId, businessAssetProjectId),
+      creativeBriefId: normalizeString(sourceReferences.creativeBriefId) || undefined,
+      selectedKnowledgeEntryIds: normalizeStringArray(sourceReferences.selectedKnowledgeEntryIds),
+      workItemRecordId: normalizeString(sourceReferences.workItemRecordId) || undefined,
+      workItemId: normalizeString(sourceReferences.workItemId) || undefined,
+      workOrderId: normalizeString(sourceReferences.workOrderId) || undefined,
+      executionRequestId: normalizeString(sourceReferences.executionRequestId) || undefined,
+      executionRecordId: normalizeString(sourceReferences.executionRecordId) || undefined,
+      executionId: normalizeString(sourceReferences.executionId) || undefined,
+      executionResultId: normalizeString(sourceReferences.executionResultId) || undefined,
+      providerName: normalizeString(sourceReferences.providerName) || undefined,
+      modelName: normalizeString(sourceReferences.modelName) || undefined,
+      capability: normalizeString(sourceReferences.capability) || undefined,
+    },
+    createdAt: conceptCreatedAt,
+    updatedAt: normalizeString(raw.updatedAt, conceptCreatedAt),
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
 function defaultBlueprintDeliverables(updatedAt: string): ProductionBlueprintDeliverable[] {
   return productionBlueprintDeliverableNames.map((name) => ({
     id: id('blueprint-deliverable'),
@@ -242,6 +319,73 @@ function normalizeBlueprintDeliverable(raw: unknown, fallbackName: ProductionBlu
   }
 }
 
+function normalizeCreativeAssetPackageDeliverable(raw: unknown): CreativeAssetPackageDeliverable | undefined {
+  if (!isRecord(raw)) return undefined
+  const deliverableName = productionBlueprintDeliverableNames.includes(raw.deliverableName as CreativeAssetPackageDeliverable['deliverableName'])
+    ? raw.deliverableName as CreativeAssetPackageDeliverable['deliverableName']
+    : undefined
+  if (!deliverableName) return undefined
+
+  return {
+    id: normalizeString(raw.id, id('asset-package-deliverable')),
+    deliverableId: normalizeString(raw.deliverableId),
+    deliverableName,
+    approvedContent: normalizeString(raw.approvedContent),
+    approvedAt: normalizeString(raw.approvedAt) || undefined,
+    reviewApprovalId: normalizeString(raw.reviewApprovalId) || undefined,
+    sourceExecutionRecordId: normalizeString(raw.sourceExecutionRecordId) || undefined,
+    sourceExecutionId: normalizeString(raw.sourceExecutionId) || undefined,
+    sourceExecutionRequestId: normalizeString(raw.sourceExecutionRequestId) || undefined,
+    sourceResultId: normalizeString(raw.sourceResultId) || undefined,
+    sourceWorkItemId: normalizeString(raw.sourceWorkItemId) || undefined,
+    sourceWorkOrderId: normalizeString(raw.sourceWorkOrderId) || undefined,
+    reviewHistoryIds: normalizeStringArray(raw.reviewHistoryIds),
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
+function normalizeCreativeAssetPackage(raw: unknown, projectRecordId: string, projectId: string, createdAt: string, blueprintType: ProductionBlueprint['blueprintType'], assetType: BusinessAssetProfile['assetType']): CreativeAssetPackage | undefined {
+  if (!isRecord(raw)) return undefined
+  const packageCreatedAt = normalizeString(raw.createdAt, createdAt)
+  const status = creativeAssetPackageStatuses.includes(raw.status as CreativeAssetPackage['status'])
+    ? raw.status as CreativeAssetPackage['status']
+    : 'Export Ready'
+  const exportFormats: CreativeAssetPackage['exportFormats'] = Array.isArray(raw.exportFormats)
+    ? raw.exportFormats.filter((item): item is CreativeAssetPackage['exportFormats'][number] => item === 'Markdown' || item === 'JSON')
+    : ['Markdown', 'JSON']
+
+  return {
+    id: normalizeString(raw.id, id('asset-package')),
+    packageId: normalizeString(raw.packageId, id('CAP')),
+    projectRecordId: normalizeString(raw.projectRecordId, projectRecordId),
+    projectId: normalizeString(raw.projectId, projectId),
+    businessAssetType: businessAssetTypes.includes(raw.businessAssetType as BusinessAssetProfile['assetType'])
+      ? raw.businessAssetType as BusinessAssetProfile['assetType']
+      : assetType,
+    platform: normalizeString(raw.platform, assetType === 'YouTube Video' ? 'YouTube' : ''),
+    blueprintType: productionBlueprintTypes.includes(raw.blueprintType as ProductionBlueprint['blueprintType'])
+      ? raw.blueprintType as ProductionBlueprint['blueprintType']
+      : blueprintType,
+    packageVersion: Number.isFinite(Number(raw.packageVersion)) ? Math.max(1, Math.round(Number(raw.packageVersion))) : 1,
+    status,
+    createdAt: packageCreatedAt,
+    updatedAt: normalizeString(raw.updatedAt, packageCreatedAt),
+    approvalState: 'CEO Approved',
+    deliverables: Array.isArray(raw.deliverables)
+      ? raw.deliverables.map(normalizeCreativeAssetPackageDeliverable).filter((item): item is CreativeAssetPackageDeliverable => Boolean(item))
+      : [],
+    sourceReviewIds: normalizeStringArray(raw.sourceReviewIds),
+    sourceExecutionRecordIds: normalizeStringArray(raw.sourceExecutionRecordIds),
+    sourceExecutionRequestIds: normalizeStringArray(raw.sourceExecutionRequestIds),
+    sourceWorkItemIds: normalizeStringArray(raw.sourceWorkItemIds),
+    sourceWorkOrderIds: normalizeStringArray(raw.sourceWorkOrderIds),
+    sourceResultIds: normalizeStringArray(raw.sourceResultIds),
+    revisionLineageReferences: normalizeStringArray(raw.revisionLineageReferences),
+    exportFormats: exportFormats.length > 0 ? exportFormats : ['Markdown', 'JSON'],
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
 function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, assetType?: BusinessAssetProfile['assetType']): ProductionBlueprint | undefined {
   if (!isRecord(raw) || raw.enabled !== true) return undefined
 
@@ -259,12 +403,25 @@ function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, as
     const matching = rawDeliverables.find((item) => isRecord(item) && item.name === name)
     return normalizeBlueprintDeliverable(matching, name, updatedAt)
   })
+  const creativeAssetPackages = Array.isArray(raw.creativeAssetPackages)
+    ? raw.creativeAssetPackages
+      .map((item) => normalizeCreativeAssetPackage(
+        item,
+        normalizeString(raw.projectRecordId),
+        normalizeString(raw.projectId),
+        createdAt,
+        blueprintType,
+        normalizedAssetType,
+      ))
+      .filter((item): item is CreativeAssetPackage => Boolean(item))
+    : []
 
   return {
     enabled: true,
     blueprintType,
     assetType: normalizedAssetType,
     deliverables,
+    creativeAssetPackages,
     createdAt,
     updatedAt,
     metadata,
@@ -274,9 +431,11 @@ function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, as
 function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord {
   const timestamp = raw.createdAt ?? now()
   const businessAsset = normalizeBusinessAsset(raw.businessAsset, raw.departmentId ?? '', raw.departmentName ?? 'Unassigned Department', timestamp)
+  const projectId = raw.projectId ?? fallbackProjectCode(index)
+  const projectRecordId = raw.id ?? id('project')
   return {
-    id: raw.id ?? id('project'),
-    projectId: raw.projectId ?? fallbackProjectCode(index),
+    id: projectRecordId,
+    projectId,
     name: raw.name?.trim() || 'Untitled Project',
     description: raw.description?.trim() || 'No project description recorded yet.',
     businessId: raw.businessId ?? '',
@@ -302,6 +461,12 @@ function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord
       : [timeline('Project record created.', timestamp)],
     businessAsset,
     knowledgeWorkspace: normalizeKnowledgeWorkspace(raw.knowledgeWorkspace, timestamp),
+    creativeBrief: normalizeCreativeBrief(raw.creativeBrief, timestamp),
+    creativeConcepts: Array.isArray(raw.creativeConcepts)
+      ? raw.creativeConcepts
+        .map((concept) => normalizeCreativeConcept(concept, projectRecordId, projectId, projectRecordId, timestamp))
+        .filter((concept): concept is CreativeConcept => Boolean(concept))
+      : [],
     productionBlueprint: normalizeProductionBlueprint(raw.productionBlueprint, timestamp, businessAsset?.assetType),
   }
 }
@@ -359,9 +524,11 @@ function getSnapshot() {
 export const projectStore = {
   createProject(input: ProjectInput) {
     const timestamp = now()
+    const projectRecordId = id('project')
+    const projectCode = generateProjectCode(state)
     const project: ProjectRecord = {
-      id: id('project'),
-      projectId: generateProjectCode(state),
+      id: projectRecordId,
+      projectId: projectCode,
       name: input.name.trim() || 'Untitled Project',
       description: input.description.trim() || 'No project description recorded yet.',
       businessId: input.businessId,
@@ -385,6 +552,12 @@ export const projectStore = {
       timeline: [timeline(`Project created for ${input.businessCode}.`, timestamp)],
       businessAsset: normalizeBusinessAsset(input.businessAsset, input.departmentId, input.departmentName, timestamp),
       knowledgeWorkspace: normalizeKnowledgeWorkspace(input.knowledgeWorkspace, timestamp),
+      creativeBrief: normalizeCreativeBrief(input.creativeBrief, timestamp),
+      creativeConcepts: Array.isArray(input.creativeConcepts)
+        ? input.creativeConcepts
+          .map((concept) => normalizeCreativeConcept(concept, projectRecordId, projectCode, projectRecordId, timestamp))
+          .filter((concept): concept is CreativeConcept => Boolean(concept))
+        : [],
       productionBlueprint: normalizeProductionBlueprint(input.productionBlueprint, timestamp, input.businessAsset?.assetType),
     }
 
@@ -410,6 +583,14 @@ export const projectStore = {
           knowledgeWorkspace: updates.knowledgeWorkspace === undefined
             ? project.knowledgeWorkspace
             : normalizeKnowledgeWorkspace(updates.knowledgeWorkspace, project.createdAt),
+          creativeBrief: updates.creativeBrief === undefined
+            ? project.creativeBrief
+            : normalizeCreativeBrief(updates.creativeBrief, project.createdAt),
+          creativeConcepts: updates.creativeConcepts === undefined
+            ? project.creativeConcepts ?? []
+            : updates.creativeConcepts
+              .map((concept) => normalizeCreativeConcept(concept, project.id, project.projectId, project.id, project.createdAt))
+              .filter((concept): concept is CreativeConcept => Boolean(concept)),
           productionBlueprint: updates.productionBlueprint === undefined
             ? project.productionBlueprint
             : normalizeProductionBlueprint(updates.productionBlueprint, project.createdAt, updates.businessAsset?.assetType ?? project.businessAsset?.assetType),

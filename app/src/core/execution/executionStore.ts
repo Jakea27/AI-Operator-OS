@@ -730,13 +730,17 @@ export const executionStore = {
 
     const routing = capabilityResolver.resolveCapabilityRequest(capabilityRequest)
 
+    const isCreativeConceptDevelopment = request.correlationMetadata.workOrderType === 'Develop Creative Concepts' ||
+      request.correlationMetadata.workOrderKind === 'Creative Concept Development'
     const providerResult = routing.status === 'Routed'
       ? await providerManager.executePrompt({
         capabilityRequest,
         prompt,
-        systemPrompt: 'You are AI Operator OS executing one approved local provider request. Return only draft content for CEO review. Do not publish, approve, or update final deliverables.',
+        systemPrompt: isCreativeConceptDevelopment
+          ? 'You are AI Operator OS executing one approved local provider request for creative concept development. Return valid JSON only with exactly 4 concept candidates. Do not publish, approve, rank, create blueprints, create work orders, or update final deliverables.'
+          : 'You are AI Operator OS executing one approved local provider request. Return only draft content for CEO review. Do not publish, approve, or update final deliverables.',
         temperature: 0.2,
-        maxTokens: request.blueprintDeliverableName === 'Script' ? 1200 : 240,
+        maxTokens: isCreativeConceptDevelopment ? 900 : request.blueprintDeliverableName === 'Script' ? 1200 : 240,
         metadata: providerExecutionMetadata(working),
       })
       : undefined

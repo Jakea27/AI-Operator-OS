@@ -7,6 +7,12 @@ import { ExecutionRecord, useExecutionStore } from '@/src/core/execution'
 import {
   BusinessAssetProfile,
   BusinessAssetType,
+  CREATIVE_CONCEPT_CANDIDATE_COUNT,
+  CreativeBriefProfile,
+  CreativeBriefStatus,
+  CreativeAssetPackage,
+  CreativeAssetPackageDeliverable,
+  CreativeConcept,
   ProductionBlueprint,
   ProductionBlueprintDeliverable,
   ProductionBlueprintDeliverableStatus,
@@ -16,9 +22,13 @@ import {
   ProjectPriority,
   ProjectRecord,
   ProjectStatus,
+  createCreativeConceptRecords,
+  buildCreativeCostSummary,
+  parseCreativeConceptCandidates,
   businessAssetProductionStages,
   businessAssetProductionStatuses,
   businessAssetTypes,
+  creativeBriefStatuses,
   productionBlueprintDeliverableNames,
   productionBlueprintDeliverableStatuses,
   projectKnowledgeSections,
@@ -54,8 +64,84 @@ function formatDate(value: string) {
   }).format(new Date(value))
 }
 
+function formatMoney(value: number) {
+  return new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 2,
+  }).format(Number.isFinite(value) ? value : 0)
+}
+
+function formatDuration(value?: number) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return 'Not recorded'
+  if (value < 1000) return `${Math.round(value)} ms`
+  const seconds = value / 1000
+  if (seconds < 60) return `${seconds.toFixed(1)} sec`
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = Math.round(seconds % 60)
+  return `${minutes} min ${remainingSeconds} sec`
+}
+
 function reviewHistoryId() {
   return `blueprint-review-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function packageId() {
+  return `CAP-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function unique(values: Array<string | undefined>) {
+  return Array.from(new Set(values.filter((value): value is string => Boolean(value && value.trim()))))
+}
+
+function collectRevisionLineage(deliverable: ProductionBlueprintDeliverable) {
+  const metadataKeys = [
+    'activeRevisionSourceReviewHistoryId',
+    'activeRevisionWorkItemId',
+    'activeRevisionWorkOrderId',
+    'latestRevisionAttempt',
+    'revisionSourceReviewHistoryId',
+    'revisionSourceApprovalId',
+    'originalExecutionId',
+    'originalExecutionRecordId',
+    'originalExecutionRequestId',
+    'originalWorkOrderId',
+  ]
+
+  return unique([
+    ...metadataKeys.map((key) => deliverable.metadata[key]),
+    ...deliverable.reviewHistory.flatMap((item) => metadataKeys.map((key) => item.metadata?.[key])),
+  ])
+}
+
+function buildPackageMarkdown(record: ProjectRecord, assetPackage: CreativeAssetPackage) {
+  const deliverableText = assetPackage.deliverables.map((deliverable) => [
+    `## ${deliverable.deliverableName}`,
+    '',
+    deliverable.approvedContent || '_No approved content recorded._',
+  ].join('\n')).join('\n\n')
+
+  return [
+    `# ${record.name}`,
+    '',
+    `Package: ${assetPackage.packageId}`,
+    `Project: ${assetPackage.projectId}`,
+    `Asset Type: ${assetPackage.businessAssetType}`,
+    `Platform: ${assetPackage.platform || 'Not specified'}`,
+    `Version: ${assetPackage.packageVersion}`,
+    `Status: ${assetPackage.status}`,
+    `Approval State: ${assetPackage.approvalState}`,
+    `Created: ${assetPackage.createdAt}`,
+    '',
+    deliverableText,
+    '',
+    '---',
+    'Source lineage remains inside AI Operator OS. This package is export-ready but not published.',
+  ].join('\n')
+}
+
+function buildPackageJson(assetPackage: CreativeAssetPackage) {
+  return JSON.stringify(assetPackage, null, 2)
 }
 
 export function ProjectDetailPage() {
@@ -100,6 +186,10 @@ export function ProjectDetailPage() {
   )
   const projectWorkOrders = projectWorkItems.filter((workItem) => workItem.workOrder?.enabled)
   const regularProjectWorkItems = projectWorkItems.filter((workItem) => !workItem.workOrder?.enabled)
+  const creativeCostSummary = useMemo(
+    () => buildCreativeCostSummary(activeProject, executionStore.executions),
+    [activeProject, executionStore.executions],
+  )
 
   function selectBusiness(nextBusinessId: string) {
     const business = businessStore.businesses.find((item) => item.id === nextBusinessId)
@@ -162,6 +252,7 @@ export function ProjectDetailPage() {
       notes: draftRecord.notes,
       businessAsset,
       knowledgeWorkspace: draftRecord.knowledgeWorkspace,
+      creativeBrief: businessAsset ? draftRecord.creativeBrief : undefined,
       productionBlueprint: businessAsset ? draftRecord.productionBlueprint : undefined,
     })
   }
@@ -278,6 +369,54 @@ export function ProjectDetailPage() {
     })
   }
 
+  function defaultCreativeBrief(record: ProjectRecord): CreativeBriefProfile {
+    const timestamp = new Date().toISOString()
+    return {
+      enabled: true,
+      briefId: record.creativeBrief?.briefId ?? `CB-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      status: record.creativeBrief?.status ?? 'Draft',
+      selectedKnowledgeEntryIds: record.creativeBrief?.selectedKnowledgeEntryIds ?? [],
+      offerContext: record.creativeBrief?.offerContext ?? '',
+      keyMessage: record.creativeBrief?.keyMessage ?? '',
+      callToAction: record.creativeBrief?.callToAction ?? '',
+      constraints: record.creativeBrief?.constraints ?? '',
+      requiredInclusions: record.creativeBrief?.requiredInclusions ?? '',
+      prohibitedContent: record.creativeBrief?.prohibitedContent ?? '',
+      platformInstructions: record.creativeBrief?.platformInstructions ?? '',
+      assetInstructions: record.creativeBrief?.assetInstructions ?? '',
+      createdAt: record.creativeBrief?.createdAt ?? timestamp,
+      updatedAt: timestamp,
+      metadata: record.creativeBrief?.metadata ?? {},
+    }
+  }
+
+  function updateCreativeBrief(updates: Partial<CreativeBriefProfile>) {
+    setDraft((current) => {
+      if (!current) return current
+      const brief = current.creativeBrief ?? defaultCreativeBrief(current)
+      return {
+        ...current,
+        creativeBrief: {
+          ...brief,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        },
+      }
+    })
+  }
+
+  function toggleCreativeBriefKnowledgeEntry(entryId: string) {
+    if (!draft) return
+    const brief = draft.creativeBrief ?? defaultCreativeBrief(draft)
+    const selected = new Set(brief.selectedKnowledgeEntryIds)
+    if (selected.has(entryId)) {
+      selected.delete(entryId)
+    } else {
+      selected.add(entryId)
+    }
+    updateCreativeBrief({ selectedKnowledgeEntryIds: Array.from(selected) })
+  }
+
   const knowledgeEntriesBySection = useMemo(() => {
     const entries = draft?.knowledgeWorkspace?.entries ?? []
     return projectKnowledgeSections.map((section) => ({
@@ -305,6 +444,7 @@ export function ProjectDetailPage() {
         updatedAt: timestamp,
         metadata: {},
       })),
+      creativeAssetPackages: record.productionBlueprint?.creativeAssetPackages ?? [],
       createdAt: timestamp,
       updatedAt: timestamp,
       metadata: {},
@@ -609,6 +749,113 @@ export function ProjectDetailPage() {
     }
   }, [draft?.productionBlueprint?.deliverables])
 
+  const packageReadiness = useMemo(() => {
+    const deliverables = draft?.productionBlueprint?.deliverables ?? []
+    const blocked = deliverables.filter((deliverable) =>
+      deliverable.reviewStatus !== 'Approved' ||
+      deliverable.approvedContent.trim().length === 0
+    )
+
+    return {
+      ready: deliverables.length > 0 && blocked.length === 0,
+      blocked,
+    }
+  }, [draft?.productionBlueprint?.deliverables])
+
+  function createCreativeAssetPackage() {
+    const blueprint = activeDraft.productionBlueprint
+    const businessAsset = activeDraft.businessAsset
+    if (!blueprint?.enabled || !businessAsset?.enabled) {
+      setExecutionRequestNotice('Creative Asset Package blocked: Business Asset and Production Blueprint are required.')
+      return
+    }
+
+    const blockedDeliverables = blueprint.deliverables.filter((deliverable) =>
+      deliverable.reviewStatus !== 'Approved' ||
+      deliverable.approvedContent.trim().length === 0
+    )
+    if (blockedDeliverables.length > 0) {
+      setExecutionRequestNotice(`Creative Asset Package blocked: ${blockedDeliverables.map((item) => item.name).join(', ')} must be CEO-approved before packaging.`)
+      return
+    }
+
+    const timestamp = new Date().toISOString()
+    const existingPackages = blueprint.creativeAssetPackages ?? []
+    const nextVersion = existingPackages.reduce((highest, item) => Math.max(highest, item.packageVersion), 0) + 1
+    const packageDeliverables: CreativeAssetPackageDeliverable[] = blueprint.deliverables.map((deliverable) => ({
+      id: packageId(),
+      deliverableId: deliverable.id,
+      deliverableName: deliverable.name,
+      approvedContent: deliverable.approvedContent,
+      approvedAt: deliverable.reviewedAt,
+      reviewApprovalId: deliverable.reviewApprovalId,
+      sourceExecutionRecordId: deliverable.appliedExecutionRecordId,
+      sourceExecutionId: deliverable.appliedExecutionId,
+      sourceExecutionRequestId: deliverable.appliedExecutionRequestId,
+      sourceResultId: deliverable.appliedResultId,
+      sourceWorkItemId: deliverable.appliedWorkItemId,
+      sourceWorkOrderId: deliverable.appliedWorkOrderId,
+      reviewHistoryIds: deliverable.reviewHistory.map((item) => item.id),
+      metadata: {
+        reviewStatusAtPackaging: deliverable.reviewStatus,
+        deliverableStatusAtPackaging: deliverable.status,
+      },
+    }))
+    const assetPackage: CreativeAssetPackage = {
+      id: packageId(),
+      packageId: packageId(),
+      projectRecordId: activeProject.id,
+      projectId: activeProject.projectId,
+      businessAssetType: businessAsset.assetType,
+      platform: businessAsset.platform,
+      blueprintType: blueprint.blueprintType,
+      packageVersion: nextVersion,
+      status: 'Export Ready',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      approvalState: 'CEO Approved',
+      deliverables: packageDeliverables,
+      sourceReviewIds: unique(blueprint.deliverables.flatMap((deliverable) => deliverable.reviewHistory.map((item) => item.approvalId))),
+      sourceExecutionRecordIds: unique(blueprint.deliverables.flatMap((deliverable) => [
+        deliverable.appliedExecutionRecordId,
+        ...deliverable.reviewHistory.map((item) => item.executionRecordId),
+      ])),
+      sourceExecutionRequestIds: unique(blueprint.deliverables.flatMap((deliverable) => [
+        deliverable.appliedExecutionRequestId,
+        ...deliverable.reviewHistory.map((item) => item.executionRequestId),
+      ])),
+      sourceWorkItemIds: unique(blueprint.deliverables.flatMap((deliverable) => [
+        deliverable.appliedWorkItemId,
+        ...deliverable.reviewHistory.map((item) => item.workItemId),
+      ])),
+      sourceWorkOrderIds: unique(blueprint.deliverables.flatMap((deliverable) => [
+        deliverable.appliedWorkOrderId,
+        ...deliverable.reviewHistory.map((item) => item.workOrderId),
+      ])),
+      sourceResultIds: unique(blueprint.deliverables.flatMap((deliverable) => [
+        deliverable.appliedResultId,
+        ...deliverable.reviewHistory.map((item) => item.resultId),
+      ])),
+      revisionLineageReferences: unique(blueprint.deliverables.flatMap(collectRevisionLineage)),
+      exportFormats: ['Markdown', 'JSON'],
+      metadata: {
+        packageCreationPolicy: 'Manual after final CEO approval',
+        publishingState: 'Not published',
+        sourceOfTruth: 'Project Store / Production Blueprint',
+      },
+    }
+
+    const nextBlueprint: ProductionBlueprint = {
+      ...blueprint,
+      creativeAssetPackages: [assetPackage, ...existingPackages],
+      updatedAt: timestamp,
+    }
+
+    projectStore.updateProject(activeProject.id, { productionBlueprint: nextBlueprint })
+    setDraft({ ...activeDraft, productionBlueprint: nextBlueprint, updatedAt: timestamp })
+    setExecutionRequestNotice(`Creative Asset Package ${assetPackage.packageId} created as export-ready version ${assetPackage.packageVersion}. No publishing or external action occurred.`)
+  }
+
   function createWorkOrder(deliverable: ProductionBlueprintDeliverable) {
     if (!project) return
     const workOrder = workItemStore.createWorkOrderFromBlueprintDeliverable(project, deliverable)
@@ -698,6 +945,82 @@ export function ProjectDetailPage() {
     } finally {
       setExecutingExecutionId(undefined)
     }
+  }
+
+  function createCreativeConceptWorkOrder() {
+    if (!activeProject.businessAsset?.enabled) {
+      setExecutionRequestNotice('Creative Concept Work Order blocked: enable Business Asset context before topic development.')
+      return
+    }
+
+    if (!activeProject.creativeBrief?.enabled) {
+      setExecutionRequestNotice('Creative Concept Work Order blocked: enable Creative Brief context before topic development.')
+      return
+    }
+
+    const workOrder = workItemStore.createCreativeConceptWorkOrder(activeProject)
+    setExecutionRequestNotice(`${workOrder.workOrder?.workOrderId ?? workOrder.workItemId} is prepared for creative concept development. Generation remains manual.`)
+  }
+
+  function appendConceptsFromExecution(execution: ExecutionRecord) {
+    if (!execution.result?.success || !execution.result.responseText) {
+      setExecutionRequestNotice('Creative Concept parsing blocked: a successful provider Execution Result is required.')
+      return
+    }
+
+    if (execution.executionRequest?.correlationMetadata.workOrderType !== 'Develop Creative Concepts') {
+      setExecutionRequestNotice('Creative Concept parsing blocked: selected execution is not a creative concept development result.')
+      return
+    }
+
+    const parseResult = parseCreativeConceptCandidates(execution.result.responseText)
+    if (!parseResult.success) {
+      setExecutionRequestNotice(parseResult.error)
+      return
+    }
+
+    const timestamp = new Date().toISOString()
+    const workOrder = projectWorkOrders.find((item) =>
+      item.id === execution.executionRequest?.workItemRecordId ||
+      item.workOrder?.workOrderId === execution.workOrder?.workOrderId
+    )
+    const concepts = createCreativeConceptRecords(parseResult.candidates, {
+      projectRecordId: activeProject.id,
+      projectId: activeProject.projectId,
+      businessAssetProjectId: activeProject.id,
+      creativeBriefId: activeProject.creativeBrief?.briefId,
+      selectedKnowledgeEntryIds: activeProject.creativeBrief?.selectedKnowledgeEntryIds ?? [],
+      workItemRecordId: workOrder?.id ?? execution.executionRequest?.workItemRecordId,
+      workItemId: workOrder?.workItemId ?? execution.executionRequest?.workItemId,
+      workOrderId: workOrder?.workOrder?.workOrderId ?? execution.workOrder?.workOrderId,
+      executionRequestId: execution.executionRequest?.requestId,
+      executionRecordId: execution.id,
+      executionId: execution.executionId,
+      executionResultId: execution.result.resultId,
+      providerName: execution.result.provider?.name,
+      modelName: execution.result.model?.name,
+      capability: execution.executionRequest?.requestedCapability,
+    }, timestamp)
+
+    const existingConcepts = activeProject.creativeConcepts ?? []
+    const nextConcepts = [...concepts, ...existingConcepts]
+    projectStore.updateProject(activeProject.id, { creativeConcepts: nextConcepts })
+    setDraft({ ...activeDraft, creativeConcepts: nextConcepts, updatedAt: timestamp })
+    setExecutionRequestNotice(`${concepts.length} creative concepts were parsed and saved. Previous concepts were preserved.`)
+  }
+
+  function selectCreativeConcept(conceptId: string) {
+    const timestamp = new Date().toISOString()
+    const nextConcepts = (activeProject.creativeConcepts ?? []).map((concept): CreativeConcept => ({
+      ...concept,
+      selected: concept.conceptId === conceptId,
+      status: concept.conceptId === conceptId ? 'Selected' : concept.status === 'Selected' ? 'Generated' : concept.status,
+      updatedAt: concept.conceptId === conceptId || concept.status === 'Selected' ? timestamp : concept.updatedAt,
+    }))
+
+    projectStore.updateProject(activeProject.id, { creativeConcepts: nextConcepts })
+    setDraft({ ...activeDraft, creativeConcepts: nextConcepts, updatedAt: timestamp })
+    setExecutionRequestNotice('Creative concept selected for planning only. No Blueprint, Work Order, execution, package, publishing, upload, or external action was triggered.')
   }
 
   return (
@@ -879,6 +1202,164 @@ export function ProjectDetailPage() {
           </Section>
 
           {draft.businessAsset?.enabled ? (
+            <Section title="Creative Brief" eyebrow="Structured upstream production context">
+              <p className="m-0 mb-4 text-sm leading-6 text-muted">
+                Creative Brief composes production direction for this Business Asset without duplicating Business Asset fields or copying Knowledge Workspace content. It does not generate, execute, approve, package, publish, or create Blueprints.
+              </p>
+
+              <label className="mb-4 flex items-start gap-3 rounded-2xl border border-line bg-ink/35 p-4">
+                <input
+                  type="checkbox"
+                  checked={Boolean(draft.creativeBrief?.enabled)}
+                  onChange={(event) => {
+                    const existingBrief = draft.creativeBrief ?? defaultCreativeBrief(draft)
+                    setDraft({
+                      ...draft,
+                      creativeBrief: {
+                        ...existingBrief,
+                        enabled: event.target.checked,
+                        updatedAt: new Date().toISOString(),
+                      },
+                    })
+                  }}
+                  className="mt-1 h-4 w-4 accent-lime"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-white">Enable Creative Brief</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted">
+                    Creative Brief is stored on the existing Project record. It references Knowledge entries by ID and uses inherited Business Asset context as the source of truth.
+                  </span>
+                </span>
+              </label>
+
+              {draft.creativeBrief?.enabled ? (
+                <div className="space-y-5">
+                  <div className="grid gap-3 md:grid-cols-4">
+                    <Info label="Brief ID" value={draft.creativeBrief.briefId} />
+                    <Info label="Owner" value="Project Store" />
+                    <Info label="Created" value={formatDate(draft.creativeBrief.createdAt)} />
+                    <Info label="Updated" value={formatDate(draft.creativeBrief.updatedAt)} />
+                  </div>
+
+                  <div className="rounded-2xl border border-line bg-ink/35 p-4">
+                    <p className="eyebrow mb-3">Inherited Business Asset Context</p>
+                    <div className="grid gap-3 md:grid-cols-4">
+                      <Info label="Topic" value={draft.businessAsset.topic || 'Not specified'} />
+                      <Info label="Goal" value={draft.businessAsset.goal || 'Not specified'} />
+                      <Info label="Audience" value={draft.businessAsset.targetAudience || 'Not specified'} />
+                      <Info label="Tone" value={draft.businessAsset.tone || 'Not specified'} />
+                      <Info label="Target Length" value={draft.businessAsset.targetLength || 'Not specified'} />
+                      <Info label="Platform" value={draft.businessAsset.platform || 'Not specified'} />
+                      <Info label="Asset Type" value={draft.businessAsset.assetType} />
+                      <Info label="Source" value="Business Asset profile" />
+                    </div>
+                    <p className="m-0 mt-3 text-xs leading-5 text-muted">
+                      Edit inherited context in the Business Asset section. Creative Brief does not create override copies.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Brief Status</span>
+                      <select value={draft.creativeBrief.status} onChange={(event) => updateCreativeBrief({ status: event.target.value as CreativeBriefStatus })} className="field">
+                        {creativeBriefStatuses.map((status) => <option key={status} value={status}>{status}</option>)}
+                      </select>
+                    </label>
+                    <Info label="Persistence" value="ai-operator-os-projects-v1" />
+                    <label className="space-y-2 md:col-span-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Offer / Business Context</span>
+                      <textarea value={draft.creativeBrief.offerContext} onChange={(event) => updateCreativeBrief({ offerContext: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2 md:col-span-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Key Message</span>
+                      <textarea value={draft.creativeBrief.keyMessage} onChange={(event) => updateCreativeBrief({ keyMessage: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Call To Action</span>
+                      <textarea value={draft.creativeBrief.callToAction} onChange={(event) => updateCreativeBrief({ callToAction: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Constraints</span>
+                      <textarea value={draft.creativeBrief.constraints} onChange={(event) => updateCreativeBrief({ constraints: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Required Inclusions</span>
+                      <textarea value={draft.creativeBrief.requiredInclusions} onChange={(event) => updateCreativeBrief({ requiredInclusions: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Prohibited Content</span>
+                      <textarea value={draft.creativeBrief.prohibitedContent} onChange={(event) => updateCreativeBrief({ prohibitedContent: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Platform Instructions</span>
+                      <textarea value={draft.creativeBrief.platformInstructions} onChange={(event) => updateCreativeBrief({ platformInstructions: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Asset Instructions</span>
+                      <textarea value={draft.creativeBrief.assetInstructions} onChange={(event) => updateCreativeBrief({ assetInstructions: event.target.value })} className="field min-h-[88px]" />
+                    </label>
+                  </div>
+
+                  <div className="rounded-2xl border border-line bg-ink/35 p-4">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="eyebrow mb-1">Knowledge References</p>
+                        <h4 className="m-0 font-display text-base font-semibold text-white">Selected Knowledge Workspace Entries</h4>
+                      </div>
+                      <span className="rounded-full border border-line px-3 py-1 text-xs text-muted">
+                        {draft.creativeBrief.selectedKnowledgeEntryIds.length} selected
+                      </span>
+                    </div>
+                    {draft.knowledgeWorkspace?.enabled && draft.knowledgeWorkspace.entries.length > 0 ? (
+                      <div className="space-y-3">
+                        {knowledgeEntriesBySection.map(({ section, entries }) => entries.length > 0 ? (
+                          <div key={section} className="rounded-xl border border-line bg-white/[0.02] p-3">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted">{section}</p>
+                            <div className="space-y-2">
+                              {entries.map((entry) => (
+                                <label key={entry.id} className="flex items-start gap-3 rounded-lg border border-line bg-ink/30 p-3">
+                                  <input
+                                    type="checkbox"
+                                    checked={draft.creativeBrief?.selectedKnowledgeEntryIds.includes(entry.id) ?? false}
+                                    onChange={() => toggleCreativeBriefKnowledgeEntry(entry.id)}
+                                    className="mt-1 h-4 w-4 accent-lime"
+                                  />
+                                  <span>
+                                    <span className="block text-sm font-semibold text-white">{entry.title}</span>
+                                    <span className="mt-1 block text-xs leading-5 text-muted">
+                                      {entry.url ? `${entry.url} · ` : ''}{entry.tags.length > 0 ? entry.tags.join(', ') : 'No tags'}
+                                    </span>
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null)}
+                      </div>
+                    ) : (
+                      <Placeholder text="Enable Knowledge Workspace and add entries to reference them from the Creative Brief." />
+                    )}
+                    {draft.creativeBrief.selectedKnowledgeEntryIds.some((entryId) => !draft.knowledgeWorkspace?.entries.some((entry) => entry.id === entryId)) ? (
+                      <p className="m-0 mt-3 text-xs leading-5 text-orange-200">
+                        One or more selected Knowledge references no longer resolve to an existing entry. The reference IDs remain stored for safe review.
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <button onClick={() => save(project, draft)} className="btn-primary">Save Creative Brief</button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <Placeholder text="Enable Creative Brief to add upstream production direction before Blueprint work begins. Existing Creative Brief data remains stored when disabled." />
+                  {draft.creativeBrief ? (
+                    <button onClick={() => save(project, draft)} className="btn-secondary">Save Creative Brief Setting</button>
+                  ) : null}
+                </div>
+              )}
+            </Section>
+          ) : null}
+
+          {draft.businessAsset?.enabled ? (
             <Section title="Knowledge Workspace" eyebrow="Structured production knowledge">
               <p className="m-0 mb-4 text-sm leading-6 text-muted">
                 Store project knowledge for this Business Asset. Task 2 keeps this local, structured, and reusable for future departments without adding a separate knowledge store.
@@ -968,6 +1449,39 @@ export function ProjectDetailPage() {
             </Section>
           ) : null}
 
+          {draft.businessAsset?.enabled && draft.creativeBrief?.enabled ? (
+            <Section title="Creative Concepts" eyebrow="AI topic development foundation">
+              <p className="m-0 mb-4 text-sm leading-6 text-muted">
+                Generate exactly {CREATIVE_CONCEPT_CANDIDATE_COUNT} reusable creative topic/concept candidates from Business Asset context, Creative Brief direction, and selected Knowledge references. Concepts are Project-owned planning records and do not modify Blueprints, create downstream work, publish, or trigger autonomy.
+              </p>
+
+              {executionRequestNotice ? (
+                <div className="mb-4 rounded-xl border border-lime/20 bg-lime/[0.06] p-3 text-sm text-lime">
+                  {executionRequestNotice}
+                </div>
+              ) : null}
+
+              <CreativeConceptDevelopmentPanel
+                project={activeProject}
+                workOrders={projectWorkOrders.filter((item) => item.workOrder?.workOrderType === 'Develop Creative Concepts')}
+                executions={executionStore.executions}
+                executingExecutionId={executingExecutionId}
+                onCreateWorkOrder={createCreativeConceptWorkOrder}
+                onBuildRequest={buildExecutionRequest}
+                onCreateLifecycle={createExecutionLifecycle}
+                onExecuteProviderPath={executeProviderPath}
+                onParseConcepts={appendConceptsFromExecution}
+                onSelectConcept={selectCreativeConcept}
+              />
+            </Section>
+          ) : null}
+
+          {draft.businessAsset?.enabled ? (
+            <Section title="Creative Cost Visibility" eyebrow="Read-only execution cost summary">
+              <CreativeCostVisibilityPanel summary={creativeCostSummary} />
+            </Section>
+          ) : null}
+
           {draft.businessAsset?.enabled ? (
             <Section title="Production Blueprint" eyebrow="Reusable production contract">
               <p className="m-0 mb-4 text-sm leading-6 text-muted">
@@ -1016,6 +1530,14 @@ export function ProjectDetailPage() {
                       />
                     ))}
                   </div>
+
+                  <CreativeAssetPackagePanel
+                    project={activeProject}
+                    blueprint={draft.productionBlueprint}
+                    ready={packageReadiness.ready}
+                    blockedDeliverables={packageReadiness.blocked.map((deliverable) => deliverable.name)}
+                    onCreatePackage={createCreativeAssetPackage}
+                  />
 
                   <button onClick={() => save(project, draft)} className="btn-primary">Save Production Blueprint</button>
                 </div>
@@ -1170,6 +1692,387 @@ function Info({ label, value }: { label: string; value: string }) {
     <div className="rounded-xl border border-line bg-ink/35 p-4">
       <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
       <p className="m-0 mt-2 text-sm font-semibold text-white">{value || 'Not assigned'}</p>
+    </div>
+  )
+}
+
+function CreativeCostVisibilityPanel({
+  summary,
+}: {
+  summary: ReturnType<typeof buildCreativeCostSummary>
+}) {
+  const topProviderModels = summary.providerModelBreakdown.slice(0, 4)
+  const topWorkOrderCapabilities = summary.workOrderCapabilityBreakdown.slice(0, 4)
+
+  return (
+    <section className="rounded-2xl border border-line bg-ink/35 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow mb-2">Observation Only</p>
+          <h4 className="m-0 font-display text-base font-semibold text-white">Project creative execution cost</h4>
+          <p className="m-0 mt-2 text-sm leading-6 text-muted">
+            This summary is derived from existing Execution Core records. It does not write Money records, Cost Records, provider data, Work Orders, Execution Requests, or Project financial records.
+          </p>
+        </div>
+        <span className="rounded-full border border-line px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+          Read-only
+        </span>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
+        <Info label="Recorded Execution Cost" value={formatMoney(summary.actualRecordedCost)} />
+        <Info label="Estimated Execution Cost" value={formatMoney(summary.estimatedExecutionCost)} />
+        <Info label="Execution Count" value={String(summary.executionCount)} />
+        <Info label="No Cost Recorded" value={String(summary.noCostRecordedCount)} />
+        <Info label="Successful Executions" value={String(summary.successfulExecutionCount)} />
+        <Info label="Failed Executions" value={String(summary.failedExecutionCount)} />
+        <Info label="Execution Duration" value={formatDuration(summary.totalExecutionDurationMs)} />
+        <Info label="Average Latency" value={formatDuration(summary.averageLatencyMs)} />
+      </div>
+
+      <div className="mt-4 rounded-xl border border-orange-300/20 bg-orange-300/[0.045] p-3">
+        <p className="m-0 text-sm leading-6 text-orange-100">
+          Cost Source: Actual Recorded Cost and Estimated Execution Cost come only from existing Execution Core cost fields and Cost Records. Local Provider Direct Cost may be $0.00 for local providers; hardware, electricity, labor, and other indirect costs are not tracked here.
+        </p>
+        {summary.localProviderDirectCostCount > 0 ? (
+          <p className="m-0 mt-2 text-xs leading-5 text-orange-100">
+            Local Provider Direct Cost: {summary.localProviderDirectCostCount} execution{summary.localProviderDirectCostCount === 1 ? '' : 's'} currently have local direct provider cost with no monetary provider/API cost recorded.
+          </p>
+        ) : null}
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <div className="rounded-xl border border-line bg-white/[0.025] p-4">
+          <p className="eyebrow mb-3">Provider / Model Breakdown</p>
+          {topProviderModels.length > 0 ? (
+            <div className="space-y-3">
+              {topProviderModels.map((item) => (
+                <BreakdownRow key={item.key} item={item} />
+              ))}
+            </div>
+          ) : (
+            <p className="m-0 text-sm leading-6 text-muted">No provider/model execution records are linked to this Project yet.</p>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-line bg-white/[0.025] p-4">
+          <p className="eyebrow mb-3">Work Order / Capability Breakdown</p>
+          {topWorkOrderCapabilities.length > 0 ? (
+            <div className="space-y-3">
+              {topWorkOrderCapabilities.map((item) => (
+                <BreakdownRow key={item.key} item={item} />
+              ))}
+            </div>
+          ) : (
+            <p className="m-0 text-sm leading-6 text-muted">No Work Order or capability execution records are linked to this Project yet.</p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <Info
+          label="Revision Executions"
+          value={`${summary.revisionExecutionCount} / ${formatMoney(summary.revisionActualRecordedCost)} actual / ${formatMoney(summary.revisionEstimatedExecutionCost)} estimated`}
+        />
+        <Info
+          label="Topic Development"
+          value={`${summary.topicDevelopmentExecutionCount} / ${formatMoney(summary.topicDevelopmentActualRecordedCost)} actual / ${formatMoney(summary.topicDevelopmentEstimatedExecutionCost)} estimated`}
+        />
+      </div>
+    </section>
+  )
+}
+
+function BreakdownRow({
+  item,
+}: {
+  item: {
+    label: string
+    executionCount: number
+    actualRecordedCost: number
+    estimatedExecutionCost: number
+  }
+}) {
+  return (
+    <div className="rounded-lg border border-line bg-ink/35 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="m-0 text-sm font-semibold text-white">{item.label}</p>
+        <span className="rounded-full border border-line px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-muted">
+          {item.executionCount} execution{item.executionCount === 1 ? '' : 's'}
+        </span>
+      </div>
+      <p className="m-0 mt-2 text-xs leading-5 text-muted">
+        Actual Recorded Cost: {formatMoney(item.actualRecordedCost)} · Estimated Execution Cost: {formatMoney(item.estimatedExecutionCost)}
+      </p>
+    </div>
+  )
+}
+
+function CreativeAssetPackagePanel({
+  project,
+  blueprint,
+  ready,
+  blockedDeliverables,
+  onCreatePackage,
+}: {
+  project: ProjectRecord
+  blueprint: ProductionBlueprint
+  ready: boolean
+  blockedDeliverables: string[]
+  onCreatePackage: () => void
+}) {
+  const [copyNotice, setCopyNotice] = useState('')
+  const packages = blueprint.creativeAssetPackages ?? []
+
+  async function copyText(label: string, text: string) {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopyNotice(`${label} copied. Source package records were not modified.`)
+    } catch {
+      setCopyNotice(`${label} copy failed. Select the text manually and copy it from the field.`)
+    }
+  }
+
+  return (
+    <section className="rounded-2xl border border-lime/20 bg-lime/[0.035] p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow mb-2">Creative Asset Package</p>
+          <h4 className="m-0 font-display text-base font-semibold text-white">Export-ready package foundation</h4>
+          <p className="m-0 mt-2 text-sm leading-6 text-muted">
+            Packages are manual, local-first snapshots of final CEO-approved Blueprint deliverables. They prepare approved work for outside use but do not publish, upload, or trigger external actions.
+          </p>
+        </div>
+        <button onClick={onCreatePackage} className="btn-primary" disabled={!ready}>
+          Create Package
+        </button>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
+        <Info label="Package Owner" value="Project Store / Production Blueprint" />
+        <Info label="Approval Gate" value={ready ? 'All deliverables approved' : 'Approval incomplete'} />
+        <Info label="Package Count" value={String(packages.length)} />
+        <Info label="Export Scope" value="Copy Markdown / JSON" />
+      </div>
+
+      {!ready ? (
+        <div className="mt-4 rounded-xl border border-orange-300/25 bg-orange-300/[0.05] p-3">
+          <p className="m-0 text-sm leading-6 text-orange-100">
+            Package creation is blocked until every deliverable has final CEO-approved content.
+            {blockedDeliverables.length > 0 ? ` Blocking deliverables: ${blockedDeliverables.join(', ')}.` : ''}
+          </p>
+        </div>
+      ) : null}
+
+      {copyNotice ? (
+        <div className="mt-4 rounded-xl border border-line bg-ink/35 p-3 text-sm text-lime">{copyNotice}</div>
+      ) : null}
+
+      {packages.length > 0 ? (
+        <div className="mt-4 space-y-4">
+          {packages.map((assetPackage) => {
+            const markdown = buildPackageMarkdown(project, assetPackage)
+            const json = buildPackageJson(assetPackage)
+
+            return (
+              <article key={assetPackage.id} className="rounded-xl border border-line bg-ink/40 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="eyebrow mb-2">Package Version {assetPackage.packageVersion}</p>
+                    <h5 className="m-0 font-display text-base font-semibold text-white">{assetPackage.packageId}</h5>
+                    <p className="m-0 mt-2 text-sm leading-6 text-muted">
+                      {assetPackage.businessAssetType} package for {assetPackage.projectId}. Status: {assetPackage.status}. Created {formatDate(assetPackage.createdAt)}.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => copyText('Markdown package', markdown)} className="btn-secondary">Copy Markdown</button>
+                    <button onClick={() => copyText('JSON package', json)} className="btn-secondary">Copy JSON</button>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  <Info label="Deliverables" value={String(assetPackage.deliverables.length)} />
+                  <Info label="Review References" value={String(assetPackage.sourceReviewIds.length)} />
+                  <Info label="Execution References" value={String(assetPackage.sourceExecutionRecordIds.length)} />
+                </div>
+
+                <div className="mt-4 grid gap-3">
+                  {assetPackage.deliverables.map((deliverable) => (
+                    <div key={deliverable.id} className="rounded-lg border border-line bg-white/[0.025] p-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="m-0 text-sm font-semibold text-white">{deliverable.deliverableName}</p>
+                        <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
+                          Review {deliverable.reviewApprovalId ?? 'not recorded'} - Execution {deliverable.sourceExecutionId ?? 'not recorded'}
+                        </span>
+                      </div>
+                      <p className="m-0 mt-2 whitespace-pre-wrap text-sm leading-6 text-[#d7e2dc]">{deliverable.approvedContent}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Copyable Markdown</span>
+                    <textarea readOnly value={markdown} className="field min-h-[220px] font-mono text-xs" />
+                  </label>
+                  <label className="space-y-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Copyable JSON</span>
+                    <textarea readOnly value={json} className="field min-h-[220px] font-mono text-xs" />
+                  </label>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      ) : (
+        <Placeholder text="No Creative Asset Package has been created yet. Create a package after all Blueprint deliverables are CEO-approved." />
+      )}
+    </section>
+  )
+}
+
+function CreativeConceptDevelopmentPanel({
+  project,
+  workOrders,
+  executions,
+  executingExecutionId,
+  onCreateWorkOrder,
+  onBuildRequest,
+  onCreateLifecycle,
+  onExecuteProviderPath,
+  onParseConcepts,
+  onSelectConcept,
+}: {
+  project: ProjectRecord
+  workOrders: WorkItemRecord[]
+  executions: ExecutionRecord[]
+  executingExecutionId?: string
+  onCreateWorkOrder: () => void
+  onBuildRequest: (workOrder: WorkItemRecord) => void
+  onCreateLifecycle: (workOrder: WorkItemRecord) => void
+  onExecuteProviderPath: (execution: ExecutionRecord) => void
+  onParseConcepts: (execution: ExecutionRecord) => void
+  onSelectConcept: (conceptId: string) => void
+}) {
+  const concepts = project.creativeConcepts ?? []
+  const latestWorkOrder = workOrders[0]
+  const executionRequest = latestWorkOrder?.workOrder?.executionRequest
+  const execution = executionRequest ? executions.find((record) => record.executionRequest?.requestId === executionRequest.requestId) : undefined
+  const lifecycleState = execution?.requestLifecycle?.status
+  const canExecute = Boolean(execution && lifecycleState !== 'Completed' && lifecycleState !== 'Failed')
+  const sourceResultAlreadyParsed = Boolean(execution?.result?.resultId && concepts.some((concept) => concept.sourceReferences.executionResultId === execution.result?.resultId))
+
+  return (
+    <div className="space-y-5">
+      <div className="rounded-2xl border border-line bg-ink/35 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="eyebrow mb-2">Manual Generation</p>
+            <h4 className="m-0 font-display text-base font-semibold text-white">Creative concept development Work Order</h4>
+            <p className="m-0 mt-2 text-sm leading-6 text-muted">
+              Uses the existing Work Item / Work Order, Execution Request, Execution Core, Capability Resolver, Provider Manager, and provider path. It requests exactly {CREATIVE_CONCEPT_CANDIDATE_COUNT} structured candidates.
+            </p>
+          </div>
+          <button onClick={onCreateWorkOrder} className="btn-primary">Create Concept Work Order</button>
+        </div>
+
+        {latestWorkOrder ? (
+          <div className="mt-4 space-y-4">
+            <div className="grid gap-3 md:grid-cols-4">
+              <Info label="Work Order" value={latestWorkOrder.workOrder?.workOrderId ?? latestWorkOrder.workItemId} />
+              <Info label="Type" value={latestWorkOrder.workOrder?.workOrderType ?? 'Not assigned'} />
+              <Info label="Execution Request" value={executionRequest?.requestId ?? 'Not built'} />
+              <Info label="Lifecycle" value={execution?.requestLifecycle?.status ?? 'Not established'} />
+              <Info label="Provider" value={execution?.result?.provider?.name ?? 'Provider Manager selects'} />
+              <Info label="Model" value={execution?.result?.model?.name ?? 'Provider Manager selects'} />
+              <Info label="Candidate Count" value={String(CREATIVE_CONCEPT_CANDIDATE_COUNT)} />
+              <Info label="Policy" value="Manual only" />
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => onBuildRequest(latestWorkOrder)} className="btn-secondary" disabled={Boolean(executionRequest)}>
+                {executionRequest ? 'Execution Request Built' : 'Build Execution Request'}
+              </button>
+              {executionRequest ? (
+                <button onClick={() => onCreateLifecycle(latestWorkOrder)} className="btn-secondary" disabled={Boolean(execution)}>
+                  {execution ? 'Lifecycle Established' : 'Create Lifecycle'}
+                </button>
+              ) : null}
+              {execution ? (
+                <button onClick={() => onExecuteProviderPath(execution)} className="btn-primary" disabled={!canExecute || executingExecutionId === execution.id}>
+                  {executingExecutionId === execution.id
+                    ? 'Executing...'
+                    : lifecycleState === 'Completed'
+                      ? 'Provider Result Recorded'
+                      : lifecycleState === 'Failed'
+                        ? 'Provider Execution Failed'
+                        : 'Execute Provider Path'}
+                </button>
+              ) : null}
+              {execution?.result?.success ? (
+                <button onClick={() => onParseConcepts(execution)} className="btn-secondary" disabled={sourceResultAlreadyParsed}>
+                  {sourceResultAlreadyParsed ? 'Concepts Parsed' : 'Parse + Save Concepts'}
+                </button>
+              ) : null}
+            </div>
+
+            {execution?.result?.responseText ? (
+              <div className="rounded-xl border border-line bg-white/[0.025] p-3">
+                <p className="eyebrow mb-2">Raw Structured Execution Result</p>
+                <p className="m-0 max-h-[240px] overflow-auto whitespace-pre-wrap text-xs leading-5 text-[#d7e2dc]">{execution.result.responseText}</p>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div className="mt-4">
+            <Placeholder text="No Creative Concept Work Order exists yet. Create one manually to begin provider-independent topic development." />
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-2xl border border-line bg-ink/35 p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="eyebrow mb-1">Generated Concepts</p>
+            <h4 className="m-0 font-display text-base font-semibold text-white">Project-owned planning candidates</h4>
+          </div>
+          <span className="rounded-full border border-line px-3 py-1 text-xs text-muted">{concepts.length} stored</span>
+        </div>
+
+        {concepts.length > 0 ? (
+          <div className="grid gap-3">
+            {concepts.map((concept) => (
+              <article key={concept.conceptId} className={`rounded-xl border p-4 ${concept.selected ? 'border-lime/40 bg-lime/[0.06]' : 'border-line bg-white/[0.025]'}`}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="eyebrow mb-2">{concept.status}</p>
+                    <h5 className="m-0 font-display text-base font-semibold text-white">{concept.title}</h5>
+                    <p className="m-0 mt-2 text-sm leading-6 text-[#d7e2dc]">{concept.summary}</p>
+                  </div>
+                  <button onClick={() => onSelectConcept(concept.conceptId)} className={concept.selected ? 'btn-secondary' : 'btn-primary'} disabled={concept.selected}>
+                    {concept.selected ? 'Selected' : 'Select for Planning'}
+                  </button>
+                </div>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <Info label="Angle" value={concept.angle} />
+                  <Info label="Audience Value" value={concept.audienceValue} />
+                  <Info label="Hook Direction" value={concept.hookDirection} />
+                  <Info label="Source Execution" value={concept.sourceReferences.executionId ?? 'Not linked'} />
+                </div>
+                <div className="mt-3 rounded-lg border border-line bg-ink/40 p-3">
+                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-muted">Rationale</p>
+                  <p className="m-0 mt-2 text-sm leading-6 text-[#d7e2dc]">{concept.rationale}</p>
+                </div>
+                <p className="m-0 mt-3 text-xs leading-5 text-muted">
+                  Lineage: Work Order {concept.sourceReferences.workOrderId ?? 'not linked'} - Execution Request {concept.sourceReferences.executionRequestId ?? 'not linked'} - Result {concept.sourceReferences.executionResultId ?? 'not linked'}.
+                </p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <Placeholder text="No creative concepts have been saved yet. Run one manual concept-development execution and parse the structured result." />
+        )}
+      </div>
     </div>
   )
 }

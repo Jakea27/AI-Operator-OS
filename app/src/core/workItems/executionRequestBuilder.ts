@@ -1,3 +1,4 @@
+import { buildCreativeConceptInstructions, CREATIVE_CONCEPT_CANDIDATE_COUNT } from '../projects'
 import type { ProjectRecord, ProductionBlueprintDeliverableName } from '../projects'
 import type { ProviderCapability } from '../providers'
 import type { ExecutionRequestReference, WorkItemRecord, WorkOrderType } from './workItemTypes'
@@ -29,6 +30,7 @@ const workOrderCapabilityMap: Record<WorkOrderType, ProviderCapability> = {
   'Generate Description': 'Text Generation',
   'Generate Tags': 'Text Generation',
   'Generate Thumbnail Concept': 'Text Generation',
+  'Develop Creative Concepts': 'Text Generation',
 }
 
 function deliverableInstructionName(name: ProductionBlueprintDeliverableName) {
@@ -69,13 +71,14 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
   if (!workOrder?.enabled) errors.push('Work Item does not contain a Work Order profile.')
   if (workItem.projectId !== project.id && workItem.projectCode !== project.projectId) errors.push('Work Order does not reference the supplied Project.')
   if (!project.businessAsset?.enabled) errors.push('Project does not have an enabled Business Asset profile.')
-  if (!project.productionBlueprint?.enabled) errors.push('Project does not have an enabled Production Blueprint.')
+  if (workOrder?.workOrderType !== 'Develop Creative Concepts' && !project.productionBlueprint?.enabled) errors.push('Project does not have an enabled Production Blueprint.')
 
   const deliverable = project.productionBlueprint?.deliverables.find((item) => item.id === workOrder?.blueprintDeliverableId)
-  if (!deliverable) errors.push('Referenced Blueprint deliverable could not be resolved.')
+  const isConceptDevelopment = workOrder?.workOrderType === 'Develop Creative Concepts'
+  if (!deliverable && !isConceptDevelopment) errors.push('Referenced Blueprint deliverable could not be resolved.')
   if (!project.knowledgeWorkspace?.enabled) warnings.push('Knowledge Workspace is not enabled; request will use Business Asset and Blueprint references only.')
 
-  if (errors.length > 0 || !workOrder || !deliverable) {
+  if (errors.length > 0 || !workOrder || (!deliverable && !isConceptDevelopment)) {
     return { success: false, errors, warnings }
   }
 
@@ -84,9 +87,14 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
   const knowledgeReferenceIds = project.knowledgeWorkspace?.entries.map((entry) => entry.id) ?? []
   const asset = project.businessAsset
   const isRevision = workOrder.metadata.isRevision === 'true'
+  const selectedCreativeBriefKnowledgeIds = project.creativeBrief?.selectedKnowledgeEntryIds ?? []
   const revisionInstructions = workOrder.metadata.revisionInstructions ?? ''
-  const originalDraftContent = workOrder.metadata.originalDraftContent ?? deliverable.draftContent ?? deliverable.content
-  const baseInstructions = isRevision
+  const originalDraftContent = deliverable
+    ? workOrder.metadata.originalDraftContent ?? deliverable.draftContent ?? deliverable.content
+    : ''
+  const baseInstructions = isConceptDevelopment
+    ? [buildCreativeConceptInstructions(project)]
+    : isRevision && deliverable
     ? [
       `Revise the existing ${deliverable.name} draft using the CEO revision instructions.`,
       `Deliverable: ${deliverable.name}`,
@@ -105,13 +113,13 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
       'Preserve the intent of the original draft while applying only the requested revision. Return revised draft content only.',
     ]
     : [
-      deliverableInstructionName(deliverable.name),
+      deliverableInstructionName(deliverable!.name),
       `Topic: ${asset?.topic || 'Not specified'}`,
       `Goal: ${asset?.goal || 'Not specified'}`,
       `Audience: ${asset?.targetAudience || 'Not specified'}`,
       `Tone: ${asset?.tone || 'Not specified'}`,
       `Target Length: ${asset?.targetLength || 'Not specified'}`,
-      `Existing Blueprint Placeholder: ${deliverable.content || 'Empty'}`,
+      `Existing Blueprint Placeholder: ${deliverable!.content || 'Empty'}`,
     ]
   const request: ExecutionRequestReference = {
     requestId: id('ER'),
@@ -122,22 +130,28 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
     projectId: project.id,
     projectCode: project.projectId,
     businessAssetProjectId: project.id,
-    blueprintDeliverableId: deliverable.id,
-    blueprintDeliverableName: deliverable.name,
-    knowledgeReferenceIds,
+    blueprintDeliverableId: deliverable?.id ?? '',
+    blueprintDeliverableName: deliverable?.name ?? 'Creative Concept Development',
+    knowledgeReferenceIds: isConceptDevelopment ? selectedCreativeBriefKnowledgeIds : knowledgeReferenceIds,
     instructions: baseInstructions.join('\n'),
-    outputRequirements: isRevision
-      ? `${outputRequirements(deliverable.name)} This is a manual revision attempt. Do not approve, publish, send, or start another revision.`
-      : outputRequirements(deliverable.name),
+    outputRequirements: isConceptDevelopment
+      ? `Return JSON only with exactly ${CREATIVE_CONCEPT_CANDIDATE_COUNT} creative topic/concept candidates in a concepts array. Each candidate must include title, summary, angle, rationale, audienceValue, and hookDirection.`
+      : isRevision && deliverable
+        ? `${outputRequirements(deliverable.name)} This is a manual revision attempt. Do not approve, publish, send, or start another revision.`
+        : outputRequirements(deliverable!.name),
     correlationMetadata: {
       workOrderId: workOrder.workOrderId,
       workOrderType: workOrder.workOrderType,
+      workOrderKind: workOrder.metadata.workOrderKind ?? '',
       businessId: project.businessId,
       businessCode: project.businessCode,
       projectId: project.projectId,
       assetType: asset?.assetType ?? workOrder.assetType,
       platform: asset?.platform ?? workOrder.platform,
       productionBlueprintType: project.productionBlueprint?.blueprintType ?? workOrder.productionBlueprintType,
+      creativeBriefId: project.creativeBrief?.briefId ?? '',
+      selectedKnowledgeEntryIds: selectedCreativeBriefKnowledgeIds.join(','),
+      candidateCount: isConceptDevelopment ? String(CREATIVE_CONCEPT_CANDIDATE_COUNT) : '',
       ...workOrder.metadata,
     },
     createdAt: timestamp,

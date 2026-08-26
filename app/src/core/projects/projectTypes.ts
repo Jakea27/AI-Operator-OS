@@ -55,6 +55,62 @@ export type ProjectKnowledgeWorkspace = {
   metadata: Record<string, string>
 }
 
+export type CreativeBriefStatus = 'Draft' | 'Ready'
+
+export type CreativeBriefProfile = {
+  enabled: boolean
+  briefId: string
+  status: CreativeBriefStatus
+  selectedKnowledgeEntryIds: string[]
+  offerContext: string
+  keyMessage: string
+  callToAction: string
+  constraints: string
+  requiredInclusions: string
+  prohibitedContent: string
+  platformInstructions: string
+  assetInstructions: string
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
+export type CreativeConceptStatus = 'Generated' | 'Selected' | 'Archived'
+
+export type CreativeConceptSourceReferences = {
+  projectRecordId: string
+  projectId: string
+  businessAssetProjectId: string
+  creativeBriefId?: string
+  selectedKnowledgeEntryIds: string[]
+  workItemRecordId?: string
+  workItemId?: string
+  workOrderId?: string
+  executionRequestId?: string
+  executionRecordId?: string
+  executionId?: string
+  executionResultId?: string
+  providerName?: string
+  modelName?: string
+  capability?: string
+}
+
+export type CreativeConcept = {
+  conceptId: string
+  title: string
+  summary: string
+  angle: string
+  rationale: string
+  audienceValue: string
+  hookDirection: string
+  status: CreativeConceptStatus
+  selected: boolean
+  sourceReferences: CreativeConceptSourceReferences
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
 export type ProductionBlueprintType = 'YouTube Video Blueprint'
 
 export type ProductionBlueprintDeliverableName = 'Title' | 'Hook' | 'Script' | 'Description' | 'Tags' | 'Thumbnail Concept'
@@ -110,11 +166,56 @@ export type ProductionBlueprintDeliverable = {
   metadata: Record<string, string>
 }
 
+export type CreativeAssetPackageStatus = 'Export Ready' | 'Exported' | 'Archived'
+
+export type CreativeAssetPackageDeliverable = {
+  id: string
+  deliverableId: string
+  deliverableName: ProductionBlueprintDeliverableName
+  approvedContent: string
+  approvedAt?: string
+  reviewApprovalId?: string
+  sourceExecutionRecordId?: string
+  sourceExecutionId?: string
+  sourceExecutionRequestId?: string
+  sourceResultId?: string
+  sourceWorkItemId?: string
+  sourceWorkOrderId?: string
+  reviewHistoryIds: string[]
+  metadata: Record<string, string>
+}
+
+export type CreativeAssetPackage = {
+  id: string
+  packageId: string
+  projectRecordId: string
+  projectId: string
+  businessAssetType: BusinessAssetType
+  platform: string
+  blueprintType: ProductionBlueprintType
+  packageVersion: number
+  status: CreativeAssetPackageStatus
+  createdAt: string
+  updatedAt: string
+  approvalState: 'CEO Approved'
+  deliverables: CreativeAssetPackageDeliverable[]
+  sourceReviewIds: string[]
+  sourceExecutionRecordIds: string[]
+  sourceExecutionRequestIds: string[]
+  sourceWorkItemIds: string[]
+  sourceWorkOrderIds: string[]
+  sourceResultIds: string[]
+  revisionLineageReferences: string[]
+  exportFormats: ('Markdown' | 'JSON')[]
+  metadata: Record<string, string>
+}
+
 export type ProductionBlueprint = {
   enabled: boolean
   blueprintType: ProductionBlueprintType
   assetType: BusinessAssetType
   deliverables: ProductionBlueprintDeliverable[]
+  creativeAssetPackages: CreativeAssetPackage[]
   createdAt: string
   updatedAt: string
   metadata: Record<string, string>
@@ -146,6 +247,8 @@ export type ProjectRecord = {
   timeline: ProjectTimelineItem[]
   businessAsset?: BusinessAssetProfile
   knowledgeWorkspace?: ProjectKnowledgeWorkspace
+  creativeBrief?: CreativeBriefProfile
+  creativeConcepts?: CreativeConcept[]
   productionBlueprint?: ProductionBlueprint
 }
 
@@ -168,6 +271,8 @@ export type ProjectInput = {
   notes: string
   businessAsset?: BusinessAssetProfile
   knowledgeWorkspace?: ProjectKnowledgeWorkspace
+  creativeBrief?: CreativeBriefProfile
+  creativeConcepts?: CreativeConcept[]
   productionBlueprint?: ProductionBlueprint
 }
 
@@ -191,6 +296,8 @@ export type ProjectUpdate = Partial<Pick<
   | 'notes'
   | 'businessAsset'
   | 'knowledgeWorkspace'
+  | 'creativeBrief'
+  | 'creativeConcepts'
   | 'productionBlueprint'
 >>
 
@@ -202,6 +309,10 @@ export const businessAssetProductionStages: BusinessAssetProductionStage[] = ['I
 
 export const projectKnowledgeSections: ProjectKnowledgeSection[] = ['Research Notes', 'Reference Links', 'Keywords', 'Competitor Research', 'CEO Notes', 'Ideas', 'Source References']
 
+export const creativeBriefStatuses: CreativeBriefStatus[] = ['Draft', 'Ready']
+
+export const creativeConceptStatuses: CreativeConceptStatus[] = ['Generated', 'Selected', 'Archived']
+
 export const productionBlueprintTypes: ProductionBlueprintType[] = ['YouTube Video Blueprint']
 
 export const productionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = ['Title', 'Hook', 'Script', 'Description', 'Tags', 'Thumbnail Concept']
@@ -209,3 +320,5 @@ export const productionBlueprintDeliverableNames: ProductionBlueprintDeliverable
 export const productionBlueprintDeliverableStatuses: ProductionBlueprintDeliverableStatus[] = ['Not Started', 'Draft', 'Complete']
 
 export const productionBlueprintDeliverableReviewStatuses: ProductionBlueprintDeliverableReviewStatus[] = ['Not Ready', 'Draft', 'Approved', 'Needs Revision', 'Rejected']
+
+export const creativeAssetPackageStatuses: CreativeAssetPackageStatus[] = ['Export Ready', 'Exported', 'Archived']

@@ -15,6 +15,7 @@ export type WorkOrderType =
   | 'Generate Description'
   | 'Generate Tags'
   | 'Generate Thumbnail Concept'
+  | 'Develop Creative Concepts'
 
 export type WorkOrderStatus = 'Prepared' | 'Request Built' | 'Ready For Execution' | 'Completed' | 'Cancelled'
 
@@ -135,6 +136,7 @@ export const workOrderTypes: WorkOrderType[] = [
   'Generate Description',
   'Generate Tags',
   'Generate Thumbnail Concept',
+  'Develop Creative Concepts',
 ]
 
 export const workOrderStatuses: WorkOrderStatus[] = ['Prepared', 'Request Built', 'Ready For Execution', 'Completed', 'Cancelled']
