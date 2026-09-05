@@ -27,6 +27,10 @@ Business ownership must resolve through stable IDs and linked records, not busin
 
 Priority uses owning source-record priority and sorts Critical, High, Medium, Low. Same-priority ties sort human intervention, current failure, blocked work, routine pending approval, then oldest source creation time, then stable source-type/source-ID fallback. Missing or invalid priority remains visible as Unspecified rather than being inferred.
 
+Sprint 015 Task 2 implements this foundation as a pure derivation module exported from `app/src/core/businesses`. The module accepts existing source records as inputs and returns derived portfolio items, business summaries, ownership review groups, and priority review groups without mutating or persisting records.
+
+Task 2 current-failure semantics are explicit: `ExecutionRecord.status === 'Failed'` is current failure; `ExecutionRecord.requestLifecycle.status === 'Failed'` is also surfaced as current failure/context inconsistency when present; historical `execution.failures` entries alone are not current attention. When Execution Core status and Execution Request lifecycle conflict, the derived attention item exposes a state-consistency warning.
+
 ## 1. Overview
 
 Architecture v2 documents the operating system foundation that exists after Sprints 001 through 008.

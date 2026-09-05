@@ -38,6 +38,154 @@ Task 1 repository closeout is complete. The pushed documentation-only architectu
 
 Task 2 is not started.
 
+## Sprint 015 Task 2 - Shared Attention Summary Foundation
+
+Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+
+Task 2 implements one shared read-only derivation foundation for current multi-business attention. Future Task 3 Business Manager integration and Task 4 Command Center integration must consume the same derived result instead of calculating attention independently.
+
+Implementation files:
+
+- `app/src/core/businesses/businessAttention.ts`
+- `app/src/core/businesses/index.ts`
+
+Public foundation:
+
+- `buildBusinessAttentionSummary(input)`
+- `isPendingCeoApproval(approval)`
+- `isExecutionRequiringHumanIntervention(execution)`
+- `isCurrentExecutionFailure(execution)`
+- `getExecutionLifecycleConsistencyWarning(execution)`
+
+The shared output supports:
+
+- Portfolio-wide ordered attention list.
+- Business-level attention summary for each Business record.
+- Review groups for unidentified ownership, conflicting ownership, and unspecified priority.
+- Attention-item count.
+- Contributing source-record count.
+
+### Implemented Attention Signals
+
+Task 2 derives only:
+
+1. Pending CEO Approval.
+2. Execution Requires Human Intervention.
+3. Current Execution Failure.
+4. Blocked Work Item.
+
+Pending CEO Approval uses the current authoritative Approval Queue record. Only approvals with `status === 'Pending'` and `requiresCEOApproval === true` qualify. Cached approval references on execution records do not create or override approval attention.
+
+Execution Requires Human Intervention qualifies when `ExecutionRecord.status === 'Requires Human Intervention'`.
+
+Current Execution Failure qualifies when `ExecutionRecord.status === 'Failed'` or `ExecutionRecord.requestLifecycle.status === 'Failed'`. Historical `execution.failures` entries alone do not create current-failure attention. When the main execution status and request lifecycle disagree, the derived item exposes a `stateConsistencyWarning` instead of silently choosing one state as correct.
+
+Blocked Work Item qualifies when `WorkItemRecord.status === 'Blocked'`. The attention reason states that blocked work needs review and does not claim every blocker requires a CEO decision.
+
+### Implemented Ownership Resolution
+
+Task 2 resolves business ownership with stable references only.
+
+The derivation recognizes:
+
+- `BusinessRecord.id`
+- `BusinessRecord.businessId`
+- Project business ID/code references.
+- Work Item business ID/code and project references.
+- Execution Queue business ID/code and source Work Item references.
+- Execution business ID/code, project, Work Item, queue, Work Order, and Execution Request references.
+- Approval source business, project, work item, execution, queue, and execution-request references.
+
+Business names alone do not resolve ownership.
+
+If reliable stable references resolve to exactly one Business record, ownership is `Resolved`.
+
+If no reliable reference resolves, ownership is `Unidentified`.
+
+If reliable references resolve to more than one Business record, ownership is `Conflict`.
+
+Unidentified and Conflict items remain in the portfolio review output and are excluded from individual business totals.
+
+Paused and archived businesses can own attention items; their lifecycle status is exposed in resolved ownership and business summaries.
+
+### Implemented Duplicate and Counting Semantics
+
+Stable attention identity is composed from signal type, source type, and authoritative source record ID.
+
+The same explicit Approval ID produces one pending-approval attention item. Separate Approval IDs remain separate decisions. Related execution, request, work item, or queue references may provide context but do not produce duplicate approval attention.
+
+Independent signal types remain independent. A pending approval, human-intervention execution, current execution failure, and blocked Work Item may all remain visible when they represent separate current source conditions in the same record chain.
+
+Attention-item count is the count of derived current attention items. Contributing-source-record count is the count of unique source type/source record pairs that contributed those items.
+
+### Implemented Priority and Ordering Semantics
+
+Priority uses the owning source record priority:
+
+- Approval priority for approval attention.
+- Execution priority for execution attention.
+- Work Item priority for blocked-work attention.
+
+Known priority order:
+
+Critical > High > Medium > Low.
+
+For equal priority, ordering is:
+
+1. Human intervention.
+2. Current execution failure.
+3. Blocked Work Item.
+4. Pending approval.
+5. Valid source creation timestamp, oldest first.
+6. Stable source-type/source-record-ID fallback.
+
+Missing or invalid priority is retained as `Unspecified` and included in a visible review group. Missing or invalid timestamps are not invented and use stable fallback ordering.
+
+### Implemented Navigation Semantics
+
+Derived items emit existing routes only:
+
+- Work Items: `/work-items/:workItemId`
+- Executions: `/executions/:executionId`
+- Approvals: `/approval`
+
+The Approval Queue currently has no exact approval-detail route. Task 2 preserves the approval ID in the derived attention item so Task 3 or Task 4 can later add exact selection/opening behavior without creating a duplicate approval page.
+
+### Automated Verification
+
+Task 2 deterministic verification passed for:
+
+- Two businesses remain separated.
+- Each of the four signal types qualifies correctly.
+- Non-pending approvals are excluded.
+- Approvals that do not require CEO approval are excluded.
+- Historical failure records do not create current-failure attention.
+- Main execution status and request lifecycle disagreement is exposed.
+- Resolved conditions leave current attention output.
+- Same approval ID counts once.
+- Separate approval IDs remain separate.
+- Independent signals sharing a record chain remain present.
+- Internal business record IDs and readable business codes resolve correctly.
+- Business names alone do not resolve ownership.
+- Unknown ownership becomes Unidentified.
+- Contradictory stable references become Conflict.
+- Conflict/unidentified items stay outside business totals.
+- Paused/archived business lifecycle status is preserved.
+- Priority and signal ordering are deterministic.
+- Unspecified priority is retained in its review group.
+- Missing/invalid timestamp uses stable fallback ordering.
+- Derived results do not mutate source input.
+- Repeated derivation does not create duplicates.
+
+Build verification:
+
+- `npm.cmd run build`: PASS.
+- TypeScript: PASS.
+- Vite production build: PASS.
+- Existing Vite large-chunk warning remains non-blocking.
+
+Task 2 does not add Business Manager UI integration or Command Center UI integration. Task 3 and Task 4 remain NOT STARTED.
+
 ## Architecture Reuse
 
 Sprint 015 must reuse existing architecture:
@@ -253,6 +401,6 @@ Current Task: Sprint 015 Task 2 - Shared Attention Summary Foundation.
 
 Task 1 Status: COMPLETE - documentation COMPLETE, architecture review PASS, architecture freeze PASS, repository closeout COMPLETE.
 
-Task 2 Status: NOT STARTED.
+Task 2 Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
 
-Next Required Action: Begin Sprint 015 Task 2 - Shared Attention Summary Foundation.
+Next Required Action: Perform Sprint 015 Task 2 repository closeout; after successful push verification, begin Sprint 015 Task 3 - Business Manager Integration.

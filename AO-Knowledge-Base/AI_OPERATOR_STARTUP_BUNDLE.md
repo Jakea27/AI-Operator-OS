@@ -1157,6 +1157,10 @@ Business ownership must resolve through stable IDs and linked records, not busin
 
 Priority uses owning source-record priority and sorts Critical, High, Medium, Low. Same-priority ties sort human intervention, current failure, blocked work, routine pending approval, then oldest source creation time, then stable source-type/source-ID fallback. Missing or invalid priority remains visible as Unspecified rather than being inferred.
 
+Sprint 015 Task 2 implements this foundation as a pure derivation module exported from `app/src/core/businesses`. The module accepts existing source records as inputs and returns derived portfolio items, business summaries, ownership review groups, and priority review groups without mutating or persisting records.
+
+Task 2 current-failure semantics are explicit: `ExecutionRecord.status === 'Failed'` is current failure; `ExecutionRecord.requestLifecycle.status === 'Failed'` is also surfaced as current failure/context inconsistency when present; historical `execution.failures` entries alone are not current attention. When Execution Core status and Execution Request lifecycle conflict, the derived attention item exposes a state-consistency warning.
+
 ## 1. Overview
 
 Architecture v2 documents the operating system foundation that exists after Sprints 001 through 008.
@@ -1918,11 +1922,11 @@ Sprint 015 - Multi-Business Management
 
 ## Sprint Status
 
-ACTIVE - TASK 1 COMPLETE / TASK 2 NOT STARTED.
+ACTIVE - TASK 2 IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / REPOSITORY CLOSEOUT PENDING.
 
 ## Current Phase
 
-Sprint 015 Task 2 implementation preparation.
+Sprint 015 Task 2 repository closeout preparation.
 
 ## Current Task
 
@@ -1938,7 +1942,7 @@ Sprint 015 - Multi-Business Management.
 
 ## Current Objective
 
-Begin Sprint 015 Task 2 - Shared Attention Summary Foundation using the frozen Sprint 015 ownership, attention, duplicate, counting, and priority rules.
+Complete Sprint 015 Task 2 repository closeout after implementing the shared read-only attention derivation foundation.
 
 ## Roadmap Planning Note
 
@@ -1946,7 +1950,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 015 Task 2 - Shared Attention Summary Foundation.
+Perform Sprint 015 Task 2 repository closeout; after successful push verification, begin Sprint 015 Task 3 - Business Manager Integration.
 
 ## Blocking Issues
 
@@ -1958,11 +1962,11 @@ main
 
 ## Last QA Result
 
-Sprint 014 Tasks 9-12 batched CEO QA passed. Task 10 Creative Brief enable/disable persistence defect was fixed and manually reverified; restart persistence after the fix passed.
+Sprint 015 Task 2 automated verification passed. The shared attention derivation foundation was verified with deterministic fixtures covering two-business separation, all four signal types, approval filtering, current-failure semantics, ownership resolution, conflicts/unidentified ownership, priority ordering, invalid legacy data, input immutability, and stable repeated derivation.
 
 ## Last Build Result
 
-`npm.cmd run build` passed during Sprint 014 Tasks 9-12 final QA closeout verification from the app directory. Existing Vite large-chunk warning remains non-blocking.
+`npm.cmd run build` passed during Sprint 015 Task 2 implementation verification from the app directory. TypeScript and Vite production build passed. Existing Vite large-chunk warning remains non-blocking.
 
 ## Last Updated
 
@@ -1971,10 +1975,19 @@ Sprint 014 Tasks 9-12 batched CEO QA passed. Task 10 Creative Brief enable/disab
 ## Current Sprint Verification
 
 - Sprint: Sprint 015
-- Status: ACTIVE - Task 1 complete; Task 2 not started
+- Status: ACTIVE - Task 2 implementation complete; repository closeout pending
 - Sprint 015 Mission: Help the CEO identify which businesses need attention, understand why, and open the correct work through Business Manager and Command Center.
 - Sprint 015 Task 1: COMPLETE - documentation COMPLETE, architecture review PASS, architecture freeze PASS, repository closeout COMPLETE; no application code changed.
-- Sprint 015 Task 2: NOT STARTED - Shared Attention Summary Foundation.
+- Sprint 015 Task 2: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+- Sprint 015 Task 2 Implementation Files: `app/src/core/businesses/businessAttention.ts`, `app/src/core/businesses/index.ts`.
+- Sprint 015 Task 2 Shared Function: `buildBusinessAttentionSummary(input)` derives portfolio-wide attention, per-business summaries, unidentified/conflicting ownership review groups, and unspecified-priority review groups from existing stores without persistence or mutation.
+- Sprint 015 Task 2 Signals: Pending CEO Approval, Execution Requires Human Intervention, Current Execution Failure, and Blocked Work Item only.
+- Sprint 015 Task 2 Current Failure Semantics: Include `ExecutionRecord.status === 'Failed'` and include `requestLifecycle.status === 'Failed'` as a current-state inconsistency when the main Execution status is not Failed. Historical `execution.failures` entries alone do not create current failure attention. If Execution status and request lifecycle disagree, expose `stateConsistencyWarning`.
+- Sprint 015 Task 2 Ownership Resolution: Uses stable Business, Project, Work Item, Execution Queue, Execution, and Approval references only; business names alone do not resolve ownership; missing references become Unidentified and contradictory stable references become Conflict.
+- Sprint 015 Task 2 Counting: attention-item count counts derived current attention items; contributing-source-record count counts unique source type/source record pairs. Conflict and unidentified items remain outside individual business totals.
+- Sprint 015 Task 2 Ordering: Critical > High > Medium > Low, then human intervention, current failure, blocked work, pending approval, then valid source creation time oldest first, then stable source type/source ID. Missing or invalid priority is retained as Unspecified.
+- Sprint 015 Task 2 Navigation: Work Items route to `/work-items/:workItemId`, Executions route to `/executions/:executionId`, Approvals route to `/approval` with approval ID preserved for future exact-selection behavior.
+- Sprint 015 Task 2 Exclusions Verified: no Attention Store, Portfolio Store, Notification Store, new persistence key, persisted derived summary, workflow engine, graph engine, rules engine, AI ranking, financial scoring, Business Manager UI integration, or Command Center UI integration was added.
 - Sprint 015 Task 3: NOT STARTED - Business Manager Integration.
 - Sprint 015 Task 4: NOT STARTED - Command Center Integration and Consistent Priority Ordering.
 - Sprint 015 Task 5: NOT STARTED - Integration QA, CEO QA, documentation, and repository closeout.
@@ -2339,15 +2352,29 @@ Command used:
 
 ## Current Status
 
-Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Task 1 - Multi-Business Management Architecture Definition is complete after documentation alignment, architecture review PASS, architecture freeze PASS, and repository closeout COMPLETE. No application code was modified for Task 1. Sprint 015 Task 2 is NOT STARTED.
+Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Task 1 - Multi-Business Management Architecture Definition is complete after documentation alignment, architecture review PASS, architecture freeze PASS, and repository closeout COMPLETE. Sprint 015 Task 2 - Shared Attention Summary Foundation implementation is complete, deterministic verification passed, TypeScript/Vite production build passed, and documentation has been updated. Repository closeout remains pending until the Task 2 implementation/documentation commit is pushed and verified.
 
 ## Next Phase
 
-Begin Sprint 015 Task 2 - Shared Attention Summary Foundation.
+Perform Sprint 015 Task 2 repository closeout; after successful push verification, begin Sprint 015 Task 3 - Business Manager Integration.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 is CLOSED. Sprint 014 is COMPLETE - REPOSITORY VERIFIED after Tasks 1-12 passed implementation, QA, documentation, commit, push, and final closeout. Sprint 015 is ACTIVE. Sprint 015 Task 1 is COMPLETE. Sprint 015 Task 2, Task 3, Task 4, and Task 5 are NOT STARTED.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 is CLOSED. Sprint 014 is COMPLETE - REPOSITORY VERIFIED after Tasks 1-12 passed implementation, QA, documentation, commit, push, and final closeout. Sprint 015 is ACTIVE. Sprint 015 Task 1 is COMPLETE. Sprint 015 Task 2 implementation and automated verification are COMPLETE; repository closeout is PENDING. Sprint 015 Task 3, Task 4, and Task 5 are NOT STARTED.
+
+Sprint 015 Task 2 implementation files:
+
+- `app/src/core/businesses/businessAttention.ts`
+- `app/src/core/businesses/index.ts`
+
+Sprint 015 Task 2 created one shared read-only derivation foundation. It adds no Attention Store, Portfolio Store, Notification Store, new persistence key, persisted attention summary, workflow engine, graph engine, rules engine, AI ranking, financial scoring, Business Manager UI integration, or Command Center UI integration.
+
+Sprint 015 Task 2 current-failure semantics:
+
+- Current failure attention includes `ExecutionRecord.status === 'Failed'`.
+- Current failure attention also includes `ExecutionRecord.requestLifecycle.status === 'Failed'` when present.
+- Historical entries in `execution.failures` alone do not create current-failure attention.
+- Main execution/request lifecycle disagreements are exposed through `stateConsistencyWarning`.
 
 Sprint 014 Task 8 - Revision Execution Foundation is complete. Task 8 preserved the supervised human revision boundary after a Needs Revision decision. Sprint 014 Tasks 9-12 are complete with CEO QA PASS, documentation COMPLETE, and repository closeout COMPLETE.
 
@@ -2727,7 +2754,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 015 Task 2 - Shared Attention Summary Foundation. Sprint 014 Tasks 1-12 are complete, Tasks 9-12 passed batched CEO QA, repository closeout is complete, and the Sprint 014 Creative Production Engine mission is satisfied. Sprint 015 Task 1 - Multi-Business Management Architecture Definition is complete after documentation alignment, architecture review PASS, architecture freeze PASS, and repository closeout COMPLETE.
+The current focus is Sprint 015 Task 2 repository closeout. Sprint 015 Task 2 - Shared Attention Summary Foundation implementation is complete, automated verification passed, TypeScript/Vite production build passed, and documentation has been updated. Repository closeout remains pending until the Task 2 implementation/documentation commit is pushed and verified.
 
 Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is complete after Tasks 1-12 established the reusable Creative Production Engine from Business Asset through export-ready Creative Asset Package and Creative Cost Visibility. Sprint 014 Tasks 9, 10, 11, and 12 implementation, automated/remote verification, build validation, CEO QA, documentation closeout, repository commit, and push are complete.
 
@@ -2764,7 +2791,9 @@ Sprint 014 - Early Revenue Foundation.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 015 Task 2 - Shared Attention Summary Foundation.
+- Complete Sprint 015 Task 2 repository closeout; after successful push verification, begin Sprint 015 Task 3 - Business Manager Integration.
+- Preserve the Task 2 shared attention derivation as read-only. Business Manager and Command Center must consume the same derived result in later tasks.
+- Do not start Sprint 015 Task 3 or Task 4 until Task 2 repository closeout is verified.
 - Preserve Sprint 015 mission: help the CEO identify which businesses need attention, understand why, and open the correct work through Business Manager and Command Center.
 - Preserve Sprint 015 attention-summary ownership boundaries: source stores own records; attention summaries are read-only derived information and must not become a new store or persistence key.
 - Preserve the Task 9 Creative Asset Package CEO QA result as PASS.
@@ -3349,6 +3378,154 @@ Task 1 repository closeout is complete. The pushed documentation-only architectu
 
 Task 2 is not started.
 
+## Sprint 015 Task 2 - Shared Attention Summary Foundation
+
+Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+
+Task 2 implements one shared read-only derivation foundation for current multi-business attention. Future Task 3 Business Manager integration and Task 4 Command Center integration must consume the same derived result instead of calculating attention independently.
+
+Implementation files:
+
+- `app/src/core/businesses/businessAttention.ts`
+- `app/src/core/businesses/index.ts`
+
+Public foundation:
+
+- `buildBusinessAttentionSummary(input)`
+- `isPendingCeoApproval(approval)`
+- `isExecutionRequiringHumanIntervention(execution)`
+- `isCurrentExecutionFailure(execution)`
+- `getExecutionLifecycleConsistencyWarning(execution)`
+
+The shared output supports:
+
+- Portfolio-wide ordered attention list.
+- Business-level attention summary for each Business record.
+- Review groups for unidentified ownership, conflicting ownership, and unspecified priority.
+- Attention-item count.
+- Contributing source-record count.
+
+### Implemented Attention Signals
+
+Task 2 derives only:
+
+1. Pending CEO Approval.
+2. Execution Requires Human Intervention.
+3. Current Execution Failure.
+4. Blocked Work Item.
+
+Pending CEO Approval uses the current authoritative Approval Queue record. Only approvals with `status === 'Pending'` and `requiresCEOApproval === true` qualify. Cached approval references on execution records do not create or override approval attention.
+
+Execution Requires Human Intervention qualifies when `ExecutionRecord.status === 'Requires Human Intervention'`.
+
+Current Execution Failure qualifies when `ExecutionRecord.status === 'Failed'` or `ExecutionRecord.requestLifecycle.status === 'Failed'`. Historical `execution.failures` entries alone do not create current-failure attention. When the main execution status and request lifecycle disagree, the derived item exposes a `stateConsistencyWarning` instead of silently choosing one state as correct.
+
+Blocked Work Item qualifies when `WorkItemRecord.status === 'Blocked'`. The attention reason states that blocked work needs review and does not claim every blocker requires a CEO decision.
+
+### Implemented Ownership Resolution
+
+Task 2 resolves business ownership with stable references only.
+
+The derivation recognizes:
+
+- `BusinessRecord.id`
+- `BusinessRecord.businessId`
+- Project business ID/code references.
+- Work Item business ID/code and project references.
+- Execution Queue business ID/code and source Work Item references.
+- Execution business ID/code, project, Work Item, queue, Work Order, and Execution Request references.
+- Approval source business, project, work item, execution, queue, and execution-request references.
+
+Business names alone do not resolve ownership.
+
+If reliable stable references resolve to exactly one Business record, ownership is `Resolved`.
+
+If no reliable reference resolves, ownership is `Unidentified`.
+
+If reliable references resolve to more than one Business record, ownership is `Conflict`.
+
+Unidentified and Conflict items remain in the portfolio review output and are excluded from individual business totals.
+
+Paused and archived businesses can own attention items; their lifecycle status is exposed in resolved ownership and business summaries.
+
+### Implemented Duplicate and Counting Semantics
+
+Stable attention identity is composed from signal type, source type, and authoritative source record ID.
+
+The same explicit Approval ID produces one pending-approval attention item. Separate Approval IDs remain separate decisions. Related execution, request, work item, or queue references may provide context but do not produce duplicate approval attention.
+
+Independent signal types remain independent. A pending approval, human-intervention execution, current execution failure, and blocked Work Item may all remain visible when they represent separate current source conditions in the same record chain.
+
+Attention-item count is the count of derived current attention items. Contributing-source-record count is the count of unique source type/source record pairs that contributed those items.
+
+### Implemented Priority and Ordering Semantics
+
+Priority uses the owning source record priority:
+
+- Approval priority for approval attention.
+- Execution priority for execution attention.
+- Work Item priority for blocked-work attention.
+
+Known priority order:
+
+Critical > High > Medium > Low.
+
+For equal priority, ordering is:
+
+1. Human intervention.
+2. Current execution failure.
+3. Blocked Work Item.
+4. Pending approval.
+5. Valid source creation timestamp, oldest first.
+6. Stable source-type/source-record-ID fallback.
+
+Missing or invalid priority is retained as `Unspecified` and included in a visible review group. Missing or invalid timestamps are not invented and use stable fallback ordering.
+
+### Implemented Navigation Semantics
+
+Derived items emit existing routes only:
+
+- Work Items: `/work-items/:workItemId`
+- Executions: `/executions/:executionId`
+- Approvals: `/approval`
+
+The Approval Queue currently has no exact approval-detail route. Task 2 preserves the approval ID in the derived attention item so Task 3 or Task 4 can later add exact selection/opening behavior without creating a duplicate approval page.
+
+### Automated Verification
+
+Task 2 deterministic verification passed for:
+
+- Two businesses remain separated.
+- Each of the four signal types qualifies correctly.
+- Non-pending approvals are excluded.
+- Approvals that do not require CEO approval are excluded.
+- Historical failure records do not create current-failure attention.
+- Main execution status and request lifecycle disagreement is exposed.
+- Resolved conditions leave current attention output.
+- Same approval ID counts once.
+- Separate approval IDs remain separate.
+- Independent signals sharing a record chain remain present.
+- Internal business record IDs and readable business codes resolve correctly.
+- Business names alone do not resolve ownership.
+- Unknown ownership becomes Unidentified.
+- Contradictory stable references become Conflict.
+- Conflict/unidentified items stay outside business totals.
+- Paused/archived business lifecycle status is preserved.
+- Priority and signal ordering are deterministic.
+- Unspecified priority is retained in its review group.
+- Missing/invalid timestamp uses stable fallback ordering.
+- Derived results do not mutate source input.
+- Repeated derivation does not create duplicates.
+
+Build verification:
+
+- `npm.cmd run build`: PASS.
+- TypeScript: PASS.
+- Vite production build: PASS.
+- Existing Vite large-chunk warning remains non-blocking.
+
+Task 2 does not add Business Manager UI integration or Command Center UI integration. Task 3 and Task 4 remain NOT STARTED.
+
 ## Architecture Reuse
 
 Sprint 015 must reuse existing architecture:
@@ -3564,9 +3741,9 @@ Current Task: Sprint 015 Task 2 - Shared Attention Summary Foundation.
 
 Task 1 Status: COMPLETE - documentation COMPLETE, architecture review PASS, architecture freeze PASS, repository closeout COMPLETE.
 
-Task 2 Status: NOT STARTED.
+Task 2 Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
 
-Next Required Action: Begin Sprint 015 Task 2 - Shared Attention Summary Foundation.
+Next Required Action: Perform Sprint 015 Task 2 repository closeout; after successful push verification, begin Sprint 015 Task 3 - Business Manager Integration.
 
 ---
 

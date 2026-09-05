@@ -16,15 +16,29 @@ Command used:
 
 ## Current Status
 
-Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Task 1 - Multi-Business Management Architecture Definition is complete after documentation alignment, architecture review PASS, architecture freeze PASS, and repository closeout COMPLETE. No application code was modified for Task 1. Sprint 015 Task 2 is NOT STARTED.
+Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Task 1 - Multi-Business Management Architecture Definition is complete after documentation alignment, architecture review PASS, architecture freeze PASS, and repository closeout COMPLETE. Sprint 015 Task 2 - Shared Attention Summary Foundation implementation is complete, deterministic verification passed, TypeScript/Vite production build passed, and documentation has been updated. Repository closeout remains pending until the Task 2 implementation/documentation commit is pushed and verified.
 
 ## Next Phase
 
-Begin Sprint 015 Task 2 - Shared Attention Summary Foundation.
+Perform Sprint 015 Task 2 repository closeout; after successful push verification, begin Sprint 015 Task 3 - Business Manager Integration.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 is CLOSED. Sprint 014 is COMPLETE - REPOSITORY VERIFIED after Tasks 1-12 passed implementation, QA, documentation, commit, push, and final closeout. Sprint 015 is ACTIVE. Sprint 015 Task 1 is COMPLETE. Sprint 015 Task 2, Task 3, Task 4, and Task 5 are NOT STARTED.
+Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 is CLOSED. Sprint 014 is COMPLETE - REPOSITORY VERIFIED after Tasks 1-12 passed implementation, QA, documentation, commit, push, and final closeout. Sprint 015 is ACTIVE. Sprint 015 Task 1 is COMPLETE. Sprint 015 Task 2 implementation and automated verification are COMPLETE; repository closeout is PENDING. Sprint 015 Task 3, Task 4, and Task 5 are NOT STARTED.
+
+Sprint 015 Task 2 implementation files:
+
+- `app/src/core/businesses/businessAttention.ts`
+- `app/src/core/businesses/index.ts`
+
+Sprint 015 Task 2 created one shared read-only derivation foundation. It adds no Attention Store, Portfolio Store, Notification Store, new persistence key, persisted attention summary, workflow engine, graph engine, rules engine, AI ranking, financial scoring, Business Manager UI integration, or Command Center UI integration.
+
+Sprint 015 Task 2 current-failure semantics:
+
+- Current failure attention includes `ExecutionRecord.status === 'Failed'`.
+- Current failure attention also includes `ExecutionRecord.requestLifecycle.status === 'Failed'` when present.
+- Historical entries in `execution.failures` alone do not create current-failure attention.
+- Main execution/request lifecycle disagreements are exposed through `stateConsistencyWarning`.
 
 Sprint 014 Task 8 - Revision Execution Foundation is complete. Task 8 preserved the supervised human revision boundary after a Needs Revision decision. Sprint 014 Tasks 9-12 are complete with CEO QA PASS, documentation COMPLETE, and repository closeout COMPLETE.
 
