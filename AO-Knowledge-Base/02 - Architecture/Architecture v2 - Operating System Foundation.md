@@ -6,6 +6,27 @@ Owner: Jake Allen
 Last Updated: 2026-07-09  
 Scope: Post Sprint 008
 
+## Sprint 015 Architecture Extension - Multi-Business Attention
+
+Sprint 015 extends the existing operating-system foundation by adding a read-only multi-business attention layer across existing records.
+
+This extension does not change source ownership:
+
+- Business Store owns Business records, lifecycle status, readable business codes, business health labels, and business priority.
+- Project Store owns Project records and project/business relationships.
+- Work Item Store owns Work Items, Work Orders, blocked-work status, and work priority.
+- Execution Queue owns existing queue records where still used.
+- Execution Core owns execution lifecycle, failures, human-intervention state, attempts, timing, provider/model metadata, cost records, results, and Work Order / Execution Request lineage.
+- Approval Queue owns current approval status, approval decisions, review records, and decision history.
+
+Sprint 015 attention summaries are read-only derived view models. They must not become a new store, new persistence key, notification system, workflow engine, graph engine, rules engine, or duplicate approval/execution/project/work/business system.
+
+The first attention signals are pending CEO approvals, executions currently requiring human intervention, current failed executions, and Work Items currently Blocked. Historical failures alone are not current attention. Current Approval Queue status is authoritative over cached approval references on other records.
+
+Business ownership must resolve through stable IDs and linked records, not business names alone. Missing ownership and contradictory ownership are visible data-quality conditions and must not be silently repaired or reassigned by the attention layer.
+
+Priority uses owning source-record priority and sorts Critical, High, Medium, Low. Same-priority ties sort human intervention, current failure, blocked work, routine pending approval, then oldest source creation time, then stable source-type/source-ID fallback. Missing or invalid priority remains visible as Unspecified rather than being inferred.
+
 ## 1. Overview
 
 Architecture v2 documents the operating system foundation that exists after Sprints 001 through 008.

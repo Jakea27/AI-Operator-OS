@@ -1,5 +1,17 @@
 # AO Knowledge Base Changelog
 
+## Sprint 015 Task 1 Architecture Freeze - 2026-09-05
+
+### Updated
+
+- Created the Sprint 015 - Multi-Business Management summary and implementation contract.
+- Recorded Sprint 015 mission: help the CEO identify which businesses need attention, understand why, and open the correct work through Business Manager and Command Center.
+- Recorded Sprint 015 five-task structure: architecture definition, shared attention summaries, Business Manager integration, Command Center integration, and final QA/closeout.
+- Documented ownership boundaries for Business Store, Project Store, Work Item Store, Execution Queue, Execution Core, Approval Queue, Business Manager, and Command Center.
+- Documented read-only attention-summary rules, business ownership resolution, missing/conflicting reference handling, duplicate/counting semantics, priority ordering, current-failure semantics, and Task 2 implementation contract.
+- Updated current-state documentation from Post-Sprint 014 planning to Sprint 015 Task 1.
+- Regenerated the AI Operator Startup Bundle.
+
 ## Post-Sprint 014 Continuity State Repair - 2026-09-04
 
 ### Updated
