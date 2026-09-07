@@ -1,9 +1,13 @@
 import { ArrowLeft, BriefcaseBusiness, Check, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { BusinessStatus, businessStatuses, useBusinessStore } from '@/src/core/businesses'
+import { BusinessAttentionItem, BusinessStatus, buildBusinessAttentionSummary, businessStatuses, useBusinessStore } from '@/src/core/businesses'
 import { CompanyStructureTemplate, DepartmentName, companyStructureTemplates, departmentNames, useCompanyStructureStore } from '@/src/core/companyStructure'
+import { useExecutionStore } from '@/src/core/execution'
+import { useExecutionQueueStore } from '@/src/core/executionQueue'
 import { ProjectRecord, useProjectStore } from '@/src/core/projects'
+import { useWorkItemStore } from '@/src/core/workItems'
+import { useApprovalStore } from '@/src/features/approval/store/approvalStore'
 import { ProjectForm } from '@/src/features/projects/components/ProjectForm'
 import { BusinessLifecycle } from '../components/BusinessLifecycle'
 import { BusinessMetrics } from '../components/BusinessMetrics'
@@ -24,6 +28,10 @@ export function BusinessDetailPage() {
   const businessStore = useBusinessStore()
   const companyStructure = useCompanyStructureStore()
   const projectStore = useProjectStore()
+  const workItemStore = useWorkItemStore()
+  const executionQueueStore = useExecutionQueueStore()
+  const executionStore = useExecutionStore()
+  const approvalStore = useApprovalStore()
   const [selectedTemplate, setSelectedTemplate] = useState('general-business')
   const [showProjectForm, setShowProjectForm] = useState(false)
   const business = businessStore.businesses.find((item) => item.id === businessId || item.businessId === businessId)
@@ -43,6 +51,22 @@ export function BusinessDetailPage() {
     businessKeys.has(project.businessId) ||
     businessKeys.has(project.businessCode),
   )
+  const attention = useMemo(() => buildBusinessAttentionSummary({
+    businesses: businessStore.businesses,
+    projects: projectStore.projects,
+    workItems: workItemStore.workItems,
+    executionQueueItems: executionQueueStore.queueItems,
+    executions: executionStore.executions,
+    approvals: approvalStore.approvals,
+  }), [
+    approvalStore.approvals,
+    businessStore.businesses,
+    executionQueueStore.queueItems,
+    executionStore.executions,
+    projectStore.projects,
+    workItemStore.workItems,
+  ])
+  const attentionSummary = attention.businessSummaries.find((summary) => summary.businessRecordId === business.id)
 
   return (
     <div className="space-y-6">
@@ -90,6 +114,27 @@ export function BusinessDetailPage() {
       </section>
 
       <BusinessLifecycle status={business.status} />
+
+      <BusinessSection title="Current Attention" eyebrow="Derived signals">
+        <div className="mb-4 grid gap-3 md:grid-cols-3">
+          <Info label="Attention Items" value={`${attentionSummary?.attentionItemCount ?? 0}`} />
+          <Info label="Source Records" value={`${attentionSummary?.contributingSourceRecordCount ?? 0}`} />
+          <Info label="Lifecycle Status" value={business.status} />
+        </div>
+        {attentionSummary && attentionSummary.items.length > 0 ? (
+          <div className="space-y-3">
+            {attentionSummary.items.map((item) => <BusinessAttentionItemCard key={item.attentionId} item={item} />)}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-line bg-white/[0.02] p-4">
+            <p className="m-0 text-sm font-semibold text-white">No tracked attention items.</p>
+            <p className="m-0 mt-2 text-sm leading-6 text-muted">
+              This only means the current Sprint 015 tracked signals are clear. It does not prove the business is healthy,
+              profitable, complete, or low risk.
+            </p>
+          </div>
+        )}
+      </BusinessSection>
 
       <BusinessSection title="Projects" eyebrow="Business initiatives">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -233,6 +278,35 @@ export function BusinessDetailPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function BusinessAttentionItemCard({ item }: { item: BusinessAttentionItem }) {
+  return (
+    <article className="rounded-xl border border-line bg-ink/35 p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <span className="rounded-full border border-lime/20 bg-lime/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-lime">{item.signalType}</span>
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">{item.priority}</span>
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">{item.sourceType}</span>
+          </div>
+          <h3 className="m-0 text-base font-semibold text-white">{item.title}</h3>
+          <p className="m-0 mt-2 text-sm leading-6 text-muted">{item.reason}</p>
+        </div>
+        <Link to={item.navigationTarget.route} className="btn-secondary shrink-0">{item.navigationTarget.label}</Link>
+      </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <Info label="Source" value={item.sourceReadableId ?? item.sourceRecordId} />
+        <Info label="Ownership" value={item.ownership.state} />
+        <Info label="Created" value={item.sourceCreatedAt ? formatDate(item.sourceCreatedAt) : 'Not recorded'} />
+      </div>
+      {item.ownershipWarning || item.stateConsistencyWarning ? (
+        <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-300/[0.05] p-3">
+          <p className="m-0 text-xs leading-5 text-amber-100">{item.ownershipWarning ?? item.stateConsistencyWarning}</p>
+        </div>
+      ) : null}
+    </article>
   )
 }
 

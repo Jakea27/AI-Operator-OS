@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PageIntro } from '@/components/PageIntro'
 import { ExecutionQueueRecord, useExecutionQueueStore } from '@/src/core/executionQueue'
 import { useCTORecommendationStore } from '@/src/core/operators'
@@ -15,6 +16,8 @@ export function ApprovalQueuePage() {
   const approvalStore = useApprovalStore()
   const executionQueue = useExecutionQueueStore()
   const ctoRecommendations = useCTORecommendationStore()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedApprovalId = searchParams.get('approvalId')
   const [filters, setFilters] = useState<ApprovalFilterState>({
     search: '',
     status: 'All',
@@ -42,6 +45,12 @@ export function ApprovalQueuePage() {
       approvalStore.addApproval(buildApprovalFromQueueItem(queueItem))
     })
   }, [approvalStore, queueItemsRequiringApproval])
+
+  useEffect(() => {
+    if (!selectedApprovalId) return
+    const approval = approvalStore.approvals.find((item) => item.id === selectedApprovalId)
+    if (approval) setSelectedApproval(approval)
+  }, [approvalStore.approvals, selectedApprovalId])
 
   const recordDecision = (approval: Approval, status: ApprovalStatus, note: string) => {
     approvalStore.updateStatus(approval.id, status, note)
@@ -75,7 +84,10 @@ export function ApprovalQueuePage() {
         {selectedApproval && (
           <ApprovalDetailPanel
             approval={approvalStore.approvals.find((approval) => approval.id === selectedApproval.id) ?? selectedApproval}
-            onClose={() => setSelectedApproval(null)}
+            onClose={() => {
+              setSelectedApproval(null)
+              if (selectedApprovalId) setSearchParams({})
+            }}
           />
         )}
         {visibleApprovals.length === 0 ? (
@@ -87,7 +99,10 @@ export function ApprovalQueuePage() {
                 key={approval.id}
                 approval={approval}
                 onDecision={(status: ApprovalStatus, note: string) => recordDecision(approval, status, note)}
-                onViewDetails={() => setSelectedApproval(approval)}
+                onViewDetails={() => {
+                  setSelectedApproval(approval)
+                  setSearchParams({ approvalId: approval.id })
+                }}
               />
             ))}
           </div>

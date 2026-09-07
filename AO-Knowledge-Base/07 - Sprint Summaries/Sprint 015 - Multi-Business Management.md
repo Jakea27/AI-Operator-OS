@@ -153,9 +153,9 @@ Derived items emit existing routes only:
 
 - Work Items: `/work-items/:workItemId`
 - Executions: `/executions/:executionId`
-- Approvals: `/approval`
+- Approvals: `/approval?approvalId=<approval-id>` when an exact approval ID is available
 
-The Approval Queue currently has no exact approval-detail route. Task 2 preserves the approval ID in the derived attention item so Task 3 or Task 4 can later add exact selection/opening behavior without creating a duplicate approval page.
+Task 3 added exact approval opening by having the existing Approval Queue read the `approvalId` query parameter and select the matching approval. No new approval page, approval route family, store, or persistence key was added.
 
 ### Automated Verification
 
@@ -190,7 +190,91 @@ Build verification:
 - Vite production build: PASS.
 - Existing Vite large-chunk warning remains non-blocking.
 
-Task 2 does not add Business Manager UI integration or Command Center UI integration. Task 3 and Task 4 remain NOT STARTED.
+Task 2 did not add Business Manager UI integration or Command Center UI integration. Task 3 now integrates the shared summary into Business Manager. Task 4 remains NOT STARTED and owns Command Center integration.
+
+## Sprint 015 Task 3 - Business Manager Integration
+
+Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+
+Task 3 integrates the completed shared attention foundation into Business Manager only.
+
+Task 3 implementation files:
+
+- `app/src/core/businesses/businessAttention.ts`
+- `app/src/features/businesses/pages/BusinessesPage.tsx`
+- `app/src/features/businesses/pages/BusinessDetailPage.tsx`
+- `app/src/features/businesses/components/BusinessCard.tsx`
+- `app/src/features/approval/pages/ApprovalQueuePage.tsx`
+
+Task 3 consumes the existing `buildBusinessAttentionSummary(input)` result using current data from:
+
+- Business Store.
+- Project Store.
+- Work Item Store.
+- Execution Queue.
+- Execution Core.
+- Approval Queue.
+
+Business Manager does not reproduce signal qualification, ownership resolution, ordering, counting, or duplicate logic. It displays the shared derived result.
+
+### Overview Behavior
+
+Business Manager overview now displays:
+
+- Portfolio attention-item count.
+- Contributing-source-record count, clearly distinct from attention-item count.
+- Attention state for each business.
+- Per-business attention count.
+- Highest recorded priority where attention exists.
+- Business lifecycle status, including Paused and Archived.
+- Existing route to Business Detail.
+- Review sections for unidentified ownership, conflicting ownership, and unspecified priority.
+
+Unidentified and conflicting ownership items remain outside individual business totals.
+
+### Business Detail Behavior
+
+Business Detail now displays the selected business's already ordered shared attention items, including:
+
+- Signal type.
+- Concrete attention reason.
+- Recorded priority or Unspecified.
+- Source type and readable source identifier.
+- Ownership warning where present.
+- State-consistency warning where present.
+- Existing navigation target for the source record.
+
+When a business has no derived attention, Business Detail displays `No tracked attention items` and explicitly clarifies that this does not prove the business is healthy, profitable, complete, or low risk.
+
+### Exact Approval Opening
+
+Task 3 adds the smallest compatible exact-approval opening behavior by preserving the existing Approval Queue route and adding an approval ID query parameter:
+
+`/approval?approvalId=<approval-id>`
+
+The existing Approval Queue reads `approvalId` from the query string and selects the corresponding Approval Queue record when it still exists.
+
+No new approval page, route family, store, or persistence key was added.
+
+### Verification
+
+Task 3 deterministic verification passed for:
+
+- Business counts matching shared derived summaries.
+- Shared ordering preserved.
+- Conflict and unidentified items remaining outside business totals.
+- Paused businesses remaining discoverable.
+- Unspecified priority review group visibility.
+- Approval navigation emitting the exact-selection query parameter.
+
+Build verification:
+
+- `npm.cmd run build`: PASS.
+- TypeScript: PASS.
+- Vite production build: PASS.
+- Existing Vite large-chunk warning remains non-blocking.
+
+Task 3 does not modify Command Center attention UI. Task 4 remains NOT STARTED.
 
 ## Architecture Reuse
 
@@ -409,6 +493,6 @@ Task 1 Status: COMPLETE - documentation COMPLETE, architecture review PASS, arch
 
 Task 2 Status: COMPLETE - implementation COMPLETE, automated verification PASS, build PASS, documentation COMPLETE, repository closeout COMPLETE.
 
-Task 3 Status: NOT STARTED.
+Task 3 Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
 
-Next Required Action: Begin Sprint 015 Task 3 - Business Manager Integration.
+Next Required Action: Perform Sprint 015 Task 3 repository closeout; after successful push verification, begin Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering.

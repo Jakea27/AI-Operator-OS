@@ -454,7 +454,7 @@ function approvalAttentionItem(approval: Approval, ownership: BusinessAttentionO
     ownership,
     ...ownershipFields(ownership),
     navigationTarget: {
-      route: '/approval',
+      route: `/approval?approvalId=${encodeURIComponent(approval.id)}`,
       label: 'Open Approval Queue',
       recordId: approval.id,
       readableId: approval.id,

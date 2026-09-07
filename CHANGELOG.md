@@ -1,5 +1,14 @@
 # Changelog
 
+# Sprint 015 Task 3 Implementation Ready
+
+- Integrated the shared `buildBusinessAttentionSummary(input)` result into Business Manager overview and Business Detail.
+- Added portfolio attention-item and contributing-source-record counts, per-business attention count/highest priority display, lifecycle visibility, and review sections for unidentified ownership, conflicting ownership, and unspecified priority.
+- Added Business Detail attention item display with source navigation, warnings, and truthful no-attention empty-state language.
+- Added exact Approval Queue opening through `/approval?approvalId=<approval-id>` on the existing Approval Queue route.
+- Verified deterministic Task 3 assumptions and `npm.cmd run build` PASS.
+- Regenerated the AI Operator Startup Bundle.
+
 # Sprint 015 Task 2 Repository Closeout
 
 - Verified the pushed Sprint 015 Task 2 implementation/documentation commit `d66bdd5c8385eb53620a07fd4185e7425a20815e` on local `main` and `origin/main`.

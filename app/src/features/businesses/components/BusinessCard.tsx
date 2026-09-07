@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { BusinessRecord } from '@/src/core/businesses'
+import { BusinessAttentionSummary, BusinessRecord } from '@/src/core/businesses'
 import { BusinessMetrics } from './BusinessMetrics'
 
 function formatDate(value: string) {
@@ -15,7 +15,16 @@ const healthClass: Record<BusinessRecord['health'], string> = {
   Unrated: 'border-white/10 bg-white/[0.04] text-muted',
 }
 
-export function BusinessCard({ business }: { business: BusinessRecord }) {
+export function BusinessCard({
+  business,
+  attentionSummary,
+}: {
+  business: BusinessRecord
+  attentionSummary?: BusinessAttentionSummary
+}) {
+  const highestPriority = attentionSummary?.items.find((item) => item.priority !== 'Unspecified')?.priority ??
+    (attentionSummary && attentionSummary.attentionItemCount > 0 ? 'Unspecified' : 'None')
+
   return (
     <article className="record-card p-5">
       <div className="flex items-start justify-between gap-4">
@@ -32,6 +41,23 @@ export function BusinessCard({ business }: { business: BusinessRecord }) {
         <Info label="Status" value={business.status} />
         <Info label="Model" value={business.businessModel} />
         <Info label="Priority" value={business.priority} />
+      </div>
+      <div className="mt-4 rounded-xl border border-line bg-white/[0.025] p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Current Attention</p>
+            <p className="m-0 mt-1 text-sm font-semibold text-white">
+              {attentionSummary?.attentionItemCount ?? 0} item{attentionSummary?.attentionItemCount === 1 ? '' : 's'}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Highest Recorded Priority</p>
+            <p className="m-0 mt-1 text-sm font-semibold text-white">{highestPriority}</p>
+          </div>
+        </div>
+        <p className="m-0 mt-2 text-xs leading-5 text-muted">
+          Derived from current approvals, execution state, and blocked work. No attention does not prove health or profitability.
+        </p>
       </div>
       <div className="mt-4">
         <BusinessMetrics metrics={business.metrics} />
