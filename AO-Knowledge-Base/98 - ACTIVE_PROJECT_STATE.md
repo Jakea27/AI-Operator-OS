@@ -28,15 +28,15 @@ Sprint 015 - Multi-Business Management
 
 ## Sprint Status
 
-ACTIVE - TASK 3 IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / REPOSITORY CLOSEOUT PENDING.
+ACTIVE - TASK 3 COMPLETE / REPOSITORY CLOSEOUT COMPLETE.
 
 ## Current Phase
 
-Sprint 015 Task 3 repository closeout preparation.
+Sprint 015 Task 4 preparation.
 
 ## Current Task
 
-Sprint 015 Task 3 - Business Manager Integration.
+Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering.
 
 ## Last Completed Sprint
 
@@ -48,7 +48,7 @@ Sprint 015 - Multi-Business Management.
 
 ## Current Objective
 
-Complete Sprint 015 Task 3 repository closeout after integrating shared attention summaries into Business Manager.
+Begin Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering using the completed Task 2 shared attention foundation and completed Task 3 Business Manager integration.
 
 ## Roadmap Planning Note
 
@@ -56,7 +56,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Perform Sprint 015 Task 3 repository closeout; after successful push verification, begin Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering.
+Begin Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering.
 
 ## Blocking Issues
 
@@ -68,7 +68,7 @@ main
 
 ## Last QA Result
 
-Sprint 015 Task 3 automated verification passed. Business Manager now consumes the shared Task 2 attention derivation, displays portfolio and business-level attention summaries, preserves unidentified/conflicting ownership outside business totals, and opens exact Approval Queue records through `/approval?approvalId=...`.
+Sprint 015 Task 3 repository closeout passed. The implementation/documentation commit `2300b9443975ac0d02d30b533358ac8aa4e14353` was pushed to `origin/main`, local `main` matched `origin/main`, and the working tree was clean before documentation-only closeout.
 
 ## Last Build Result
 
@@ -81,7 +81,7 @@ Sprint 015 Task 3 automated verification passed. Business Manager now consumes t
 ## Current Sprint Verification
 
 - Sprint: Sprint 015
-- Status: ACTIVE - Task 3 implementation complete; repository closeout pending
+- Status: ACTIVE - Task 3 complete; Task 4 not started
 - Sprint 015 Mission: Help the CEO identify which businesses need attention, understand why, and open the correct work through Business Manager and Command Center.
 - Sprint 015 Task 1: COMPLETE - documentation COMPLETE, architecture review PASS, architecture freeze PASS, repository closeout COMPLETE; no application code changed.
 - Sprint 015 Task 2: COMPLETE - implementation COMPLETE, automated verification PASS, build PASS, documentation COMPLETE, repository closeout COMPLETE.
@@ -94,13 +94,14 @@ Sprint 015 Task 3 automated verification passed. Business Manager now consumes t
 - Sprint 015 Task 2 Ordering: Critical > High > Medium > Low, then human intervention, current failure, blocked work, pending approval, then valid source creation time oldest first, then stable source type/source ID. Missing or invalid priority is retained as Unspecified.
 - Sprint 015 Task 2 Navigation: Work Items route to `/work-items/:workItemId`, Executions route to `/executions/:executionId`, Approvals route to `/approval` with approval ID preserved for future exact-selection behavior.
 - Sprint 015 Task 2 Exclusions Verified: no Attention Store, Portfolio Store, Notification Store, new persistence key, persisted derived summary, workflow engine, graph engine, rules engine, AI ranking, financial scoring, Business Manager UI integration, or Command Center UI integration was added.
-- Sprint 015 Task 3: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+- Sprint 015 Task 3: COMPLETE - implementation COMPLETE, automated verification PASS, build PASS, documentation COMPLETE, repository closeout COMPLETE.
 - Sprint 015 Task 3 Implementation Files: `app/src/core/businesses/businessAttention.ts`, `app/src/features/businesses/pages/BusinessesPage.tsx`, `app/src/features/businesses/pages/BusinessDetailPage.tsx`, `app/src/features/businesses/components/BusinessCard.tsx`, `app/src/features/approval/pages/ApprovalQueuePage.tsx`.
 - Sprint 015 Task 3 Business Manager Behavior: Business Manager overview consumes `buildBusinessAttentionSummary(input)`, displays portfolio attention-item count, contributing-source-record count, business attention counts, highest recorded priority, business lifecycle status, and review sections for unidentified ownership, conflicting ownership, and unspecified priority.
 - Sprint 015 Task 3 Business Detail Behavior: Business detail displays that business's already ordered attention items from the shared summary, including signal type, concrete reason, recorded priority, source type/readable source identifier, ownership warning, state-consistency warning, and existing navigation target.
 - Sprint 015 Task 3 Approval Opening: Approval attention links use `/approval?approvalId=<approval-id>`; the existing Approval Queue reads the query parameter and selects the matching approval when it exists. No new approval page, route family, store, or persistence key was added.
 - Sprint 015 Task 3 Empty State: Business detail states `No tracked attention items` and clarifies that this does not prove the business is healthy, profitable, complete, or low risk.
 - Sprint 015 Task 3 Exclusions Verified: no Command Center UI integration, Attention Store, Portfolio Store, Notification Store, new persistence key, AI ranking, inferred urgency, financial scoring, source priority mutation, ownership repair, unrelated UI redesign, external API, automation, scheduling, retry, or orchestration was added.
+- Sprint 015 Task 3 Implementation Commit: `2300b9443975ac0d02d30b533358ac8aa4e14353` - pushed to `origin/main` and verified synchronized.
 - Sprint 015 Task 4: NOT STARTED - Command Center Integration and Consistent Priority Ordering.
 - Sprint 015 Task 5: NOT STARTED - Integration QA, CEO QA, documentation, and repository closeout.
 - Previous Sprint: Sprint 012 CLOSED
@@ -428,12 +429,12 @@ Sprint 015 Task 3 automated verification passed. Business Manager now consumes t
 ## Repository Checkpoint
 
 - Current Branch: main
-- Repository Checkpoint: `d66bdd5c8385eb53620a07fd4185e7425a20815e`
-- Checkpoint Description: Verified Sprint 015 Task 2 implementation and documentation commit pushed to `origin/main`. The checkpoint identifies the last verified Task 2 implementation source state; it is not required to equal the commit that contains a regenerated Startup Bundle.
-- Working Tree Status: CLEAN after Sprint 015 Task 2 implementation/documentation commit verification
-- Repository Push Status: PUSHED - local `main` matched `origin/main` at verified Task 2 implementation/documentation commit
-- Repository Verification Status: VERIFIED - Sprint 015 Task 2 implementation/documentation commit synchronized
-- Last Verified Date: 2026-09-05
+- Repository Checkpoint: `2300b9443975ac0d02d30b533358ac8aa4e14353`
+- Checkpoint Description: Verified Sprint 015 Task 3 implementation and documentation commit pushed to `origin/main`. The checkpoint identifies the last verified Task 3 implementation source state; it is not required to equal the commit that contains a regenerated Startup Bundle.
+- Working Tree Status: CLEAN after Sprint 015 Task 3 implementation/documentation commit verification and before documentation-only repository closeout update
+- Repository Push Status: PUSHED - local `main` matched `origin/main` at verified Task 3 implementation/documentation commit
+- Repository Verification Status: VERIFIED - Sprint 015 Task 3 implementation/documentation commit synchronized
+- Last Verified Date: 2026-09-07
 
 ## Rules
 
