@@ -190,7 +190,7 @@ Build verification:
 - Vite production build: PASS.
 - Existing Vite large-chunk warning remains non-blocking.
 
-Task 2 did not add Business Manager UI integration or Command Center UI integration. Task 3 now integrates the shared summary into Business Manager. Task 4 remains NOT STARTED and owns Command Center integration.
+Task 2 did not add Business Manager UI integration or Command Center UI integration. Task 3 integrates the shared summary into Business Manager, and Task 4 now integrates it into Command Center.
 
 ## Sprint 015 Task 3 - Business Manager Integration
 
@@ -281,7 +281,61 @@ Build verification:
 - Vite production build: PASS.
 - Existing Vite large-chunk warning remains non-blocking.
 
-Task 3 does not modify Command Center attention UI. Task 4 remains NOT STARTED.
+Task 3 did not modify Command Center attention UI; that integration is implemented by Task 4.
+
+## Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering
+
+Status: IMPLEMENTATION COMPLETE / AUTOMATED VERIFICATION PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+
+Task 4 integrates the completed Task 2 shared attention result into the existing Command Center in `app/pages/Dashboard.tsx`.
+
+The Command Center now consumes `buildBusinessAttentionSummary(input)` using current records from the existing Business Store, Project Store, Work Item Store, Execution Queue, Execution Core, and Approval Queue. It does not reproduce signal qualification, ownership resolution, counting, deduplication, or ordering logic.
+
+### Command Center Behavior
+
+The new narrow multi-business attention surface displays:
+
+- Total current attention-item count.
+- Unique contributing-source-record count.
+- Businesses with resolved current attention, including lifecycle status and per-business count.
+- The first six items from the already ordered shared portfolio result.
+- Signal type, concrete reason, recorded priority or Unspecified, source type, readable source identifier, resolved business/lifecycle or unresolved ownership state, and available ownership/state-consistency warnings.
+- Each shared item's existing `navigationTarget.route`.
+- The displayed-item count relative to the total and a route to Business Manager for the complete portfolio view.
+
+If no shared attention exists, the Command Center states `No tracked business attention items` and clarifies that this does not prove every business is healthy, profitable, complete, or low risk.
+
+### Consistent Ordering and Duplicate Removal
+
+Task 4 preserves the exact `portfolioItems` order emitted by the shared derivation. The limited Command Center list uses `portfolioItems.slice(0, 6)` and does not independently sort, infer severity, or mutate source priority.
+
+Legacy CEO Required Actions and Alerts representations of Pending CEO Approval, Execution Requires Human Intervention, Current Execution Failure, and Blocked Work Item were removed from those attention surfaces. The shared derivation is authoritative for those four signals. Capability readiness, queue, audit, cost, timing, roadmap, money, recent activity, and other unrelated Command Center summaries remain intact.
+
+The existing Dashboard's general execution-risk count now uses `isCurrentExecutionFailure`. Historical `execution.failures` entries alone no longer represent a current Sprint 015 failure condition there.
+
+### Verification
+
+Deterministic verification passed for:
+
+- Two-business separation and matching shared portfolio/business counts.
+- Exact shared priority and equal-priority signal ordering.
+- Historical failures alone producing no current attention.
+- Unidentified and conflicting ownership remaining outside business totals.
+- Unspecified priority remaining visible.
+- Paused and archived business lifecycle labels remaining discoverable.
+- Exact Work Item, Execution, and Approval navigation targets.
+- Repeated pure derivation producing no persisted duplicates.
+- Source-state changes updating derived results.
+- No duplicate legacy representations of the four shared signals in CEO Required Actions or Alerts.
+
+Build verification:
+
+- `npm.cmd run build`: PASS.
+- TypeScript: PASS.
+- Vite production build: PASS.
+- Existing Vite large-chunk warning remains non-blocking.
+
+Task 4 adds no Attention Store, Portfolio Store, Notification Store, persistence key, AI ranking, inferred urgency, financial scoring, source-priority mutation, ownership repair, automation, scheduling, retry, orchestration, or unrelated Command Center redesign. Final integration and CEO QA remain Task 5 work.
 
 ## Architecture Reuse
 
@@ -510,4 +564,8 @@ Task 3 push status:
 
 PUSHED to `origin/main` and verified synchronized.
 
-Next Required Action: Begin Sprint 015 Task 4 - Command Center Integration and Consistent Priority Ordering.
+Task 4 Status: IMPLEMENTATION COMPLETE - automated verification PASS, build PASS, documentation updated, repository closeout PENDING.
+
+Task 5 Status: NOT STARTED - Integration QA, CEO QA, documentation, and repository closeout.
+
+Next Required Action: Complete Sprint 015 Task 4 repository closeout.

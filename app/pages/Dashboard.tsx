@@ -15,9 +15,14 @@ import {
   ShieldAlert,
   Sparkles,
 } from 'lucide-react'
-import { KeyboardEvent, ReactNode } from 'react'
+import { KeyboardEvent, ReactNode, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useBusinessStore } from '@/src/core/businesses'
+import {
+  BusinessAttentionItem,
+  buildBusinessAttentionSummary,
+  isCurrentExecutionFailure,
+  useBusinessStore,
+} from '@/src/core/businesses'
 import { useCapabilityPlanningStore } from '@/src/core/capabilityPlanning'
 import { useMemoryStore } from '@/src/core/memory'
 import { useMoneyStore } from '@/src/core/money'
@@ -88,10 +93,6 @@ function isHumanIntervention(execution: ExecutionRecord) {
   return execution.status === 'Requires Human Intervention'
 }
 
-function isFailed(execution: ExecutionRecord) {
-  return execution.status === 'Failed' || execution.failures.length > 0
-}
-
 function isLongRunningOrPaused(execution: ExecutionRecord) {
   if (execution.status === 'Paused') return true
   if (execution.status !== 'Running' || !execution.timing.startedAt) return false
@@ -132,12 +133,11 @@ export function Dashboard() {
   const operatorStore = useOperatorStore()
 
   const approvalStats = getApprovalStats(approvalQueue.approvals)
-  const pendingApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Pending')
   const deferredApprovals = approvalQueue.approvals.filter((approval) => approval.status === 'Deferred')
   const executions = executionStore.executions
   const executionsAwaitingApproval = executions.filter(waitingOnCEO)
   const executionsRequiringHumanIntervention = executions.filter(isHumanIntervention)
-  const failedExecutions = executions.filter(isFailed)
+  const failedExecutions = executions.filter(isCurrentExecutionFailure)
   const longRunningExecutions = executions.filter(isLongRunningOrPaused)
   const readyExecutions = executions.filter((execution) => execution.status === 'Ready')
   const runningExecutions = executions.filter((execution) => execution.status === 'Running')
@@ -166,7 +166,6 @@ export function Dashboard() {
   const blockedPlans = capabilityPlanning.capabilityPlans.filter((plan) => plan.readinessStatus === 'Blocked')
   const activeBusinesses = businessStore.businesses.filter((business) => business.status !== 'Archived')
   const activeProjects = projectStore.projects.filter((project) => ['Planning', 'Active', 'On Hold'].includes(project.status))
-  const blockedWorkItems = workItemStore.workItems.filter((item) => item.status === 'Blocked')
   const waitingWorkItems = workItemStore.workItems.filter((item) => ['Planning', 'Ready', 'In Progress', 'Review'].includes(item.status))
   const dueWorkItems = workItemStore.workItems
     .filter((item) => item.dueDate && !['Completed', 'Archived'].includes(item.status))
@@ -176,6 +175,22 @@ export function Dashboard() {
   const registeredOperators = getRegisteredOperators()
   const nonIdleOperators = registeredOperators.filter((operator) => operator.currentStatus !== 'Idle').length
 
+  const businessAttention = useMemo(() => buildBusinessAttentionSummary({
+    businesses: businessStore.businesses,
+    projects: projectStore.projects,
+    workItems: workItemStore.workItems,
+    executionQueueItems: executionQueue.queueItems,
+    executions: executionStore.executions,
+    approvals: approvalQueue.approvals,
+  }), [
+    approvalQueue.approvals,
+    businessStore.businesses,
+    executionQueue.queueItems,
+    executionStore.executions,
+    projectStore.projects,
+    workItemStore.workItems,
+  ])
+
   const briefingIsCurrent = data.latestBriefing?.sourceFingerprint === generateDailyBriefing({
     state: data,
     memories: memoryStore.memoryEntries,
@@ -183,17 +198,12 @@ export function Dashboard() {
   }).sourceFingerprint
 
   const actions = buildAttentionActions({
-    pendingApprovals,
-    executionsAwaitingApproval,
-    executionsRequiringHumanIntervention,
-    failedExecutions,
     blockedByCapabilityExecutions,
     costConcernExecutions,
     incompleteAuditExecutions,
     blockedQueueItems,
     blockedPlans,
     incompletePlans,
-    blockedWorkItems,
   })
 
   const recentActivity = buildRecentActivity({
@@ -208,8 +218,6 @@ export function Dashboard() {
   })
 
   const alerts = buildAlerts({
-    executionsRequiringHumanIntervention,
-    failedExecutions,
     longRunningExecutions,
     costConcernExecutions,
     incompleteAuditExecutions,
@@ -254,6 +262,8 @@ export function Dashboard() {
           </div>
         </div>
       </section>
+
+      <BusinessAttentionPanel attention={businessAttention} />
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <Section title="CEO Required Actions" eyebrow="Human judgment needed">
@@ -390,73 +400,118 @@ export function Dashboard() {
   )
 }
 
+function BusinessAttentionPanel({ attention }: { attention: ReturnType<typeof buildBusinessAttentionSummary> }) {
+  const displayLimit = 6
+  const displayedItems = attention.portfolioItems.slice(0, displayLimit)
+  const businessesNeedingAttention = attention.businessSummaries.filter((summary) => summary.attentionItemCount > 0)
+
+  return (
+    <Section title="Business Attention" eyebrow="Shared multi-business priority">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <SummaryValue label="Attention Items" value={attention.attentionItemCount} detail="Current derived signals" />
+        <SummaryValue label="Source Records" value={attention.contributingSourceRecordCount} detail="Unique contributing records" />
+        <SummaryValue label="Businesses" value={businessesNeedingAttention.length} detail="With resolved current attention" />
+      </div>
+
+      {businessesNeedingAttention.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {businessesNeedingAttention.map((business) => (
+            <Link
+              key={business.businessRecordId}
+              to={`/businesses/${business.businessRecordId}`}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-[#cbd5d0] transition hover:border-lime/35 hover:text-white"
+            >
+              {business.businessName} · {business.businessStatus} · {business.attentionItemCount}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
+      {displayedItems.length > 0 ? (
+        <div className="mt-4 space-y-3">
+          {displayedItems.map((item) => <BusinessAttentionCard key={item.attentionId} item={item} />)}
+        </div>
+      ) : (
+        <div className="mt-4">
+          <EmptyPanel
+            title="No tracked business attention items."
+            copy="This only means the current Sprint 015 tracked signals are clear. It does not prove every business is healthy, profitable, complete, or low risk."
+          />
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+        <p className="m-0 text-xs text-muted">
+          Showing {displayedItems.length} of {attention.attentionItemCount} attention items in shared priority order.
+        </p>
+        <Link to="/businesses" className="btn-secondary">Open Business Manager</Link>
+      </div>
+    </Section>
+  )
+}
+
+function BusinessAttentionCard({ item }: { item: BusinessAttentionItem }) {
+  const businessLabel = item.ownership.state === 'Resolved'
+    ? `${item.ownership.businessName} · ${item.ownership.businessStatus}`
+    : item.ownership.state === 'Conflict'
+      ? 'Conflicting business ownership'
+      : 'Unidentified business ownership'
+
+  return (
+    <NavigationCard to={item.navigationTarget.route} ariaLabel={`${item.navigationTarget.label}: ${item.title}`}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full border border-lime/20 bg-lime/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-lime">{item.signalType}</span>
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">{item.priority}</span>
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">{item.sourceType}</span>
+          </div>
+          <h4 className="m-0 mt-3 text-sm font-semibold text-white">{item.title}</h4>
+          <p className="m-0 mt-2 text-xs leading-5 text-[#aeb8b3]">{item.reason}</p>
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted">
+            <span>Business: {businessLabel}</span>
+            <span>Source: {item.sourceReadableId ?? item.sourceRecordId}</span>
+          </div>
+          {item.ownershipWarning || item.stateConsistencyWarning ? (
+            <p className="m-0 mt-2 text-xs leading-5 text-amber-100">
+              {item.ownershipWarning ?? item.stateConsistencyWarning}
+            </p>
+          ) : null}
+        </div>
+        <span className="shrink-0 text-xs font-semibold text-lime">{item.navigationTarget.label}</span>
+      </div>
+    </NavigationCard>
+  )
+}
+
+function SummaryValue({ label, value, detail }: { label: string; value: number; detail: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-ink/35 p-4">
+      <p className="eyebrow mb-2">{label}</p>
+      <p className="m-0 font-display text-2xl font-semibold text-white">{value}</p>
+      <p className="m-0 mt-1 text-xs text-muted">{detail}</p>
+    </div>
+  )
+}
+
 function buildAttentionActions({
-  pendingApprovals,
-  executionsAwaitingApproval,
-  executionsRequiringHumanIntervention,
-  failedExecutions,
   blockedByCapabilityExecutions,
   costConcernExecutions,
   incompleteAuditExecutions,
   blockedQueueItems,
   blockedPlans,
   incompletePlans,
-  blockedWorkItems,
 }: {
-  pendingApprovals: Approval[]
-  executionsAwaitingApproval: ExecutionRecord[]
-  executionsRequiringHumanIntervention: ExecutionRecord[]
-  failedExecutions: ExecutionRecord[]
   blockedByCapabilityExecutions: ExecutionRecord[]
   costConcernExecutions: ExecutionRecord[]
   incompleteAuditExecutions: ExecutionRecord[]
   blockedQueueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
   blockedPlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
   incompletePlans: ReturnType<typeof useCapabilityPlanningStore>['capabilityPlans']
-  blockedWorkItems: ReturnType<typeof useWorkItemStore>['workItems']
 }): AttentionAction[] {
-  const pendingApprovalIds = new Set(pendingApprovals.map((approval) => approval.id))
-  const interventionIds = new Set(executionsRequiringHumanIntervention.map((execution) => execution.id))
-  const failedIds = new Set(failedExecutions.map((execution) => execution.id))
   const costConcernIds = new Set(costConcernExecutions.map((execution) => execution.id))
 
   return [
-    ...pendingApprovals.map((approval) => ({
-      id: `approval-${approval.id}`,
-      severity: approval.priority === 'Critical' ? 'Critical' as const : approval.priority === 'High' ? 'High' as const : 'Medium' as const,
-      title: approval.title,
-      why: 'This approval requires a human CEO decision before the related work should proceed.',
-      blocked: approval.sourceQueueCode ? `${approval.sourceQueueCode} or related approval workflow` : 'Approval Queue decision',
-      to: '/approval',
-    })),
-    ...executionsAwaitingApproval
-      .filter((execution) => !execution.approval?.approvalId || !pendingApprovalIds.has(execution.approval.approvalId))
-      .map((execution) => ({
-        id: `execution-approval-${execution.id}`,
-        severity: 'High' as const,
-        title: `${execution.executionId}: approval required`,
-        why: 'This execution record is waiting on CEO approval before it can move toward readiness.',
-        blocked: execution.queueItem?.queueId ?? execution.executionRequest?.requestId ?? execution.workItem.workItemId,
-        to: `/executions/${execution.id}`,
-      })),
-    ...executionsRequiringHumanIntervention.map((execution) => ({
-      id: `execution-human-${execution.id}`,
-      severity: 'Critical' as const,
-      title: `${execution.executionId}: human intervention required`,
-      why: 'The Execution Core marked this record as requiring human judgment or missing context.',
-      blocked: execution.workItem.workItemId,
-      to: `/executions/${execution.id}`,
-    })),
-    ...failedExecutions
-      .filter((execution) => !interventionIds.has(execution.id))
-      .map((execution) => ({
-        id: `execution-failed-${execution.id}`,
-        severity: 'Critical' as const,
-        title: `${execution.executionId}: execution failed`,
-        why: 'A failure is recorded and should be reviewed before any future work continues.',
-        blocked: execution.workItem.workItemId,
-        to: `/executions/${execution.id}`,
-      })),
     ...blockedByCapabilityExecutions.map((execution) => ({
       id: `execution-capability-${execution.id}`,
       severity: 'Medium' as const,
@@ -476,7 +531,7 @@ function buildAttentionActions({
       to: `/executions/${execution.id}`,
     })),
     ...incompleteAuditExecutions
-      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id) && !costConcernIds.has(execution.id))
+      .filter((execution) => !isHumanIntervention(execution) && !isCurrentExecutionFailure(execution) && !costConcernIds.has(execution.id))
       .slice(0, 4)
       .map((execution) => ({
         id: `execution-audit-${execution.id}`,
@@ -512,14 +567,6 @@ function buildAttentionActions({
         blocked: plan.sourceQueueCode,
         to: `/capability-planning/${plan.id}`,
       })),
-    ...blockedWorkItems.map((item) => ({
-      id: `work-${item.id}`,
-      severity: item.priority === 'Critical' ? 'Critical' as const : item.priority === 'High' ? 'High' as const : 'Medium' as const,
-      title: `${item.workItemId}: ${item.title}`,
-      why: 'This Work Item is marked blocked and needs a decision or missing context.',
-      blocked: item.projectCode,
-      to: `/work-items/${item.id}`,
-    })),
   ].sort((a, b) => severityWeight(b.severity) - severityWeight(a.severity))
 }
 
@@ -615,8 +662,6 @@ function buildRecentActivity({
 }
 
 function buildAlerts({
-  executionsRequiringHumanIntervention,
-  failedExecutions,
   longRunningExecutions,
   costConcernExecutions,
   incompleteAuditExecutions,
@@ -625,8 +670,6 @@ function buildAlerts({
   blockedQueueItems,
   dueWorkItems,
 }: {
-  executionsRequiringHumanIntervention: ExecutionRecord[]
-  failedExecutions: ExecutionRecord[]
   longRunningExecutions: ExecutionRecord[]
   costConcernExecutions: ExecutionRecord[]
   incompleteAuditExecutions: ExecutionRecord[]
@@ -635,31 +678,11 @@ function buildAlerts({
   blockedQueueItems: ReturnType<typeof useExecutionQueueStore>['queueItems']
   dueWorkItems: ReturnType<typeof useWorkItemStore>['workItems']
 }): AttentionAction[] {
-  const interventionIds = new Set(executionsRequiringHumanIntervention.map((execution) => execution.id))
-  const failedIds = new Set(failedExecutions.map((execution) => execution.id))
   const costConcernIds = new Set(costConcernExecutions.map((execution) => execution.id))
 
   return [
-    ...executionsRequiringHumanIntervention.map((execution) => ({
-      id: `alert-execution-human-${execution.id}`,
-      severity: 'Critical' as const,
-      title: `${execution.executionId} requires human intervention`,
-      why: execution.workItem.title,
-      blocked: execution.workItem.workItemId,
-      to: `/executions/${execution.id}`,
-    })),
-    ...failedExecutions
-      .filter((execution) => !interventionIds.has(execution.id))
-      .map((execution) => ({
-        id: `alert-execution-failed-${execution.id}`,
-        severity: 'Critical' as const,
-        title: `${execution.executionId} failed`,
-        why: execution.failures[execution.failures.length - 1]?.message || execution.workItem.title,
-        blocked: execution.workItem.workItemId,
-        to: `/executions/${execution.id}`,
-      })),
     ...longRunningExecutions
-      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id))
+      .filter((execution) => !isHumanIntervention(execution) && !isCurrentExecutionFailure(execution))
       .map((execution) => ({
         id: `alert-execution-running-${execution.id}`,
         severity: 'Medium' as const,
@@ -669,7 +692,7 @@ function buildAlerts({
         to: `/executions/${execution.id}`,
       })),
     ...costConcernExecutions
-      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id))
+      .filter((execution) => !isHumanIntervention(execution) && !isCurrentExecutionFailure(execution))
       .map((execution) => ({
         id: `alert-execution-cost-${execution.id}`,
         severity: 'Medium' as const,
@@ -679,7 +702,7 @@ function buildAlerts({
         to: `/executions/${execution.id}`,
       })),
     ...incompleteAuditExecutions
-      .filter((execution) => !interventionIds.has(execution.id) && !failedIds.has(execution.id) && !costConcernIds.has(execution.id))
+      .filter((execution) => !isHumanIntervention(execution) && !isCurrentExecutionFailure(execution) && !costConcernIds.has(execution.id))
       .slice(0, 3)
       .map((execution) => ({
         id: `alert-execution-audit-${execution.id}`,

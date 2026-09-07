@@ -1,5 +1,14 @@
 # Changelog
 
+# Sprint 015 Task 4 Implementation Ready
+
+- Integrated the shared `buildBusinessAttentionSummary(input)` result into the existing Command Center.
+- Added shared attention/source/business counts, the first six already ordered portfolio items, exact navigation, lifecycle labels, and warning visibility.
+- Removed duplicate legacy CEO action/alert representations of the four Sprint 015 attention signals while preserving unrelated dashboard behavior.
+- Applied current-failure semantics that exclude historical failure entries alone.
+- Verified deterministic Task 4 assumptions and `npm.cmd run build` PASS.
+- Recorded Task 4 repository closeout as pending and Task 5 as not started.
+
 # Sprint 015 Task 3 Repository Closeout
 
 - Verified the pushed Sprint 015 Task 3 implementation/documentation commit `2300b9443975ac0d02d30b533358ac8aa4e14353` on local `main` and `origin/main`.

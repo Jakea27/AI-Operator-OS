@@ -1,5 +1,19 @@
 # AO Knowledge Base Changelog
 
+## Sprint 015 Task 4 Implementation Ready - 2026-09-07
+
+### Updated
+
+- Integrated the shared `buildBusinessAttentionSummary(input)` result into the existing Command Center.
+- Added current attention-item, contributing-source-record, and resolved-business counts plus the first six already ordered shared attention items and a route to Business Manager.
+- Preserved signal reason, recorded priority/Unspecified, source identity, business lifecycle, ownership/state warnings, and exact source navigation.
+- Removed duplicate legacy Command Center CEO action/alert representations of the four Sprint 015 shared attention signals.
+- Applied shared current-failure semantics so historical failure entries alone do not represent current Sprint 015 failure attention.
+- Preserved unrelated capability, queue, audit, cost, timing, roadmap, money, recent activity, and operating summaries.
+- Recorded deterministic automated verification PASS and `npm.cmd run build` PASS.
+- Confirmed no new store, persistence key, ranking/scoring, source mutation, automation, scheduling, retry, orchestration, or unrelated redesign.
+- Recorded Sprint 015 Task 4 repository closeout as pending and Task 5 as not started.
+
 ## Sprint 015 Task 3 Repository Closeout - 2026-09-07
 
 ### Updated
