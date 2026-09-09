@@ -365,12 +365,20 @@ Deterministic integration QA passed for:
 
 One narrow presentation defect was found and fixed in `app/src/features/businesses/pages/BusinessesPage.tsx`: the portfolio review explanation previously implied that every review item stayed outside business totals. The corrected copy states that unidentified/conflicting ownership remains outside business totals while resolved unspecified-priority items remain counted and are also shown for priority review. No derivation, ownership, counting, persistence, or navigation logic changed.
 
+Manual CEO QA then found a lifecycle mismatch on legacy Business record `BIZ-QA-T6`: read-only surfaces displayed persisted status `Active`, while the Lifecycle Control `<select>` visually fell back to `Building` because `Active` is not a current `BusinessStatus` option. The root cause was missing runtime validation in `normalizeBusiness()`.
+
+The Business Store boundary now normalizes legacy `Active` to the current lifecycle equivalent `Operating`, preserves every current `BusinessStatus` unchanged, and retains `Building` as the safe default for missing or unrecognized runtime values. The normalization does not mutate source input or change Business IDs, relationships, activity, attention ownership, counts, source records, stores, persistence keys, or lifecycle definitions.
+
+Deterministic post-fix verification passed for legacy, current, missing, and unrecognized statuses; dropdown membership; source-input immutability; repeated normalization; and unchanged Business attention ownership/counts. All Business and Command Center surfaces consume the same normalized Business Store record after load or restart.
+
 Build verification after the fix:
 
 - `npm.cmd run build`: PASS.
 - TypeScript: PASS.
 - Vite production build: PASS.
 - Existing Vite large-chunk warning remains non-blocking.
+
+Manual CEO QA retest remains required for the lifecycle normalization fix. CEO QA is PENDING; Task 5 and Sprint 015 remain active.
 
 Read-only architecture remains preserved. No Attention Store, Portfolio Store, Notification Store, new persistence key, persisted derived summary, source-priority mutation, ownership repair, AI ranking, financial scoring, automation, scheduling, retry, or orchestration was added.
 

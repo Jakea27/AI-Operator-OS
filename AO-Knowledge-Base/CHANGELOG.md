@@ -1,5 +1,14 @@
 # AO Knowledge Base Changelog
 
+## Sprint 015 Task 5 Business Lifecycle Status Normalization Fix - 2026-09-09
+
+### Fixed
+
+- Recorded the manual CEO QA mismatch where legacy Business status `Active` appeared on read-only surfaces while Lifecycle Control visually fell back to `Building`.
+- Added Business Store boundary normalization from legacy `Active` to current status `Operating`; valid statuses remain unchanged and missing/unrecognized values retain the `Building` default.
+- Verified status normalization, dropdown membership, source-input immutability, repeat-load behavior, and unchanged attention ownership/counts deterministically.
+- Recorded TypeScript and Vite production build PASS and retained CEO QA as PENDING for manual retest.
+
 ## Sprint 015 Task 5 Automated Integration QA - 2026-09-09
 
 ### Updated

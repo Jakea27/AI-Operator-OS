@@ -1926,7 +1926,7 @@ ACTIVE - TASK 5 AUTOMATED QA COMPLETE / CEO QA PENDING.
 
 ## Current Phase
 
-Sprint 015 Task 5 manual CEO QA.
+Sprint 015 Task 5 manual CEO QA defect retest.
 
 ## Current Task
 
@@ -1942,7 +1942,7 @@ Sprint 015 - Multi-Business Management.
 
 ## Current Objective
 
-Complete Sprint 015 Task 5 manual CEO QA using the verified shared attention foundation and Business Manager/Command Center integrations. Do not close Task 5 or Sprint 015 until Jake reports the result.
+Retest the Sprint 015 Task 5 Business lifecycle normalization fix in manual CEO QA. Do not close Task 5 or Sprint 015 until Jake reports the result.
 
 ## Roadmap Planning Note
 
@@ -1950,7 +1950,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Jake performs Sprint 015 Task 5 manual CEO QA using the prepared checklist.
+Jake performs the Sprint 015 Task 5 manual CEO QA lifecycle-status retest on legacy Business record `BIZ-QA-T6`.
 
 ## Blocking Issues
 
@@ -1962,11 +1962,11 @@ main
 
 ## Last QA Result
 
-Sprint 015 Task 5 automated integration QA passed. One presentation-copy defect was fixed so Business Manager accurately distinguishes unresolved ownership outside business totals from resolved unspecified-priority items that remain counted. Deterministic integration QA and the post-fix build passed. CEO QA remains PENDING.
+Sprint 015 Task 5 manual CEO QA found a legacy Business lifecycle mismatch: persisted `Active` appeared on read-only surfaces while Lifecycle Control visually fell back to `Building`. Business Store runtime normalization now maps legacy `Active` to `Operating`, preserves current valid statuses, and defaults missing or unrecognized values to `Building`. Deterministic post-fix verification and build passed. CEO QA remains PENDING for manual retest.
 
 ## Last Build Result
 
-`npm.cmd run build` passed after the Sprint 015 Task 5 integration-QA presentation fix from the app directory. TypeScript and Vite production build passed. Existing Vite large-chunk warning remains non-blocking.
+`npm.cmd run build` passed after the Sprint 015 Task 5 Business lifecycle normalization fix from the app directory. TypeScript and Vite production build passed. Existing Vite large-chunk warning remains non-blocking.
 
 ## Last Updated
 
@@ -2006,6 +2006,9 @@ Sprint 015 Task 5 automated integration QA passed. One presentation-copy defect 
 - Sprint 015 Task 5: AUTOMATED INTEGRATION QA COMPLETE - deterministic verification PASS, build PASS, CEO QA PENDING; Task 5 and Sprint 015 are not complete.
 - Sprint 015 Task 5 Verification: shared counts, qualification, ownership, ordering, duplicate handling, exact navigation, truthful empty states, read-only architecture, and unrelated Command Center preservation PASS.
 - Sprint 015 Task 5 Fix: corrected Business Manager portfolio-review copy to distinguish unresolved ownership outside business totals from resolved unspecified-priority items that remain counted; no derivation logic changed.
+- Sprint 015 Task 5 CEO QA Defect: legacy persisted Business status `Active` was not runtime-validated, so read-only surfaces showed `Active` while the Lifecycle Control dropdown visually fell back to `Building`.
+- Sprint 015 Task 5 Lifecycle Fix: Business Store normalization maps legacy `Active` to `Operating`, preserves all current valid statuses, and uses the existing `Building` default for missing or unrecognized runtime values.
+- Sprint 015 Task 5 Post-Fix Verification: deterministic status, immutability, dropdown-membership, attention ownership/count, repeat-load behavior, TypeScript, and Vite production-build checks PASS; manual CEO QA retest PENDING.
 - Previous Sprint: Sprint 012 CLOSED
 - Sprint 012 Implementation: COMPLETE
 - Sprint 012 Internal QA: PASS
@@ -2360,7 +2363,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Build passing as of Sprint 015 Task 5 automated integration QA after the scoped presentation-copy fix.
+Build passing as of Sprint 015 Task 5 post-fix verification after Business lifecycle status normalization.
 
 Command used:
 
@@ -2368,11 +2371,11 @@ Command used:
 
 ## Current Status
 
-Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Tasks 1-4 are complete and repository-closed. Sprint 015 Task 5 automated integration QA and build verification passed after one scoped presentation-copy fix. CEO QA is pending; Task 5 and Sprint 015 are not complete.
+Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Tasks 1-4 are complete and repository-closed. Sprint 015 Task 5 automated integration QA passed. Manual CEO QA found a legacy Business lifecycle mismatch; the scoped normalization fix and post-fix automated/build verification passed. CEO QA retest is pending; Task 5 and Sprint 015 are not complete.
 
 ## Next Phase
 
-Jake performs Sprint 015 Task 5 manual CEO QA using the prepared checklist.
+Jake performs the Sprint 015 Task 5 manual CEO QA lifecycle-status retest on legacy Business record `BIZ-QA-T6`.
 
 ## Current Sprint Implementation Status
 
@@ -2381,6 +2384,8 @@ Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeou
 Sprint 015 Task 5 automated integration QA verified shared counts, qualification, ownership, ordering, duplicate handling, current-failure semantics, exact source navigation, Approval Queue exact selection support, truthful empty states, read-only architecture, and preservation of unrelated Command Center behavior.
 
 Task 5 fixed one scoped presentation defect in `app/src/features/businesses/pages/BusinessesPage.tsx`: portfolio-review copy now accurately states that unidentified/conflicting ownership is outside business totals while resolved unspecified-priority items remain counted and separately reviewable. Shared derivation behavior was not changed.
+
+Task 5 manual CEO QA found that persisted legacy Business status `Active` was accepted without runtime validation. Read-only surfaces therefore displayed `Active`, while the current lifecycle `<select>` fell back visually to `Building`. `app/src/core/businesses/businessStore.ts` now normalizes legacy `Active` to `Operating`, preserves every valid current status, and uses `Building` for missing or unrecognized runtime values. Deterministic post-fix verification confirmed no input mutation and no change to attention ownership or counts. CEO QA retest remains pending.
 
 Sprint 015 Task 4 implementation file:
 
@@ -2812,7 +2817,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 015 Task 5 manual CEO QA. Automated integration QA and the post-fix TypeScript/Vite production build passed. One Business Manager review-copy defect was corrected without changing shared derivation logic. Task 5 and Sprint 015 remain active pending Jake's manual CEO QA result.
+The current focus is Sprint 015 Task 5 manual CEO QA defect retest. CEO QA found that legacy persisted Business status `Active` appeared on read-only surfaces while Lifecycle Control visually fell back to `Building`. Business Store normalization now maps legacy `Active` to `Operating`, preserves current valid statuses, and retains `Building` as the missing/unrecognized default. Deterministic post-fix verification and the TypeScript/Vite production build passed. Task 5 and Sprint 015 remain active pending Jake's manual retest.
 
 Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is complete after Tasks 1-12 established the reusable Creative Production Engine from Business Asset through export-ready Creative Asset Package and Creative Cost Visibility. Sprint 014 Tasks 9, 10, 11, and 12 implementation, automated/remote verification, build validation, CEO QA, documentation closeout, repository commit, and push are complete.
 
@@ -2849,7 +2854,7 @@ Sprint 014 - Early Revenue Foundation.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Jake performs Sprint 015 Task 5 manual CEO QA using the prepared checklist.
+- Jake performs the Sprint 015 Task 5 lifecycle-status manual CEO QA retest on legacy Business record `BIZ-QA-T6`.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Do not mark Sprint 015 Task 5 or Sprint 015 complete until Jake reports manual CEO QA PASS.
@@ -3764,12 +3769,20 @@ Deterministic integration QA passed for:
 
 One narrow presentation defect was found and fixed in `app/src/features/businesses/pages/BusinessesPage.tsx`: the portfolio review explanation previously implied that every review item stayed outside business totals. The corrected copy states that unidentified/conflicting ownership remains outside business totals while resolved unspecified-priority items remain counted and are also shown for priority review. No derivation, ownership, counting, persistence, or navigation logic changed.
 
+Manual CEO QA then found a lifecycle mismatch on legacy Business record `BIZ-QA-T6`: read-only surfaces displayed persisted status `Active`, while the Lifecycle Control `<select>` visually fell back to `Building` because `Active` is not a current `BusinessStatus` option. The root cause was missing runtime validation in `normalizeBusiness()`.
+
+The Business Store boundary now normalizes legacy `Active` to the current lifecycle equivalent `Operating`, preserves every current `BusinessStatus` unchanged, and retains `Building` as the safe default for missing or unrecognized runtime values. The normalization does not mutate source input or change Business IDs, relationships, activity, attention ownership, counts, source records, stores, persistence keys, or lifecycle definitions.
+
+Deterministic post-fix verification passed for legacy, current, missing, and unrecognized statuses; dropdown membership; source-input immutability; repeated normalization; and unchanged Business attention ownership/counts. All Business and Command Center surfaces consume the same normalized Business Store record after load or restart.
+
 Build verification after the fix:
 
 - `npm.cmd run build`: PASS.
 - TypeScript: PASS.
 - Vite production build: PASS.
 - Existing Vite large-chunk warning remains non-blocking.
+
+Manual CEO QA retest remains required for the lifecycle normalization fix. CEO QA is PENDING; Task 5 and Sprint 015 remain active.
 
 Read-only architecture remains preserved. No Attention Store, Portfolio Store, Notification Store, new persistence key, persisted derived summary, source-priority mutation, ownership repair, AI ranking, financial scoring, automation, scheduling, retry, or orchestration was added.
 

@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-The current focus is Sprint 015 Task 5 manual CEO QA. Automated integration QA and the post-fix TypeScript/Vite production build passed. One Business Manager review-copy defect was corrected without changing shared derivation logic. Task 5 and Sprint 015 remain active pending Jake's manual CEO QA result.
+The current focus is Sprint 015 Task 5 manual CEO QA defect retest. CEO QA found that legacy persisted Business status `Active` appeared on read-only surfaces while Lifecycle Control visually fell back to `Building`. Business Store normalization now maps legacy `Active` to `Operating`, preserves current valid statuses, and retains `Building` as the missing/unrecognized default. Deterministic post-fix verification and the TypeScript/Vite production build passed. Task 5 and Sprint 015 remain active pending Jake's manual retest.
 
 Sprint 011 is officially closed. Sprint 012 - AI Execution Infrastructure is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, and documentation COMPLETE. Sprint 013 - AI Provider Integration is officially closed after implementation COMPLETE, internal QA PASS, final CEO QA PASS, documentation COMPLETE, Git commit COMPLETE, and Git push PUSHED. Sprint 014 - Early Revenue Foundation is complete after Tasks 1-12 established the reusable Creative Production Engine from Business Asset through export-ready Creative Asset Package and Creative Cost Visibility. Sprint 014 Tasks 9, 10, 11, and 12 implementation, automated/remote verification, build validation, CEO QA, documentation closeout, repository commit, and push are complete.
 
@@ -45,7 +45,7 @@ Sprint 014 - Early Revenue Foundation.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Jake performs Sprint 015 Task 5 manual CEO QA using the prepared checklist.
+- Jake performs the Sprint 015 Task 5 lifecycle-status manual CEO QA retest on legacy Business record `BIZ-QA-T6`.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Do not mark Sprint 015 Task 5 or Sprint 015 complete until Jake reports manual CEO QA PASS.

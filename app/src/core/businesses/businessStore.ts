@@ -7,6 +7,7 @@ import {
   BusinessStatus,
   defaultBusinessMetrics,
 } from './businessTypes'
+import { businessStatuses } from './businessLifecycle'
 
 const STORAGE_KEY = 'ai-operator-os-businesses-v1'
 
@@ -42,6 +43,11 @@ function generateBusinessCode(existing: BusinessRecord[]) {
   return `BIZ-${String(max + 1).padStart(4, '0')}`
 }
 
+export function normalizeBusinessStatus(status: unknown): BusinessStatus {
+  if (status === 'Active') return 'Operating'
+  return businessStatuses.includes(status as BusinessStatus) ? status as BusinessStatus : 'Building'
+}
+
 function normalizeBusiness(raw: Partial<BusinessRecord>, index = 0): BusinessRecord {
   const timestamp = raw.createdAt ?? now()
   return {
@@ -51,7 +57,7 @@ function normalizeBusiness(raw: Partial<BusinessRecord>, index = 0): BusinessRec
     description: raw.description?.trim() || 'No description recorded yet.',
     portfolioType: raw.portfolioType?.trim() || 'General Portfolio',
     businessModel: raw.businessModel?.trim() || 'Unspecified',
-    status: raw.status ?? 'Building',
+    status: normalizeBusinessStatus(raw.status),
     health: raw.health ?? 'Unrated',
     priority: raw.priority ?? 'Medium',
     notes: raw.notes ?? '',

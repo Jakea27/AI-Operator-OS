@@ -1,5 +1,12 @@
 # Changelog
 
+# Sprint 015 Task 5 Business Lifecycle Status Normalization Fix
+
+- Fixed legacy Business status normalization so persisted `Active` loads as current lifecycle status `Operating` across Business and Command Center surfaces.
+- Preserved all valid statuses and retained `Building` as the safe default for missing or unrecognized runtime values.
+- Verified no attention ownership/count changes, no input mutation, and a passing TypeScript/Vite production build.
+- CEO QA remains pending for manual lifecycle-status retest; Task 5 and Sprint 015 remain active.
+
 # Sprint 015 Task 5 Automated Integration QA
 
 - Verified shared attention integration across Business Manager, Business Detail, Approval Queue exact selection, and Command Center.
