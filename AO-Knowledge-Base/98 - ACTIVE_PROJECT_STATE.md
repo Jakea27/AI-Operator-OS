@@ -28,11 +28,11 @@ Sprint 015 - Multi-Business Management
 
 ## Sprint Status
 
-ACTIVE - TASK 4 COMPLETE / REPOSITORY CLOSEOUT COMPLETE.
+ACTIVE - TASK 5 AUTOMATED QA COMPLETE / CEO QA PENDING.
 
 ## Current Phase
 
-Sprint 015 Task 5 preparation.
+Sprint 015 Task 5 manual CEO QA.
 
 ## Current Task
 
@@ -48,7 +48,7 @@ Sprint 015 - Multi-Business Management.
 
 ## Current Objective
 
-Begin Sprint 015 Task 5 - Integration QA, CEO QA, documentation, and repository closeout using the completed shared attention foundation and verified Business Manager/Command Center integrations.
+Complete Sprint 015 Task 5 manual CEO QA using the verified shared attention foundation and Business Manager/Command Center integrations. Do not close Task 5 or Sprint 015 until Jake reports the result.
 
 ## Roadmap Planning Note
 
@@ -56,7 +56,7 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 015 Task 5 - Integration QA, CEO QA, documentation, and repository closeout.
+Jake performs Sprint 015 Task 5 manual CEO QA using the prepared checklist.
 
 ## Blocking Issues
 
@@ -68,7 +68,7 @@ main
 
 ## Last QA Result
 
-Sprint 015 Task 4 repository closeout passed. The implementation/documentation commit `c9800726b93698d1490102b6a4d8e39dc71e2ea9` was pushed to `origin/main`, local `main` matched `origin/main`, and the working tree was clean before documentation-only closeout.
+Sprint 015 Task 5 automated integration QA passed. One presentation-copy defect was fixed so Business Manager accurately distinguishes unresolved ownership outside business totals from resolved unspecified-priority items that remain counted. Deterministic integration QA and the post-fix build passed. CEO QA remains PENDING.
 
 ## Last Build Result
 
@@ -81,7 +81,7 @@ Sprint 015 Task 4 repository closeout passed. The implementation/documentation c
 ## Current Sprint Verification
 
 - Sprint: Sprint 015
-- Status: ACTIVE - Task 4 complete; Task 5 not started
+- Status: ACTIVE - Task 5 automated integration QA complete; CEO QA pending
 - Sprint 015 Mission: Help the CEO identify which businesses need attention, understand why, and open the correct work through Business Manager and Command Center.
 - Sprint 015 Task 1: COMPLETE - documentation COMPLETE, architecture review PASS, architecture freeze PASS, repository closeout COMPLETE; no application code changed.
 - Sprint 015 Task 2: COMPLETE - implementation COMPLETE, automated verification PASS, build PASS, documentation COMPLETE, repository closeout COMPLETE.
@@ -109,7 +109,9 @@ Sprint 015 Task 4 repository closeout passed. The implementation/documentation c
 - Sprint 015 Task 4 Current Failure Semantics: Dashboard execution-risk state uses `isCurrentExecutionFailure`; historical failure entries alone do not create current Sprint 015 failure attention.
 - Sprint 015 Task 4 Exclusions Verified: no new store, persistence key, AI ranking, severity inference, financial scoring, priority mutation, ownership repair, automation, scheduling, retry, orchestration, or unrelated redesign.
 - Sprint 015 Task 4 Implementation Commit: `c9800726b93698d1490102b6a4d8e39dc71e2ea9` - pushed to `origin/main` and verified synchronized.
-- Sprint 015 Task 5: NOT STARTED - Integration QA, CEO QA, documentation, and repository closeout.
+- Sprint 015 Task 5: AUTOMATED INTEGRATION QA COMPLETE - deterministic verification PASS, build PASS, CEO QA PENDING; Task 5 and Sprint 015 are not complete.
+- Sprint 015 Task 5 Verification: shared counts, qualification, ownership, ordering, duplicate handling, exact navigation, truthful empty states, read-only architecture, and unrelated Command Center preservation PASS.
+- Sprint 015 Task 5 Fix: corrected Business Manager portfolio-review copy to distinguish unresolved ownership outside business totals from resolved unspecified-priority items that remain counted; no derivation logic changed.
 - Previous Sprint: Sprint 012 CLOSED
 - Sprint 012 Implementation: COMPLETE
 - Sprint 012 Internal QA: PASS

@@ -1,5 +1,15 @@
 # AO Knowledge Base Changelog
 
+## Sprint 015 Task 5 Automated Integration QA - 2026-09-09
+
+### Updated
+
+- Verified the complete Sprint 015 path from existing source stores through `buildBusinessAttentionSummary(input)`, Business Manager, Business Detail, Command Center, and exact source navigation.
+- Recorded deterministic integration QA PASS for counts, qualification, ownership, ordering, duplicate handling, lifecycle labels, empty states, navigation, purity, and read-only architecture.
+- Fixed one scoped Business Manager presentation defect so unresolved ownership outside business totals is distinguished from resolved unspecified-priority items that remain counted.
+- Recorded post-fix TypeScript and Vite production build PASS; the existing large-chunk warning remains non-blocking.
+- Recorded Task 5 CEO QA as PENDING and preserved Sprint 015 as ACTIVE.
+
 ## Sprint 015 Task 4 Repository Closeout - 2026-09-07
 
 ### Updated

@@ -345,6 +345,37 @@ Build verification:
 
 Task 4 adds no Attention Store, Portfolio Store, Notification Store, persistence key, AI ranking, inferred urgency, financial scoring, source-priority mutation, ownership repair, automation, scheduling, retry, orchestration, or unrelated Command Center redesign. Final integration and CEO QA remain Task 5 work.
 
+## Sprint 015 Task 5 - Integration QA, CEO QA, documentation, and repository closeout
+
+Status: AUTOMATED INTEGRATION QA COMPLETE / BUILD PASS / CEO QA PENDING.
+
+Task 5 Gate 1 verified the complete Sprint 015 integration from existing source stores through `buildBusinessAttentionSummary(input)`, Business Manager, Business Detail, Command Center, and existing source-record navigation.
+
+Deterministic integration QA passed for:
+
+- Two-business separation using stable ownership references.
+- Shared attention-item count, contributing-source-record count, per-business totals, qualification, ownership, ordering, and navigation semantics.
+- All four authorized signals: Pending CEO Approval, Execution Requires Human Intervention, Current Execution Failure, and Blocked Work Item.
+- Current-state qualification, resolved-condition removal, historical-failure exclusion, approval-ID deduplication, separate approval decisions, and independent signals sharing a source record.
+- Unidentified and conflicting ownership outside business totals, distinguishable missing/conflicting warnings, business names not establishing ownership, and paused/archived lifecycle visibility.
+- Critical, High, Medium, Low, and Unspecified ordering plus equal-priority signal/time/stable-ID ordering.
+- Exact Work Item, Execution, and Approval navigation, Approval Queue exact selection support, Business Detail routes, and Command Center navigation to Business Manager.
+- Pure repeated derivation with no persisted duplicates.
+- Business Manager and Command Center source inspection confirming both consume the same shared derivation without independent attention sorting.
+
+One narrow presentation defect was found and fixed in `app/src/features/businesses/pages/BusinessesPage.tsx`: the portfolio review explanation previously implied that every review item stayed outside business totals. The corrected copy states that unidentified/conflicting ownership remains outside business totals while resolved unspecified-priority items remain counted and are also shown for priority review. No derivation, ownership, counting, persistence, or navigation logic changed.
+
+Build verification after the fix:
+
+- `npm.cmd run build`: PASS.
+- TypeScript: PASS.
+- Vite production build: PASS.
+- Existing Vite large-chunk warning remains non-blocking.
+
+Read-only architecture remains preserved. No Attention Store, Portfolio Store, Notification Store, new persistence key, persisted derived summary, source-priority mutation, ownership repair, AI ranking, financial scoring, automation, scheduling, retry, or orchestration was added.
+
+Manual CEO QA remains required. Task 5 is not complete, and Sprint 015 remains active.
+
 ## Architecture Reuse
 
 Sprint 015 must reuse existing architecture:
@@ -582,6 +613,6 @@ Task 4 push status:
 
 PUSHED to `origin/main` and verified synchronized.
 
-Task 5 Status: NOT STARTED - Integration QA, CEO QA, documentation, and repository closeout.
+Task 5 Status: AUTOMATED INTEGRATION QA COMPLETE - build PASS, CEO QA PENDING, Task 5 not complete.
 
-Next Required Action: Begin Sprint 015 Task 5 - Integration QA, CEO QA, documentation, and repository closeout.
+Next Required Action: Jake performs Sprint 015 Task 5 manual CEO QA using the prepared checklist.

@@ -1,5 +1,13 @@
 # Changelog
 
+# Sprint 015 Task 5 Automated Integration QA
+
+- Verified shared attention integration across Business Manager, Business Detail, Approval Queue exact selection, and Command Center.
+- Verified deterministic counts, qualification, ownership, ordering, duplicate handling, navigation, empty states, purity, and read-only architecture.
+- Corrected Business Manager review copy to distinguish unresolved ownership outside totals from resolved unspecified-priority items that remain counted.
+- Verified `npm.cmd run build` PASS after the fix.
+- Recorded CEO QA as pending; Task 5 and Sprint 015 remain active.
+
 # Sprint 015 Task 4 Repository Closeout
 
 - Verified the pushed Sprint 015 Task 4 implementation/documentation commit `c9800726b93698d1490102b6a4d8e39dc71e2ea9` on local `main` and `origin/main`.

@@ -124,7 +124,7 @@ function BusinessAttentionReviewSection({ attention }: { attention: ReturnType<t
       <p className="eyebrow mb-2">Portfolio attention review</p>
       <h3 className="m-0 font-display text-xl font-semibold text-white">Items requiring ownership or priority review</h3>
       <p className="mt-2 text-sm leading-6 text-muted">
-        These items stay outside individual business totals until their source records resolve cleanly.
+        Unidentified and conflicting ownership stays outside individual business totals. Resolved items with unspecified priority remain in their business totals and are also shown here for priority review.
       </p>
       <div className="mt-4 grid gap-4 xl:grid-cols-3">
         <AttentionReviewGroup title="Unidentified Ownership" items={attention.reviewGroups.unidentifiedOwnership} />
