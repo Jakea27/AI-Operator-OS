@@ -230,11 +230,13 @@ AO-013 does not replace AO-012. It sits on top of the execution infrastructure a
 
 Begin practical early revenue systems, especially B2C opportunities that can compound over time while infrastructure continues maturing.
 
-### Current
-
 #### AO-015 - Multi-Business Management
 
 Improve the operating system's ability to manage multiple active businesses without increasing CEO workload linearly.
+
+### Current
+
+No active implementation sprint. Sprint 015 is complete and repository verified. Current phase: Post-Sprint 015 Planning / Sprint 016 Definition. Next required action: define Sprint 016 scope and first task from the authoritative roadmap. AO-016 remains planned and is not activated.
 
 ### Future
 

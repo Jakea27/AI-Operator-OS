@@ -33,6 +33,10 @@ Every AI operator must read the following source documents in this exact order.
 17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 015 - Multi-Business Management.md`
 18. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
+## Post-Sprint 015 Handoff
+
+Sprint 015 is COMPLETE - REPOSITORY VERIFIED. No active implementation sprint exists. Keep the Sprint 015 summary in the required reading order until a new sprint is formally defined. Active Project State remains authoritative for checkpoint metadata. AO-016 is planned, not active. Next required action: Define Sprint 016 scope and its first task from the authoritative roadmap.
+
 ## Startup Source Priority
 
 1. Primary Source:
