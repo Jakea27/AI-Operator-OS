@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 015 - Multi-Business Management: COMPLETE - REPOSITORY VERIFIED. Tasks 1-5 COMPLETE; mission SATISFIED. Task 5 automated integration QA PASS, build PASS, CEO QA PASS (reported by Jake), lifecycle fix and restart VERIFIED, documentation COMPLETE, repository closeout COMPLETE. No active implementation sprint exists. Current phase: Post-Sprint 015 Planning / Sprint 016 Definition. AO-016 - B2B Revenue Systems remains planned, not activated; no Sprint 016 task is defined or started.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE for Documentation-First activation. The approved mission is to produce one real CEO-approved short-form asset through AO, manually publish it to one AO-owned page, and record its publication and initial performance. Application implementation is NOT STARTED. Task 1 - Architecture Definition and Freeze is authorized only after activation documentation is committed, pushed, and repository verified.
 
 ## Last Completed Sprint
 
@@ -43,7 +43,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Define Sprint 016 scope and its first task from the authoritative roadmap.
+- Complete Sprint 016 documentation activation and repository verification, then begin Task 1 - Architecture Definition and Freeze.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -168,7 +168,18 @@ Sprint 015 - Multi-Business Management.
 - Sprint 014 Task 4 first use case processes YouTube Production Blueprint deliverables.
 - Sprint 014 Task 4 does not authorize autonomous execution, background execution, cloud providers, worker autonomy, streaming, or chat UI.
 
-## Current Handoff
+## Sprint 016 Activation Handoff
+
+- Sprint 016: ACTIVE - documentation activation in progress.
+- Mission: one real short-form asset produced through AO, CEO-approved, manually published to one AO-owned page, with publication and initial performance recorded in AO.
+- Current Task: Task 1 - Architecture Definition and Freeze.
+- Task 1 Status: AUTHORIZED - NOT STARTED.
+- Application Implementation: NOT STARTED.
+- Last Completed Sprint: Sprint 015 - Multi-Business Management.
+- Next Required Action: complete activation commit, push, and repository verification; then begin Task 1 architecture definition.
+- Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
+
+## Historical Current Handoff
 
 - Sprint 011 implementation is complete.
 - Sprint 011 QA passed.

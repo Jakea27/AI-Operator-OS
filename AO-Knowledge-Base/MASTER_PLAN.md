@@ -236,25 +236,41 @@ Improve the operating system's ability to manage multiple active businesses with
 
 ### Current
 
-No active implementation sprint. Sprint 015 is complete and repository verified. Current phase: Post-Sprint 015 Planning / Sprint 016 Definition. Next required action: define Sprint 016 scope and first task from the authoritative roadmap. AO-016 remains planned and is not activated.
+#### AO-016 - Shared Short-Form Operating Capability
+
+Activate the transition from building AI Operator OS to using it for real business operations. Extend the shared Creative Production Engine so one real short-form idea can become a CEO-approved finished asset, be manually published to one AO-owned TikTok, YouTube Shorts, or Instagram Reels page, and have its initial observed performance recorded in AO.
+
+Sprint 016 must prove the minimum operational capability through the real workflow rather than build generalized infrastructure in isolation. Short-form production remains reusable by owned-content and future B2B workflows without depending on a customer model.
 
 ### Future
 
-#### AO-016 - B2B Revenue Systems
+#### AO-017 - B2B Short-Form Service Operations
 
-Create B2B revenue workflows that can generate more immediate cash flow and help fund continued growth.
+Reuse the shared finished short-form capability for prospects, offers, engagements, client review, delivery, payment records, follow-up, and repeat service operations without duplicating the production engine.
 
-#### AO-017 - External Integrations
+#### AO-018 - Active Content Operations and Feedback
 
-Add approved external services, tools, and APIs only when ROI, cost, permission, and approval rules are clear.
+Increase the operating ability of active owned-content and B2B workflows through repeatable cadence, multi-platform distribution records, performance history, and evidence-based next-content decisions.
 
-#### AO-018 - Autonomous Departments
+#### AO-019 - Measured Bottleneck Integration
 
-Advance departments toward higher autonomy after approval architecture, capability planning, execution infrastructure, and monitoring are stable.
+Add only the approved external integration that removes the largest demonstrated constraint in an active workflow, such as media creation, editing, social publishing, communication, payment, or analytics.
 
-#### AO-019+ - Long-Term Scaling
+#### AO-020 - Trading Intelligence MVP
 
-Scale toward autonomous business management, portfolio operations, advanced analytics, reusable business blueprints, and continuously improving operators.
+Add read-only brokerage and market information, risk-aware trade proposals, and daily trading review without placing real orders.
+
+#### AO-021 - Paper Trading Operations
+
+Prove order, fill, position, exit, reconciliation, and P&L workflows without real capital.
+
+#### AO-022 - Conditional Robinhood Execution
+
+Add approval-controlled live order execution only after paper results, risk controls, idempotency, reconciliation, and CEO gates pass.
+
+#### AO-023+ - Earned Operational Automation
+
+Automate specific successful workflows based on reviewed operating history. Department autonomy remains earned, bounded, and explicitly CEO-authorized.
 
 #### Future - Unscheduled: AI Operator OS Experience Layer
 

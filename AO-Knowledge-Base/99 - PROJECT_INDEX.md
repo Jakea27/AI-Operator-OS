@@ -30,12 +30,12 @@ Every AI operator must read the following source documents in this exact order.
 14. `AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md`
 15. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 16. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
-17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 015 - Multi-Business Management.md`
+17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md`
 18. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
-## Post-Sprint 015 Handoff
+## Active Sprint 016 Handoff
 
-Sprint 015 is COMPLETE - REPOSITORY VERIFIED. No active implementation sprint exists. Keep the Sprint 015 summary in the required reading order until a new sprint is formally defined. Active Project State remains authoritative for checkpoint metadata. AO-016 is planned, not active. Next required action: Define Sprint 016 scope and its first task from the authoritative roadmap.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE for Documentation-First activation. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED. Application implementation has not begun. Task 1 - Architecture Definition and Freeze is the first authorized task only after activation documentation is committed, pushed, and repository verified. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 

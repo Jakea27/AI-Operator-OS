@@ -1,5 +1,13 @@
 # Changelog
 
+## Sprint 016 - Documentation-First Activation - 2026-09-11
+
+- Activated Sprint 016 - Shared Short-Form Operating Capability after CEO concept and sprint-plan approval.
+- Recorded the five-task sprint contract, real operating finish line, acceptance criteria, automated QA, CEO QA, ownership direction, and explicit exclusions.
+- Replaced the former broad AO-016 B2B milestone with the approved shared short-form operating milestone and recorded the revised evidence-driven roadmap.
+- Authorized Task 1 - Architecture Definition and Freeze only after activation commit, push, and repository verification.
+- Application code and user records unchanged.
+
 ## Sprint 015 - Repository Closeout - 2026-09-11
 
 - Verified the CEO QA/documentation closeout commit pushed and synchronized before recording repository completion.
