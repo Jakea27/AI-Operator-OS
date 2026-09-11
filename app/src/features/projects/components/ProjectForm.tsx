@@ -197,7 +197,7 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
           <span>
             <span className="block text-sm font-semibold text-white">Create as Business Asset Project</span>
             <span className="mt-1 block text-sm leading-6 text-muted">
-              Business Assets are produced by departments. Task 1 supports YouTube Video as the first asset type while keeping the Project system reusable.
+              Business Assets are produced by departments. Short-Form Video is the primary shared asset type for TikTok, YouTube Shorts, and Instagram Reels. Existing YouTube Video workflows remain supported.
             </span>
           </span>
         </label>
@@ -210,7 +210,10 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
                 {businessAssetTypes.map((item) => <option key={item} value={item}>{item}</option>)}
               </select>
             </label>
-            <Info label="Platform" value={assetType === 'YouTube Video' ? 'YouTube' : 'Future platform'} />
+            <Info
+              label={assetType === 'YouTube Video' ? 'Platform' : 'Target Platforms'}
+              value={assetType === 'YouTube Video' ? 'YouTube' : 'Choose TikTok, YouTube Shorts, or Instagram Reels in Project Detail'}
+            />
             <label className="space-y-2 md:col-span-2">
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Topic</span>
               <input value={topic} onChange={(event) => setTopic(event.target.value)} className="field" placeholder="What should this asset be about?" />
