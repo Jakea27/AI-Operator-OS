@@ -16,21 +16,21 @@ Command used:
 
 ## Current Status
 
-Sprint 013 - AI Provider Integration is closed. Sprint 014 - Early Revenue Foundation is complete and repository verified after Tasks 1-12 established the Creative Production Engine. Sprint 015 - Multi-Business Management is active. Sprint 015 Tasks 1-4 are complete and repository-closed. Sprint 015 Task 5 automated integration QA passed. Manual CEO QA found a legacy Business lifecycle mismatch; the scoped normalization fix and post-fix automated/build verification passed. CEO QA retest is pending; Task 5 and Sprint 015 are not complete.
+Sprint 015 mission SATISFIED. Task 5 automated integration QA PASS, build PASS, manual CEO QA PASS (reported by Jake), lifecycle fix and restart VERIFIED, documentation COMPLETE. Final repository closeout PENDING push verification. Sprint 015 remains active until that verification succeeds.
 
 ## Next Phase
 
-Jake performs the Sprint 015 Task 5 manual CEO QA lifecycle-status retest on legacy Business record `BIZ-QA-T6`.
+Verify final Sprint 015 documentation commit and push.
 
 ## Current Sprint Implementation Status
 
-Sprint 012 implementation, internal QA, final CEO QA, documentation, and closeout are COMPLETE. Sprint 013 is CLOSED. Sprint 014 is COMPLETE - REPOSITORY VERIFIED after Tasks 1-12 passed implementation, QA, documentation, commit, push, and final closeout. Sprint 015 is ACTIVE. Sprint 015 Tasks 1-4 are COMPLETE. Sprint 015 Task 5 automated integration QA is COMPLETE with deterministic verification PASS and build PASS; CEO QA is PENDING.
+Sprint 015 mission SATISFIED. Task 5 automated integration QA PASS, build PASS, manual CEO QA PASS (reported by Jake), lifecycle fix and restart VERIFIED, documentation COMPLETE. Final repository closeout PENDING push verification. Sprint 015 remains active until that verification succeeds.
 
 Sprint 015 Task 5 automated integration QA verified shared counts, qualification, ownership, ordering, duplicate handling, current-failure semantics, exact source navigation, Approval Queue exact selection support, truthful empty states, read-only architecture, and preservation of unrelated Command Center behavior.
 
 Task 5 fixed one scoped presentation defect in `app/src/features/businesses/pages/BusinessesPage.tsx`: portfolio-review copy now accurately states that unidentified/conflicting ownership is outside business totals while resolved unspecified-priority items remain counted and separately reviewable. Shared derivation behavior was not changed.
 
-Task 5 manual CEO QA found that persisted legacy Business status `Active` was accepted without runtime validation. Read-only surfaces therefore displayed `Active`, while the current lifecycle `<select>` fell back visually to `Building`. `app/src/core/businesses/businessStore.ts` now normalizes legacy `Active` to `Operating`, preserves every valid current status, and uses `Building` for missing or unrecognized runtime values. Deterministic post-fix verification confirmed no input mutation and no change to attention ownership or counts. CEO QA retest remains pending.
+Task 5 manual CEO QA found that persisted legacy Business status `Active` was accepted without runtime validation. Read-only surfaces therefore displayed `Active`, while the current lifecycle `<select>` fell back visually to `Building`. `app/src/core/businesses/businessStore.ts` now normalizes legacy `Active` to `Operating`, preserves every valid current status, and uses `Building` for missing or unrecognized runtime values. Deterministic post-fix verification confirmed no input mutation and no change to attention ownership or counts. Jake reported CEO QA retest PASS, including full restart and unchanged attention counts.
 
 Sprint 015 Task 4 implementation file:
 
