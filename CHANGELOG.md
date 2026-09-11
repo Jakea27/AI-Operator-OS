@@ -1,5 +1,13 @@
 # Changelog
 
+## Sprint 016 Task 2 - Implementation Checkpoint - 2026-09-11
+
+- Implemented the shared Short-Form Video foundation inside the existing Project Store and Project Detail architecture with typed TikTok, YouTube Shorts, and Instagram Reels targets.
+- Added blueprint-type-specific deliverables and normalization, a Project-owned production-readiness container, Short-Form-aware Hook/Script provider instructions, and protection against unsupported Work Orders for manual planning deliverables.
+- Preserved existing YouTube blueprints and the `ai-operator-os-projects-v1` persistence key; added no store, external integration, publication/performance record, B2B model, trading, automation, or scheduler.
+- Full 199-file TypeScript verification PASS with zero diagnostics; deterministic normalization, readiness, persistence-key, and YouTube-compatibility checks PASS.
+- Implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618` pushed to `origin/main` and verified. Production build, CEO QA, documentation closeout, and Task 2 repository closeout remain pending; Task 3 is not authorized.
+
 ## Sprint 016 Task 1 - Repository Closeout - 2026-09-11
 
 - Verified Task 1 documentation commit `21b94d5152ae67f7fc2db66245774af880662fb8` on `origin/main`.

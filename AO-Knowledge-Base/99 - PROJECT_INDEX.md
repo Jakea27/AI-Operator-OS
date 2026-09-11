@@ -35,7 +35,7 @@ Every AI operator must read the following source documents in this exact order.
 
 ## Active Sprint 016 Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 - Architecture Definition and Freeze is COMPLETE - REPOSITORY VERIFIED. Application implementation has NOT STARTED. Task 2 - Short-Form Production Foundation is the current authorized task and is NOT STARTED. Its implementation must remain inside the frozen Task 1 contract. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 is COMPLETE - REPOSITORY VERIFIED. Task 2 implementation is COMPLETE and implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618` is VERIFIED; production build, CEO QA, and Task 2 closeout remain PENDING. Task 3 is not authorized. The next action is the bounded Task 2 build/QA/closeout. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 
