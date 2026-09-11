@@ -35,7 +35,7 @@ export function ProjectCard({ project }: { project: ProjectRecord }) {
         {project.businessAsset?.enabled ? (
           <>
             <Info label="Asset Type" value={project.businessAsset.assetType} />
-            <Info label="Production" value={`${project.businessAsset.currentProductionStage} Â· ${project.businessAsset.productionStatus}`} />
+            <Info label="Production" value={`${project.businessAsset.currentProductionStage} · ${project.businessAsset.productionStatus}`} />
           </>
         ) : null}
       </div>
