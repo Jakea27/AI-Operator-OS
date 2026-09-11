@@ -61,6 +61,8 @@ type OllamaTagsResponse = {
   models?: unknown
 }
 
+const OLLAMA_PROMPT_EXECUTION_TIMEOUT_MS = 120000
+
 function now() {
   return new Date().toISOString()
 }
@@ -874,7 +876,7 @@ export async function executeOllamaPrompt(input: ProviderAdapterPromptExecutionI
         num_predict: input.maxTokens,
       },
     },
-    configuration.connectionTimeoutMs,
+    Math.max(configuration.connectionTimeoutMs, OLLAMA_PROMPT_EXECUTION_TIMEOUT_MS),
   )
   const completedAt = now()
 

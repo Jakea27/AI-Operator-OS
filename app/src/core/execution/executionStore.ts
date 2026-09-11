@@ -614,6 +614,64 @@ export const executionStore = {
     return execution
   },
 
+  createRetryExecution(executionRecordId: string) {
+    const failedExecution = state.find((execution) => execution.id === executionRecordId)
+    const requestId = failedExecution?.executionRequest?.requestId
+
+    if (!failedExecution || !requestId || failedExecution.requestLifecycle?.status !== 'Failed') {
+      return undefined
+    }
+
+    const activeRetry = state.find((execution) =>
+      execution.id !== failedExecution.id &&
+      execution.executionRequest?.requestId === requestId &&
+      execution.requestLifecycle?.status !== 'Completed' &&
+      execution.requestLifecycle?.status !== 'Failed',
+    )
+    if (activeRetry) return activeRetry
+
+    const timestamp = now()
+    const attemptNumber = state.filter((execution) => execution.executionRequest?.requestId === requestId).length + 1
+    const retryExecutionId = generateExecutionCode(state)
+    const retryExecution: ExecutionRecord = {
+      ...failedExecution,
+      id: id('execution'),
+      executionId: retryExecutionId,
+      title: `${failedExecution.workOrder?.workOrderId ?? failedExecution.executionId} retry ${attemptNumber} lifecycle`,
+      description: `Manual retry lifecycle for ${requestId}. Failed execution ${failedExecution.executionId} remains immutable in history.`,
+      status: 'Prepared',
+      requestLifecycle: initialExecutionRequestLifecycle(timestamp),
+      selectedProviders: [],
+      timing: {
+        preparedAt: timestamp,
+      },
+      actualCost: 0,
+      costRecords: [],
+      result: undefined,
+      resultRef: undefined,
+      events: [
+        event(`Retry attempt ${attemptNumber} established from failed execution ${failedExecution.executionId}. No provider execution started.`, timestamp),
+      ],
+      transitionHistory: [],
+      logs: [],
+      retryHistory: [],
+      failures: [],
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
+    const failedWithRetry = recordRetryForExecution(failedExecution, {
+      attemptNumber,
+      status: 'Attempted',
+      reason: 'CEO manually created a provider retry lifecycle.',
+      resultSummary: `Retry lifecycle ${retryExecutionId} created.`,
+    })
+
+    persist([retryExecution, ...state.map((execution) =>
+      execution.id === failedExecution.id ? failedWithRetry : execution,
+    )])
+    return retryExecution
+  },
+
   async executeProviderRequest(executionRecordId: string): Promise<ExecutionProviderRunResult | undefined> {
     const initialExecution = state.find((execution) => execution.id === executionRecordId)
 
@@ -1319,6 +1377,7 @@ export function useExecutionStore() {
     createExecution: executionStore.createExecution,
     createExecutionFromQueueItem: executionStore.createExecutionFromQueueItem,
     createExecutionFromWorkOrder: executionStore.createExecutionFromWorkOrder,
+    createRetryExecution: executionStore.createRetryExecution,
     executeProviderRequest: executionStore.executeProviderRequest,
     transitionExecution: executionStore.transitionExecution,
     transitionExecutionRequestLifecycle: executionStore.transitionExecutionRequestLifecycle,

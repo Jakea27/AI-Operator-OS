@@ -1023,6 +1023,16 @@ export function ProjectDetailPage() {
     }
   }
 
+  function retryProviderPath(execution: ExecutionRecord) {
+    const retryExecution = executionStore.createRetryExecution(execution.id)
+    if (!retryExecution) {
+      setExecutionRequestNotice('Retry lifecycle blocked: the selected execution is not a failed provider attempt or an active retry already exists.')
+      return
+    }
+
+    setExecutionRequestNotice(`Retry lifecycle ${retryExecution.executionId} established from failed execution ${execution.executionId}. The failed record remains in history and no provider execution started.`)
+  }
+
   function createCreativeConceptWorkOrder() {
     if (!activeProject.businessAsset?.enabled) {
       setExecutionRequestNotice('Creative Concept Work Order blocked: enable Business Asset context before topic development.')
@@ -1747,11 +1757,13 @@ export function ProjectDetailPage() {
                       onBuildRequest={() => workOrder ? buildExecutionRequest(workOrder) : undefined}
                       onCreateLifecycle={() => workOrder ? createExecutionLifecycle(workOrder) : undefined}
                       onExecuteProviderPath={() => execution ? executeProviderPath(execution) : undefined}
+                      onRetryProviderPath={() => execution ? retryProviderPath(execution) : undefined}
                       onApplyDraft={() => applyDraftForReview(deliverable, workOrder, execution)}
                       onCreateRevisionWorkOrder={() => createRevisionWorkOrder(deliverable)}
                       onBuildRevisionRequest={(revisionWorkOrder) => buildExecutionRequest(revisionWorkOrder)}
                       onCreateRevisionLifecycle={(revisionWorkOrder) => createExecutionLifecycle(revisionWorkOrder)}
                       onExecuteRevisionProviderPath={(revisionExecution) => executeProviderPath(revisionExecution)}
+                      onRetryRevisionProviderPath={(revisionExecution) => retryProviderPath(revisionExecution)}
                       onApplyRevisionDraft={(revisionWorkOrder, revisionExecution) => applyDraftForReview(deliverable, revisionWorkOrder, revisionExecution)}
                       onApproveDraft={() => recordReviewDecision(deliverable, 'Approved')}
                       onNeedsRevision={() => openReviewModal('Needs Revision', deliverable)}
@@ -2243,11 +2255,13 @@ function WorkOrderBlueprintRow({
   onBuildRequest,
   onCreateLifecycle,
   onExecuteProviderPath,
+  onRetryProviderPath,
   onApplyDraft,
   onCreateRevisionWorkOrder,
   onBuildRevisionRequest,
   onCreateRevisionLifecycle,
   onExecuteRevisionProviderPath,
+  onRetryRevisionProviderPath,
   onApplyRevisionDraft,
   onApproveDraft,
   onNeedsRevision,
@@ -2263,11 +2277,13 @@ function WorkOrderBlueprintRow({
   onBuildRequest: () => void
   onCreateLifecycle: () => void
   onExecuteProviderPath: () => void
+  onRetryProviderPath: () => void
   onApplyDraft: () => void
   onCreateRevisionWorkOrder: () => void
   onBuildRevisionRequest: (workOrder: WorkItemRecord) => void
   onCreateRevisionLifecycle: (workOrder: WorkItemRecord) => void
   onExecuteRevisionProviderPath: (execution: ExecutionRecord) => void
+  onRetryRevisionProviderPath: (execution: ExecutionRecord) => void
   onApplyRevisionDraft: (workOrder: WorkItemRecord, execution: ExecutionRecord) => void
   onApproveDraft: () => void
   onNeedsRevision: () => void
@@ -2279,10 +2295,12 @@ function WorkOrderBlueprintRow({
   const canApplyDraft = Boolean(execution?.result?.success && execution.result.responseText?.trim() && deliverable.appliedResultId !== execution.result.resultId)
   const canReviewDraft = deliverable.activeReview && deliverable.reviewStatus === 'Draft'
   const canCreateRevisionWorkOrder = deliverable.reviewStatus === 'Needs Revision' && !deliverable.activeReview && Boolean(deliverable.reviewFeedback?.trim())
-  const activeRevisionWorkOrder = revisionWorkOrders.find(({ workOrder: revisionWorkOrder }) =>
-    revisionWorkOrder.workOrder?.metadata.revisionSourceApprovalId === deliverable.reviewApprovalId ||
-    revisionWorkOrder.workOrder?.metadata.revisionSourceReviewHistoryId === deliverable.metadata.activeRevisionSourceReviewHistoryId,
-  )
+  const latestNeedsRevisionReview = deliverable.reviewHistory.find((item) => item.decision === 'Needs Revision')
+  const activeRevisionWorkOrder = latestNeedsRevisionReview
+    ? revisionWorkOrders.find(({ workOrder: revisionWorkOrder }) =>
+      revisionWorkOrder.workOrder?.metadata.revisionSourceReviewHistoryId === latestNeedsRevisionReview.id,
+    )
+    : undefined
 
   return (
     <article className="rounded-xl border border-line bg-ink/40 p-4">
@@ -2304,16 +2322,17 @@ function WorkOrderBlueprintRow({
                 {execution ? 'Lifecycle Established' : 'Create Lifecycle'}
               </button>
             ) : null}
-            {execution ? (
+            {execution && lifecycleState !== 'Failed' ? (
               <button onClick={onExecuteProviderPath} className="btn-primary" disabled={!canExecuteProviderPath || executing}>
                 {executing
                   ? 'Executing...'
                   : lifecycleState === 'Completed'
                     ? 'Provider Result Recorded'
-                    : lifecycleState === 'Failed'
-                      ? 'Provider Execution Failed'
-                      : 'Execute Provider Path'}
+                    : 'Execute Provider Path'}
               </button>
+            ) : null}
+            {execution && lifecycleState === 'Failed' ? (
+              <button onClick={onRetryProviderPath} className="btn-secondary">Create Retry Lifecycle</button>
             ) : null}
             {execution?.result?.success ? (
               <button onClick={onApplyDraft} className="btn-secondary" disabled={!canApplyDraft}>
@@ -2461,16 +2480,17 @@ function WorkOrderBlueprintRow({
                                 {revisionExecution ? 'Revision Lifecycle Established' : 'Create Revision Lifecycle'}
                               </button>
                             ) : null}
-                            {revisionExecution ? (
+                            {revisionExecution && revisionLifecycle !== 'Failed' ? (
                               <button onClick={() => onExecuteRevisionProviderPath(revisionExecution)} className="btn-primary" disabled={!revisionCanExecute || executing}>
                                 {executing
                                   ? 'Executing...'
                                   : revisionLifecycle === 'Completed'
                                     ? 'Revision Result Recorded'
-                                    : revisionLifecycle === 'Failed'
-                                      ? 'Revision Failed'
-                                      : 'Execute Revision Manually'}
+                                    : 'Execute Revision Manually'}
                               </button>
+                            ) : null}
+                            {revisionExecution && revisionLifecycle === 'Failed' ? (
+                              <button onClick={() => onRetryRevisionProviderPath(revisionExecution)} className="btn-secondary">Create Retry Lifecycle</button>
                             ) : null}
                             {revisionExecution?.result?.success ? (
                               <button onClick={() => onApplyRevisionDraft(revisionWorkOrder, revisionExecution)} className="btn-secondary" disabled={!revisionCanApply}>
