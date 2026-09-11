@@ -4,7 +4,7 @@
 
 ## Bundle Metadata
 
-- Bundle generation date: 2026-09-09
+- Bundle generation date: 2026-09-11
 - Continuity System Version: 1.1
 - Project Version: 0.1.0-alpha
 - Current Sprint: Sprint 015 - Multi-Business Management
@@ -304,7 +304,7 @@ AI Operator OS manages multiple automation platforms and business blueprints. It
 Status: Active  
 Version: 0.1  
 Owner: Jake Allen  
-Last Updated: 2026-07-18
+Last Updated: 2026-09-11
 
 ## Purpose
 
@@ -441,6 +441,8 @@ The long-term goal is not simply to build software. The goal is to create a busi
 
 ## Master Roadmap
 
+Milestone status follows the official sprint closeouts. Completion means the approved sprint mission and acceptance criteria were met; it does not mean every long-term capability in the retained roadmap scope descriptions was implemented. Deferred capabilities remain deferred under their original ownership and authorization rules. Sprint summaries record delivered scope and limitations.
+
 ### Completed
 
 #### AO-001 - Opportunity Pipeline
@@ -487,8 +489,6 @@ Created the Command Center experience, grouped navigation, and shared visual sys
 
 Created the Documentation-First Continuity System, deterministic startup flow, Operator Verification Gate, Startup Bundle, repository checkpoint normalization, and clean-room validation.
 
-### Current
-
 #### AO-012 - AI Execution Infrastructure
 
 Prove AI Operator OS can execute work end-to-end without AI providers.
@@ -507,8 +507,6 @@ AO-012 includes:
 - End-to-end execution workflow
 
 Workers may execute deterministic tools only. AO-012 does not include AI providers, model execution, autonomous AI work, or provider-specific intelligence.
-
-### Future
 
 #### AO-013 - AI Provider Integration
 
@@ -533,9 +531,13 @@ AO-013 does not replace AO-012. It sits on top of the execution infrastructure a
 
 Begin practical early revenue systems, especially B2C opportunities that can compound over time while infrastructure continues maturing.
 
+### Current
+
 #### AO-015 - Multi-Business Management
 
 Improve the operating system's ability to manage multiple active businesses without increasing CEO workload linearly.
+
+### Future
 
 #### AO-016 - B2B Revenue Systems
 
