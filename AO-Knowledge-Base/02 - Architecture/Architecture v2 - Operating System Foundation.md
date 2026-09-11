@@ -4,7 +4,29 @@ Status: Active
 Version: 2.0  
 Owner: Jake Allen  
 Last Updated: 2026-07-09  
-Scope: Post Sprint 008
+Scope: Operating System Foundation with approved extensions through Sprint 016 Task 1
+
+## Sprint 016 Architecture Extension - Shared Short-Form Operating Capability
+
+Sprint 016 extends the existing Project-owned Creative Production Engine from a YouTube-first planning/package workflow into a shared short-form operating workflow that can produce one real finished video and record manual owned-page publication and performance evidence.
+
+The authoritative Sprint 016 Task 1 schema, gates, normalization rules, duplicate rules, compatibility requirements, and Task 2 boundary are frozen in `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md`.
+
+The architecture reuses:
+
+- Business Store for the AO-operated content Business.
+- Project Store and `ai-operator-os-projects-v1` for Short-Form Business Asset context, target platforms, Blueprint, short-form production, file-reference metadata, QA evidence, finished-asset versions, manual publication records, and manual performance snapshots.
+- Work Item Store for Work Items and Work Orders.
+- Execution Core and Provider Manager for provider-independent text work, results, cost, and lineage.
+- Approval Queue for final CEO approval status and decision history.
+- External platforms for publication and performance truth.
+- Money Department for financial truth.
+
+No Content Store, Asset Store, Publication Store, Analytics Store, Account Store, new persistence key, social connector, automated publisher, analytics ingester, B2B customer model, trading capability, scheduler, workflow engine, or autonomous behavior is authorized.
+
+Short-form production is platform-shared. `TikTok`, `YouTube Shorts`, and `Instagram Reels` are typed targets inside one production capability, not separate production engines. The Project-owned production path ends at a version-preserved, QA-complete, CEO-approved finished asset. Manual owned-page publication and manual performance snapshots are downstream evidence and do not redefine the production asset.
+
+Existing YouTube records remain compatible. Blueprint deliverable sets and execution instructions must be selected by asset/blueprint type rather than applying a new global short-form schema to legacy records. Approval never implies publication, a publication record never performs an external action, and a file reference never grants filesystem access.
 
 ## Sprint 015 Architecture Extension - Multi-Business Attention
 

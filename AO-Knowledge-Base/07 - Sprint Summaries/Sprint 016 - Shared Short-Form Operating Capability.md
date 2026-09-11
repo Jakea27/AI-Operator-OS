@@ -51,13 +51,206 @@ The preferred persistence direction is the existing Project Store extension patt
 
 ### Task 1 - Architecture Definition and Freeze
 
-Status: AUTHORIZED - NOT STARTED.
+Status: DOCUMENTATION COMPLETE - ARCHITECTURE REVIEW PASS - ARCHITECTURE FREEZE PASS - REPOSITORY CLOSEOUT PENDING.
 
 Objective: Inspect the current implementation and freeze the smallest architecture capable of reaching the Sprint 016 finish line.
 
 Task 1 must define and verify the short-form asset schema; platform representation; Production Blueprint and deliverables; source-asset and finished-video reference model; production and QA states; finished-asset definition and version preservation; final CEO approval gate; manual publication record; initial manual performance snapshot; ownership, persistence, lineage, normalization, and duplicate protection; compatibility with existing YouTube Video records; and separation between shared production and downstream owned-content or future B2B workflows.
 
 Task 1 is documentation and architecture work only. Application implementation is not authorized until Task 1 architecture review, architecture freeze, documentation closeout, commit, push, and repository verification pass.
+
+## Task 1 Architecture Definition and Freeze
+
+### Repository Inspection Result
+
+PASS.
+
+Task 1 inspected the implemented Project Store, Business Asset model, Knowledge Workspace, Creative Brief, Creative Concepts, Production Blueprint, Creative Asset Packages, Work Item / Work Order system, Execution Request Builder, Execution Core, Provider path, Approval Queue, Creative Cost Visibility, and Project Detail workflow.
+
+The current implementation already provides reusable research context, briefs, AI concept development, provider-independent text generation, revision history, CEO review, approval history, package versioning, execution lineage, and local-first persistence. The missing layer is a short-form-specific extension from production instructions into a real finished-video record, manual publication evidence, and manual performance evidence.
+
+### Architecture Review
+
+PASS with bounded compatibility requirements.
+
+- The architecture must extend the existing Project-owned creative model and existing Project Store key `ai-operator-os-projects-v1`.
+- Existing `YouTube Video` records, `YouTube Video Blueprint` records, deliverables, packages, Work Orders, executions, reviews, and costs must remain valid and unchanged.
+- Current blueprint normalization assumes one global deliverable list. Task 2 must make required deliverables blueprint-type-specific so short-form fields are not injected into legacy YouTube blueprints and legacy deliverables are not removed.
+- Current execution instructions contain YouTube-specific language. Task 2 must select instructions by asset/blueprint type while reusing the existing Work Order -> Execution Request -> Execution Core -> Provider Manager path.
+- Project Detail is already the active creative operating surface. Sprint 016 must extend that route rather than create a separate Content application.
+- No existing module owns reusable social-account records. Sprint 016 therefore records the manual destination handle on each publication event and does not introduce an Account Store or pretend to manage external accounts.
+
+### Frozen Ownership
+
+- Business Store owns the AO-operated content Business and its lifecycle.
+- Project Store owns the Short-Form Business Asset, target-platform intent, Project Knowledge, Creative Brief, Creative Concepts, Production Blueprint, production record, file references, QA evidence, finished-asset versions, manual publication records, and manual performance snapshots.
+- Work Item Store owns specialized Work Items and Work Orders.
+- Execution Core owns provider execution state, raw results, failures, timing, provider/model data, costs, and lineage.
+- Approval Queue owns current CEO approval status and decision history. Project-owned finished assets reference approvals but do not replace Approval Queue truth.
+- External platforms remain authoritative for whether a post exists and for observed platform metrics.
+- Money Department remains authoritative for financial truth. Sprint 016 performance snapshots do not create revenue or financial records.
+
+### Frozen Short-Form Representation
+
+The existing Business Asset model is extended, not replaced:
+
+- Add `Short-Form Video` as a valid `BusinessAssetType`.
+- Preserve `YouTube Video` as a valid legacy/current type.
+- Add a typed `ShortFormPlatform`: `TikTok`, `YouTube Shorts`, or `Instagram Reels`.
+- A Short-Form Business Asset records one or more `targetPlatforms`. The production system remains shared across platforms.
+- The existing single `platform` string remains for existing records and display compatibility. It must not be used to infer a missing short-form target silently.
+- Empty, duplicated, or invalid target-platform values normalize to a stable deduplicated list of recognized values. Missing targets stay visibly incomplete.
+
+### Frozen Blueprint Contract
+
+Add `Short-Form Video Blueprint` as a valid Production Blueprint type.
+
+Its minimum required deliverables are:
+
+1. Hook.
+2. Script.
+3. Shot and Visual Plan.
+4. On-Screen Text and Audio Plan.
+5. Caption, Call to Action, and Platform Metadata.
+6. Source Asset Requirements.
+
+Business Asset topic, goal, audience, tone, target length, and target platforms remain inherited context. Research stays in Knowledge Workspace. Brief-specific instructions stay in Creative Brief. Selected concepts stay in Creative Concepts. These values must not be copied into competing Blueprint fields.
+
+Hook and Script may reuse the existing provider-independent Work Order path in Task 2. The remaining deliverables may be completed manually for the first real workflow. Sprint 016 does not require a new provider, generation engine, workflow engine, or AI media generation.
+
+Blueprint deliverable definitions must be selected by blueprint type. Normalization must preserve recognized legacy YouTube deliverables, recognized short-form deliverables, their IDs, content, approvals, review history, and package lineage.
+
+### Frozen Production and File-Reference Contract
+
+Add one optional Project-owned `shortFormProduction` extension container. It is part of the existing Project record and persistence key, not a new store.
+
+Minimum production fields:
+
+- stable production ID;
+- production status: `Not Started`, `Ready`, `In Production`, `QA Pending`, `QA Failed`, or `QA Passed`;
+- tool/process description;
+- production notes;
+- blockers or missing components;
+- source-asset references;
+- finished-asset versions;
+- manual publication records;
+- manual performance snapshots;
+- created and updated timestamps;
+- optional metadata consistent with existing extension-container patterns.
+
+A file reference stores metadata only: stable reference ID, kind, label, location type, user-entered local path or external reference, optional media type, rights/restriction state, notes, and recorded timestamp. AO does not copy, upload, render, inspect, delete, or manage the referenced file.
+
+Allowed reference kinds are source asset and finished video. Rights/restriction state is `Unknown`, `Cleared`, or `Restricted`; unknown must remain visible and must not be treated as cleared.
+
+### Frozen QA and Finished-Asset Contract
+
+Each finished asset is an append-preserved `ShortFormFinishedAssetVersion` and acts as the versioned finished-asset package for the real video. It references the approved Creative Asset Package and source production lineage rather than copying approved scripts or execution results.
+
+Minimum finished-asset fields:
+
+- stable finished-asset ID and positive version number;
+- finished-video file reference;
+- source-asset reference IDs;
+- source Creative Asset Package ID and Blueprint reference;
+- production completion time and notes;
+- required QA checks and QA actor/time;
+- final Approval Queue ID;
+- creation/update timestamps;
+- supersession reference where applicable;
+- lineage references needed to reconstruct Project, Blueprint, package, Work Item, Work Order, Execution Request, Execution Result, review, and approval history.
+
+Mandatory QA checks cover: finished-video reference present; selected platform target; portrait/vertical orientation or recorded exception; duration reviewed; video playback reviewed; audio reviewed; on-screen text reviewed; caption/call to action reviewed; required production components present; source rights/restrictions reviewed; and platform suitability reviewed.
+
+A finished asset qualifies as CEO approved only when all mandatory QA checks pass, the finished-video reference exists, and the linked current Approval Queue decision is `Approved`. Approval Queue status is authoritative. A cached approval label must not override it.
+
+After final CEO approval, material changes require a new finished-asset version and a new final approval. Prior versions, QA evidence, file references, approvals, and lineage are not overwritten or deleted. Repeated saves update the same draft version by stable ID and must not create duplicates.
+
+### Frozen Final Approval Gate
+
+Final finished-video approval is separate from approval of Hook, Script, or other planning deliverables.
+
+The existing Approval Queue is extended only with optional stable source references needed to open the exact finished asset and version. No duplicate approval workflow is authorized.
+
+Creating or approving the final review must not publish, upload, schedule, execute another provider call, or change external state.
+
+### Frozen Manual Publication Contract
+
+A `ShortFormPublicationRecord` belongs to the Project-owned short-form production container and references exactly one finished-asset version.
+
+Minimum fields:
+
+- stable publication ID;
+- finished-asset ID/version reference;
+- platform;
+- AO-owned page name or handle as a manual destination label;
+- status: `Planned`, `Published`, `Failed`, or `Removed`;
+- optional planned time;
+- actual publication time;
+- published URL or external post ID;
+- publishing actor;
+- notes or failure/blocker information;
+- created and updated timestamps.
+
+`Published` requires a currently CEO-approved finished asset, an actual publication time, and a non-empty published URL or external post ID. The action remains manual. Approval never implies publication.
+
+A repeated save updates the same publication ID. If a platform post ID or normalized URL is already linked to another publication record, the duplicate must be blocked or surfaced for correction rather than counted twice.
+
+### Frozen Manual Performance Contract
+
+A `ShortFormPerformanceSnapshot` references one publication record.
+
+Minimum fields:
+
+- stable snapshot ID and publication ID;
+- manual observation time;
+- views, likes, comments, and shares;
+- optional followers gained, clicks, leads, and conversions;
+- CEO notes;
+- source `Manual`;
+- created and updated timestamps.
+
+Each metric is a non-negative number or explicit unknown. Unknown and observed zero are distinct. Blank input normalizes to unknown, never zero. Repeated saves update the same snapshot ID; a new observation creates a new append-preserved snapshot. Platform data remains external truth.
+
+Sprint 016 records no revenue, profitability, attribution model, automated analytics, or cross-platform ranking.
+
+### Shared Capability Boundary
+
+The production path ends at a reusable CEO-approved finished asset. It has no customer, client, engagement, invoice, or payment dependency.
+
+Owned-content operation may reference that asset through manual publication and performance records. Future B2B service operation may reference the same finished asset through future client review/delivery records. Neither downstream workflow owns or rewrites the shared production record.
+
+### Duplicate, Normalization, and Safety Rules
+
+- All relationships use stable IDs; names, handles, labels, URLs, and file paths are not ownership keys.
+- Runtime normalization must validate every new enum, array, metric, ID reference, and timestamp without mutating input records.
+- Existing records missing Sprint 016 fields remain valid.
+- New optional containers must default safely and must not erase unknown future fields within approved metadata containers.
+- Creation actions must be explicit and idempotent by stable record ID.
+- No approval creates execution or publication.
+- No publication record performs publication.
+- No performance snapshot fetches platform data.
+- No file reference grants filesystem access.
+- No derived summary becomes persisted truth.
+
+### Task 2 Bounded Implementation Contract
+
+Task 2 may implement only:
+
+- Short-Form Video and the three platform values;
+- blueprint-type-specific deliverables and normalization;
+- the Project-owned short-form production container and its safe defaults;
+- Short-Form Business Asset and Production Blueprint creation/editing inside the existing Project experience;
+- manual completion of required production-plan deliverables;
+- Hook/Script AI-assisted drafting through the existing Work Order, Execution Request, Execution Core, Provider Manager, review, revision, approval, package, and cost path;
+- compatibility and deterministic verification required for the foundation.
+
+Task 2 must not implement finished-video QA/final approval, publication/performance records, B2B data, social integrations, automation, scheduling, analytics ingestion, trading, new stores, new persistence keys, or unrelated UI refactoring.
+
+### Architecture Freeze Result
+
+PASS.
+
+Sprint 016 Task 1 architecture is FROZEN. Application implementation remains NOT STARTED. Task 2 becomes authorized only after Task 1 documentation closeout is committed, pushed, and repository verified.
 
 ### Task 2 - Short-Form Production Foundation
 
@@ -172,9 +365,13 @@ Sprint 016 does not authorize:
 - CEO Sprint Plan Approval: PASS - Jake approved the scope, five tasks, acceptance criteria, QA requirements, and exclusions.
 - Documentation Activation: COMPLETE.
 - Activation Commit: `eeddfdb47cc5528434da7b6cdc1d86a76c66ad94`.
-- Repository Verification: COMPLETE - PASS.
+- Activation Repository Verification: COMPLETE - PASS.
 - Startup Bundle: VALID.
 - Application Implementation: NOT STARTED.
-- Current Authorized Task: Task 1 - Architecture Definition and Freeze.
-- Task 1 Status: AUTHORIZED - NOT STARTED.
-- Next Required Action: Begin Sprint 016 Task 1 - Architecture Definition and Freeze. Task 1 remains documentation and architecture work only; application implementation is not authorized until its architecture review, freeze, documentation closeout, commit, push, and repository verification pass.
+- Current Task: Task 1 - Architecture Definition and Freeze.
+- Task 1 Documentation: COMPLETE.
+- Task 1 Architecture Review: PASS.
+- Task 1 Architecture Freeze: PASS.
+- Task 1 Repository Closeout: PENDING.
+- Task 2: NOT STARTED and not authorized until Task 1 repository closeout passes.
+- Next Required Action: Commit and push Sprint 016 Task 1 documentation, verify the repository and Startup Bundle, then begin Task 2 - Short-Form Production Foundation.

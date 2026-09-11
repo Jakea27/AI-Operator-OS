@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE with documentation activation COMPLETE and REPOSITORY VERIFIED. The approved mission is to produce one real CEO-approved short-form asset through AO, manually publish it to one AO-owned page, and record its publication and initial performance. Application implementation is NOT STARTED. Task 1 - Architecture Definition and Freeze is AUTHORIZED - NOT STARTED.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 repository inspection and architecture definition are complete. Architecture review PASS and architecture freeze PASS. Application implementation is NOT STARTED. Task 1 repository closeout is PENDING; Task 2 is NOT STARTED.
 
 ## Last Completed Sprint
 
@@ -33,6 +33,15 @@ Sprint 015 - Multi-Business Management.
 - The Master Plan is now the authoritative strategic planning document.
 - Prove Before Autonomy is now a permanent project philosophy: AI operators are treated like newly trained employees, autonomy must be earned through meaningful reviewed task history and sustained performance, and final autonomy requires CEO authorization.
 
+- Sprint 016 Task 1 freezes Project Store ownership and the existing `ai-operator-os-projects-v1` key for short-form production records; no new store or persistence key.
+- Short-Form Video is one shared capability with typed TikTok, YouTube Shorts, and Instagram Reels targets, not three production engines.
+- Existing YouTube Video records remain valid; Blueprint deliverables and execution instructions must be selected by asset/blueprint type.
+- The Project-owned production path ends at a QA-complete, version-preserved finished asset whose current final approval is owned by Approval Queue.
+- File references store metadata only and grant no filesystem access.
+- Publication and performance are manual Project-owned evidence records; external platforms remain authoritative and approval never implies publication.
+- Unknown metrics remain distinct from observed zero.
+- Shared production contains no B2B customer dependency; future owned-content and B2B workflows reference the finished asset downstream.
+
 ## Current Development Priorities
 
 - Preserve the operating system foundation created through Sprints 001-010.
@@ -43,7 +52,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 016 Task 1 - Architecture Definition and Freeze. Do not write application code during Task 1.
+- Complete Sprint 016 Task 1 documentation commit, push, repository verification, and Startup Bundle validation; then begin Task 2 - Short-Form Production Foundation.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -173,10 +182,11 @@ Sprint 015 - Multi-Business Management.
 - Sprint 016: ACTIVE - documentation activation COMPLETE - REPOSITORY VERIFIED.
 - Mission: one real short-form asset produced through AO, CEO-approved, manually published to one AO-owned page, with publication and initial performance recorded in AO.
 - Current Task: Task 1 - Architecture Definition and Freeze.
-- Task 1 Status: AUTHORIZED - NOT STARTED.
+- Task 1 Status: documentation COMPLETE; architecture review PASS; architecture freeze PASS; repository closeout PENDING.
 - Application Implementation: NOT STARTED.
+- Task 2: NOT STARTED.
 - Last Completed Sprint: Sprint 015 - Multi-Business Management.
-- Next Required Action: begin Task 1 architecture definition; application implementation remains unauthorized during Task 1.
+- Next Required Action: commit and push Task 1 documentation, verify the repository and Startup Bundle, then begin Task 2 - Short-Form Production Foundation.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
 ## Historical Current Handoff
