@@ -232,7 +232,7 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
             </label>
             <label className="space-y-2">
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Length</span>
-              <input value={targetLength} onChange={(event) => setTargetLength(event.target.value)} className="field" placeholder="8-10 minutes, short-form, etc." />
+              <input value={targetLength} onChange={(event) => setTargetLength(event.target.value)} className="field" placeholder={assetType === 'Short-Form Video' ? '15-60 seconds' : '8-10 minutes'} />
             </label>
             <label className="space-y-2 md:col-span-2">
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Business Asset Notes</span>
