@@ -44,7 +44,7 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
   const [targetDate, setTargetDate] = useState(defaultTargetDate())
   const [notes, setNotes] = useState('')
   const [businessAssetEnabled, setBusinessAssetEnabled] = useState(false)
-  const [assetType, setAssetType] = useState<BusinessAssetType>('YouTube Video')
+  const [assetType, setAssetType] = useState<BusinessAssetType>('Short-Form Video')
   const [topic, setTopic] = useState('')
   const [goal, setGoal] = useState('')
   const [targetAudience, setTargetAudience] = useState('')
@@ -61,6 +61,7 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
 
   function submit() {
     if (!selectedBusiness || !selectedDepartment) return
+    const timestamp = new Date().toISOString()
 
     onCreate({
       name,
@@ -82,7 +83,8 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
       businessAsset: businessAssetEnabled ? {
         enabled: true,
         assetType,
-        platform: assetType === 'YouTube Video' ? 'YouTube' : '',
+        platform: assetType === 'YouTube Video' ? 'YouTube' : 'Short-Form Multi-Platform',
+        targetPlatforms: [],
         topic,
         goal,
         targetAudience,
@@ -93,8 +95,16 @@ export function ProjectForm({ fixedBusiness, onCancel, onCreate }: ProjectFormPr
         productionStatus: 'Planning' satisfies BusinessAssetProductionStatus,
         departmentId: selectedDepartment.id,
         departmentName: selectedDepartment.departmentName,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        metadata: {},
+      } : undefined,
+      shortFormProduction: businessAssetEnabled && assetType === 'Short-Form Video' ? {
+        enabled: true,
+        productionId: `SFP-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        status: 'Not Started',
+        createdAt: timestamp,
+        updatedAt: timestamp,
         metadata: {},
       } : undefined,
     })

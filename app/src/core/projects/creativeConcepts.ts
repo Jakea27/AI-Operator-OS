@@ -134,6 +134,7 @@ export function buildCreativeConceptInstructions(project: ProjectRecord) {
     `- Tone: ${asset?.tone || 'Not specified'}`,
     `- Target Length: ${asset?.targetLength || 'Not specified'}`,
     `- Platform: ${asset?.platform || 'Not specified'}`,
+    `- Target Platforms: ${asset?.targetPlatforms?.length ? asset.targetPlatforms.join(', ') : 'Not specified'}`,
     `- Asset Type: ${asset?.assetType || 'Not specified'}`,
     `- Additional Notes: ${asset?.additionalNotes || 'None'}`,
     '',

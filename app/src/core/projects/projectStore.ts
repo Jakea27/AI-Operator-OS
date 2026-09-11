@@ -11,6 +11,7 @@ import {
   CreativeConcept,
   creativeConceptStatuses,
   creativeAssetPackageStatuses,
+  getProductionBlueprintDeliverableNames,
   ProductionBlueprint,
   ProductionBlueprintDeliverable,
   ProductionBlueprintDeliverableReviewHistoryItem,
@@ -21,6 +22,9 @@ import {
   productionBlueprintDeliverableStatuses,
   productionBlueprintTypes,
   projectKnowledgeSections,
+  shortFormPlatforms,
+  shortFormProductionStatuses,
+  ShortFormProductionProfile,
   ProjectInput,
   ProjectPriority,
   ProjectRecord,
@@ -98,7 +102,12 @@ function normalizeBusinessAsset(raw: unknown, fallbackDepartmentId: string, fall
   return {
     enabled: true,
     assetType,
-    platform: normalizeString(raw.platform, assetType === 'YouTube Video' ? 'YouTube' : ''),
+    platform: normalizeString(raw.platform, assetType === 'YouTube Video' ? 'YouTube' : 'Short-Form Multi-Platform'),
+    targetPlatforms: Array.isArray(raw.targetPlatforms)
+      ? Array.from(new Set(raw.targetPlatforms.filter((item): item is BusinessAssetProfile['targetPlatforms'][number] =>
+        shortFormPlatforms.includes(item as BusinessAssetProfile['targetPlatforms'][number]),
+      )))
+      : [],
     topic: normalizeString(raw.topic),
     goal: normalizeString(raw.goal),
     targetAudience: normalizeString(raw.targetAudience),
@@ -238,8 +247,8 @@ function normalizeCreativeConcept(raw: unknown, projectRecordId: string, project
   }
 }
 
-function defaultBlueprintDeliverables(updatedAt: string): ProductionBlueprintDeliverable[] {
-  return productionBlueprintDeliverableNames.map((name) => ({
+function defaultBlueprintDeliverables(blueprintType: ProductionBlueprint['blueprintType'], updatedAt: string): ProductionBlueprintDeliverable[] {
+  return getProductionBlueprintDeliverableNames(blueprintType).map((name) => ({
     id: id('blueprint-deliverable'),
     name,
     status: 'Not Started',
@@ -362,7 +371,12 @@ function normalizeCreativeAssetPackage(raw: unknown, projectRecordId: string, pr
     businessAssetType: businessAssetTypes.includes(raw.businessAssetType as BusinessAssetProfile['assetType'])
       ? raw.businessAssetType as BusinessAssetProfile['assetType']
       : assetType,
-    platform: normalizeString(raw.platform, assetType === 'YouTube Video' ? 'YouTube' : ''),
+    platform: normalizeString(raw.platform, assetType === 'YouTube Video' ? 'YouTube' : 'Short-Form Multi-Platform'),
+    targetPlatforms: Array.isArray(raw.targetPlatforms)
+      ? Array.from(new Set(raw.targetPlatforms.filter((item): item is CreativeAssetPackage['targetPlatforms'][number] =>
+        shortFormPlatforms.includes(item as CreativeAssetPackage['targetPlatforms'][number]),
+      )))
+      : [],
     blueprintType: productionBlueprintTypes.includes(raw.blueprintType as ProductionBlueprint['blueprintType'])
       ? raw.blueprintType as ProductionBlueprint['blueprintType']
       : blueprintType,
@@ -391,15 +405,18 @@ function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, as
 
   const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
   const updatedAt = normalizeString(raw.updatedAt, createdAt)
-  const blueprintType = productionBlueprintTypes.includes(raw.blueprintType as ProductionBlueprint['blueprintType'])
-    ? raw.blueprintType as ProductionBlueprint['blueprintType']
-    : 'YouTube Video Blueprint'
   const normalizedAssetType = businessAssetTypes.includes(raw.assetType as BusinessAssetProfile['assetType'])
     ? raw.assetType as BusinessAssetProfile['assetType']
     : assetType ?? 'YouTube Video'
+  const fallbackBlueprintType: ProductionBlueprint['blueprintType'] = normalizedAssetType === 'Short-Form Video'
+    ? 'Short-Form Video Blueprint'
+    : 'YouTube Video Blueprint'
+  const blueprintType = productionBlueprintTypes.includes(raw.blueprintType as ProductionBlueprint['blueprintType'])
+    ? raw.blueprintType as ProductionBlueprint['blueprintType']
+    : fallbackBlueprintType
   const metadata = normalizeMetadata(raw.metadata)
   const rawDeliverables = Array.isArray(raw.deliverables) ? raw.deliverables : []
-  const deliverables = productionBlueprintDeliverableNames.map((name) => {
+  const deliverables = getProductionBlueprintDeliverableNames(blueprintType).map((name) => {
     const matching = rawDeliverables.find((item) => isRecord(item) && item.name === name)
     return normalizeBlueprintDeliverable(matching, name, updatedAt)
   })
@@ -428,9 +445,53 @@ function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, as
   }
 }
 
+function normalizeShortFormProduction(raw: unknown, projectCreatedAt: string): ShortFormProductionProfile | undefined {
+  if (!isRecord(raw) || raw.enabled !== true) return undefined
+
+  const createdAt = normalizeString(raw.createdAt, projectCreatedAt)
+  const status = shortFormProductionStatuses.includes(raw.status as ShortFormProductionProfile['status'])
+    ? raw.status as ShortFormProductionProfile['status']
+    : 'Not Started'
+
+  return {
+    enabled: true,
+    productionId: normalizeString(raw.productionId, id('SFP')),
+    status,
+    createdAt,
+    updatedAt: normalizeString(raw.updatedAt, createdAt),
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
+function isShortFormPlanReady(businessAsset: BusinessAssetProfile | undefined, blueprint: ProductionBlueprint | undefined) {
+  if (businessAsset?.assetType !== 'Short-Form Video' || businessAsset.targetPlatforms.length === 0) return false
+  if (blueprint?.blueprintType !== 'Short-Form Video Blueprint') return false
+  const requiredNames = getProductionBlueprintDeliverableNames('Short-Form Video Blueprint')
+  return requiredNames.every((name) => {
+    const deliverable = blueprint.deliverables.find((item) => item.name === name)
+    return Boolean(deliverable && (deliverable.approvedContent.trim() || deliverable.draftContent.trim() || deliverable.content.trim()))
+  })
+}
+
+function gateShortFormProduction(
+  production: ShortFormProductionProfile | undefined,
+  businessAsset: BusinessAssetProfile | undefined,
+  blueprint: ProductionBlueprint | undefined,
+) {
+  if (!production || production.status !== 'Ready' || isShortFormPlanReady(businessAsset, blueprint)) return production
+  return {
+    ...production,
+    status: 'Not Started' as const,
+  }
+}
+
 function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord {
   const timestamp = raw.createdAt ?? now()
   const businessAsset = normalizeBusinessAsset(raw.businessAsset, raw.departmentId ?? '', raw.departmentName ?? 'Unassigned Department', timestamp)
+  const productionBlueprint = normalizeProductionBlueprint(raw.productionBlueprint, timestamp, businessAsset?.assetType)
+  const shortFormProduction = businessAsset?.assetType === 'Short-Form Video'
+    ? normalizeShortFormProduction(raw.shortFormProduction, timestamp)
+    : undefined
   const projectId = raw.projectId ?? fallbackProjectCode(index)
   const projectRecordId = raw.id ?? id('project')
   return {
@@ -467,7 +528,8 @@ function normalizeProject(raw: Partial<ProjectRecord>, index = 0): ProjectRecord
         .map((concept) => normalizeCreativeConcept(concept, projectRecordId, projectId, projectRecordId, timestamp))
         .filter((concept): concept is CreativeConcept => Boolean(concept))
       : [],
-    productionBlueprint: normalizeProductionBlueprint(raw.productionBlueprint, timestamp, businessAsset?.assetType),
+    productionBlueprint,
+    shortFormProduction: gateShortFormProduction(shortFormProduction, businessAsset, productionBlueprint),
   }
 }
 
@@ -504,9 +566,10 @@ if (typeof window !== 'undefined') {
 }
 
 function persist(next: ProjectRecord[]) {
-  state = next
+  const normalized = next.map((project, index) => normalizeProject(project, index))
+  state = normalized
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized))
   } finally {
     listeners.forEach((listener) => listener())
   }
@@ -559,6 +622,9 @@ export const projectStore = {
           .filter((concept): concept is CreativeConcept => Boolean(concept))
         : [],
       productionBlueprint: normalizeProductionBlueprint(input.productionBlueprint, timestamp, input.businessAsset?.assetType),
+      shortFormProduction: input.businessAsset?.assetType === 'Short-Form Video'
+        ? normalizeShortFormProduction(input.shortFormProduction, timestamp)
+        : undefined,
     }
 
     persist([project, ...state])
@@ -594,6 +660,11 @@ export const projectStore = {
           productionBlueprint: updates.productionBlueprint === undefined
             ? project.productionBlueprint
             : normalizeProductionBlueprint(updates.productionBlueprint, project.createdAt, updates.businessAsset?.assetType ?? project.businessAsset?.assetType),
+          shortFormProduction: (updates.businessAsset?.assetType ?? project.businessAsset?.assetType) === 'Short-Form Video'
+            ? updates.shortFormProduction === undefined
+              ? project.shortFormProduction
+              : normalizeShortFormProduction(updates.shortFormProduction, project.createdAt)
+            : undefined,
           updatedAt: timestamp,
           timeline: [timeline('Project record updated.', timestamp), ...project.timeline],
         }

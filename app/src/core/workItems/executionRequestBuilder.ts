@@ -1,5 +1,5 @@
 import { buildCreativeConceptInstructions, CREATIVE_CONCEPT_CANDIDATE_COUNT } from '../projects'
-import type { ProjectRecord, ProductionBlueprintDeliverableName } from '../projects'
+import type { BusinessAssetType, ProjectRecord, ProductionBlueprintDeliverableName } from '../projects'
 import type { ProviderCapability } from '../providers'
 import type { ExecutionRequestReference, WorkItemRecord, WorkOrderType } from './workItemTypes'
 
@@ -33,7 +33,13 @@ const workOrderCapabilityMap: Record<WorkOrderType, ProviderCapability> = {
   'Develop Creative Concepts': 'Text Generation',
 }
 
-function deliverableInstructionName(name: ProductionBlueprintDeliverableName) {
+function deliverableInstructionName(name: ProductionBlueprintDeliverableName, assetType: BusinessAssetType) {
+  if (assetType === 'Short-Form Video') {
+    if (name === 'Hook') return 'Create a concise opening hook for a vertical short-form video.'
+    if (name === 'Script') return 'Create a concise vertical short-form video script structured for the recorded target length and platforms.'
+    return `Create draft ${name.toLowerCase()} production instructions for a vertical short-form video.`
+  }
+
   switch (name) {
     case 'Title':
       return 'Create a clear YouTube title candidate.'
@@ -47,10 +53,18 @@ function deliverableInstructionName(name: ProductionBlueprintDeliverableName) {
       return 'Create relevant YouTube tags.'
     case 'Thumbnail Concept':
       return 'Create a thumbnail concept for the YouTube video.'
+    default:
+      return `Create draft ${name.toLowerCase()} content for the YouTube video.`
   }
 }
 
-function outputRequirements(name: ProductionBlueprintDeliverableName) {
+function outputRequirements(name: ProductionBlueprintDeliverableName, assetType: BusinessAssetType) {
+  if (assetType === 'Short-Form Video') {
+    if (name === 'Hook') return 'Return one concise hook suitable for CEO review and a vertical short-form opening.'
+    if (name === 'Script') return 'Return a concise spoken and visual short-form script suitable for CEO review. Do not publish or execute anything.'
+    return `Return concise draft ${name.toLowerCase()} instructions suitable for CEO review. Do not publish or execute anything.`
+  }
+
   switch (name) {
     case 'Tags':
       return 'Return concise comma-separated tags suitable for a YouTube video.'
@@ -86,6 +100,8 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
   const capability = workOrderCapabilityMap[workOrder.workOrderType]
   const knowledgeReferenceIds = project.knowledgeWorkspace?.entries.map((entry) => entry.id) ?? []
   const asset = project.businessAsset
+  const assetType: BusinessAssetType = asset?.assetType ?? 'YouTube Video'
+  const targetPlatforms = asset?.targetPlatforms?.join(', ') || 'Not specified'
   const isRevision = workOrder.metadata.isRevision === 'true'
   const selectedCreativeBriefKnowledgeIds = project.creativeBrief?.selectedKnowledgeEntryIds ?? []
   const revisionInstructions = workOrder.metadata.revisionInstructions ?? ''
@@ -103,6 +119,7 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
       `Audience: ${asset?.targetAudience || 'Not specified'}`,
       `Tone: ${asset?.tone || 'Not specified'}`,
       `Target Length: ${asset?.targetLength || 'Not specified'}`,
+      `Target Platforms: ${targetPlatforms}`,
       '',
       'Current Draft:',
       originalDraftContent || 'No current draft content recorded.',
@@ -113,12 +130,13 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
       'Preserve the intent of the original draft while applying only the requested revision. Return revised draft content only.',
     ]
     : [
-      deliverableInstructionName(deliverable!.name),
+      deliverableInstructionName(deliverable!.name, assetType),
       `Topic: ${asset?.topic || 'Not specified'}`,
       `Goal: ${asset?.goal || 'Not specified'}`,
       `Audience: ${asset?.targetAudience || 'Not specified'}`,
       `Tone: ${asset?.tone || 'Not specified'}`,
       `Target Length: ${asset?.targetLength || 'Not specified'}`,
+      `Target Platforms: ${targetPlatforms}`,
       `Existing Blueprint Placeholder: ${deliverable!.content || 'Empty'}`,
     ]
   const request: ExecutionRequestReference = {
@@ -137,8 +155,8 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
     outputRequirements: isConceptDevelopment
       ? `Return JSON only with exactly ${CREATIVE_CONCEPT_CANDIDATE_COUNT} creative topic/concept candidates in a concepts array. Each candidate must include title, summary, angle, rationale, audienceValue, and hookDirection.`
       : isRevision && deliverable
-        ? `${outputRequirements(deliverable.name)} This is a manual revision attempt. Do not approve, publish, send, or start another revision.`
-        : outputRequirements(deliverable!.name),
+        ? `${outputRequirements(deliverable.name, assetType)} This is a manual revision attempt. Do not approve, publish, send, or start another revision.`
+        : outputRequirements(deliverable!.name, assetType),
     correlationMetadata: {
       workOrderId: workOrder.workOrderId,
       workOrderType: workOrder.workOrderType,
@@ -148,6 +166,7 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
       projectId: project.projectId,
       assetType: asset?.assetType ?? workOrder.assetType,
       platform: asset?.platform ?? workOrder.platform,
+      targetPlatforms,
       productionBlueprintType: project.productionBlueprint?.blueprintType ?? workOrder.productionBlueprintType,
       creativeBriefId: project.creativeBrief?.briefId ?? '',
       selectedKnowledgeEntryIds: selectedCreativeBriefKnowledgeIds.join(','),

@@ -222,7 +222,7 @@ function generateWorkOrderCode(existing: WorkItemRecord[]) {
   return `WO-${String(max + 1).padStart(4, '0')}`
 }
 
-function workOrderTypeForDeliverable(deliverable: ProductionBlueprintDeliverable): WorkOrderType {
+function workOrderTypeForDeliverable(deliverable: ProductionBlueprintDeliverable): WorkOrderType | undefined {
   switch (deliverable.name) {
     case 'Title':
       return 'Generate Title'
@@ -236,6 +236,8 @@ function workOrderTypeForDeliverable(deliverable: ProductionBlueprintDeliverable
       return 'Generate Tags'
     case 'Thumbnail Concept':
       return 'Generate Thumbnail Concept'
+    default:
+      return undefined
   }
 }
 
@@ -362,6 +364,7 @@ export const workItemStore = {
 
     const timestamp = now()
     const workOrderType = workOrderTypeForDeliverable(deliverable)
+    if (!workOrderType) return undefined
     const workOrder: WorkOrderProfile = {
       enabled: true,
       workOrderId: generateWorkOrderCode(state),
@@ -442,6 +445,7 @@ export const workItemStore = {
 
     const timestamp = now()
     const workOrderType = workOrderTypeForDeliverable(deliverable)
+    if (!workOrderType) return undefined
     const revisionAttempt = String(
       state.filter((workItem) =>
         workItem.workOrder?.businessAssetProjectId === project.id &&

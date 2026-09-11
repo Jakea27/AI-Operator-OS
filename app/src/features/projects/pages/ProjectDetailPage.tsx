@@ -16,6 +16,8 @@ import {
   ProductionBlueprint,
   ProductionBlueprintDeliverable,
   ProductionBlueprintDeliverableStatus,
+  ShortFormPlatform,
+  ShortFormProductionProfile,
   ProjectKnowledgeEntry,
   ProjectKnowledgeSection,
   ProjectKnowledgeWorkspace,
@@ -29,8 +31,10 @@ import {
   businessAssetProductionStatuses,
   businessAssetTypes,
   creativeBriefStatuses,
-  productionBlueprintDeliverableNames,
+  getProductionBlueprintDeliverableNames,
   productionBlueprintDeliverableStatuses,
+  shortFormPlatforms,
+  shortFormProductionStatuses,
   projectKnowledgeSections,
   projectPriorities,
   projectStatuses,
@@ -94,6 +98,10 @@ function unique(values: Array<string | undefined>) {
   return Array.from(new Set(values.filter((value): value is string => Boolean(value && value.trim()))))
 }
 
+function supportsAiWorkOrder(deliverable: ProductionBlueprintDeliverable) {
+  return ['Title', 'Hook', 'Script', 'Description', 'Tags', 'Thumbnail Concept'].includes(deliverable.name)
+}
+
 function collectRevisionLineage(deliverable: ProductionBlueprintDeliverable) {
   const metadataKeys = [
     'activeRevisionSourceReviewHistoryId',
@@ -128,6 +136,7 @@ function buildPackageMarkdown(record: ProjectRecord, assetPackage: CreativeAsset
     `Project: ${assetPackage.projectId}`,
     `Asset Type: ${assetPackage.businessAssetType}`,
     `Platform: ${assetPackage.platform || 'Not specified'}`,
+    `Target Platforms: ${assetPackage.targetPlatforms.length > 0 ? assetPackage.targetPlatforms.join(', ') : 'Not specified'}`,
     `Version: ${assetPackage.packageVersion}`,
     `Status: ${assetPackage.status}`,
     `Approval State: ${assetPackage.approvalState}`,
@@ -254,6 +263,7 @@ export function ProjectDetailPage() {
       knowledgeWorkspace: draftRecord.knowledgeWorkspace,
       creativeBrief: businessAsset ? draftRecord.creativeBrief : undefined,
       productionBlueprint: businessAsset ? draftRecord.productionBlueprint : undefined,
+      shortFormProduction: businessAsset?.assetType === 'Short-Form Video' ? draftRecord.shortFormProduction : undefined,
     })
   }
 
@@ -261,8 +271,9 @@ export function ProjectDetailPage() {
     const timestamp = new Date().toISOString()
     return {
       enabled: true,
-      assetType: 'YouTube Video',
-      platform: 'YouTube',
+      assetType: 'Short-Form Video',
+      platform: 'Short-Form Multi-Platform',
+      targetPlatforms: [],
       topic: '',
       goal: '',
       targetAudience: '',
@@ -284,15 +295,31 @@ export function ProjectDetailPage() {
       if (!current) return current
       const currentBusinessAsset = current.businessAsset ?? defaultBusinessAsset(current)
       const nextAssetType = updates.assetType ?? currentBusinessAsset.assetType
+      const targetPlatforms = nextAssetType === 'Short-Form Video'
+        ? updates.targetPlatforms ?? currentBusinessAsset.targetPlatforms
+        : []
       return {
         ...current,
         businessAsset: {
           ...currentBusinessAsset,
           ...updates,
-          platform: updates.platform ?? (nextAssetType === 'YouTube Video' ? 'YouTube' : currentBusinessAsset.platform),
+          platform: nextAssetType === 'YouTube Video' ? 'YouTube' : 'Short-Form Multi-Platform',
+          targetPlatforms,
           updatedAt: new Date().toISOString(),
         },
+        shortFormProduction: nextAssetType === 'Short-Form Video'
+          ? current.shortFormProduction ?? defaultShortFormProduction(current)
+          : undefined,
       }
+    })
+  }
+
+  function toggleShortFormPlatform(platform: ShortFormPlatform) {
+    const current = draft?.businessAsset?.targetPlatforms ?? []
+    updateBusinessAsset({
+      targetPlatforms: current.includes(platform)
+        ? current.filter((item) => item !== platform)
+        : [...current, platform],
     })
   }
 
@@ -427,11 +454,15 @@ export function ProjectDetailPage() {
 
   function defaultProductionBlueprint(record: ProjectRecord): ProductionBlueprint {
     const timestamp = new Date().toISOString()
+    const assetType = record.businessAsset?.assetType ?? 'Short-Form Video'
+    const blueprintType: ProductionBlueprint['blueprintType'] = assetType === 'Short-Form Video'
+      ? 'Short-Form Video Blueprint'
+      : 'YouTube Video Blueprint'
     return {
       enabled: true,
-      blueprintType: 'YouTube Video Blueprint',
-      assetType: record.businessAsset?.assetType ?? 'YouTube Video',
-      deliverables: productionBlueprintDeliverableNames.map((name) => ({
+      blueprintType,
+      assetType,
+      deliverables: getProductionBlueprintDeliverableNames(blueprintType).map((name) => ({
         id: `blueprint-${Date.now()}-${name.toLowerCase().replace(/\s+/g, '-')}`,
         name,
         status: 'Not Started',
@@ -449,6 +480,34 @@ export function ProjectDetailPage() {
       updatedAt: timestamp,
       metadata: {},
     }
+  }
+
+  function defaultShortFormProduction(record: ProjectRecord): ShortFormProductionProfile {
+    const timestamp = new Date().toISOString()
+    return {
+      enabled: true,
+      productionId: `SFP-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      status: 'Not Started',
+      createdAt: record.shortFormProduction?.createdAt ?? timestamp,
+      updatedAt: timestamp,
+      metadata: record.shortFormProduction?.metadata ?? {},
+    }
+  }
+
+  function updateShortFormProduction(updates: Partial<ShortFormProductionProfile>) {
+    setDraft((current) => {
+      if (!current) return current
+      const production = current.shortFormProduction ?? defaultShortFormProduction(current)
+      return {
+        ...current,
+        shortFormProduction: {
+          ...production,
+          ...updates,
+          enabled: true,
+          updatedAt: new Date().toISOString(),
+        },
+      }
+    })
   }
 
   function updateProductionBlueprint(updates: Partial<ProductionBlueprint>) {
@@ -749,6 +808,18 @@ export function ProjectDetailPage() {
     }
   }, [draft?.productionBlueprint?.deliverables])
 
+  const shortFormPlanningReady = useMemo(() => {
+    if (draft?.businessAsset?.assetType !== 'Short-Form Video') return false
+    const targetsReady = draft.businessAsset.targetPlatforms.length > 0
+    const deliverables = draft.productionBlueprint?.blueprintType === 'Short-Form Video Blueprint'
+      ? draft.productionBlueprint.deliverables
+      : []
+    const deliverablesReady = deliverables.length > 0 && deliverables.every((deliverable) =>
+      Boolean(deliverable.approvedContent.trim() || deliverable.draftContent.trim() || deliverable.content.trim()),
+    )
+    return targetsReady && deliverablesReady
+  }, [draft?.businessAsset, draft?.productionBlueprint])
+
   const packageReadiness = useMemo(() => {
     const deliverables = draft?.productionBlueprint?.deliverables ?? []
     const blocked = deliverables.filter((deliverable) =>
@@ -808,6 +879,7 @@ export function ProjectDetailPage() {
       projectId: activeProject.projectId,
       businessAssetType: businessAsset.assetType,
       platform: businessAsset.platform,
+      targetPlatforms: businessAsset.targetPlatforms,
       blueprintType: blueprint.blueprintType,
       packageVersion: nextVersion,
       status: 'Export Ready',
@@ -859,6 +931,10 @@ export function ProjectDetailPage() {
   function createWorkOrder(deliverable: ProductionBlueprintDeliverable) {
     if (!project) return
     const workOrder = workItemStore.createWorkOrderFromBlueprintDeliverable(project, deliverable)
+    if (!workOrder) {
+      setExecutionRequestNotice(`${deliverable.name} is a manual production-plan deliverable in Sprint 016 Task 2 and does not create an AI Work Order.`)
+      return
+    }
     setExecutionRequestNotice(`${workOrder.workOrder?.workOrderId ?? workOrder.workItemId} is prepared for ${deliverable.name}.`)
   }
 
@@ -1131,9 +1207,13 @@ export function ProjectDetailPage() {
                 type="checkbox"
                 checked={Boolean(draft.businessAsset?.enabled)}
                 onChange={(event) => {
+                  const businessAsset = draft.businessAsset ?? defaultBusinessAsset(draft)
                   setDraft({
                     ...draft,
-                    businessAsset: event.target.checked ? draft.businessAsset ?? defaultBusinessAsset(draft) : undefined,
+                    businessAsset: event.target.checked ? businessAsset : undefined,
+                    shortFormProduction: event.target.checked && businessAsset.assetType === 'Short-Form Video'
+                      ? draft.shortFormProduction ?? defaultShortFormProduction(draft)
+                      : draft.shortFormProduction,
                   })
                 }}
                 className="mt-1 h-4 w-4 accent-lime"
@@ -1141,7 +1221,7 @@ export function ProjectDetailPage() {
               <span>
                 <span className="block text-sm font-semibold text-white">Enable Business Asset profile</span>
                 <span className="mt-1 block text-sm leading-6 text-muted">
-                  Business Assets extend this Project record. YouTube Video is the first supported asset type; future types can reuse this profile without a new Project system.
+                  Business Assets extend this Project record. Short-Form Video is the primary operating direction; existing YouTube Video records remain supported without a new Project system.
                 </span>
               </span>
             </label>
@@ -1150,11 +1230,40 @@ export function ProjectDetailPage() {
               <div className="mt-5 grid gap-4 md:grid-cols-2">
                 <label className="space-y-2">
                   <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Asset Type</span>
-                  <select value={draft.businessAsset.assetType} onChange={(event) => updateBusinessAsset({ assetType: event.target.value as BusinessAssetType })} className="field">
+                  <select
+                    value={draft.businessAsset.assetType}
+                    onChange={(event) => updateBusinessAsset({ assetType: event.target.value as BusinessAssetType })}
+                    className="field"
+                    disabled={Boolean(draft.productionBlueprint?.enabled)}
+                  >
                     {businessAssetTypes.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
+                  {draft.productionBlueprint?.enabled ? (
+                    <span className="block text-xs leading-5 text-muted">Asset type is locked while a Production Blueprint exists, protecting its deliverables and history.</span>
+                  ) : null}
                 </label>
-                <Info label="Platform" value={draft.businessAsset.platform} />
+                <Info label="Platform Model" value={draft.businessAsset.platform} />
+                {draft.businessAsset.assetType === 'Short-Form Video' ? (
+                  <div className="space-y-3 md:col-span-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Platforms</span>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      {shortFormPlatforms.map((platform) => (
+                        <label key={platform} className="flex items-center gap-3 rounded-xl border border-line bg-ink/35 p-3">
+                          <input
+                            type="checkbox"
+                            checked={draft.businessAsset?.targetPlatforms.includes(platform) ?? false}
+                            onChange={() => toggleShortFormPlatform(platform)}
+                            className="h-4 w-4 accent-lime"
+                          />
+                          <span className="text-sm font-semibold text-white">{platform}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <p className="m-0 text-xs leading-5 text-muted">
+                      Select one or more destinations. The production capability remains shared; selecting platforms does not publish or connect an account.
+                    </p>
+                  </div>
+                ) : null}
                 <label className="space-y-2 md:col-span-2">
                   <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Topic</span>
                   <input value={draft.businessAsset.topic} onChange={(event) => updateBusinessAsset({ topic: event.target.value })} className="field" placeholder="What should this asset be about?" />
@@ -1493,9 +1602,13 @@ export function ProjectDetailPage() {
                   type="checkbox"
                   checked={Boolean(draft.productionBlueprint?.enabled)}
                   onChange={(event) => {
+                    const productionBlueprint = draft.productionBlueprint ?? defaultProductionBlueprint(draft)
                     setDraft({
                       ...draft,
-                      productionBlueprint: event.target.checked ? draft.productionBlueprint ?? defaultProductionBlueprint(draft) : undefined,
+                      productionBlueprint: event.target.checked ? productionBlueprint : undefined,
+                      shortFormProduction: event.target.checked && draft.businessAsset?.assetType === 'Short-Form Video'
+                        ? draft.shortFormProduction ?? defaultShortFormProduction(draft)
+                        : draft.shortFormProduction,
                     })
                   }}
                   className="mt-1 h-4 w-4 accent-lime"
@@ -1503,7 +1616,7 @@ export function ProjectDetailPage() {
                 <span>
                   <span className="block text-sm font-semibold text-white">Enable Production Blueprint</span>
                   <span className="mt-1 block text-sm leading-6 text-muted">
-                    YouTube Video Blueprint is the first supported blueprint type. Future asset types can reuse this contract pattern without a separate store.
+                    Blueprint requirements follow the selected asset type. Short-Form Video and existing YouTube Video reuse the same Project-owned production architecture.
                   </span>
                 </span>
               </label>
@@ -1542,15 +1655,57 @@ export function ProjectDetailPage() {
                   <button onClick={() => save(project, draft)} className="btn-primary">Save Production Blueprint</button>
                 </div>
               ) : (
-                <Placeholder text="Enable the Production Blueprint to define the Title, Hook, Script, Description, Tags, and Thumbnail Concept required for this YouTube Business Asset." />
+                <Placeholder text={draft.businessAsset.assetType === 'Short-Form Video'
+                  ? 'Enable the Production Blueprint to define the Hook, Script, Shot and Visual Plan, On-Screen Text and Audio Plan, Caption/CTA/Platform Metadata, and Source Asset Requirements.'
+                  : 'Enable the Production Blueprint to define the Title, Hook, Script, Description, Tags, and Thumbnail Concept required for this YouTube Business Asset.'}
+                />
               )}
+            </Section>
+          ) : null}
+
+          {draft.businessAsset?.assetType === 'Short-Form Video' && draft.shortFormProduction?.enabled ? (
+            <Section title="Short-Form Production Foundation" eyebrow="Shared operating readiness">
+              <p className="m-0 mb-4 text-sm leading-6 text-muted">
+                This Project-owned record tracks whether the shared production plan is ready. It does not create a finished video, perform QA, publish, schedule, or call an external platform.
+              </p>
+              <div className="grid gap-4 md:grid-cols-3">
+                <Info label="Production ID" value={draft.shortFormProduction.productionId} />
+                <Info
+                  label="Target Platforms"
+                  value={draft.businessAsset.targetPlatforms.length > 0 ? draft.businessAsset.targetPlatforms.join(', ') : 'Required'}
+                />
+                <Info label="Planning Readiness" value={shortFormPlanningReady ? 'Complete' : 'Incomplete'} />
+                <label className="space-y-2 md:col-span-2">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Foundation Status</span>
+                  <select
+                    value={draft.shortFormProduction.status}
+                    onChange={(event) => updateShortFormProduction({ status: event.target.value as ShortFormProductionProfile['status'] })}
+                    className="field"
+                  >
+                    {shortFormProductionStatuses
+                      .filter((status) => status === 'Not Started' || status === 'Ready')
+                      .map((status) => (
+                        <option key={status} value={status} disabled={status === 'Ready' && !shortFormPlanningReady}>{status}</option>
+                      ))}
+                  </select>
+                  <span className="block text-xs leading-5 text-muted">
+                    Ready requires at least one target platform and content in every Short-Form Blueprint deliverable.
+                  </span>
+                </label>
+              </div>
+              {!shortFormPlanningReady ? (
+                <div className="mt-4 rounded-xl border border-orange-300/25 bg-orange-300/[0.05] p-3 text-sm leading-6 text-orange-100">
+                  Complete the target-platform selection and every Short-Form Blueprint deliverable before marking the foundation Ready.
+                </div>
+              ) : null}
+              <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Short-Form Foundation</button>
             </Section>
           ) : null}
 
           {draft.businessAsset?.enabled && draft.productionBlueprint?.enabled ? (
             <Section title="Work Orders" eyebrow="Blueprint deliverable requests">
               <p className="m-0 mb-4 text-sm leading-6 text-muted">
-                Work Orders are specialized Work Items for one requested Blueprint deliverable. Execution Requests are provider-independent request records and do not execute providers, route providers, or update final Blueprint content.
+                Work Orders are specialized Work Items for AI-supported Blueprint deliverables. Short-Form Hook and Script reuse the existing provider-independent path; the remaining Short-Form production-plan deliverables are completed manually in the Blueprint during Task 2.
               </p>
 
               {executionRequestNotice ? (
@@ -1560,7 +1715,7 @@ export function ProjectDetailPage() {
               ) : null}
 
               <div className="grid gap-4">
-                {draft.productionBlueprint.deliverables.map((deliverable) => {
+                {draft.productionBlueprint.deliverables.filter(supportsAiWorkOrder).map((deliverable) => {
                   const workOrder = projectWorkOrders.find((item) =>
                     item.workOrder?.blueprintDeliverableId === deliverable.id &&
                     item.workOrder?.metadata.isRevision !== 'true',

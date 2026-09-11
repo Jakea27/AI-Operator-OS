@@ -8,7 +8,20 @@ export type ProjectTimelineItem = {
   createdAt: string
 }
 
-export type BusinessAssetType = 'YouTube Video'
+export type BusinessAssetType = 'YouTube Video' | 'Short-Form Video'
+
+export type ShortFormPlatform = 'TikTok' | 'YouTube Shorts' | 'Instagram Reels'
+
+export type ShortFormProductionStatus = 'Not Started' | 'Ready' | 'In Production' | 'QA Pending' | 'QA Failed' | 'QA Passed'
+
+export type ShortFormProductionProfile = {
+  enabled: true
+  productionId: string
+  status: ShortFormProductionStatus
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
 
 export type BusinessAssetProductionStatus = 'Planning' | 'Ready' | 'In Production' | 'Review' | 'Approved' | 'Packaged' | 'Archived'
 
@@ -18,6 +31,7 @@ export type BusinessAssetProfile = {
   enabled: boolean
   assetType: BusinessAssetType
   platform: string
+  targetPlatforms: ShortFormPlatform[]
   topic: string
   goal: string
   targetAudience: string
@@ -111,9 +125,19 @@ export type CreativeConcept = {
   metadata: Record<string, string>
 }
 
-export type ProductionBlueprintType = 'YouTube Video Blueprint'
+export type ProductionBlueprintType = 'YouTube Video Blueprint' | 'Short-Form Video Blueprint'
 
-export type ProductionBlueprintDeliverableName = 'Title' | 'Hook' | 'Script' | 'Description' | 'Tags' | 'Thumbnail Concept'
+export type ProductionBlueprintDeliverableName =
+  | 'Title'
+  | 'Hook'
+  | 'Script'
+  | 'Description'
+  | 'Tags'
+  | 'Thumbnail Concept'
+  | 'Shot and Visual Plan'
+  | 'On-Screen Text and Audio Plan'
+  | 'Caption, Call to Action, and Platform Metadata'
+  | 'Source Asset Requirements'
 
 export type ProductionBlueprintDeliverableStatus = 'Not Started' | 'Draft' | 'Complete'
 
@@ -192,6 +216,7 @@ export type CreativeAssetPackage = {
   projectId: string
   businessAssetType: BusinessAssetType
   platform: string
+  targetPlatforms: ShortFormPlatform[]
   blueprintType: ProductionBlueprintType
   packageVersion: number
   status: CreativeAssetPackageStatus
@@ -250,6 +275,7 @@ export type ProjectRecord = {
   creativeBrief?: CreativeBriefProfile
   creativeConcepts?: CreativeConcept[]
   productionBlueprint?: ProductionBlueprint
+  shortFormProduction?: ShortFormProductionProfile
 }
 
 export type ProjectInput = {
@@ -274,6 +300,7 @@ export type ProjectInput = {
   creativeBrief?: CreativeBriefProfile
   creativeConcepts?: CreativeConcept[]
   productionBlueprint?: ProductionBlueprint
+  shortFormProduction?: ShortFormProductionProfile
 }
 
 export type ProjectUpdate = Partial<Pick<
@@ -299,9 +326,14 @@ export type ProjectUpdate = Partial<Pick<
   | 'creativeBrief'
   | 'creativeConcepts'
   | 'productionBlueprint'
+  | 'shortFormProduction'
 >>
 
-export const businessAssetTypes: BusinessAssetType[] = ['YouTube Video']
+export const businessAssetTypes: BusinessAssetType[] = ['Short-Form Video', 'YouTube Video']
+
+export const shortFormPlatforms: ShortFormPlatform[] = ['TikTok', 'YouTube Shorts', 'Instagram Reels']
+
+export const shortFormProductionStatuses: ShortFormProductionStatus[] = ['Not Started', 'Ready', 'In Production', 'QA Pending', 'QA Failed', 'QA Passed']
 
 export const businessAssetProductionStatuses: BusinessAssetProductionStatus[] = ['Planning', 'Ready', 'In Production', 'Review', 'Approved', 'Packaged', 'Archived']
 
@@ -313,9 +345,29 @@ export const creativeBriefStatuses: CreativeBriefStatus[] = ['Draft', 'Ready']
 
 export const creativeConceptStatuses: CreativeConceptStatus[] = ['Generated', 'Selected', 'Archived']
 
-export const productionBlueprintTypes: ProductionBlueprintType[] = ['YouTube Video Blueprint']
+export const productionBlueprintTypes: ProductionBlueprintType[] = ['YouTube Video Blueprint', 'Short-Form Video Blueprint']
 
-export const productionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = ['Title', 'Hook', 'Script', 'Description', 'Tags', 'Thumbnail Concept']
+export const youtubeProductionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = ['Title', 'Hook', 'Script', 'Description', 'Tags', 'Thumbnail Concept']
+
+export const shortFormProductionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = [
+  'Hook',
+  'Script',
+  'Shot and Visual Plan',
+  'On-Screen Text and Audio Plan',
+  'Caption, Call to Action, and Platform Metadata',
+  'Source Asset Requirements',
+]
+
+export const productionBlueprintDeliverableNames: ProductionBlueprintDeliverableName[] = Array.from(new Set([
+  ...youtubeProductionBlueprintDeliverableNames,
+  ...shortFormProductionBlueprintDeliverableNames,
+]))
+
+export function getProductionBlueprintDeliverableNames(blueprintType: ProductionBlueprintType) {
+  return blueprintType === 'Short-Form Video Blueprint'
+    ? shortFormProductionBlueprintDeliverableNames
+    : youtubeProductionBlueprintDeliverableNames
+}
 
 export const productionBlueprintDeliverableStatuses: ProductionBlueprintDeliverableStatus[] = ['Not Started', 'Draft', 'Complete']
 
