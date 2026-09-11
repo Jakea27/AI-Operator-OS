@@ -41,6 +41,7 @@ Sprint 015 - Multi-Business Management.
 - Publication and performance are manual Project-owned evidence records; external platforms remain authoritative and approval never implies publication.
 - Unknown metrics remain distinct from observed zero.
 - Shared production contains no B2B customer dependency; future owned-content and B2B workflows reference the finished asset downstream.
+- Initial Task 2 CEO QA confirmed Short-Form Video as the creation default and found obsolete YouTube-first / `Future platform` text; the verified corrective commit now presents accurate TikTok, YouTube Shorts, and Instagram Reels guidance.
 
 ## Current Development Priorities
 
@@ -187,6 +188,7 @@ Sprint 015 - Multi-Business Management.
 - Current Task: Task 2 - Short-Form Production Foundation.
 - Task 2 Status: IMPLEMENTATION COMPLETE - IMPLEMENTATION COMMIT VERIFIED; production build, CEO QA, and closeout PENDING.
 - Task 2 Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
+- Task 2 CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`; build/relaunch retest pending.
 - Verification: full-program TypeScript PASS with zero diagnostics; deterministic foundation QA PASS.
 - Last Completed Sprint: Sprint 015 - Multi-Business Management.
 - Next Required Action: run `npm.cmd run build` from a synchronized local app checkout, then complete bounded Task 2 CEO QA and repository closeout. Task 3 remains unauthorized.

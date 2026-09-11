@@ -1,5 +1,12 @@
 # AO Knowledge Base Changelog
 
+## Sprint 016 Task 2 - CEO QA Creation-Copy Fix - 2026-09-11
+
+- Initial CEO QA confirmed Short-Form Video is the default Business Asset type.
+- Corrected obsolete YouTube-first explanatory copy and the misleading `Future platform` label in Project creation.
+- Short-Form creation now names TikTok, YouTube Shorts, and Instagram Reels and directs target selection to Project Detail; existing YouTube support remains explicit.
+- Syntax verification PASS. Corrective commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2` pushed and verified; production build/relaunch retest and remaining Task 2 CEO QA are pending.
+
 ## Sprint 016 Task 2 - Implementation Checkpoint - 2026-09-11
 
 - Implemented the shared Short-Form Video foundation inside the existing Project Store and Project Detail architecture with typed TikTok, YouTube Shorts, and Instagram Reels targets.
