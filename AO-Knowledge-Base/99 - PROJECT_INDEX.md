@@ -35,7 +35,7 @@ Every AI operator must read the following source documents in this exact order.
 
 ## Active Sprint 016 Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 is COMPLETE - REPOSITORY VERIFIED. Task 2 implementation is COMPLETE; implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618`, CEO QA copy-fix commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2`, and length-guidance commit `74a7479014d08c7a4772a38c57b773202e15a9c4` are VERIFIED. Production build, CEO QA, and Task 2 closeout remain PENDING. Task 3 is not authorized. The next action is the bounded Task 2 build/QA/closeout. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 is COMPLETE - REPOSITORY VERIFIED. Task 2 implementation is COMPLETE; implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618`, CEO QA copy-fix commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2`, length-guidance commit `74a7479014d08c7a4772a38c57b773202e15a9c4`, and Project-card separator commit `690cb5d9db45fb6003633bef963ec569b38fb99d` are VERIFIED. Production build, CEO QA, and Task 2 closeout remain PENDING. Task 3 is not authorized. The next action is the bounded Task 2 build/QA/closeout. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 

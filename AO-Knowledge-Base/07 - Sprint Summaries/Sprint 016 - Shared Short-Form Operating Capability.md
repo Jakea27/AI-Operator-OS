@@ -278,7 +278,8 @@ Finish condition: AO can prepare and manage a complete short-form production pla
 - CEO QA presentation defect: the creation form retained obsolete YouTube-first copy and displayed `Future platform` for Short-Form Video.
 - Corrective result: Short-Form creation now identifies TikTok, YouTube Shorts, and Instagram Reels as supported targets, directs target selection to Project Detail, and accurately preserves existing YouTube support.
 - Corrective copy commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`; pushed to `origin/main` and verified.
-- Follow-up length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; Short-Form Video now prompts for 15-60 seconds while YouTube retains 8-10 minutes. Syntax verification PASS; build/relaunch retest pending.
+- Follow-up length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; Short-Form Video now prompts for 15-60 seconds while YouTube retains 8-10 minutes.
+- Project-card separator commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; replaces malformed `Â·` with `·`. Relevant Project surfaces contain no remaining mojibake markers. Syntax verification PASS; build/relaunch retest pending.
 - Production build: PENDING because this connected GitHub-only environment does not provide a repository checkout for `npm.cmd run build`; no build PASS is claimed.
 - CEO QA and Task 2 repository closeout: PENDING. Task 3 is not authorized.
 
@@ -394,4 +395,5 @@ Sprint 016 does not authorize:
 - Task 2 Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - Task 2 CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`.
 - Task 2 Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`.
+- Task 2 Project-Card Separator Commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`.
 - Next Required Action: run `npm.cmd run build` from a synchronized local app checkout, then complete bounded Task 2 CEO QA and repository closeout. Do not begin Task 3.

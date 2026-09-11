@@ -1,5 +1,11 @@
 # Changelog
 
+## Sprint 016 Task 2 - Project Card Encoding Fix - 2026-09-11
+
+- CEO QA found malformed `Intake Â· Planning` production text on the new Short-Form Project card.
+- Corrected the JSX separator to render `Intake · Planning`; relevant Project surfaces contain no remaining mojibake markers.
+- Syntax verification PASS. Commit `690cb5d9db45fb6003633bef963ec569b38fb99d` pushed and verified; build/relaunch retest and remaining Task 2 CEO QA are pending.
+
 ## Sprint 016 Task 2 - Short-Form Length Guidance Fix - 2026-09-11
 
 - CEO QA identified that the default Short-Form creation form still led with an 8-10 minute target-length placeholder.

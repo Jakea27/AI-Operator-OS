@@ -11,8 +11,8 @@
 - Last Completed Sprint: Sprint 015 - Multi-Business Management
 - Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md
 - Repository checkpoint source: AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md
-- Repository Checkpoint: `74a7479014d08c7a4772a38c57b773202e15a9c4`
-- Checkpoint Description: Verified Sprint 016 Task 2 creation-copy and Short-Form target-length guidance corrections pushed to origin/main; production build/relaunch retest, remaining CEO QA, and Task 2 closeout remain pending.
+- Repository Checkpoint: `690cb5d9db45fb6003633bef963ec569b38fb99d`
+- Checkpoint Description: Verified Sprint 016 Task 2 creation guidance, target-length guidance, and Project-card separator corrections pushed to origin/main; production build/relaunch retest, remaining CEO QA, and Task 2 closeout remain pending.
 - Working Tree Status: CLEAN at committed GitHub repository state; connected GitHub workflow contains no uncommitted application changes
 - Repository Push Status: PUSHED - Sprint 016 Task 2 implementation and CEO QA copy-fix commits verified on origin/main
 - Repository Verification Status: VERIFIED - Task 2 implementation checkpoint only; Task 2 closeout pending
@@ -82,7 +82,7 @@ Every AI operator must read the following source documents in this exact order.
 
 ## Active Sprint 016 Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 is COMPLETE - REPOSITORY VERIFIED. Task 2 implementation is COMPLETE; implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618`, CEO QA copy-fix commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2`, and length-guidance commit `74a7479014d08c7a4772a38c57b773202e15a9c4` are VERIFIED. Production build, CEO QA, and Task 2 closeout remain PENDING. Task 3 is not authorized. The next action is the bounded Task 2 build/QA/closeout. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Task 1 is COMPLETE - REPOSITORY VERIFIED. Task 2 implementation is COMPLETE; implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618`, CEO QA copy-fix commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2`, length-guidance commit `74a7479014d08c7a4772a38c57b773202e15a9c4`, and Project-card separator commit `690cb5d9db45fb6003633bef963ec569b38fb99d` are VERIFIED. Production build, CEO QA, and Task 2 closeout remain PENDING. Task 3 is not authorized. The next action is the bounded Task 2 build/QA/closeout. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 
@@ -2008,7 +2008,7 @@ main
 
 ## Last QA Result
 
-Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program produced zero diagnostics, and deterministic checks passed for platform normalization/deduplication, readiness gating, invalid-status fallback, existing-key persistence, and legacy YouTube compatibility. Initial CEO QA confirmed the Short-Form default and found stale YouTube-first / `Future platform` creation copy. Corrective commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2` is pushed and syntax-verified. Follow-up commit `74a7479014d08c7a4772a38c57b773202e15a9c4` corrects the Short-Form target-length placeholder to 15-60 seconds while preserving the YouTube 8-10 minute placeholder; build/relaunch retest and remaining CEO QA are pending.
+Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program produced zero diagnostics, and deterministic checks passed for platform normalization/deduplication, readiness gating, invalid-status fallback, existing-key persistence, and legacy YouTube compatibility. Initial CEO QA confirmed the Short-Form default and found stale YouTube-first / `Future platform` creation copy. Corrective commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2` is pushed and syntax-verified. Follow-up commit `74a7479014d08c7a4772a38c57b773202e15a9c4` corrects the Short-Form target-length placeholder. CEO QA then found malformed `Â·` production text on Project cards; commit `690cb5d9db45fb6003633bef963ec569b38fb99d` restores `·`, with no remaining mojibake markers on relevant Project surfaces. Build/relaunch retest and remaining CEO QA are pending.
 
 ## Last Build Result
 
@@ -2024,6 +2024,7 @@ Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program
 - Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`.
 - Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`.
+- Project-Card Separator Commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`.
 - Push and Repository Verification: PASS on `origin/main`.
 - Changed Application Files: `app/src/core/projects/projectTypes.ts`, `app/src/core/projects/projectStore.ts`, `app/src/core/projects/creativeConcepts.ts`, `app/src/core/workItems/executionRequestBuilder.ts`, `app/src/core/workItems/workItemStore.ts`, `app/src/features/projects/components/ProjectForm.tsx`, and `app/src/features/projects/pages/ProjectDetailPage.tsx`.
 - TypeScript Program Verification: PASS - zero diagnostics across 199 TypeScript/TSX source files.
@@ -2437,8 +2438,8 @@ Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program
 ## Repository Checkpoint
 
 - Current Branch: main
-- Repository Checkpoint: `74a7479014d08c7a4772a38c57b773202e15a9c4`
-- Checkpoint Description: Verified Sprint 016 Task 2 creation-copy and Short-Form target-length guidance corrections pushed to origin/main; production build/relaunch retest, remaining CEO QA, and Task 2 closeout remain pending.
+- Repository Checkpoint: `690cb5d9db45fb6003633bef963ec569b38fb99d`
+- Checkpoint Description: Verified Sprint 016 Task 2 creation guidance, target-length guidance, and Project-card separator corrections pushed to origin/main; production build/relaunch retest, remaining CEO QA, and Task 2 closeout remain pending.
 - Working Tree Status: CLEAN at committed GitHub repository state; connected GitHub workflow contains no uncommitted application changes
 - Repository Push Status: PUSHED - Sprint 016 Task 2 implementation and CEO QA copy-fix commits verified on origin/main
 - Repository Synchronization Status: VERIFIED - origin/main contains the latest Task 2 corrective checkpoint
@@ -2502,6 +2503,7 @@ Task 2 - Short-Form Production Foundation:
 - Implementation commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - CEO QA copy-fix commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`; replaces obsolete YouTube-first / `Future platform` creation labels with accurate shared Short-Form target guidance.
 - Short-Form length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; uses 15-60 seconds for Short-Form Video and retains 8-10 minutes for YouTube.
+- Project-card separator commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; corrects malformed `Â·` to `·`; relevant Project surfaces contain no remaining mojibake markers.
 - Copy-fix syntax verification: PASS; production build and relaunch retest PENDING.
 - Full-program TypeScript verification: PASS - 199 source files, zero diagnostics.
 - Deterministic foundation verification: PASS.
@@ -3151,7 +3153,8 @@ Sprint 015 - Multi-Business Management.
 - Task 2 Status: IMPLEMENTATION COMPLETE - IMPLEMENTATION COMMIT VERIFIED; production build, CEO QA, and closeout PENDING.
 - Task 2 Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - Task 2 CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`.
-- Task 2 Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; build/relaunch retest pending.
+- Task 2 Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`.
+- Task 2 Project-Card Separator Commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; build/relaunch retest pending.
 - Verification: full-program TypeScript PASS with zero diagnostics; deterministic foundation QA PASS.
 - Last Completed Sprint: Sprint 015 - Multi-Business Management.
 - Next Required Action: run `npm.cmd run build` from a synchronized local app checkout, then complete bounded Task 2 CEO QA and repository closeout. Task 3 remains unauthorized.
@@ -3860,7 +3863,8 @@ Finish condition: AO can prepare and manage a complete short-form production pla
 - CEO QA presentation defect: the creation form retained obsolete YouTube-first copy and displayed `Future platform` for Short-Form Video.
 - Corrective result: Short-Form creation now identifies TikTok, YouTube Shorts, and Instagram Reels as supported targets, directs target selection to Project Detail, and accurately preserves existing YouTube support.
 - Corrective copy commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`; pushed to `origin/main` and verified.
-- Follow-up length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; Short-Form Video now prompts for 15-60 seconds while YouTube retains 8-10 minutes. Syntax verification PASS; build/relaunch retest pending.
+- Follow-up length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; Short-Form Video now prompts for 15-60 seconds while YouTube retains 8-10 minutes.
+- Project-card separator commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; replaces malformed `Â·` with `·`. Relevant Project surfaces contain no remaining mojibake markers. Syntax verification PASS; build/relaunch retest pending.
 - Production build: PENDING because this connected GitHub-only environment does not provide a repository checkout for `npm.cmd run build`; no build PASS is claimed.
 - CEO QA and Task 2 repository closeout: PENDING. Task 3 is not authorized.
 
@@ -3976,6 +3980,7 @@ Sprint 016 does not authorize:
 - Task 2 Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - Task 2 CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`.
 - Task 2 Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`.
+- Task 2 Project-Card Separator Commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`.
 - Next Required Action: run `npm.cmd run build` from a synchronized local app checkout, then complete bounded Task 2 CEO QA and repository closeout. Do not begin Task 3.
 
 ---

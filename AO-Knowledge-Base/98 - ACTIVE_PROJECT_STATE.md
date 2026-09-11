@@ -68,7 +68,7 @@ main
 
 ## Last QA Result
 
-Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program produced zero diagnostics, and deterministic checks passed for platform normalization/deduplication, readiness gating, invalid-status fallback, existing-key persistence, and legacy YouTube compatibility. Initial CEO QA confirmed the Short-Form default and found stale YouTube-first / `Future platform` creation copy. Corrective commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2` is pushed and syntax-verified. Follow-up commit `74a7479014d08c7a4772a38c57b773202e15a9c4` corrects the Short-Form target-length placeholder to 15-60 seconds while preserving the YouTube 8-10 minute placeholder; build/relaunch retest and remaining CEO QA are pending.
+Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program produced zero diagnostics, and deterministic checks passed for platform normalization/deduplication, readiness gating, invalid-status fallback, existing-key persistence, and legacy YouTube compatibility. Initial CEO QA confirmed the Short-Form default and found stale YouTube-first / `Future platform` creation copy. Corrective commit `774d4f64f88f862ce08dcdd88d9af0626527c5f2` is pushed and syntax-verified. Follow-up commit `74a7479014d08c7a4772a38c57b773202e15a9c4` corrects the Short-Form target-length placeholder. CEO QA then found malformed `Â·` production text on Project cards; commit `690cb5d9db45fb6003633bef963ec569b38fb99d` restores `·`, with no remaining mojibake markers on relevant Project surfaces. Build/relaunch retest and remaining CEO QA are pending.
 
 ## Last Build Result
 
@@ -84,6 +84,7 @@ Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program
 - Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`.
 - Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`.
+- Project-Card Separator Commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`.
 - Push and Repository Verification: PASS on `origin/main`.
 - Changed Application Files: `app/src/core/projects/projectTypes.ts`, `app/src/core/projects/projectStore.ts`, `app/src/core/projects/creativeConcepts.ts`, `app/src/core/workItems/executionRequestBuilder.ts`, `app/src/core/workItems/workItemStore.ts`, `app/src/features/projects/components/ProjectForm.tsx`, and `app/src/features/projects/pages/ProjectDetailPage.tsx`.
 - TypeScript Program Verification: PASS - zero diagnostics across 199 TypeScript/TSX source files.
@@ -497,8 +498,8 @@ Sprint 016 Task 2 remote verification PASS: the full 199-file TypeScript program
 ## Repository Checkpoint
 
 - Current Branch: main
-- Repository Checkpoint: `74a7479014d08c7a4772a38c57b773202e15a9c4`
-- Checkpoint Description: Verified Sprint 016 Task 2 creation-copy and Short-Form target-length guidance corrections pushed to origin/main; production build/relaunch retest, remaining CEO QA, and Task 2 closeout remain pending.
+- Repository Checkpoint: `690cb5d9db45fb6003633bef963ec569b38fb99d`
+- Checkpoint Description: Verified Sprint 016 Task 2 creation guidance, target-length guidance, and Project-card separator corrections pushed to origin/main; production build/relaunch retest, remaining CEO QA, and Task 2 closeout remain pending.
 - Working Tree Status: CLEAN at committed GitHub repository state; connected GitHub workflow contains no uncommitted application changes
 - Repository Push Status: PUSHED - Sprint 016 Task 2 implementation and CEO QA copy-fix commits verified on origin/main
 - Repository Synchronization Status: VERIFIED - origin/main contains the latest Task 2 corrective checkpoint

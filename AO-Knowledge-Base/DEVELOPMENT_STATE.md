@@ -44,6 +44,7 @@ Task 2 - Short-Form Production Foundation:
 - Implementation commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
 - CEO QA copy-fix commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`; replaces obsolete YouTube-first / `Future platform` creation labels with accurate shared Short-Form target guidance.
 - Short-Form length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; uses 15-60 seconds for Short-Form Video and retains 8-10 minutes for YouTube.
+- Project-card separator commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; corrects malformed `Â·` to `·`; relevant Project surfaces contain no remaining mojibake markers.
 - Copy-fix syntax verification: PASS; production build and relaunch retest PENDING.
 - Full-program TypeScript verification: PASS - 199 source files, zero diagnostics.
 - Deterministic foundation verification: PASS.
