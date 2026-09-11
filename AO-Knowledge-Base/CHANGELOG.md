@@ -1,5 +1,11 @@
 # AO Knowledge Base Changelog
 
+## Sprint 016 Task 2 - Short-Form Length Guidance Fix - 2026-09-11
+
+- CEO QA identified that the default Short-Form creation form still led with an 8-10 minute target-length placeholder.
+- Short-Form Video now displays a 15-60 second placeholder; YouTube Video retains its 8-10 minute guidance.
+- Syntax verification PASS. Commit `74a7479014d08c7a4772a38c57b773202e15a9c4` pushed and verified; production build/relaunch retest and remaining Task 2 CEO QA are pending.
+
 ## Sprint 016 Task 2 - CEO QA Creation-Copy Fix - 2026-09-11
 
 - Initial CEO QA confirmed Short-Form Video is the default Business Asset type.
