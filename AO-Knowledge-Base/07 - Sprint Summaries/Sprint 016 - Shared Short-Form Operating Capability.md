@@ -51,7 +51,7 @@ The preferred persistence direction is the existing Project Store extension patt
 
 ### Task 1 - Architecture Definition and Freeze
 
-Status: DOCUMENTATION COMPLETE - ARCHITECTURE REVIEW PASS - ARCHITECTURE FREEZE PASS - REPOSITORY CLOSEOUT PENDING.
+Status: COMPLETE - REPOSITORY VERIFIED.
 
 Objective: Inspect the current implementation and freeze the smallest architecture capable of reaching the Sprint 016 finish line.
 
@@ -250,11 +250,11 @@ Task 2 must not implement finished-video QA/final approval, publication/performa
 
 PASS.
 
-Sprint 016 Task 1 architecture is FROZEN. Application implementation remains NOT STARTED. Task 2 becomes authorized only after Task 1 documentation closeout is committed, pushed, and repository verified.
+Sprint 016 Task 1 architecture is FROZEN. Documentation commit `21b94d5152ae67f7fc2db66245774af880662fb8` is pushed and repository verified. Application implementation remains NOT STARTED. Task 2 - Short-Form Production Foundation is AUTHORIZED - NOT STARTED.
 
 ### Task 2 - Short-Form Production Foundation
 
-Status: NOT STARTED.
+Status: AUTHORIZED - NOT STARTED.
 
 Objective: Extend the existing Creative Production Engine with a reusable Short-Form Video capability.
 
@@ -366,12 +366,11 @@ Sprint 016 does not authorize:
 - Documentation Activation: COMPLETE.
 - Activation Commit: `eeddfdb47cc5528434da7b6cdc1d86a76c66ad94`.
 - Activation Repository Verification: COMPLETE - PASS.
+- Task 1 Documentation Commit: `21b94d5152ae67f7fc2db66245774af880662fb8`.
+- Task 1 Repository Verification: COMPLETE - PASS.
 - Startup Bundle: VALID.
 - Application Implementation: NOT STARTED.
-- Current Task: Task 1 - Architecture Definition and Freeze.
-- Task 1 Documentation: COMPLETE.
-- Task 1 Architecture Review: PASS.
-- Task 1 Architecture Freeze: PASS.
-- Task 1 Repository Closeout: PENDING.
-- Task 2: NOT STARTED and not authorized until Task 1 repository closeout passes.
-- Next Required Action: Commit and push Sprint 016 Task 1 documentation, verify the repository and Startup Bundle, then begin Task 2 - Short-Form Production Foundation.
+- Task 1: COMPLETE - REPOSITORY VERIFIED.
+- Current Authorized Task: Task 2 - Short-Form Production Foundation.
+- Task 2 Status: AUTHORIZED - NOT STARTED.
+- Next Required Action: Begin Sprint 016 Task 2 - Short-Form Production Foundation within the frozen Task 1 contract.
