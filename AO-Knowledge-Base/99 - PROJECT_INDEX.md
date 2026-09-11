@@ -35,7 +35,7 @@ Every AI operator must read the following source documents in this exact order.
 
 ## Active Sprint 016 Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE for Documentation-First activation. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED. Application implementation has not begun. Task 1 - Architecture Definition and Freeze is the first authorized task only after activation documentation is committed, pushed, and repository verified. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Documentation activation is COMPLETE, committed, pushed, and REPOSITORY VERIFIED. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED. Application implementation has NOT STARTED. Task 1 - Architecture Definition and Freeze is the first authorized task and is NOT STARTED. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 
