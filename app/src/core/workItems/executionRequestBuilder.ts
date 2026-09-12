@@ -155,7 +155,7 @@ export function buildExecutionRequestFromWorkOrder(workItem: WorkItemRecord, pro
     outputRequirements: isConceptDevelopment
       ? `Return JSON only with exactly ${CREATIVE_CONCEPT_CANDIDATE_COUNT} creative topic/concept candidates in a concepts array. Each candidate must include title, summary, angle, rationale, audienceValue, and hookDirection.`
       : isRevision && deliverable
-        ? `${outputRequirements(deliverable.name, assetType)} This is a manual revision attempt. Do not approve, publish, send, or start another revision.`
+        ? 'Follow the CEO Revision Instructions as the authoritative output contract. Return revised deliverable content only, and do not include content the CEO instructions prohibit. Do not approve, publish, send, or start another revision.'
         : outputRequirements(deliverable!.name, assetType),
     correlationMetadata: {
       workOrderId: workOrder.workOrderId,
