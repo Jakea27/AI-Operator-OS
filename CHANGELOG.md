@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 017 Task 1 - Automation-First Architecture Freeze - 2026-09-12
+
+- Inspected the synchronized Electron/React application, provider/execution path, persistence boundaries, approval workflow, Windows speech capability, and available media tooling.
+- Froze one visible Content Production Job as the CEO workflow and one metadata-only persistence domain for job input, state, attempts, output references, and failures.
+- Reused Execution Core, Capability Resolver, Provider Manager, and Approval Queue instead of creating duplicate AI execution, provider, or review systems.
+- Froze Reddit Stories as a typed format module rather than shared-engine architecture.
+- Froze local Windows narration/timing through `System.Speech`, ASS subtitle generation, and pinned FFmpeg rendering behind validated Electron-main IPC and protected local paths.
+- Required append-only attempts/results, manual retry/revision, no publication, legacy-data preservation, deterministic engine tests, and packaged Windows runtime verification.
+- Task 1 architecture freeze PASS. No application code was changed and Task 2 has not started.
+
 ## Sprint 017 Activation - Automation-First Content Production MVP - 2026-09-12
 
 - Recorded the CEO product reset after the Sprint 016 Task 3 pilot.

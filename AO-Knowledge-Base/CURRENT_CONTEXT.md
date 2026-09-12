@@ -27,6 +27,12 @@ Sprint 015 - Multi-Business Management.
 - One requested video is one visible job even if internal execution contains multiple steps.
 - Main operational surfaces may remain simple; unused or unproven systems must be hidden from the primary workflow until they perform measurable work.
 - No publication of the rejected Sprint 016 pilot is authorized.
+- Sprint 017 Task 1 repository/application inspection and architecture review are complete; architecture freeze is PASS and application implementation was not performed.
+- The new primary flow is one visible Content Production Job. A focused job store owns orchestration metadata, attempts, result references, and errors under `ai-operator-os-content-production-jobs-v1`; media bytes remain on the filesystem.
+- Existing Execution Core, Capability Resolver, Provider Manager, and Approval Queue retain AI execution, provider-selection, and CEO-decision ownership.
+- Reddit Stories is the first typed format module. Shared writing, narration, caption, footage, render, job, preview, and review capabilities remain format-independent.
+- Windows MVP narration uses a fixed Electron-main `System.Speech` helper with word timing. Rendering uses a pinned FFmpeg runtime behind validated typed IPC; the renderer receives no generic filesystem or process access.
+- Attempts and result versions are append-only. Failures, startup interruptions, retries, revisions, and prior review decisions remain reconstructable; no automatic retry, revision, publication, or external action is authorized.
 
 - The Dashboard is now treated as the CEO Command Center.
 - The Command Center should answer: "What requires my attention right now?"
@@ -72,7 +78,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Complete Sprint 017 Task 1 architecture definition and freeze for the four-day automation-first content MVP. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
+- Complete Sprint 017 Task 1 documentation repository closeout, then begin Task 2 - Automated Editor Engine from the frozen architecture. Task 3 UI work remains not started. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -206,9 +212,10 @@ Sprint 015 - Multi-Business Management.
 - Task 3 Implementation Commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
 - Task 3 Initializer Fix / Final Application Source Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
 - Task 3 Verification: build PASS; real 44.97-second 1080p 9:16 asset produced; 11/11 QA PASS; final CEO approval APPROVED; version locked; restart persistence PASS.
-- Current Task: Sprint 017 Task 1 - Automation-First Architecture Definition and Freeze.
-- Task 1 Status: AUTHORIZED - NOT STARTED.
-- Next Required Action: inspect the current application and freeze the smallest end-to-end Reddit-story editing architecture before coding.
+- Current Task: Sprint 017 Task 1 - architecture freeze complete; documentation repository closeout pending.
+- Task 1 Status: ARCHITECTURE FREEZE PASS - APPLICATION IMPLEMENTATION NOT PERFORMED.
+- Task 2 Status: AUTHORIZED AFTER TASK 1 REPOSITORY CLOSEOUT - NOT STARTED.
+- Next Required Action: complete Task 1 documentation repository closeout, then begin Task 2 - Automated Editor Engine from the frozen architecture.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
 ## Historical Current Handoff

@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 1 architecture definition. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. Task 1 repository/application inspection is complete and architecture freeze is PASS; documentation repository closeout is pending. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Inspect the current app and freeze Sprint 017 Task 1. Preserve the existing implementation and data, but design a new simple CEO workflow around one automated Reddit-story-style content format.
+Complete Sprint 017 Task 1 documentation repository closeout, then begin Task 2 - Automated Editor Engine from the frozen architecture. Task 3 remains not started.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 application implementation has NOT STARTED. Documentation authorizes Task 1 architecture definition and freeze only.
+Sprint 017 application implementation has NOT STARTED. Task 1 architecture freeze is PASS. Task 2 is authorized after Task 1 documentation repository closeout.
 
 Required MVP input:
 - topic or source story;
@@ -60,8 +60,29 @@ Not authorized in the four-day MVP:
 - multiple finished content formats;
 - exposed manual package, reference, Work Item, or QA workflows.
 
+Task 1 inspection findings:
+- Existing Electron preload exposes platform/version only; no media IPC, file dialog, child-process, or protected preview boundary exists.
+- Existing Project/Blueprint/short-form state is record-oriented and preserved, but is not the owner of the new automated job workflow.
+- Existing Execution Core, Capability Resolver, Provider Manager, and Approval Queue can be reused for script execution and CEO decisions.
+- Installed Windows `System.Speech` voices and word-position timing are available; FFmpeg is not an existing application or system dependency.
+
+Task 1 frozen implementation boundary:
+- one new CEO-visible Content Production Job domain and metadata-only key `ai-operator-os-content-production-jobs-v1`;
+- typed `reddit-stories` format module producing strict `hookText`, `narrationText`, and `ctaText` JSON;
+- provider-independent script execution through existing Execution Core -> Capability Resolver -> Provider Manager;
+- fixed Electron-main `System.Speech` PowerShell helper producing WAV and word-timing JSON;
+- deterministic phrase-caption grouping and ASS subtitle generation;
+- pinned FFmpeg runtime invoked in Electron main with validated argument arrays and packaged outside ASAR;
+- native footage selection, protected output root/preview protocol, append-only attempts/results, manual retry/revision, and Approval Queue review ownership;
+- no external editor, automatic retry, automatic publication, generic filesystem/process bridge, or legacy-data deletion.
+
 Implementation checkpoint: none.
-Build/QA: not started.
+Task 1 application files changed: NONE.
+Build/QA: not run because Task 1 is documentation/architecture only.
+Task 1 architecture review: PASS.
+Task 1 architecture freeze: PASS.
+Task 1 documentation: COMPLETE locally; repository closeout PENDING.
+Task 2: AUTHORIZED AFTER TASK 1 REPOSITORY CLOSEOUT - NOT STARTED.
 
 ## Sprint 016 Implementation Status
 

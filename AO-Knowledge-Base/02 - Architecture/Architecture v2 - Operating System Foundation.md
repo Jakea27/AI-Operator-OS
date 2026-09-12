@@ -3,8 +3,30 @@
 Status: Active  
 Version: 2.0  
 Owner: Jake Allen  
-Last Updated: 2026-07-09  
-Scope: Operating System Foundation with approved extensions through Sprint 016 Task 1
+Last Updated: 2026-09-12
+Scope: Operating System Foundation with approved extensions through Sprint 017 Task 1
+
+## Sprint 017 Architecture Extension - Automation-First Content Production
+
+Sprint 017 introduces one outcome-first content-production workflow in which one requested video is one visible job. The first typed format is Reddit Stories using reusable prerecorded footage, but format rules remain separate from shared writing, narration, caption, footage, rendering, state, preview, and review capabilities.
+
+The architecture adds one necessary runtime domain: `ContentProductionJobStore`. It owns only CEO job input, orchestration state, append-only attempts, rendered-result references, and recoverable errors. Its local-first metadata key is `ai-operator-os-content-production-jobs-v1`. Media bytes remain on the local filesystem. This store does not replace or duplicate Project, Production Blueprint, Work Item, Execution Core, Provider, Approval, or Money ownership.
+
+Execution Core remains authoritative for AI execution lifecycle and results. Capability Resolver and Provider Manager remain authoritative for provider selection. Approval Queue remains authoritative for result decisions and decision history. Electron main owns native file dialogs, validated local process invocation, temporary media, final output paths, and protected preview access. Existing Project Store data and the Sprint 016 short-form profile remain preserved historical/advanced architecture and are not migrated into the job store.
+
+The first `ContentFormatModule` is `reddit-stories`. The small typed module contract owns input validation, defaults, provider instructions, strict result parsing, and format render/caption rules. It requests a provider-independent JSON object with non-empty `hookText`, `narrationText`, and `ctaText`. Malformed output preserves the raw Execution Result and fails the attempt without fabricated content, partial output, or automatic retry.
+
+Script work follows `Content Production Job -> Execution Core -> Capability Resolver -> Provider Manager -> Provider -> Execution Result`. The renderer must not call providers directly, and Local Ollama is a validation provider rather than product architecture.
+
+Windows narration uses a narrow adapter implemented by a fixed Electron-main PowerShell helper over installed `System.Speech.Synthesis.SpeechSynthesizer` voices. `SpeakProgress.AudioPosition` supplies word timing. Word timings are grouped deterministically into phrase captions, and hook/captions/CTA are rendered as ASS subtitle events.
+
+Media rendering uses one pinned FFmpeg runtime invoked by Electron main with argument arrays and `shell: false`. The shared render plan loops source footage as needed, scales and crops to 1080x1920 at 30 fps, adds narration, burns ASS captions, and emits H.264/AAC MP4 with `yuv420p` and fast-start metadata. The FFmpeg binary and fixed TTS helper must be unpacked from ASAR and verified in a Windows portable or installer build.
+
+Preload exposes only typed content-production operations. Electron main validates sender, schemas, bounds, IDs, extensions, and canonical paths. No generic filesystem, command, shell, or process bridge is allowed. Final output is restricted to an `AI Operator OS/Generated` directory beneath the operating-system Videos directory and preview is restricted to that root.
+
+Job operational state is limited to Draft, Running, Ready for Review, and Failed. CEO decision state is derived from the linked Approval Queue record rather than duplicated. Attempts and result versions are append-only. Startup converts abandoned Running attempts to visible interrupted failures; retry and revision require a manual CEO action and create new attempts. Approve performs no publication. Needs Revision requires feedback. Reject preserves history and performs no automatic action.
+
+No Media Store, Render Store, Prompt Store, general plugin framework, second execution engine, second provider system, second approval system, scheduler, worker queue, automatic retry, automatic revision, AI-generated footage, publication, external platform integration, or legacy-data deletion is authorized by Sprint 017 Task 1.
 
 ## Sprint 016 Architecture Extension - Shared Short-Form Operating Capability
 

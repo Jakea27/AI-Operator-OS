@@ -28,15 +28,15 @@ Sprint 017 - Automation-First Content Production MVP
 
 ## Sprint Status
 
-ACTIVE - CEO PRODUCT RESET APPROVED; Task 1 architecture definition and freeze is the next required action.
+ACTIVE - TASK 1 ARCHITECTURE FREEZE PASS; repository closeout is pending and Task 2 has not started.
 
 ## Current Phase
 
-Sprint 017 Task 1 - Automation-First Architecture Definition and Freeze.
+Sprint 017 Task 1 - Architecture freeze complete; documentation repository closeout pending.
 
 ## Current Task
 
-Define and freeze the smallest architecture that can turn a topic, requirements, and prerecorded footage into a complete Reddit-story-style vertical MP4 without manual editing.
+Close out the frozen Sprint 017 Task 1 architecture documentation before beginning Task 2 - Automated Editor Engine.
 
 ## Last Completed Sprint
 
@@ -56,11 +56,11 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Complete Sprint 017 Task 1 repository inspection and freeze the four-day MVP architecture before application implementation. Do not begin Sprint 016 Task 4 and do not publish the rejected pilot.
+Complete Sprint 017 Task 1 documentation repository closeout, then begin Sprint 017 Task 2 - Automated Editor Engine. Do not begin Task 3, do not resume Sprint 016 Task 4, and do not publish the rejected pilot.
 
 ## Blocking Issues
 
-No product blocker is documented. Application implementation and Windows media-tool verification must occur from the synchronized local repository worktree.
+No architecture blocker is documented. Task 1 repository closeout remains before Task 2 application implementation.
 
 ## Current Branch
 
@@ -79,6 +79,26 @@ Sprint 016 Task 3 technical workflow QA passed, but the CEO rejected the product
 ## Last Updated
 
 2026-09-12
+
+## Sprint 017 Task 1 Architecture Freeze
+
+- Repository and application inspection: COMPLETE.
+- Documentation: COMPLETE locally; repository closeout PENDING.
+- Architecture review: PASS.
+- Architecture freeze: PASS.
+- Application implementation: NOT PERFORMED.
+- Primary workflow: one CEO-visible Content Production Job from format/input/footage through preview and Approve, Needs Revision, or Reject.
+- Job ownership: new focused Content Production Job Store for orchestration metadata, append-only attempts/results, and recoverable errors.
+- Persistence: one new metadata-only key, `ai-operator-os-content-production-jobs-v1`; media bytes remain on the local filesystem.
+- Reused ownership: Execution Core owns AI execution/results; Capability Resolver and Provider Manager own provider selection; Approval Queue owns review decisions/history; Electron main owns privileged filesystem, TTS, FFmpeg, and preview access.
+- First format: typed `reddit-stories` module; Reddit Stories is configuration, not shared-engine architecture.
+- Script output: strict provider-independent JSON containing `hookText`, `narrationText`, and `ctaText`; malformed output fails without fabrication or automatic retry.
+- Windows narration: fixed main-process PowerShell helper using installed `System.Speech` voices and `SpeakProgress.AudioPosition` timing.
+- Rendering: pinned FFmpeg runtime, protected main-process invocation, 1080x1920 H.264/AAC MP4, ASS captions/hook/CTA, and local output under the operating-system Videos directory.
+- Security: typed preload IPC only; no generic filesystem, process, command, or unrestricted-path bridge.
+- Recovery: interrupted work becomes a visible failed attempt; retry/revision is manual and append-only.
+- Legacy isolation: existing Project, Blueprint, Work Item, package, execution, approval, and Sprint 016 short-form records remain preserved; normal content creation does not require CEO operation of those records.
+- Task 2: AUTHORIZED AFTER TASK 1 REPOSITORY CLOSEOUT - NOT STARTED.
 
 ## CEO Product Reset - 2026-09-12
 

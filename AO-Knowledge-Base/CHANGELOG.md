@@ -1,5 +1,15 @@
 # AO Knowledge Base Changelog
 
+## Sprint 017 Task 1 - Reddit Stories Architecture Freeze - 2026-09-12
+
+- Completed synchronized repository and current-application inspection without modifying application code.
+- Froze one visible Content Production Job workflow and a focused metadata-only job store under `ai-operator-os-content-production-jobs-v1`.
+- Preserved Execution Core, Capability Resolver, Provider Manager, Approval Queue, Project Store, and filesystem ownership boundaries.
+- Froze a small typed Reddit Stories format module with strict hook/narration/CTA JSON and format-independent shared production capabilities.
+- Selected Windows `System.Speech` word timing, deterministic ASS captions, and a pinned FFmpeg runtime behind secure typed Electron IPC.
+- Froze native footage selection, protected local output/preview, append-only attempts/results, manual recovery/revision, and packaged-runtime verification.
+- Architecture review and freeze PASS. Application implementation was not performed; Task 2 is not started pending Task 1 documentation repository closeout.
+
 ## Sprint 017 Automation-First Product Reset - 2026-09-12
 
 - Stopped and closed Sprint 016 after its Task 3 pilot; withdrew Task 4 publication authorization and cancelled Task 5.
