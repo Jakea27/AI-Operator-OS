@@ -543,7 +543,7 @@ export function ProjectDetailPage() {
   }
 
   function persistBlueprintDeliverable(deliverableId: string, updates: Partial<ProductionBlueprintDeliverable>) {
-    const currentProject = projectStore.projects.find((item) => item.id === activeProject.id) ?? activeDraft
+    const currentProject = draft ?? projectStore.projects.find((item) => item.id === activeProject.id) ?? activeDraft
     if (!currentProject) return undefined
     const blueprint = currentProject.productionBlueprint ?? defaultProductionBlueprint(currentProject)
     const timestamp = new Date().toISOString()
@@ -564,6 +564,49 @@ export function ProjectDetailPage() {
     projectStore.updateProject(currentProject.id, { productionBlueprint: nextBlueprint })
     setDraft({ ...currentProject, productionBlueprint: nextBlueprint, updatedAt: timestamp })
     return nextBlueprint.deliverables.find((deliverable) => deliverable.id === deliverableId)
+  }
+
+  function approveManualBlueprintDeliverable(deliverable: ProductionBlueprintDeliverable) {
+    if (supportsAiWorkOrder(deliverable)) {
+      setExecutionRequestNotice(`${deliverable.name} approval must use its Work Order review path.`)
+      return
+    }
+
+    const approvedContent = deliverable.content.trim()
+    if (!approvedContent) {
+      setExecutionRequestNotice(`${deliverable.name} approval blocked: add the manual production-plan content first.`)
+      return
+    }
+
+    const timestamp = new Date().toISOString()
+    persistBlueprintDeliverable(deliverable.id, {
+      status: 'Complete',
+      content: approvedContent,
+      reviewStatus: 'Approved',
+      activeReview: false,
+      draftContent: approvedContent,
+      approvedContent,
+      reviewApprovalId: undefined,
+      reviewFeedback: undefined,
+      rejectionReason: undefined,
+      reviewedAt: timestamp,
+      reviewHistory: [
+        {
+          id: reviewHistoryId(),
+          decision: 'Approved',
+          actor: 'CEO',
+          note: 'Manual Blueprint deliverable approved by CEO.',
+          createdAt: timestamp,
+          metadata: {
+            reviewedDraftContent: approvedContent,
+            sourceReviewStatus: deliverable.reviewStatus,
+            reviewSource: 'Manual Blueprint',
+          },
+        },
+        ...deliverable.reviewHistory,
+      ],
+    })
+    setExecutionRequestNotice(`${deliverable.name} manual review decision recorded: Approved.`)
   }
 
   function findReviewApproval(deliverable: ProductionBlueprintDeliverable, execution?: ExecutionRecord) {
@@ -1645,13 +1688,33 @@ export function ProjectDetailPage() {
                   </div>
 
                   <div className="grid gap-4">
-                    {draft.productionBlueprint.deliverables.map((deliverable) => (
-                      <BlueprintDeliverableEditor
-                        key={deliverable.id}
-                        deliverable={deliverable}
-                        onUpdate={(updates) => updateBlueprintDeliverable(deliverable.id, updates)}
-                      />
-                    ))}
+                    {draft.productionBlueprint.deliverables.map((deliverable) => {
+                      const manualDeliverable = !supportsAiWorkOrder(deliverable)
+                      return (
+                        <BlueprintDeliverableEditor
+                          key={deliverable.id}
+                          deliverable={deliverable}
+                          onUpdate={(updates) => updateBlueprintDeliverable(deliverable.id,
+                            manualDeliverable &&
+                            updates.content !== undefined &&
+                            updates.content !== deliverable.content &&
+                            deliverable.reviewStatus === 'Approved'
+                              ? {
+                                ...updates,
+                                status: updates.content.trim() ? 'Draft' : 'Not Started',
+                                reviewStatus: 'Not Ready',
+                                activeReview: false,
+                                draftContent: '',
+                                approvedContent: '',
+                                reviewApprovalId: undefined,
+                                reviewedAt: undefined,
+                              }
+                              : updates,
+                          )}
+                          onApproveManual={manualDeliverable ? () => approveManualBlueprintDeliverable(deliverable) : undefined}
+                        />
+                      )
+                    })}
                   </div>
 
                   <CreativeAssetPackagePanel
@@ -2604,9 +2667,11 @@ function ReviewDecisionModal({
 function BlueprintDeliverableEditor({
   deliverable,
   onUpdate,
+  onApproveManual,
 }: {
   deliverable: ProductionBlueprintDeliverable
   onUpdate: (updates: Partial<ProductionBlueprintDeliverable>) => void
+  onApproveManual?: () => void
 }) {
   return (
     <article className="rounded-xl border border-line bg-ink/40 p-4">
@@ -2632,6 +2697,26 @@ function BlueprintDeliverableEditor({
           placeholder={`Draft ${deliverable.name.toLowerCase()} requirements here.`}
         />
       </label>
+      {onApproveManual ? (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-lime/20 bg-lime/[0.04] p-3">
+          <p className="m-0 text-xs leading-5 text-muted">
+            Manual Blueprint deliverables require an explicit CEO decision. Approval snapshots this content for packaging and records it in decision history.
+          </p>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={onApproveManual}
+            disabled={
+              !deliverable.content.trim() ||
+              (deliverable.reviewStatus === 'Approved' && deliverable.approvedContent === deliverable.content.trim())
+            }
+          >
+            {deliverable.reviewStatus === 'Approved' && deliverable.approvedContent === deliverable.content.trim()
+              ? 'Manual Deliverable Approved'
+              : 'Approve Manual Deliverable'}
+          </button>
+        </div>
+      ) : null}
       {deliverable.reviewFeedback ? <p className="m-0 mt-3 text-xs leading-5 text-orange-200">Revision feedback: {deliverable.reviewFeedback}</p> : null}
       {deliverable.rejectionReason ? <p className="m-0 mt-3 text-xs leading-5 text-rose-200">Rejection reason: {deliverable.rejectionReason}</p> : null}
       <p className="m-0 mt-3 text-xs text-muted">
