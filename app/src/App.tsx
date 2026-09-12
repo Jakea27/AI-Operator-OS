@@ -22,12 +22,14 @@ import { ExecutionQueueDetailPage } from '@/src/features/executionQueue/Executio
 import { ExecutionQueuePage } from '@/src/features/executionQueue/ExecutionQueuePage'
 import { ExecutionDashboardPage } from '@/src/features/execution/ExecutionDashboardPage'
 import { ExecutionDetailPage } from '@/src/features/execution/ExecutionDetailPage'
+import { ContentProductionPage } from '@/src/features/contentProduction'
 
 export default function App() {
   return (
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<Dashboard />} />
+        <Route path="create-content" element={<ContentProductionPage />} />
         <Route path="ceo" element={<CEO />} />
         <Route path="money" element={<Money />} />
         <Route path="opportunities" element={<OpportunityPipelinePage />} />

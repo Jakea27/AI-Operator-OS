@@ -348,6 +348,15 @@ export function createContentProductionStore(options: StoreOptions = {}) {
       })
       return result
     },
+    linkResultApproval(jobId: string, resultId: string, approvalId: string) {
+      return update(jobId, (job) => ({
+        ...job,
+        results: job.results.map((result) => result.resultId === resultId && !result.approvalId
+          ? { ...result, approvalId }
+          : result),
+        updatedAt: clock(),
+      }))
+    },
   }
 }
 

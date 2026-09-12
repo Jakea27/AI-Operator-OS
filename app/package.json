@@ -17,6 +17,7 @@
     "verify:content-engine": "tsx scripts/verify-content-production-engine.ts",
     "verify:content-provider": "tsx scripts/verify-content-provider.ts",
     "verify:content-package": "node scripts/verify-content-package.cjs",
+    "verify:content-ui": "tsx scripts/verify-content-ui-state.ts",
     "preview": "vite preview --configLoader runner",
     "dist": "npm run build && electron-builder --win nsis portable --config electron-builder.json",
     "dist:installer": "npm run build && electron-builder --win nsis --config electron-builder.json",

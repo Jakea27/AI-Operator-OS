@@ -8,7 +8,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Sprint 017 Task 2 production build and Windows package PASS. `npm run dist:unpacked` completed TypeScript and Vite: 2,601 modules transformed in 7.21 seconds. The existing large-chunk warning remains non-blocking. Packaged FFmpeg/System.Speech execution and packaged desktop launch also passed.
+Sprint 017 Task 3 production build and Windows package PASS. `npm run build` completed TypeScript and Vite with 2,610 modules in 5.15 seconds; `npm run dist:unpacked` repeated the build in 4.70 seconds. The existing large-chunk warning remains non-blocking. Packaged FFmpeg/System.Speech execution and packaged desktop startup also passed.
 
 Command used:
 
@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1 and 2 are complete and repository verified. Task 3 is not started. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1 and 2 are complete and repository verified. Task 3 implementation and automated verification are complete with repository closeout pending. Task 4 Windows CEO QA is not started. Sprint 016 stopped and closed after the Task 3 pilot; its Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Begin Task 3 - Simple Content UI against the verified Automated Editor Engine.
+Complete Task 3 repository closeout, then begin Task 4 - Windows Integration and CEO QA.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 Task 2 application implementation is COMPLETE. Automated engine, provider, media, package, and desktop verification PASS. Documentation and repository closeout are COMPLETE. Task 3 is NOT STARTED.
+Sprint 017 Task 3 application implementation is COMPLETE. Automated UI/state, provider, media, production build, package, desktop startup, and restart-persistence verification PASS. Repository closeout is pending. Task 4 CEO QA is NOT STARTED.
 
 Required MVP input:
 - topic or source story;
@@ -113,7 +113,32 @@ Task 2 implementation/documentation checkpoint: `0cc6f771ec2eb4531707cbcb4321a6c
 Task 2 documentation: COMPLETE.
 Task 2 push and synchronization verification: PASS - commit verified on `origin/main` with local/remote parity `0/0`.
 Task 2 repository closeout: COMPLETE.
-Task 3: NOT STARTED.
+Task 3: IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+
+Task 3 implementation:
+- one primary Create Content route/navigation entry;
+- Reddit Stories source/requirements, protected prerecorded-footage selection, optional duration/voice/style, and one Generate Video action;
+- one visible current job with Writing/Narrating/Rendering progress, failure details, and manual retry;
+- protected finished-video preview and reveal-in-folder through the existing Task 2 Electron bridge;
+- existing Approval Queue-backed Approve, written-feedback Revise, and Reject decisions;
+- separate manual Generate Revision action after feedback, preserving append-only attempts/results and preventing automatic AI revision;
+- no provider execution, Work Item, package, file-reference form, QA form, or internal ID in the focused workflow.
+
+Task 3 verification:
+- TypeScript: PASS.
+- Deterministic UI/state, approval deduplication, manual revision separation, decision persistence, and restart reconstruction: PASS.
+- Existing Task 2 engine/media integration: PASS.
+- Existing provider path through Ollama / `qwen2.5:7b`: PASS.
+- Vite production build: PASS, 2,610 modules in 5.15 seconds.
+- Windows unpacked build: PASS, 2,610 modules in 4.70 seconds.
+- Packaged resources and desktop startup: PASS.
+- Rendered 1440x1000 layout smoke check: PASS; no horizontal overflow.
+- New store/persistence/provider/execution/publication/AI-footage/automatic-retry architecture: NONE.
+
+Task 3 implementation checkpoint: pending commit.
+Task 3 documentation: UPDATED locally.
+Task 3 repository closeout: PENDING.
+Task 4 Windows Integration and CEO QA: NOT STARTED.
 
 ## Sprint 016 Implementation Status
 

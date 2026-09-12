@@ -5,6 +5,7 @@ import type {
   ContentMediaBuildResult,
   ContentProductionBridge,
   ContentProductionError,
+  ContentProductionJob,
 } from './contentProductionTypes'
 
 function requestId(jobId: string, attemptId: string) {
@@ -25,6 +26,10 @@ function failure(
   message: string,
 ) {
   return { stage, code, message }
+}
+
+export function retryInstructionsFor(job: ContentProductionJob) {
+  return [...job.attempts].reverse().find((attempt) => attempt.status === 'Failed')?.revisionInstructions
 }
 
 async function buildAttempt(jobId: string, revisionInstructions?: string) {
@@ -171,7 +176,7 @@ export const contentProductionCoordinator = {
   retry(jobId: string) {
     const job = contentProductionStore.getJob(jobId)
     if (!job || job.runState !== 'Failed') throw new Error('Only a failed job can be retried.')
-    return buildAttempt(jobId)
+    return buildAttempt(jobId, retryInstructionsFor(job))
   },
   revise(jobId: string, revisionInstructions: string) {
     if (!revisionInstructions.trim()) throw new Error('Written revision instructions are required.')

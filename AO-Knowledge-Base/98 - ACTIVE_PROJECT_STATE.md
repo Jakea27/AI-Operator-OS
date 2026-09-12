@@ -28,15 +28,15 @@ Sprint 017 - Automation-First Content Production MVP
 
 ## Sprint Status
 
-ACTIVE - TASK 2 COMPLETE - REPOSITORY VERIFIED; Task 3 is NOT STARTED.
+ACTIVE - TASK 3 IMPLEMENTATION COMPLETE; automated UI/state, production-build, package, and desktop checks PASS; repository closeout pending.
 
 ## Current Phase
 
-Sprint 017 Task 3 - Simple Content UI - authorized next and not started.
+Sprint 017 Task 3 - Simple Content UI - implementation verified; repository closeout pending.
 
 ## Current Task
 
-Begin Sprint 017 Task 3 - Simple Content UI against the verified Automated Editor Engine.
+Complete Sprint 017 Task 3 documentation and repository closeout without beginning Task 4 CEO QA.
 
 ## Last Completed Sprint
 
@@ -56,11 +56,11 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 017 Task 3 - Simple Content UI against the verified Automated Editor Engine. Do not redesign the Task 2 engine, resume Sprint 016 Task 4, or publish the rejected pilot.
+Complete Sprint 017 Task 3 repository closeout, then begin Task 4 - Windows Integration and CEO QA. Do not resume Sprint 016 Task 4 or publish the rejected pilot.
 
 ## Blocking Issues
 
-No implementation blocker is documented. Task 3 is not started.
+No implementation blocker is documented. Task 3 repository closeout remains pending; Task 4 CEO QA has not started.
 
 ## Current Branch
 
@@ -68,11 +68,11 @@ main
 
 ## Last QA Result
 
-Sprint 017 Task 2 automated verification PASS. The content engine generated a structured script through existing Ollama provider routing, generated real Windows System.Speech narration and word timing, rendered a temporary 1080x1920 H.264/AAC MP4 with ASS captions through pinned FFmpeg, verified append-only persistence/recovery behavior, and launched the packaged desktop application. Task 3 UI and CEO workflow QA have not started.
+Sprint 017 Task 3 automated verification PASS. Deterministic tests verified focused UI/review state, approval deduplication, no review-triggered execution, append-only manual revision, decision persistence, and reload reconstruction. A 1440x1000 rendered smoke check showed the expected simple workflow without overflow. Task 4 Windows CEO QA has not started.
 
 ## Last Build Result
 
-Sprint 017 Task 2 `npm run dist:unpacked` completed TypeScript and Vite production build verification: 2,601 modules transformed in 7.21 seconds. The existing large-chunk warning remains non-blocking. Windows unpacked packaging, packaged FFmpeg/System.Speech execution, and packaged desktop launch PASS.
+Sprint 017 Task 3 `npm run build` PASS with TypeScript and Vite; 2,610 modules transformed in 5.15 seconds. `npm run dist:unpacked` PASS with a final 4.70-second Vite build. The existing large-chunk warning remains non-blocking. Packaged FFmpeg/System.Speech execution and packaged desktop startup PASS.
 
 
 
@@ -122,7 +122,25 @@ Sprint 017 Task 2 `npm run dist:unpacked` completed TypeScript and Vite producti
 - Push and synchronization verification: PASS - the implementation commit is present on `origin/main` and local/remote parity is `0/0`.
 - Documentation: COMPLETE.
 - Repository closeout: COMPLETE.
-- Task 3: NOT STARTED.
+- Task 3 state at Task 2 repository closeout: NOT STARTED.
+
+## Sprint 017 Task 3 Simple Content UI
+
+- Implementation: COMPLETE.
+- Automated verification: PASS.
+- TypeScript and Vite production build: PASS.
+- Windows unpacked package and packaged desktop startup: PASS.
+- UI: one `Create Content` route with Reddit Stories source/requirements, prerecorded footage, optional duration/voice/style, and one Generate Video action.
+- Visible job: one current job with Writing/Narrating/Rendering progress, clear failure, manual retry, protected finished-video preview, and result-level decisions.
+- Review ownership: existing Approval Queue; result approvals are deduplicated by result ID and linked back to the append-only job result.
+- Decisions: Approve, written-feedback Revise with separate manual Generate Revision, and Reject; none publishes, uploads, or triggers an external action.
+- Persistence/restart: PASS for job/result/review links and decision state without duplicate approvals or automatic execution.
+- Internal provider executions, Work Items, packages, file-reference forms, QA forms, and IDs: not exposed by the focused workflow.
+- New stores or persistence keys: NONE.
+- Task 2 engine redesign, publishing, upload, AI footage, automatic retry/revision, and legacy deletion: NONE.
+- Documentation: UPDATED locally.
+- Repository closeout: PENDING.
+- Task 4 Windows CEO QA: NOT STARTED.
 
 ## CEO Product Reset - 2026-09-12
 
@@ -583,7 +601,7 @@ Sprint 017 Task 2 `npm run dist:unpacked` completed TypeScript and Vite producti
 - Working Tree Status: CLEAN at committed GitHub repository state; connected GitHub workflow contains no uncommitted application changes
 - Repository Push Status: PUSHED - Sprint 017 Task 2 implementation/documentation commit verified on origin/main
 - Repository Synchronization Status: VERIFIED - local `main` and `origin/main` were `0/0` at the Task 2 implementation checkpoint
-- Repository Verification Status: VERIFIED - Task 2 implementation, automated verification, build/package validation, documentation, and repository closeout COMPLETE; Task 3 NOT STARTED
+- Repository Verification Status: VERIFIED - Task 2 implementation, automated verification, build/package validation, documentation, and repository closeout COMPLETE; Task 3 was NOT STARTED at this checkpoint
 - Last Verified Date: 2026-09-12
 
 ## Rules

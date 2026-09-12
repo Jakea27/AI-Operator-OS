@@ -33,10 +33,15 @@ Sprint 015 - Multi-Business Management.
 - Reddit Stories is the first typed format module. Shared writing, narration, caption, footage, render, job, preview, and review capabilities remain format-independent.
 - Windows MVP narration uses a fixed Electron-main `System.Speech` helper with word timing. Rendering uses a pinned FFmpeg runtime behind validated typed IPC; the renderer receives no generic filesystem or process access.
 - Attempts and result versions are append-only. Failures, startup interruptions, retries, revisions, and prior review decisions remain reconstructable; no automatic retry, revision, publication, or external action is authorized.
-- Sprint 017 Task 2 Automated Editor Engine implementation, automated verification, documentation, commit, push, and repository closeout are complete; Task 3 is not started.
+- Sprint 017 Task 2 Automated Editor Engine implementation, automated verification, documentation, commit, push, and repository closeout are complete. At that closeout checkpoint, Task 3 was not started.
 - Task 2 added the frozen Content Production Job model/store, strict Reddit Stories script format, a narrow existing-Execution-Core script request, Windows System.Speech word timing, deterministic ASS captions, pinned FFmpeg rendering, secure Electron-main IPC, protected local paths/preview, append-only results, failure reporting, and manual retry/revision entry points.
 - Real local verification produced a temporary 1080x1920 H.264/AAC vertical MP4 and removed its fixtures. Provider verification passed through Ollama / `qwen2.5:7b`. The unpacked Windows application executed its packaged FFmpeg/TTS resources and launched successfully.
 - Task 2 did not add a content UI route, publishing, upload, AI-generated footage, automatic retries, a second provider/execution system, or unrelated architecture.
+- Sprint 017 Task 3 Simple Content UI implementation and automated verification are complete; repository closeout is pending and Task 4 Windows CEO QA has not started.
+- Task 3 added one Create Content route for Reddit Stories with topic/source, requirements, prerecorded footage, optional duration/voice/style, one Generate Video action, understandable Task 2 progress/failure/manual retry, protected video preview, and focused Approve/Revise/Reject controls.
+- Approval Queue remains decision owner. Result approvals are deduplicated by result ID; revision feedback is saved without AI execution and a separate CEO action starts the append-only revision attempt.
+- Deterministic UI/state and restart persistence, Task 2 media tests, real provider routing, TypeScript/Vite production build, unpacked Windows packaging, packaged resource execution, desktop startup, and rendered desktop-layout smoke checks PASS.
+- Task 3 added no store, persistence key, provider/execution path, publication/upload, AI footage, automatic retry/revision, legacy deletion, or unrelated system.
 
 - The Dashboard is now treated as the CEO Command Center.
 - The Command Center should answer: "What requires my attention right now?"
@@ -82,7 +87,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3` and Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc` are pushed and repository verified. Task 3 UI remains not started. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
+- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3` and Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc` are pushed and repository verified. Task 3 UI implementation and automated verification are complete with repository closeout pending. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -216,12 +221,13 @@ Sprint 015 - Multi-Business Management.
 - Task 3 Implementation Commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
 - Task 3 Initializer Fix / Final Application Source Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
 - Task 3 Verification: build PASS; real 44.97-second 1080p 9:16 asset produced; 11/11 QA PASS; final CEO approval APPROVED; version locked; restart persistence PASS.
-- Current Task: Sprint 017 Task 3 - Simple Content UI - NOT STARTED.
+- Current Task: Sprint 017 Task 3 - Simple Content UI - repository closeout pending.
 - Task 1 Status: COMPLETE - ARCHITECTURE FREEZE PASS - REPOSITORY VERIFIED - APPLICATION IMPLEMENTATION NOT PERFORMED.
 - Task 1 Commit: `304ad17486df539b7efa20b2b360e3a624b22ab3` pushed and verified on `origin/main`.
 - Task 2 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
-- Task 3 Status: NOT STARTED.
-- Next Required Action: begin Task 3 - Simple Content UI against the verified Automated Editor Engine.
+- Task 3 Status: IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+- Task 4 Status: NOT STARTED.
+- Next Required Action: complete Task 3 repository closeout, then begin Task 4 - Windows Integration and CEO QA.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
 ## Historical Current Handoff

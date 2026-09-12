@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ClipboardCheck,
   ClipboardList,
+  Clapperboard,
   Code2,
   Cpu,
   LayoutDashboard,
@@ -47,6 +48,7 @@ const navigationGroups: NavigationGroup[] = [
     collapsible: false,
     items: [
       { label: 'Command Center', to: '/', icon: LayoutDashboard },
+      { label: 'Create Content', to: '/create-content', icon: Clapperboard },
     ],
   },
   {
@@ -109,6 +111,7 @@ const defaultGroupState = navigationGroups.reduce<Record<string, boolean>>((stat
 
 const titles: Record<string, string> = {
   '/': 'Command Center',
+  '/create-content': 'Create Content',
   '/ceo': 'CEO office',
   '/money': 'Financial cockpit',
   '/opportunities': 'Opportunity Pipeline',

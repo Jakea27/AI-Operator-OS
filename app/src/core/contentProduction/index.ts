@@ -1,4 +1,6 @@
 export * from './contentProductionTypes'
 export * from './contentProductionStore'
 export * from './contentProductionCoordinator'
+export * from './contentProductionPresentation'
+export * from './contentProductionReview'
 export * from './redditStoriesFormat'

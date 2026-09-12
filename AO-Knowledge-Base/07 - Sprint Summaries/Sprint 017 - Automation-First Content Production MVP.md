@@ -1,6 +1,6 @@
 # Sprint 017 - Automation-First Content Production MVP
 
-Status: ACTIVE - TASK 2 COMPLETE - REPOSITORY VERIFIED - TASK 3 NOT STARTED
+Status: ACTIVE - TASK 3 IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - REPOSITORY CLOSEOUT PENDING
 Owner: Jake Allen  
 Activated: 2026-09-12  
 Timebox: Four development days
@@ -218,13 +218,37 @@ Implement script, narration, caption timing, footage preparation, and vertical M
 - Production build: PASS; the final unpacked-package gate reran TypeScript and Vite and transformed 2,601 modules in 7.21 seconds. Existing large-chunk warning remains non-blocking.
 - Windows unpacked package: PASS. FFmpeg and the System.Speech helper executed from `app.asar.unpacked`, required Electron engine files were present in `app.asar`, and the packaged desktop executable launched and shut down successfully with an isolated temporary profile.
 - Scope verification: PASS. No Task 3 route/UI, publication, upload, AI-generated footage, automatic retry, automatic revision, scheduler, unrelated system, or legacy-data mutation was added.
-- Task 3 remains NOT STARTED.
+- Task 3 state at Task 2 repository closeout: NOT STARTED.
 
 ## Task 3 - Simple Content UI
 
-Status: NOT STARTED.
+Status: IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
 
 Implement the minimum Create, progress, preview, and Approve/Revise/Reject experience. Legacy operational forms must not enter the normal workflow.
+
+### Implementation Summary
+
+- Added one primary `Create Content` route and navigation entry for the `reddit-stories` format.
+- Added one concise input surface for topic/source story, requirements, prerecorded footage, optional target duration, installed Windows voice, and style, with one `Generate Video` action.
+- Reused the verified Task 2 job store and coordinator. The UI creates one persisted job and shows only that current visible job rather than exposing provider executions, Work Items, packages, file-reference forms, QA forms, or internal IDs.
+- Added understandable Writing, Narrating, and Rendering progress, persisted failure details, and a manual Retry action. Failed revision retries preserve the written revision instructions.
+- Added protected finished-video preview and reveal-in-folder through the existing Task 2 Electron bridge.
+- Reused Approval Queue as the decision owner. Each result receives at most one deduplicated approval linked by result ID; the focused UI exposes Approve, Revise, and Reject without requiring the CEO to operate the Approval Queue.
+- Approve and Reject preserve the exact result and decision history and perform no publication. Revise requires written instructions; saving feedback performs no AI work, and a separate `Generate Revision` action starts the append-only Task 2 revision attempt.
+- No Task 2 engine redesign, duplicate store, new persistence key, publishing, upload, AI-generated footage, automatic retry/revision, legacy deletion, or unrelated system was added.
+
+### Automated Verification
+
+- TypeScript: PASS.
+- Deterministic UI/state verification: PASS for one-result/one-approval deduplication, required revision feedback, no review-triggered execution, manual revision separation, Approve/Reject/Needs Revision state, persisted review linkage, reload reconstruction, and preserved revision instructions on manual retry.
+- Task 2 deterministic media/engine verification: PASS.
+- Existing provider path: PASS through Ollama / `qwen2.5:7b` in 6,439 ms.
+- Vite production build: PASS; 2,610 modules transformed in 5.15 seconds. The existing large-chunk warning remains non-blocking.
+- Windows unpacked package: PASS; its final embedded TypeScript/Vite build transformed 2,610 modules in 4.70 seconds.
+- Packaged FFmpeg/System.Speech execution and packaged desktop startup: PASS.
+- Rendered UI smoke verification: PASS at a 1440x1000 desktop viewport with no horizontal overflow; expected business inputs, Generate Video action, and local/no-publishing boundary were present.
+- Persistence/restart verification: PASS using a second store instance over the same isolated in-memory storage; job/result approval links and Approve/Needs Revision/Reject decisions remained intact with no duplicate approval or automatic execution.
+- Task 4 Windows CEO QA: NOT STARTED.
 
 ## Task 4 - Windows Integration and CEO QA
 
@@ -264,4 +288,4 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 
 ## Next Required Action
 
-Begin Task 3 - Simple Content UI against the verified Automated Editor Engine. Implement only the minimum Create, progress, preview, and Approve/Revise/Reject experience; keep legacy operational forms out of the normal workflow. Do not redesign the Task 2 engine or add publishing.
+Complete Task 3 repository closeout, then begin Task 4 - Windows Integration and CEO QA. Do not claim CEO QA before the real Windows workflow is manually verified.

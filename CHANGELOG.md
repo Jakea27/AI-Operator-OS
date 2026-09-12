@@ -1,5 +1,13 @@
 # Changelog
 
+## Sprint 017 Task 3 - Simple Content UI - 2026-09-12
+
+- Added a focused Reddit Stories Create Content route with one Generate Video action and one visible persisted job.
+- Added clear writing/narration/rendering progress, failure/manual retry, protected video preview, and focused Approve/Revise/Reject controls backed by the existing Approval Queue.
+- Preserved manual revision separation, append-only Task 2 attempts/results, review history, and the no-publishing boundary.
+- Automated UI/state, restart persistence, engine/media, real provider, TypeScript/Vite, unpacked Windows package, packaged-resource, desktop-startup, and layout-smoke checks PASS.
+- No Task 2 redesign, duplicate store/key, publishing/upload, AI footage, automatic retry/revision, or legacy deletion was introduced. Repository closeout is pending; Task 4 CEO QA is not started.
+
 ## Sprint 017 Task 2 - Repository Closeout - 2026-09-12
 
 - Verified Sprint 017 Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc` on `origin/main` at local/remote parity `0/0`.
