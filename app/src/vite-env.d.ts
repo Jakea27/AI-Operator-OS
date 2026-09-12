@@ -7,5 +7,6 @@ interface Window {
   operatorOS?: {
     platform: string
     version: string
+    contentProduction: import('./core/contentProduction').ContentProductionBridge
   }
 }

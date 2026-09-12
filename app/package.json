@@ -14,12 +14,17 @@
     "dev": "npm run build && concurrently -k \"vite build --watch --configLoader runner\" \"vite preview --configLoader runner --port 5173 --strictPort\" \"wait-on http://localhost:5173 && electron .\"",
     "dev:desktop": "npm run build && concurrently -k -n BUILD,WEB,ELECTRON -c green,cyan,magenta \"vite build --watch --configLoader runner\" \"vite preview --configLoader runner --host 127.0.0.1 --port 5173 --strictPort\" \"wait-on http-get://127.0.0.1:5173/ && electron .\"",
     "build": "tsc --noEmit && vite build --configLoader runner",
+    "verify:content-engine": "tsx scripts/verify-content-production-engine.ts",
+    "verify:content-provider": "tsx scripts/verify-content-provider.ts",
+    "verify:content-package": "node scripts/verify-content-package.cjs",
     "preview": "vite preview --configLoader runner",
     "dist": "npm run build && electron-builder --win nsis portable --config electron-builder.json",
     "dist:installer": "npm run build && electron-builder --win nsis --config electron-builder.json",
-    "dist:portable": "npm run build && electron-builder --win portable --config electron-builder.json"
+    "dist:portable": "npm run build && electron-builder --win portable --config electron-builder.json",
+    "dist:unpacked": "npm run build && electron-builder --dir --win --config electron-builder.json"
   },
   "dependencies": {
+    "ffmpeg-static": "5.3.0",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -39,6 +44,7 @@
     "electron-builder": "^25.1.8",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "tsx": "4.23.13",
     "typescript": "^5.7.2",
     "vite": "^6.0.5",
     "wait-on": "^8.0.1"

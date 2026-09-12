@@ -28,15 +28,15 @@ Sprint 017 - Automation-First Content Production MVP
 
 ## Sprint Status
 
-ACTIVE - TASK 1 COMPLETE AND REPOSITORY VERIFIED; Task 2 is authorized and not started.
+ACTIVE - TASK 2 IMPLEMENTATION COMPLETE; automated verification and Windows package checks PASS; repository closeout pending.
 
 ## Current Phase
 
-Sprint 017 Task 2 - Automated Editor Engine - authorized, not started.
+Sprint 017 Task 2 - Automated Editor Engine - implementation verified; repository closeout pending.
 
 ## Current Task
 
-Begin Sprint 017 Task 2 - Automated Editor Engine from the frozen Task 1 architecture.
+Complete Sprint 017 Task 2 documentation and repository closeout without beginning Task 3.
 
 ## Last Completed Sprint
 
@@ -56,11 +56,11 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 017 Task 2 - Automated Editor Engine. Do not begin Task 3, do not resume Sprint 016 Task 4, and do not publish the rejected pilot.
+Complete Sprint 017 Task 2 repository closeout, then begin Task 3 - Simple Content UI. Do not resume Sprint 016 Task 4 and do not publish the rejected pilot.
 
 ## Blocking Issues
 
-No architecture or repository blocker is documented for Task 2.
+No implementation blocker is documented. Task 2 repository closeout remains pending.
 
 ## Current Branch
 
@@ -68,11 +68,11 @@ main
 
 ## Last QA Result
 
-Sprint 016 Task 3 technical workflow QA passed, but the CEO rejected the product experience and finished pilot as unsuitable for publication. The pilot proved persistence, versioning, QA, and approval controls; it also proved that manual production, manual record entry, 26 visible Work Items, and external Clipchamp editing violate AO's intended automation-first operating model.
+Sprint 017 Task 2 automated verification PASS. The content engine generated a structured script through existing Ollama provider routing, generated real Windows System.Speech narration and word timing, rendered a temporary 1080x1920 H.264/AAC MP4 with ASS captions through pinned FFmpeg, verified append-only persistence/recovery behavior, and launched the packaged desktop application. Task 3 UI and CEO workflow QA have not started.
 
 ## Last Build Result
 
-`npm.cmd run build` completed TypeScript and Vite production build verification after the Task 3 initializer fix: 2,601 modules transformed and build completed in 5.08 seconds. The existing large-chunk warning remains non-blocking. Desktop relaunch and restart persistence PASS.
+Sprint 017 Task 2 `npm run dist:unpacked` completed TypeScript and Vite production build verification: 2,601 modules transformed in 5.57 seconds. The existing large-chunk warning remains non-blocking. Windows unpacked packaging, packaged FFmpeg/System.Speech execution, and packaged desktop launch PASS.
 
 
 
@@ -101,7 +101,26 @@ Sprint 016 Task 3 technical workflow QA passed, but the CEO rejected the product
 - Architecture/documentation commit: `304ad17486df539b7efa20b2b360e3a624b22ab3`.
 - Push and repository verification: PASS; commit verified on `origin/main` with local/remote parity `0/0` before closeout metadata regeneration.
 - Repository closeout: COMPLETE.
-- Task 2: AUTHORIZED - NOT STARTED.
+- Task 2 state at Task 1 closeout: AUTHORIZED - NOT STARTED.
+
+## Sprint 017 Task 2 Automated Editor Engine
+
+- Implementation: COMPLETE.
+- Automated verification: PASS.
+- TypeScript: PASS.
+- Vite production build: PASS.
+- Windows unpacked package and desktop launch: PASS.
+- Provider path: PASS through existing Execution Core, Capability Resolver, Provider Manager, Ollama, and `qwen2.5:7b`.
+- Job persistence: existing frozen key `ai-operator-os-content-production-jobs-v1`; no additional persistence key.
+- Engine output: generated narration WAV, word timings, deterministic ASS captions, and automatically looped/cropped/trimmed 1080x1920 H.264/AAC MP4.
+- Recovery: structured stage failures, partial-output cleanup, interrupted-attempt normalization, and manual retry only.
+- History: attempts and results append; prior executions/results remain preserved.
+- Electron security: typed IPC, exact sender-origin validation, native footage dialog, extension/canonical-path checks, protected output root and media protocol, fixed PowerShell helper, FFmpeg argument arrays with `shell: false`, and process cancellation at shutdown.
+- Task 3 UI: NOT IMPLEMENTED.
+- Publishing, upload, AI-generated footage, and automatic retry/revision: NOT IMPLEMENTED.
+- Documentation: UPDATED locally.
+- Repository closeout: PENDING.
+- Task 3: NOT STARTED.
 
 ## CEO Product Reset - 2026-09-12
 

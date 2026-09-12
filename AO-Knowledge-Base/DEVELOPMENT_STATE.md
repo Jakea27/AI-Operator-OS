@@ -8,7 +8,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Sprint 016 Task 3 production build PASS. `npm.cmd run build` completed TypeScript and Vite after the initializer fix: 2,601 modules transformed in 5.08 seconds. The existing large-chunk warning remains non-blocking. Desktop relaunch and restart persistence also passed.
+Sprint 017 Task 2 production build and Windows package PASS. `npm run dist:unpacked` completed TypeScript and Vite: 2,601 modules transformed in 5.57 seconds. The existing large-chunk warning remains non-blocking. Packaged FFmpeg/System.Speech execution and packaged desktop launch also passed.
 
 Command used:
 
@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. Task 1 repository/application inspection, architecture freeze, documentation, commit, push, and repository verification are complete. Task 2 is authorized and not started. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. Task 1 is complete and repository verified. Task 2 implementation and automated verification are complete with repository closeout pending. Task 3 is not started. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Begin Task 2 - Automated Editor Engine from the frozen Task 1 architecture. Task 3 remains not started.
+Complete Task 2 repository closeout, then begin Task 3 - Simple Content UI against the verified engine.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 application implementation has NOT STARTED. Task 1 architecture freeze and repository closeout are complete. Task 2 is authorized and not started.
+Sprint 017 Task 2 application implementation is COMPLETE. Automated engine, provider, media, package, and desktop verification PASS. Repository closeout is pending. Task 3 is NOT STARTED.
 
 Required MVP input:
 - topic or source story;
@@ -85,7 +85,34 @@ Task 1 documentation: COMPLETE.
 Task 1 architecture/documentation commit: `304ad17486df539b7efa20b2b360e3a624b22ab3`.
 Task 1 push and repository verification: PASS.
 Task 1 repository closeout: COMPLETE.
-Task 2: AUTHORIZED - NOT STARTED.
+Task 2: IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+
+Task 2 implementation:
+- typed Content Production Job Store under `ai-operator-os-content-production-jobs-v1`;
+- append-only job attempts and rendered result versions with interruption recovery and manual retry/revision only;
+- strict `reddit-stories` format input/instruction/result parser for hook, narration, and CTA;
+- narrow content-script Execution Request inside existing Execution Core and provider routing;
+- Windows System.Speech narration and `SpeakProgress.AudioPosition` word timing;
+- deterministic ASS caption/hook/CTA generation;
+- pinned `ffmpeg-static` 5.3.0 runtime for loop/crop/trim/duration-match and 1080x1920 H.264/AAC output;
+- typed secure Electron IPC, native footage selection, protected local output/preview, child-process shutdown cancellation, intermediate/partial-output cleanup, and ASAR unpacking for executable resources.
+
+Task 2 automated verification:
+- Electron JavaScript syntax: PASS.
+- TypeScript: PASS.
+- Deterministic store/parser/caption/path/failure tests: PASS.
+- Existing provider path through Ollama / `qwen2.5:7b`: PASS.
+- Real temporary System.Speech + FFmpeg vertical MP4 integration: PASS.
+- Vite production build: PASS, 2,601 modules in 5.57 seconds.
+- Windows unpacked package resource execution: PASS.
+- Packaged desktop launch/shutdown: PASS.
+- Task 3 UI changes: NONE.
+- Publication, upload, AI-generated footage, automatic retry/revision, and unrelated systems: NONE.
+
+Task 2 implementation checkpoint: pending commit.
+Task 2 documentation: UPDATED locally.
+Task 2 repository closeout: PENDING.
+Task 3: NOT STARTED.
 
 ## Sprint 016 Implementation Status
 

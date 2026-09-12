@@ -490,6 +490,15 @@ export type ExecutionInput = {
   notes: string
 }
 
+export type ContentScriptExecutionInput = {
+  requestId: string
+  jobId: string
+  attemptId: string
+  formatId: string
+  instructions: string
+  outputRequirements: string
+}
+
 export type ExecutionUpdate = Partial<Pick<
   ExecutionRecord,
   | 'title'

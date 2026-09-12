@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 017 Task 2 - Automated Editor Engine - 2026-09-12
+
+- Added the shared append-only Content Production Job engine and strict Reddit Stories format module.
+- Routed structured script generation through existing Execution Core, Capability Resolver, Provider Manager, and local Ollama architecture.
+- Added fixed Windows System.Speech TTS/word timing, deterministic ASS captions, and pinned FFmpeg vertical-video rendering.
+- Added protected local footage/output handling and typed Electron IPC with no generic filesystem or process bridge.
+- Verified persistence/recovery semantics, malformed-output rejection, manual retry, real temporary media rendering, provider execution, production build, unpacked package resources, and desktop launch.
+- Task 3 UI, publishing, uploads, AI-generated footage, and automatic retry/revision remain unimplemented. Task 2 repository closeout is pending.
+
 ## Sprint 017 Task 1 - Repository Closeout - 2026-09-12
 
 - Verified Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3` on `origin/main`.

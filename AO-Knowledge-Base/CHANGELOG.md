@@ -1,5 +1,15 @@
 # AO Knowledge Base Changelog
 
+## Sprint 017 Task 2 - Automated Editor Engine - 2026-09-12
+
+- Implemented the shared Content Production Job engine and the first typed `reddit-stories` format without adding the Task 3 UI.
+- Reused Execution Core, Capability Resolver, Provider Manager, and Ollama for provider-independent structured hook/narration/CTA script generation.
+- Added Windows System.Speech narration with word timing, deterministic ASS captions, and pinned FFmpeg footage loop/crop/trim/duration matching to 1080x1920 H.264/AAC MP4.
+- Added secure typed Electron-main IPC, native footage selection, protected output/preview paths, shutdown cancellation, intermediate cleanup, and partial-output cleanup.
+- Added append-only job attempts/results, interruption recovery, structured failure reporting, and manual retry/revision only under `ai-operator-os-content-production-jobs-v1`.
+- Deterministic engine tests, real local media integration, Ollama / `qwen2.5:7b` provider integration, TypeScript, Vite production build, unpacked Windows packaging, packaged resource execution, and desktop launch PASS.
+- No UI route, publication, upload, AI-generated footage, automatic retry/revision, legacy-data migration, or unrelated system was added. Repository closeout is pending; Task 3 is not started.
+
 ## Sprint 017 Task 1 - Repository Closeout - 2026-09-12
 
 - Verified architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3` on `origin/main` with local/remote parity `0/0`.

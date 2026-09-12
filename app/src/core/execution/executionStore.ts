@@ -27,6 +27,7 @@ import {
 } from './executionAudit'
 import {
   CostRecord,
+  ContentScriptExecutionInput,
   ExecutionEvent,
   ExecutionInput,
   ExecutionLifecycleTransitionInput,
@@ -614,6 +615,97 @@ export const executionStore = {
     return execution
   },
 
+  createContentScriptExecution(input: ContentScriptExecutionInput) {
+    const existing = state.find((execution) =>
+      execution.executionRequest?.requestId === input.requestId ||
+      (
+        execution.executionRequest?.correlationMetadata.contentProductionJobId === input.jobId &&
+        execution.executionRequest?.correlationMetadata.contentProductionAttemptId === input.attemptId
+      ),
+    )
+    if (existing) return existing
+
+    const timestamp = now()
+    const executionId = generateExecutionCode(state)
+    const internalReferenceId = `content-production:${input.jobId}:${input.attemptId}`
+    const execution: ExecutionRecord = {
+      id: id('execution'),
+      executionId,
+      title: `Content script execution for ${input.jobId}`,
+      description: `Provider-independent content script execution for ${input.formatId}. The visible content job owns orchestration; Execution Core owns this execution history.`,
+      status: 'Prepared',
+      sourceType: 'Execution Request',
+      priority: 'Medium',
+      executionType: 'Future AI',
+      riskLevel: 'Low',
+      workItem: {
+        workItemRecordId: internalReferenceId,
+        workItemId: internalReferenceId,
+        title: `Automated ${input.formatId} script generation`,
+        projectId: '',
+        projectCode: '',
+        businessId: '',
+        businessCode: '',
+      },
+      executionRequest: {
+        requestId: input.requestId,
+        status: 'Built',
+        requestedCapability: 'Text Generation',
+        workItemRecordId: internalReferenceId,
+        workItemId: internalReferenceId,
+        projectId: '',
+        projectCode: '',
+        businessAssetProjectId: '',
+        blueprintDeliverableId: '',
+        blueprintDeliverableName: 'Content Script',
+        knowledgeReferenceIds: [],
+        instructions: input.instructions,
+        outputRequirements: input.outputRequirements,
+        correlationMetadata: {
+          executionKind: 'Content Script Generation',
+          contentProductionJobId: input.jobId,
+          contentProductionAttemptId: input.attemptId,
+          contentFormatId: input.formatId,
+        },
+        createdAt: timestamp,
+      },
+      requestLifecycle: initialExecutionRequestLifecycle(timestamp),
+      selectedCapabilities: [{
+        capabilityId: 'Text Generation',
+        name: 'Text Generation',
+        category: 'Execution Request Capability',
+      }],
+      selectedTools: [],
+      selectedProviders: [],
+      businessId: '',
+      businessCode: '',
+      businessName: 'Content Production',
+      projectId: '',
+      projectCode: '',
+      projectName: 'Content Production Job',
+      departmentId: '',
+      departmentCode: '',
+      departmentName: 'Content Production',
+      managerName: 'Unassigned',
+      operatorName: 'AI Operator OS',
+      timing: { preparedAt: timestamp },
+      estimatedCost: 0,
+      actualCost: 0,
+      costRecords: [],
+      events: [event(`Content script Execution Request established for ${input.jobId} attempt ${input.attemptId}.`, timestamp)],
+      transitionHistory: [],
+      logs: [],
+      retryHistory: [],
+      failures: [],
+      notes: 'Automatically created internal execution lineage. No Project, Blueprint, or Work Item record was created.',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
+
+    persist([execution, ...state])
+    return execution
+  },
+
   createRetryExecution(executionRecordId: string) {
     const failedExecution = state.find((execution) => execution.id === executionRecordId)
     const requestId = failedExecution?.executionRequest?.requestId
@@ -788,17 +880,21 @@ export const executionStore = {
 
     const routing = capabilityResolver.resolveCapabilityRequest(capabilityRequest)
 
+    const isContentScriptGeneration = request.correlationMetadata.executionKind === 'Content Script Generation'
     const isCreativeConceptDevelopment = request.correlationMetadata.workOrderType === 'Develop Creative Concepts' ||
       request.correlationMetadata.workOrderKind === 'Creative Concept Development'
     const providerResult = routing.status === 'Routed'
       ? await providerManager.executePrompt({
         capabilityRequest,
         prompt,
-        systemPrompt: isCreativeConceptDevelopment
-          ? 'You are AI Operator OS executing one approved local provider request for creative concept development. Return valid JSON only with exactly 4 concept candidates. Do not publish, approve, rank, create blueprints, create work orders, or update final deliverables.'
-          : 'You are AI Operator OS executing one approved local provider request. Return only draft content for CEO review. Do not publish, approve, or update final deliverables.',
+        systemPrompt: isContentScriptGeneration
+          ? 'You are AI Operator OS executing one provider-independent content script request. Return one valid JSON object matching the requested schema. Do not publish, approve, create projects, create work items, or trigger another execution.'
+          : isCreativeConceptDevelopment
+            ? 'You are AI Operator OS executing one approved local provider request for creative concept development. Return valid JSON only with exactly 4 concept candidates. Do not publish, approve, rank, create blueprints, create work orders, or update final deliverables.'
+            : 'You are AI Operator OS executing one approved local provider request. Return only draft content for CEO review. Do not publish, approve, or update final deliverables.',
         temperature: 0.2,
-        maxTokens: isCreativeConceptDevelopment ? 900 : request.blueprintDeliverableName === 'Script' ? 1200 : 240,
+        maxTokens: isContentScriptGeneration ? 1800 : isCreativeConceptDevelopment ? 900 : request.blueprintDeliverableName === 'Script' ? 1200 : 240,
+        structuredResponse: isContentScriptGeneration,
         metadata: providerExecutionMetadata(working),
       })
       : undefined
@@ -1377,6 +1473,7 @@ export function useExecutionStore() {
     createExecution: executionStore.createExecution,
     createExecutionFromQueueItem: executionStore.createExecutionFromQueueItem,
     createExecutionFromWorkOrder: executionStore.createExecutionFromWorkOrder,
+    createContentScriptExecution: executionStore.createContentScriptExecution,
     createRetryExecution: executionStore.createRetryExecution,
     executeProviderRequest: executionStore.executeProviderRequest,
     transitionExecution: executionStore.transitionExecution,

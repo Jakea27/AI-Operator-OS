@@ -3,6 +3,10 @@
   "productName": "AI Operator OS",
   "copyright": "Copyright © 2026 AI Operator",
   "asar": true,
+  "asarUnpack": [
+    "electron/system-speech-tts.ps1",
+    "node_modules/ffmpeg-static/**/*"
+  ],
   "compression": "maximum",
   "directories": {
     "buildResources": "assets",
