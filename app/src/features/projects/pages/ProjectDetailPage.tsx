@@ -2292,7 +2292,15 @@ function WorkOrderBlueprintRow({
   const executionRequest = workOrder?.workOrder?.executionRequest
   const lifecycleState = execution?.requestLifecycle?.status
   const canExecuteProviderPath = Boolean(execution && lifecycleState !== 'Completed' && lifecycleState !== 'Failed')
-  const canApplyDraft = Boolean(execution?.result?.success && execution.result.responseText?.trim() && deliverable.appliedResultId !== execution.result.resultId)
+  const resultWasAlreadyApplied = (resultId?: string) => Boolean(
+    resultId &&
+    deliverable.reviewHistory.some((item) => item.decision === 'Draft Applied' && item.resultId === resultId),
+  )
+  const canApplyDraft = Boolean(
+    execution?.result?.success &&
+    execution.result.responseText?.trim() &&
+    !resultWasAlreadyApplied(execution.result.resultId),
+  )
   const canReviewDraft = deliverable.activeReview && deliverable.reviewStatus === 'Draft'
   const canCreateRevisionWorkOrder = deliverable.reviewStatus === 'Needs Revision' && !deliverable.activeReview && Boolean(deliverable.reviewFeedback?.trim())
   const latestNeedsRevisionReview = deliverable.reviewHistory.find((item) => item.decision === 'Needs Revision')
@@ -2459,7 +2467,7 @@ function WorkOrderBlueprintRow({
                     const revisionCanApply = Boolean(
                       revisionExecution?.result?.success &&
                       revisionExecution.result.responseText?.trim() &&
-                      deliverable.appliedResultId !== revisionExecution.result.resultId,
+                      !resultWasAlreadyApplied(revisionExecution.result.resultId),
                     )
 
                     return (
