@@ -1,8 +1,8 @@
 # Sprint 016 - Shared Short-Form Operating Capability
 
-Status: ACTIVE - TASK 2 IMPLEMENTATION CHECKPOINT VERIFIED; PRODUCTION BUILD AND CEO QA PENDING  
+Status: ACTIVE - TASK 2 COMPLETE - REPOSITORY VERIFIED; TASK 3 NOT STARTED  
 Owner: Jake Allen  
-Last Updated: 2026-09-11
+Last Updated: 2026-09-12
 
 ## Sprint Mission
 
@@ -250,11 +250,11 @@ Task 2 must not implement finished-video QA/final approval, publication/performa
 
 PASS.
 
-Sprint 016 Task 1 architecture is FROZEN. Documentation commit `21b94d5152ae67f7fc2db66245774af880662fb8` is pushed and repository verified. Task 2 implementation commit `1866448d8365c91f402e99eb8aa65786ab0b2618` is pushed and repository verified; its production build and CEO QA remain pending.
+Sprint 016 Task 1 architecture is FROZEN. Documentation commit `21b94d5152ae67f7fc2db66245774af880662fb8` is pushed and repository verified. Task 2 implementation and bounded CEO QA recovery commits through `d389cf19028ea0c00af5e7059d0ec0c9f4ac93ff` are pushed and repository verified. Production build, CEO QA, restart persistence, package creation, and Markdown/JSON export verification passed.
 
 ### Task 2 - Short-Form Production Foundation
 
-Status: IMPLEMENTATION COMPLETE - REMOTE TYPECHECK AND DETERMINISTIC QA PASS - IMPLEMENTATION COMMIT PUSHED AND VERIFIED; PRODUCTION BUILD, CEO QA, AND TASK CLOSEOUT PENDING.
+Status: COMPLETE - PRODUCTION BUILD PASS - CEO QA PASS - RESTART PERSISTENCE PASS - REPOSITORY VERIFIED.
 
 Objective: Extend the existing Creative Production Engine with a reusable Short-Form Video capability.
 
@@ -279,9 +279,17 @@ Finish condition: AO can prepare and manage a complete short-form production pla
 - Corrective result: Short-Form creation now identifies TikTok, YouTube Shorts, and Instagram Reels as supported targets, directs target selection to Project Detail, and accurately preserves existing YouTube support.
 - Corrective copy commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`; pushed to `origin/main` and verified.
 - Follow-up length-guidance commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`; Short-Form Video now prompts for 15-60 seconds while YouTube retains 8-10 minutes.
-- Project-card separator commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; replaces malformed `Â·` with `·`. Relevant Project surfaces contain no remaining mojibake markers. Syntax verification PASS; build/relaunch retest pending.
-- Production build: PENDING because this connected GitHub-only environment does not provide a repository checkout for `npm.cmd run build`; no build PASS is claimed.
-- CEO QA and Task 2 repository closeout: PENDING. Task 3 is not authorized.
+- Project-card separator commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`; replaces malformed `Â·` with `·`. Relevant Project surfaces contain no remaining mojibake markers.
+- QA recovery commit `27767405333709120190f035d275539f5fb3282c`: adds append-preserved retry lifecycles for failed provider executions, raises prompt execution timeout to 120 seconds while retaining 30-second health/discovery limits, and selects the newest completed CEO Needs Revision decision for later revision attempts.
+- Revision output-contract commit `340128f6af9886a7f40615e0b29436fd965aa72a`: makes CEO revision instructions authoritative for revised Hook/Script output instead of appending conflicting standard output requirements.
+- Stale-draft guard commit `29b05d1811a52f4eb1ecc012a77ab793b444415a`: prevents an already-applied execution result from overwriting a newer or approved draft.
+- Manual-approval commit `77a219bc15bda63e7f69acb24724cd2818ac9d2c`: adds explicit CEO approval, approved-content snapshots, decision history, and approval invalidation on later edits for manual Blueprint deliverables.
+- Manual package-lineage label commit `d389cf19028ea0c00af5e7059d0ec0c9f4ac93ff`: exposes the recorded Blueprint review-history reference and truthful `Manual Deliverable` execution label.
+- Production build and desktop relaunch: PASS. The synchronized `npm.cmd run dev:desktop` path completed its required TypeScript/Vite build and launched Build ID `C7X5XItI`.
+- CEO QA: PASS on temporary Project `PROJ-0002`. Verified the shared Short-Form asset, all three target platforms, failed-execution preservation and retry, successful Ollama Hook/Script execution, multiple written revision cycles, authoritative revision output, stale-draft protection, final Hook/Script CEO approval, four manual deliverable approvals, and 6/6 completion.
+- Creative Asset Package QA: PASS. Package `CAP-1789191063129-30hvmo` Version 1 contains all six approved deliverables, is `Export Ready` / `CEO Approved`, persisted through a full app restart, and copied both Markdown and JSON without modifying source records.
+- Safety/boundary verification: PASS. No publishing, upload, scheduling, social API, analytics ingestion, finished-video record, performance record, B2B dependency, new store, or new persistence key was introduced.
+- Task 2 repository closeout: COMPLETE - repository verified. Task 3 remains NOT STARTED.
 
 ### Task 3 - Manual Production, QA, and Finished Asset
 
@@ -388,12 +396,10 @@ Sprint 016 does not authorize:
 - Task 1 Documentation Commit: `21b94d5152ae67f7fc2db66245774af880662fb8`.
 - Task 1 Repository Verification: COMPLETE - PASS.
 - Startup Bundle: VALID.
-- Application Implementation: Task 2 COMPLETE and pushed; production build and CEO QA pending.
+- Application Implementation: Task 2 COMPLETE - REPOSITORY VERIFIED.
 - Task 1: COMPLETE - REPOSITORY VERIFIED.
-- Current Authorized Task: Task 2 - Short-Form Production Foundation.
-- Task 2 Status: IMPLEMENTATION COMPLETE - IMPLEMENTATION COMMIT VERIFIED; PRODUCTION BUILD, CEO QA, AND TASK CLOSEOUT PENDING.
+- Task 2: COMPLETE - build PASS, CEO QA PASS, restart persistence PASS, package/export QA PASS, repository verified.
 - Task 2 Implementation Commit: `1866448d8365c91f402e99eb8aa65786ab0b2618`.
-- Task 2 CEO QA Copy-Fix Commit: `774d4f64f88f862ce08dcdd88d9af0626527c5f2`.
-- Task 2 Short-Form Length-Guidance Commit: `74a7479014d08c7a4772a38c57b773202e15a9c4`.
-- Task 2 Project-Card Separator Commit: `690cb5d9db45fb6003633bef963ec569b38fb99d`.
-- Next Required Action: run `npm.cmd run build` from a synchronized local app checkout, then complete bounded Task 2 CEO QA and repository closeout. Do not begin Task 3.
+- Task 2 Final Source Checkpoint: `d389cf19028ea0c00af5e7059d0ec0c9f4ac93ff`.
+- Task 3 - Manual Production, QA, and Finished Asset: NOT STARTED.
+- Next Required Action: begin Task 3 only from its frozen contract; do not implement publication or performance work from Task 4.
