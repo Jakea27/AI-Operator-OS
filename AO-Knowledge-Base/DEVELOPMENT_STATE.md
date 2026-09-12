@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1 and 2 are complete and repository verified. Task 3 implementation and automated verification are complete with repository closeout pending. Task 4 Windows CEO QA is not started. Sprint 016 stopped and closed after the Task 3 pilot; its Task 4 publication and Task 5 closeout are cancelled.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1-3 are complete and repository verified. Task 4 Windows Integration and CEO QA is not started. Sprint 016 stopped and closed after the Task 3 pilot; its Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Complete Task 3 repository closeout, then begin Task 4 - Windows Integration and CEO QA.
+Begin Task 4 - Windows Integration and CEO QA against the verified Task 2 engine and Task 3 UI.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 Task 3 application implementation is COMPLETE. Automated UI/state, provider, media, production build, package, desktop startup, and restart-persistence verification PASS. Repository closeout is pending. Task 4 CEO QA is NOT STARTED.
+Sprint 017 Task 3 application implementation, automated verification, documentation, commit, push, and repository closeout are COMPLETE. Task 4 CEO QA is NOT STARTED.
 
 Required MVP input:
 - topic or source story;
@@ -113,7 +113,7 @@ Task 2 implementation/documentation checkpoint: `0cc6f771ec2eb4531707cbcb4321a6c
 Task 2 documentation: COMPLETE.
 Task 2 push and synchronization verification: PASS - commit verified on `origin/main` with local/remote parity `0/0`.
 Task 2 repository closeout: COMPLETE.
-Task 3: IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+Task 3: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 
 Task 3 implementation:
 - one primary Create Content route/navigation entry;
@@ -135,9 +135,10 @@ Task 3 verification:
 - Rendered 1440x1000 layout smoke check: PASS; no horizontal overflow.
 - New store/persistence/provider/execution/publication/AI-footage/automatic-retry architecture: NONE.
 
-Task 3 implementation checkpoint: pending commit.
-Task 3 documentation: UPDATED locally.
-Task 3 repository closeout: PENDING.
+Task 3 implementation/documentation checkpoint: `d4124ac85ec80ac3b628615befbc2c4b8e8203fd`.
+Task 3 documentation: COMPLETE.
+Task 3 push and synchronization verification: PASS - commit verified on `origin/main` with local/remote parity `0/0`.
+Task 3 repository closeout: COMPLETE.
 Task 4 Windows Integration and CEO QA: NOT STARTED.
 
 ## Sprint 016 Implementation Status

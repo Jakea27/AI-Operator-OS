@@ -1,12 +1,19 @@
 # Changelog
 
+## Sprint 017 Task 3 - Repository Closeout - 2026-09-12
+
+- Verified Sprint 017 Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd` on `origin/main` at local/remote parity `0/0`.
+- Recorded the focused Simple Content UI, automated checks, production build, Windows package/desktop checks, documentation, and repository closeout as complete.
+- Updated the authoritative repository checkpoint and regenerated the Startup Bundle.
+- Advanced the next required action to Task 4 - Windows Integration and CEO QA while preserving it as NOT STARTED.
+
 ## Sprint 017 Task 3 - Simple Content UI - 2026-09-12
 
 - Added a focused Reddit Stories Create Content route with one Generate Video action and one visible persisted job.
 - Added clear writing/narration/rendering progress, failure/manual retry, protected video preview, and focused Approve/Revise/Reject controls backed by the existing Approval Queue.
 - Preserved manual revision separation, append-only Task 2 attempts/results, review history, and the no-publishing boundary.
 - Automated UI/state, restart persistence, engine/media, real provider, TypeScript/Vite, unpacked Windows package, packaged-resource, desktop-startup, and layout-smoke checks PASS.
-- No Task 2 redesign, duplicate store/key, publishing/upload, AI footage, automatic retry/revision, or legacy deletion was introduced. Repository closeout is pending; Task 4 CEO QA is not started.
+- No Task 2 redesign, duplicate store/key, publishing/upload, AI footage, automatic retry/revision, or legacy deletion was introduced. Repository closeout is complete; Task 4 CEO QA is not started.
 
 ## Sprint 017 Task 2 - Repository Closeout - 2026-09-12
 
