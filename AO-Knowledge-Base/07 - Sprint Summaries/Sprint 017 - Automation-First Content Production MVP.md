@@ -1,6 +1,6 @@
 # Sprint 017 - Automation-First Content Production MVP
 
-Status: ACTIVE - TASK 2 IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - REPOSITORY CLOSEOUT PENDING
+Status: ACTIVE - TASK 2 COMPLETE - REPOSITORY VERIFIED - TASK 3 NOT STARTED
 Owner: Jake Allen  
 Activated: 2026-09-12  
 Timebox: Four development days
@@ -214,8 +214,8 @@ Implement script, narration, caption timing, footage preparation, and vertical M
 - Structured parser verification: PASS for valid and fenced JSON; malformed JSON, surrounding prose, missing fields, and extra fields are rejected without content fabrication.
 - Caption verification: PASS for deterministic phrase grouping and monotonic timing.
 - Local media integration: PASS using temporary generated footage, real Windows `System.Speech` narration/word timing, ASS subtitles, and pinned FFmpeg output. The verified MP4 was 1080x1920 H.264/AAC and all temporary fixtures were removed.
-- Provider integration: PASS through Execution Core -> Capability Resolver -> Provider Manager -> Ollama -> `qwen2.5:7b` -> structured Execution Result. The final verification completed in 401 ms.
-- Production build: PASS; TypeScript and Vite transformed 2,601 modules in 5.57 seconds. Existing large-chunk warning remains non-blocking.
+- Provider integration: PASS through Execution Core -> Capability Resolver -> Provider Manager -> Ollama -> `qwen2.5:7b` -> structured Execution Result. The final verification completed in 3,992 ms.
+- Production build: PASS; the final unpacked-package gate reran TypeScript and Vite and transformed 2,601 modules in 7.21 seconds. Existing large-chunk warning remains non-blocking.
 - Windows unpacked package: PASS. FFmpeg and the System.Speech helper executed from `app.asar.unpacked`, required Electron engine files were present in `app.asar`, and the packaged desktop executable launched and shut down successfully with an isolated temporary profile.
 - Scope verification: PASS. No Task 3 route/UI, publication, upload, AI-generated footage, automatic retry, automatic revision, scheduler, unrelated system, or legacy-data mutation was added.
 - Task 3 remains NOT STARTED.
@@ -264,4 +264,4 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 
 ## Next Required Action
 
-Complete Task 2 repository closeout, then begin Task 3 - Simple Content UI against the verified engine. Do not expand Task 3 into engine redesign or publishing.
+Begin Task 3 - Simple Content UI against the verified Automated Editor Engine. Implement only the minimum Create, progress, preview, and Approve/Revise/Reject experience; keep legacy operational forms out of the normal workflow. Do not redesign the Task 2 engine or add publishing.

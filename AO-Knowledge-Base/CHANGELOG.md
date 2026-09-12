@@ -1,5 +1,12 @@
 # AO Knowledge Base Changelog
 
+## Sprint 017 Task 2 - Repository Closeout - 2026-09-12
+
+- Verified implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc` on `origin/main` with local/remote parity `0/0`.
+- Recorded Task 2 implementation, automated verification, TypeScript/Vite build, Windows packaging, packaged-runtime execution, desktop launch, documentation, and repository closeout as COMPLETE/PASS.
+- Updated the repository checkpoint to the verified Task 2 source commit and regenerated the Startup Bundle.
+- Recorded Task 3 - Simple Content UI as NOT STARTED and made it the next required action without beginning implementation.
+
 ## Sprint 017 Task 2 - Automated Editor Engine - 2026-09-12
 
 - Implemented the shared Content Production Job engine and the first typed `reddit-stories` format without adding the Task 3 UI.
@@ -8,7 +15,7 @@
 - Added secure typed Electron-main IPC, native footage selection, protected output/preview paths, shutdown cancellation, intermediate cleanup, and partial-output cleanup.
 - Added append-only job attempts/results, interruption recovery, structured failure reporting, and manual retry/revision only under `ai-operator-os-content-production-jobs-v1`.
 - Deterministic engine tests, real local media integration, Ollama / `qwen2.5:7b` provider integration, TypeScript, Vite production build, unpacked Windows packaging, packaged resource execution, and desktop launch PASS.
-- No UI route, publication, upload, AI-generated footage, automatic retry/revision, legacy-data migration, or unrelated system was added. Repository closeout is pending; Task 3 is not started.
+- No UI route, publication, upload, AI-generated footage, automatic retry/revision, legacy-data migration, or unrelated system was added. Task 2 repository closeout is complete; Task 3 is not started.
 
 ## Sprint 017 Task 1 - Repository Closeout - 2026-09-12
 

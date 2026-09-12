@@ -1,5 +1,12 @@
 # Changelog
 
+## Sprint 017 Task 2 - Repository Closeout - 2026-09-12
+
+- Verified Sprint 017 Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc` on `origin/main` at local/remote parity `0/0`.
+- Recorded the Automated Editor Engine implementation, automated checks, production build, Windows packaging, documentation, and repository closeout as complete.
+- Updated the authoritative repository checkpoint and regenerated the Startup Bundle.
+- Advanced the next required action to Task 3 - Simple Content UI while preserving Task 3 as NOT STARTED.
+
 ## Sprint 017 Task 2 - Automated Editor Engine - 2026-09-12
 
 - Added the shared append-only Content Production Job engine and strict Reddit Stories format module.
@@ -7,7 +14,7 @@
 - Added fixed Windows System.Speech TTS/word timing, deterministic ASS captions, and pinned FFmpeg vertical-video rendering.
 - Added protected local footage/output handling and typed Electron IPC with no generic filesystem or process bridge.
 - Verified persistence/recovery semantics, malformed-output rejection, manual retry, real temporary media rendering, provider execution, production build, unpacked package resources, and desktop launch.
-- Task 3 UI, publishing, uploads, AI-generated footage, and automatic retry/revision remain unimplemented. Task 2 repository closeout is pending.
+- Task 3 UI, publishing, uploads, AI-generated footage, and automatic retry/revision remain unimplemented. Task 2 repository closeout is complete.
 
 ## Sprint 017 Task 1 - Repository Closeout - 2026-09-12
 
