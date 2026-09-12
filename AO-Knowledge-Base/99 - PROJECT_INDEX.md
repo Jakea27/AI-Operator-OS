@@ -31,13 +31,12 @@ Every AI operator must read the following source documents in this exact order.
 15. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 16. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
 17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md`
-18. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+18. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 017 - Automation-First Content Production MVP.md`
+19. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
-## Active Sprint 016 Handoff
+## Active Sprint Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 3 final application checkpoint is `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`; production build, real 44.97-second 1080p 9:16 finished asset, 11/11 mandatory QA, separate final CEO approval, approved-version locking, and restart persistence all passed. Task 4 - Owned-Page Manual Publication and Performance Recording is AUTHORIZED - NOT STARTED and is the next required action. Publication remains manual and requires real external evidence. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
-
-
+Sprint 016 is STOPPED AND CLOSED AFTER PILOT. Tasks 1-3 remain preserved as verified historical work, but the CEO rejected the manual production design and withdrew Task 4 publication authorization. The pilot must not be published. Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 1 architecture definition and freeze. The next required action is to freeze the smallest modular architecture that turns a topic, requirements, and reusable prerecorded footage into a complete Reddit-story-style vertical MP4 without manual editing. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 

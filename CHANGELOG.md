@@ -1,5 +1,18 @@
 # Changelog
 
+## Sprint 017 Activation - Automation-First Content Production MVP - 2026-09-12
+
+- Recorded the CEO product reset after the Sprint 016 Task 3 pilot.
+- Stopped Sprint 016 after Task 3; withdrew Task 4 publication authorization and cancelled Task 5.
+- Preserved the current application, data, technical QA results, and finished pilot as historical evidence; no deletion is authorized.
+- Recorded that the pilot must not be published.
+- Added the permanent execution-before-administration and outcome-first CEO workflow principles.
+- Activated a four-day MVP focused on one modular Reddit-story-style format using reusable prerecorded footage.
+- Defined the required automated path: topic/requirements plus footage -> script -> TTS -> synchronized captions -> footage timing -> vertical MP4 -> CEO review.
+- Required one visible job per requested video and prohibited manual Clipchamp editing, exposed record-entry workflows, AI-generated footage, automatic publishing, and broad B2B expansion from the MVP.
+- Authorized Sprint 017 Task 1 architecture definition and freeze; application implementation remains blocked until that architecture is frozen.
+
+
 ## Sprint 016 Task 3 - Finished Asset and Repository Closeout - 2026-09-12
 
 - Added Project-owned manual-production metadata, metadata-only source/finished-video references, append-preserved finished-asset versions, 11 mandatory QA checks, separate Approval Queue final review, and approved-version locking.

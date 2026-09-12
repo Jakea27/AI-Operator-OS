@@ -22,19 +22,50 @@ Command used:
 
 ## Current Status
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 4 is AUTHORIZED - NOT STARTED. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED.
-
-
+Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 1 architecture definition. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Begin Sprint 016 Task 4 - Owned-Page Manual Publication and Performance Recording from the frozen contract. Keep publication manual and require real external evidence.
+Inspect the current app and freeze Sprint 017 Task 1. Preserve the existing implementation and data, but design a new simple CEO workflow around one automated Reddit-story-style content format.
 
+## Sprint 017 Implementation Status
 
+Sprint 017 application implementation has NOT STARTED. Documentation authorizes Task 1 architecture definition and freeze only.
+
+Required MVP input:
+- topic or source story;
+- requirements;
+- reusable prerecorded footage;
+- optional duration, voice, and style settings.
+
+Required automated output:
+- generated story/script;
+- generated TTS narration;
+- word-level or phrase-level synchronized captions;
+- hook and CTA text where required by the format;
+- prerecorded-footage trim, crop, loop, and duration matching;
+- rendered vertical MP4;
+- preview plus Approve, Revise, and Reject.
+
+Required UI rule:
+- one requested video is one visible job;
+- internal steps and records remain hidden unless an error or advanced inspection requires them;
+- no external editor is needed for normal production.
+
+Not authorized in the four-day MVP:
+- AI-generated footage;
+- automatic publishing or social-account integration;
+- broad B2B workflows;
+- deletion of legacy code or persisted data;
+- multiple finished content formats;
+- exposed manual package, reference, Work Item, or QA workflows.
+
+Implementation checkpoint: none.
+Build/QA: not started.
 
 ## Sprint 016 Implementation Status
 
-Sprint 016 application implementation: Tasks 2 and 3 COMPLETE; Task 4 AUTHORIZED - NOT STARTED.
+Sprint 016 application implementation stopped after Tasks 2 and 3. Their history remains valid; Task 4 publication and Task 5 closeout are CANCELLED by the CEO product reset.
 
 Task 1 - Architecture Definition and Freeze:
 
@@ -81,8 +112,8 @@ Task 3 - Manual Production, QA, and Finished Asset:
 
 Task 4 - Owned-Page Manual Publication and Performance Recording:
 
-- Status: AUTHORIZED - NOT STARTED.
-- Required boundary: manual publication only; AO records truthful publication evidence and observed metrics without social integration, scheduling, or analytics ingestion.
+- Status: CANCELLED - CEO AUTHORIZATION WITHDRAWN.
+- Reason: the pilot asset and manual production workflow were rejected; publication would validate the wrong product direction.
 
 ## Sprint 015 Implementation Status
 
@@ -350,7 +381,7 @@ Missing Sprint 014 required requirements: NONE.
 - Sprint 016 Task 3 final CEO approval: APPROVED.
 - Sprint 016 Task 3 restart persistence: PASS.
 - Sprint 016 Task 3 repository closeout: COMPLETE.
-- Sprint 016 real publication verification: NOT STARTED; Task 4 is next.
+- Sprint 016 real publication verification: CANCELLED; the rejected pilot must not be published.
 
 ## Historical Sprint QA Status
 

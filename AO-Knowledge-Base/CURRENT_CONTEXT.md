@@ -8,15 +8,25 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 4 - Owned-Page Manual Publication and Performance Recording is AUTHORIZED - NOT STARTED.
-
-
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. The CEO stopped Sprint 016 after its Task 3 pilot proved the technical record/approval workflow but rejected the manual production design, excessive visible Work Items, and confusing interface. Sprint 016 Task 4 is cancelled and the pilot must not be published.
 
 ## Last Completed Sprint
 
 Sprint 015 - Multi-Business Management.
 
 ## Major Decisions Made Recently
+
+- **CEO product reset (2026-09-12):** AO must perform work instead of requiring the CEO to operate internal records.
+- The current application is preserved; deletion is not authorized during the reset.
+- Normal content production must not expose packages, file-reference forms, Work Items, manual QA checklists, queues, or other implementation paperwork.
+- The CEO's normal flow is: provide topic and requirements -> receive completed draft -> Approve, Revise, or Reject.
+- Reddit Stories is the first working content format, not AO's permanent identity.
+- Shared production capabilities must support later formats without rebuilding the engine.
+- The first format uses reusable prerecorded footage; AI-generated footage is not required.
+- AO must generate the script, TTS, word-timed captions, hook/CTA text, footage timing, and vertical MP4.
+- One requested video is one visible job even if internal execution contains multiple steps.
+- Main operational surfaces may remain simple; unused or unproven systems must be hidden from the primary workflow until they perform measurable work.
+- No publication of the rejected Sprint 016 pilot is authorized.
 
 - The Dashboard is now treated as the CEO Command Center.
 - The Command Center should answer: "What requires my attention right now?"
@@ -62,7 +72,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 016 Task 4 from the frozen Owned-Page Manual Publication and Performance Recording contract. Publication remains manual and recorded evidence must be truthful.
+- Complete Sprint 017 Task 1 architecture definition and freeze for the four-day automation-first content MVP. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -196,9 +206,9 @@ Sprint 015 - Multi-Business Management.
 - Task 3 Implementation Commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
 - Task 3 Initializer Fix / Final Application Source Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
 - Task 3 Verification: build PASS; real 44.97-second 1080p 9:16 asset produced; 11/11 QA PASS; final CEO approval APPROVED; version locked; restart persistence PASS.
-- Current Task: Task 4 - Owned-Page Manual Publication and Performance Recording.
-- Task 4 Status: AUTHORIZED - NOT STARTED.
-- Next Required Action: implement the frozen Task 4 record boundary, then manually publish the approved asset to one AO-owned page and record real publication/performance evidence.
+- Current Task: Sprint 017 Task 1 - Automation-First Architecture Definition and Freeze.
+- Task 1 Status: AUTHORIZED - NOT STARTED.
+- Next Required Action: inspect the current application and freeze the smallest end-to-end Reddit-story editing architecture before coding.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
 ## Historical Current Handoff

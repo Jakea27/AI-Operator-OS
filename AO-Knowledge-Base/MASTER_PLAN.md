@@ -3,7 +3,7 @@
 Status: Active  
 Version: 0.1  
 Owner: Jake Allen  
-Last Updated: 2026-09-11
+Last Updated: 2026-09-12
 
 ## Purpose
 
@@ -108,6 +108,22 @@ The operating system manages information, structure, workflows, and context. The
 ### Profit Over Complexity
 
 Complexity is justified only when it creates business value, revenue, risk reduction, or meaningful CEO leverage.
+
+### Execution Before Administrative Expansion
+
+A represented capability is not an operational capability. AO must not describe itself as performing work when it only stores plans, roles, records, or approvals around work the CEO performs manually.
+
+New administrative modules, record types, and visible workflow steps are not justified until the underlying operator can produce a measurable result. Existing internal structure should remain hidden from normal CEO operation unless it supports a decision, exception, audit, or recovery need.
+
+### Outcome-First CEO Experience
+
+The CEO provides goals, constraints, and consequential approvals. AO performs the work, maintains its internal records, and presents results and exceptions.
+
+One requested outcome should appear as one visible job. Internal execution may contain many steps, but those steps must not become repetitive CEO data entry. If a routine workflow requires a walkthrough each time, the product workflow is not acceptable.
+
+### Pilot Failure Is Product Evidence
+
+A technically passing pilot may still fail the product mission. When real use shows that AO increases CEO workload, produces excessive visible records, or leaves the core job manual, the workflow must be stopped and corrected before downstream expansion.
 
 ## Creative Department
 

@@ -1,5 +1,16 @@
 # AO Knowledge Base Changelog
 
+## Sprint 017 Automation-First Product Reset - 2026-09-12
+
+- Stopped and closed Sprint 016 after its Task 3 pilot; withdrew Task 4 publication authorization and cancelled Task 5.
+- Preserved the application, data, verified technical history, and pilot asset without authorizing deletion or publication.
+- Recorded the CEO finding that manual editing, repetitive record entry, 26 Work Items, and unused visible modules violated AO's intended operating model.
+- Added the execution-before-administrative-expansion, outcome-first CEO experience, and pilot-failure-as-product-evidence principles.
+- Activated Sprint 017 - Automation-First Content Production MVP with a four-day timebox.
+- Authorized Task 1 architecture definition and freeze for a modular Reddit-story-style workflow using prerecorded footage.
+- Regenerated the Startup Bundle from 19 authoritative documents with validation PASS.
+
+
 ## Sprint 016 Task 2 - CEO QA and Repository Closeout - 2026-09-12
 
 - Recorded production build and synchronized desktop relaunch PASS as Build ID `C7X5XItI`.

@@ -7,17 +7,17 @@
 - Bundle generation date: 2026-09-12
 - Continuity System Version: 1.1
 - Project Version: 0.1.0-alpha
-- Current Sprint: Sprint 016 - Shared Short-Form Operating Capability
+- Current Sprint: Sprint 017 - Automation-First Content Production MVP
 - Last Completed Sprint: Sprint 015 - Multi-Business Management
-- Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md
+- Current Sprint Summary path: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 017 - Automation-First Content Production MVP.md
 - Repository checkpoint source: AO-Knowledge-Base/98 - ACTIVE_PROJECT_STATE.md
-- Repository Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`
-- Checkpoint Description: Verified final Sprint 016 Task 3 application source after production build, real finished-asset production, 11/11 QA, final CEO approval, approved-version locking, and restart persistence.
+- Repository Checkpoint: `f463b45b03a6ece6e05799d54c9486ea192335c6`
+- Checkpoint Description: Preserved Sprint 016 Task 3 application plus the committed pilot MP4 before the CEO-approved automation-first product reset.
 - Working Tree Status: CLEAN at committed GitHub repository state; connected GitHub workflow contains no uncommitted application changes
-- Repository Push Status: PUSHED - Sprint 016 Task 3 implementation and initializer fix verified on origin/main
-- Repository Verification Status: VERIFIED - Task 3 COMPLETE; documentation synchronized; Task 4 AUTHORIZED - NOT STARTED
+- Repository Push Status: PUSHED - preserved pre-reset application and pilot asset verified on origin/main
+- Repository Verification Status: VERIFIED - pre-reset checkpoint preserved; Sprint 017 reset documentation synchronized; Task 1 architecture definition authorized
 - Last Verified Date: 2026-09-12
-- Number of included documents: 18
+- Number of included documents: 19
 - Bundle Validation: VALID
 
 ## Included Documents
@@ -39,7 +39,8 @@
 15. DEVELOPMENT_STATE - `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 16. CURRENT_CONTEXT - `AO-Knowledge-Base/CURRENT_CONTEXT.md`
 17. Sprint 016 - Shared Short-Form Operating Capability - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md`
-18. OPERATOR_STARTUP_REPORT_TEMPLATE - `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+18. Sprint 017 - Automation-First Content Production MVP - `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 017 - Automation-First Content Production MVP.md`
+19. OPERATOR_STARTUP_REPORT_TEMPLATE - `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
 ---
 
@@ -78,13 +79,12 @@ Every AI operator must read the following source documents in this exact order.
 15. `AO-Knowledge-Base/DEVELOPMENT_STATE.md`
 16. `AO-Knowledge-Base/CURRENT_CONTEXT.md`
 17. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md`
-18. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
+18. `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 017 - Automation-First Content Production MVP.md`
+19. `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
 
-## Active Sprint 016 Handoff
+## Active Sprint Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 3 final application checkpoint is `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`; production build, real 44.97-second 1080p 9:16 finished asset, 11/11 mandatory QA, separate final CEO approval, approved-version locking, and restart persistence all passed. Task 4 - Owned-Page Manual Publication and Performance Recording is AUTHORIZED - NOT STARTED and is the next required action. Publication remains manual and requires real external evidence. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
-
-
+Sprint 016 is STOPPED AND CLOSED AFTER PILOT. Tasks 1-3 remain preserved as verified historical work, but the CEO rejected the manual production design and withdrew Task 4 publication authorization. The pilot must not be published. Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 1 architecture definition and freeze. The next required action is to freeze the smallest modular architecture that turns a topic, requirements, and reusable prerecorded footage into a complete Reddit-story-style vertical MP4 without manual editing. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 
@@ -310,7 +310,7 @@ AI Operator OS manages multiple automation platforms and business blueprints. It
 Status: Active  
 Version: 0.1  
 Owner: Jake Allen  
-Last Updated: 2026-09-11
+Last Updated: 2026-09-12
 
 ## Purpose
 
@@ -415,6 +415,22 @@ The operating system manages information, structure, workflows, and context. The
 ### Profit Over Complexity
 
 Complexity is justified only when it creates business value, revenue, risk reduction, or meaningful CEO leverage.
+
+### Execution Before Administrative Expansion
+
+A represented capability is not an operational capability. AO must not describe itself as performing work when it only stores plans, roles, records, or approvals around work the CEO performs manually.
+
+New administrative modules, record types, and visible workflow steps are not justified until the underlying operator can produce a measurable result. Existing internal structure should remain hidden from normal CEO operation unless it supports a decision, exception, audit, or recovery need.
+
+### Outcome-First CEO Experience
+
+The CEO provides goals, constraints, and consequential approvals. AO performs the work, maintains its internal records, and presents results and exceptions.
+
+One requested outcome should appear as one visible job. Internal execution may contain many steps, but those steps must not become repetitive CEO data entry. If a routine workflow requires a walkthrough each time, the product workflow is not acceptable.
+
+### Pilot Failure Is Product Evidence
+
+A technically passing pilot may still fail the product mission. When real use shows that AO increases CEO workload, produces excessive visible records, or leaves the core job manual, the workflow must be stopped and corrected before downstream expansion.
 
 ## Creative Department
 
@@ -1962,29 +1978,23 @@ AI Operator OS
 
 ## Current Milestone
 
-AO-016 - Shared Short-Form Operating Capability
+AO-017 - Automation-First Content Production MVP
 
 ## Current Sprint
 
-Sprint 016 - Shared Short-Form Operating Capability
+Sprint 017 - Automation-First Content Production MVP
 
 ## Sprint Status
 
-ACTIVE - Tasks 1, 2, and 3 COMPLETE - REPOSITORY VERIFIED; Task 4 AUTHORIZED - NOT STARTED.
-
-
+ACTIVE - CEO PRODUCT RESET APPROVED; Task 1 architecture definition and freeze is the next required action.
 
 ## Current Phase
 
-Sprint 016 Task 4 - Owned-Page Manual Publication and Performance Recording.
-
-
+Sprint 017 Task 1 - Automation-First Architecture Definition and Freeze.
 
 ## Current Task
 
-Sprint 016 Task 4 - Owned-Page Manual Publication and Performance Recording. AUTHORIZED - NOT STARTED.
-
-
+Define and freeze the smallest architecture that can turn a topic, requirements, and prerecorded footage into a complete Reddit-story-style vertical MP4 without manual editing.
 
 ## Last Completed Sprint
 
@@ -1992,13 +2002,11 @@ Sprint 015 - Multi-Business Management
 
 ## Next Sprint
 
-Sprint 016 is current and active.
+Sprint 017 is current and active. Sprint 016 stopped and closed after the Task 3 pilot exposed a rejected manual-production design.
 
 ## Current Objective
 
-Begin the frozen Task 4 contract: manually publish the approved finished asset to one AO-owned short-form page, then record truthful publication evidence and an initial observed performance snapshot in AO.
-
-
+Build one simple, operational, modular content-production path. The first format is Reddit Stories using prerecorded footage. AO must generate the script, TTS, timed captions, hook/CTA text, footage timing, and finished MP4 while keeping internal records out of the CEO's normal workflow.
 
 ## Roadmap Planning Note
 
@@ -2006,15 +2014,11 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 016 Task 4 from the frozen architecture contract. Publication remains manual; AO must not upload, schedule, infer publication, or invent performance data.
-
-
+Complete Sprint 017 Task 1 repository inspection and freeze the four-day MVP architecture before application implementation. Do not begin Sprint 016 Task 4 and do not publish the rejected pilot.
 
 ## Blocking Issues
 
-None documented.
-
-
+No product blocker is documented. Application implementation and Windows media-tool verification must occur from the synchronized local repository worktree.
 
 ## Current Branch
 
@@ -2022,9 +2026,7 @@ main
 
 ## Last QA Result
 
-Sprint 016 Task 3 CEO QA PASS. Project `PROJ-0002` produced the real 44.97-second 9:16 MP4 `AI Operator OS Short 001 - Final v1.mp4` through Microsoft Clipchamp using approved package `CAP-1789191063129-30hvmo`. Production metadata, source/finished references, TikTok-targeted finished asset `SFA-1789199763560-7il1v5` Version 1, all 11 mandatory QA checks, the recorded pilot exception, separate final CEO approval, immutable approved-version locking, and full restart persistence all passed. Approval did not publish or upload anything.
-
-
+Sprint 016 Task 3 technical workflow QA passed, but the CEO rejected the product experience and finished pilot as unsuitable for publication. The pilot proved persistence, versioning, QA, and approval controls; it also proved that manual production, manual record entry, 26 visible Work Items, and external Clipchamp editing violate AO's intended automation-first operating model.
 
 ## Last Build Result
 
@@ -2036,7 +2038,17 @@ Sprint 016 Task 3 CEO QA PASS. Project `PROJ-0002` produced the real 44.97-secon
 
 2026-09-12
 
+## CEO Product Reset - 2026-09-12
 
+- Sprint 016 Task 4 authorization is WITHDRAWN. Manual publication and performance recording will not proceed.
+- Sprint 016 is STOPPED AND CLOSED AFTER PILOT; Tasks 1-3 remain preserved as historical implementation and verification records.
+- The approved finished-asset record does not require publication. `AI Operator OS Short 001 - Final v1.mp4` remains an immutable technical pilot only.
+- The CEO found the production workflow too complicated even with direct build knowledge: nearly all work occurred under Projects, 26 Work Items accumulated, major modules did not contribute to execution, and the CEO manually performed editing, captions, text, TTS assembly, QA entry, and record maintenance.
+- The current application and data are preserved. No deletion is authorized during the reset.
+- The new product rule is outcome-first and automation-first: the CEO provides a goal and constraints; AO performs and records the internal work; the CEO reviews results, exceptions, and consequential approvals.
+- First working format: Reddit-story-style vertical videos built from reusable prerecorded footage.
+- Four-day MVP success: topic and requirements plus prerecorded footage produce a complete previewable MP4 with generated script, TTS, timed captions, hook/CTA text, footage trimming/looping, and rendering without an external editor.
+- The architecture must remain modular so later content formats can reuse shared writing, voice, caption, footage, rendering, and review capabilities.
 
 ## Sprint 016 Task 2 Implementation Checkpoint
 
@@ -2441,7 +2453,7 @@ Sprint 016 Task 3 CEO QA PASS. Project `PROJ-0002` produced the real 44.97-secon
 
 ## Continuity Document Pointers
 
-- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 016 - Shared Short-Form Operating Capability.md`
+- Current Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 017 - Automation-First Content Production MVP.md`
 - Last Completed Sprint Summary: `AO-Knowledge-Base/07 - Sprint Summaries/Sprint 015 - Multi-Business Management.md`
 - Master Plan: `AO-Knowledge-Base/MASTER_PLAN.md`
 - Operator Startup Report Template: `AO-Knowledge-Base/OPERATOR_STARTUP_REPORT_TEMPLATE.md`
@@ -2480,17 +2492,17 @@ Sprint 016 Task 3 CEO QA PASS. Project `PROJ-0002` produced the real 44.97-secon
 ## Repository Checkpoint
 
 - Current Branch: main
-- Repository Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`
-- Checkpoint Description: Verified final Sprint 016 Task 3 application source after production build, real finished-asset production, 11/11 QA, final CEO approval, approved-version locking, and restart persistence.
+- Repository Checkpoint: `f463b45b03a6ece6e05799d54c9486ea192335c6`
+- Checkpoint Description: Preserved Sprint 016 Task 3 application plus the committed pilot MP4 before the CEO-approved automation-first product reset.
 - Working Tree Status: CLEAN at committed GitHub repository state; connected GitHub workflow contains no uncommitted application changes
-- Repository Push Status: PUSHED - Sprint 016 Task 3 implementation and initializer fix verified on origin/main
-- Repository Synchronization Status: VERIFIED - origin/main contains the final Task 3 application checkpoint
-- Repository Verification Status: VERIFIED - Task 3 COMPLETE; documentation synchronized; Task 4 AUTHORIZED - NOT STARTED
+- Repository Push Status: PUSHED - preserved pre-reset application and pilot asset verified on origin/main
+- Repository Synchronization Status: VERIFIED - origin/main contains the preserved pre-reset checkpoint
+- Repository Verification Status: VERIFIED - pre-reset checkpoint preserved; Sprint 017 reset documentation synchronized; Task 1 architecture definition authorized
 - Last Verified Date: 2026-09-12
 
 ## Rules
 
-- Never begin a new sprint until the current sprint is officially closed.
+- Never begin a new sprint until the current sprint is completed or explicitly stopped and closed by the CEO.
 - Never skip implementation phases.
 - Documentation is authoritative over conversation memory.
 - This file must be updated at every sprint closeout.
@@ -2523,19 +2535,50 @@ Command used:
 
 ## Current Status
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 4 is AUTHORIZED - NOT STARTED. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED.
-
-
+Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 1 architecture definition. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Begin Sprint 016 Task 4 - Owned-Page Manual Publication and Performance Recording from the frozen contract. Keep publication manual and require real external evidence.
+Inspect the current app and freeze Sprint 017 Task 1. Preserve the existing implementation and data, but design a new simple CEO workflow around one automated Reddit-story-style content format.
 
+## Sprint 017 Implementation Status
 
+Sprint 017 application implementation has NOT STARTED. Documentation authorizes Task 1 architecture definition and freeze only.
+
+Required MVP input:
+- topic or source story;
+- requirements;
+- reusable prerecorded footage;
+- optional duration, voice, and style settings.
+
+Required automated output:
+- generated story/script;
+- generated TTS narration;
+- word-level or phrase-level synchronized captions;
+- hook and CTA text where required by the format;
+- prerecorded-footage trim, crop, loop, and duration matching;
+- rendered vertical MP4;
+- preview plus Approve, Revise, and Reject.
+
+Required UI rule:
+- one requested video is one visible job;
+- internal steps and records remain hidden unless an error or advanced inspection requires them;
+- no external editor is needed for normal production.
+
+Not authorized in the four-day MVP:
+- AI-generated footage;
+- automatic publishing or social-account integration;
+- broad B2B workflows;
+- deletion of legacy code or persisted data;
+- multiple finished content formats;
+- exposed manual package, reference, Work Item, or QA workflows.
+
+Implementation checkpoint: none.
+Build/QA: not started.
 
 ## Sprint 016 Implementation Status
 
-Sprint 016 application implementation: Tasks 2 and 3 COMPLETE; Task 4 AUTHORIZED - NOT STARTED.
+Sprint 016 application implementation stopped after Tasks 2 and 3. Their history remains valid; Task 4 publication and Task 5 closeout are CANCELLED by the CEO product reset.
 
 Task 1 - Architecture Definition and Freeze:
 
@@ -2582,8 +2625,8 @@ Task 3 - Manual Production, QA, and Finished Asset:
 
 Task 4 - Owned-Page Manual Publication and Performance Recording:
 
-- Status: AUTHORIZED - NOT STARTED.
-- Required boundary: manual publication only; AO records truthful publication evidence and observed metrics without social integration, scheduling, or analytics ingestion.
+- Status: CANCELLED - CEO AUTHORIZATION WITHDRAWN.
+- Reason: the pilot asset and manual production workflow were rejected; publication would validate the wrong product direction.
 
 ## Sprint 015 Implementation Status
 
@@ -2851,7 +2894,7 @@ Missing Sprint 014 required requirements: NONE.
 - Sprint 016 Task 3 final CEO approval: APPROVED.
 - Sprint 016 Task 3 restart persistence: PASS.
 - Sprint 016 Task 3 repository closeout: COMPLETE.
-- Sprint 016 real publication verification: NOT STARTED; Task 4 is next.
+- Sprint 016 real publication verification: CANCELLED; the rejected pilot must not be published.
 
 ## Historical Sprint QA Status
 
@@ -3046,15 +3089,25 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 4 - Owned-Page Manual Publication and Performance Recording is AUTHORIZED - NOT STARTED.
-
-
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. The CEO stopped Sprint 016 after its Task 3 pilot proved the technical record/approval workflow but rejected the manual production design, excessive visible Work Items, and confusing interface. Sprint 016 Task 4 is cancelled and the pilot must not be published.
 
 ## Last Completed Sprint
 
 Sprint 015 - Multi-Business Management.
 
 ## Major Decisions Made Recently
+
+- **CEO product reset (2026-09-12):** AO must perform work instead of requiring the CEO to operate internal records.
+- The current application is preserved; deletion is not authorized during the reset.
+- Normal content production must not expose packages, file-reference forms, Work Items, manual QA checklists, queues, or other implementation paperwork.
+- The CEO's normal flow is: provide topic and requirements -> receive completed draft -> Approve, Revise, or Reject.
+- Reddit Stories is the first working content format, not AO's permanent identity.
+- Shared production capabilities must support later formats without rebuilding the engine.
+- The first format uses reusable prerecorded footage; AI-generated footage is not required.
+- AO must generate the script, TTS, word-timed captions, hook/CTA text, footage timing, and vertical MP4.
+- One requested video is one visible job even if internal execution contains multiple steps.
+- Main operational surfaces may remain simple; unused or unproven systems must be hidden from the primary workflow until they perform measurable work.
+- No publication of the rejected Sprint 016 pilot is authorized.
 
 - The Dashboard is now treated as the CEO Command Center.
 - The Command Center should answer: "What requires my attention right now?"
@@ -3100,7 +3153,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Begin Sprint 016 Task 4 from the frozen Owned-Page Manual Publication and Performance Recording contract. Publication remains manual and recorded evidence must be truthful.
+- Complete Sprint 017 Task 1 architecture definition and freeze for the four-day automation-first content MVP. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -3234,9 +3287,9 @@ Sprint 015 - Multi-Business Management.
 - Task 3 Implementation Commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
 - Task 3 Initializer Fix / Final Application Source Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
 - Task 3 Verification: build PASS; real 44.97-second 1080p 9:16 asset produced; 11/11 QA PASS; final CEO approval APPROVED; version locked; restart persistence PASS.
-- Current Task: Task 4 - Owned-Page Manual Publication and Performance Recording.
-- Task 4 Status: AUTHORIZED - NOT STARTED.
-- Next Required Action: implement the frozen Task 4 record boundary, then manually publish the approved asset to one AO-owned page and record real publication/performance evidence.
+- Current Task: Sprint 017 Task 1 - Automation-First Architecture Definition and Freeze.
+- Task 1 Status: AUTHORIZED - NOT STARTED.
+- Next Required Action: inspect the current application and freeze the smallest end-to-end Reddit-story editing architecture before coding.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
 ## Historical Current Handoff
@@ -3664,9 +3717,19 @@ Tasks 10, 11, and 12 also passed batched CEO QA. Task 10 defect fix verification
 
 # Sprint 016 - Shared Short-Form Operating Capability
 
-Status: ACTIVE - TASK 2 COMPLETE - REPOSITORY VERIFIED; TASK 3 NOT STARTED  
+Status: STOPPED AND CLOSED AFTER TASK 3 PILOT - TASK 4 AND TASK 5 CANCELLED  
 Owner: Jake Allen  
 Last Updated: 2026-09-12
+
+## CEO Pilot Verdict and Sprint Stop
+
+The Task 3 pilot technically passed its documented build, persistence, QA, approval, and version-lock requirements. The CEO rejected the resulting product direction and finished pilot for publication.
+
+The workflow required the CEO to perform the editing, TTS assembly, captions, text placement, QA entry, and internal record maintenance. Nearly all practical work occurred under Projects, the pilot accumulated 26 Work Items, and major advertised modules did not materially contribute to execution. This is the opposite of AO's intended operating model.
+
+Task 4 publication authorization is withdrawn. Task 5 is cancelled. The approved finished-asset record remains immutable historical evidence, but approval does not require publication and the pilot must not be published.
+
+The corrective direction moves to Sprint 017 - Automation-First Content Production MVP.
 
 ## Sprint Mission
 
@@ -3986,11 +4049,11 @@ Finish condition: AO contains one real, QA-complete, CEO-approved, version-prese
 - Restart persistence: PASS after complete desktop close and relaunch.
 - External-action boundary: PASS - approval did not publish, upload, schedule, or execute any external action.
 - Task 3 repository closeout: COMPLETE.
-- Task 4 is AUTHORIZED - NOT STARTED.
+- Task 4 authorization was withdrawn after the CEO rejected the pilot product direction.
 
 ### Task 4 - Owned-Page Manual Publication and Performance Recording
 
-Status: NOT STARTED.
+Status: CANCELLED - CEO AUTHORIZATION WITHDRAWN.
 
 Objective: Prove the finished asset through one real manual publication to one AO-owned page.
 
@@ -4004,7 +4067,7 @@ Finish condition: the approved asset is genuinely published and its publication 
 
 ### Task 5 - Integration QA, CEO QA, Documentation, and Repository Closeout
 
-Status: NOT STARTED.
+Status: CANCELLED - SPRINT STOPPED AND CLOSED AFTER PILOT.
 
 Objective: Verify the complete real workflow and close Sprint 016 only after its finish line is satisfied.
 
@@ -4087,8 +4150,136 @@ Sprint 016 does not authorize:
 - Task 3 - Manual Production, QA, and Finished Asset: COMPLETE - build PASS, CEO QA PASS, 11/11 mandatory QA PASS, final CEO approval APPROVED, version lock PASS, restart persistence PASS, repository verified.
 - Task 3 Implementation Commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
 - Task 3 Final Application Source Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
-- Task 4 - Owned-Page Manual Publication and Performance Recording: AUTHORIZED - NOT STARTED.
-- Next Required Action: begin Task 4 only from its frozen contract; publication remains manual and requires real external evidence.
+- Task 4 - Owned-Page Manual Publication and Performance Recording: CANCELLED - CEO AUTHORIZATION WITHDRAWN.
+- Task 5 - Integration QA, CEO QA, Documentation, and Repository Closeout: CANCELLED.
+- Next Required Action: begin Sprint 017 Task 1 architecture definition and freeze. Do not publish the Sprint 016 pilot.
+
+---
+
+## Source: AO-Knowledge-Base/07 - Sprint Summaries/Sprint 017 - Automation-First Content Production MVP.md
+
+# Sprint 017 - Automation-First Content Production MVP
+
+Status: ACTIVE - TASK 1 AUTHORIZED - NOT STARTED  
+Owner: Jake Allen  
+Activated: 2026-09-12  
+Timebox: Four development days
+
+## Mission
+
+Produce the first AO workflow that performs the practical content-production work instead of requiring the CEO to operate internal records and an external editor.
+
+## Finish Line
+
+Sprint 017 passes only when the CEO can provide a topic or source story, requirements, and reusable prerecorded footage and AO returns a previewable Reddit-story-style vertical MP4 containing generated script, generated narration, synchronized captions, appropriate hook/CTA text, and automatically timed footage.
+
+Normal production must not require Clipchamp or another external editor.
+
+## Product Experience
+
+One requested video is one visible job.
+
+Minimum CEO flow:
+
+1. Select the Reddit Stories format.
+2. Enter the topic, source story, or requirements.
+3. Select reusable prerecorded footage and optional voice, duration, or style preferences.
+4. Start generation.
+5. Preview the finished draft.
+6. Approve, Revise, or Reject.
+
+Internal production records, queues, Work Items, packages, references, and QA details must not require CEO input during normal production.
+
+## Shared Capability Direction
+
+The production engine must separate shared capabilities from format-specific rules.
+
+Shared capabilities:
+
+- script generation;
+- TTS generation;
+- caption timing;
+- footage preparation;
+- media rendering;
+- job state and failure reporting;
+- result preview and review.
+
+Reddit Stories supplies its own input requirements, story structure, caption style, hook/CTA rules, and rendering defaults. Later content formats must be able to reuse the shared capabilities.
+
+## Task 1 - Architecture Definition and Freeze
+
+Status: AUTHORIZED - NOT STARTED.
+
+Inspect the current Electron/React application, provider path, storage boundaries, process boundary, Windows packaging, and available local media tooling.
+
+Freeze:
+
+- the smallest new CEO workflow;
+- format-module contract;
+- job and result state;
+- script-provider path;
+- TTS implementation;
+- caption synchronization method;
+- FFmpeg or equivalent rendering boundary;
+- secure Electron main/renderer IPC;
+- local file selection and output handling;
+- error recovery;
+- legacy UI isolation;
+- testing and packaging strategy.
+
+Task 1 is documentation and architecture work. Application implementation begins only after the architecture freeze passes.
+
+## Task 2 - Automated Editor Engine
+
+Status: NOT STARTED.
+
+Implement script, narration, caption timing, footage preparation, and vertical MP4 rendering behind one job-level interface.
+
+## Task 3 - Simple Content UI
+
+Status: NOT STARTED.
+
+Implement the minimum Create, progress, preview, and Approve/Revise/Reject experience. Legacy operational forms must not enter the normal workflow.
+
+## Task 4 - Windows Integration and CEO QA
+
+Status: NOT STARTED.
+
+Verify real generation on the CEO's Windows computer using reusable prerecorded footage. Test multiple topics, revisions, failures, persistence, application restart, and produced MP4 playback.
+
+## Acceptance Criteria
+
+1. One video is one visible job.
+2. Topic/source story and requirements are sufficient creative input.
+3. Prerecorded footage can be selected and reused.
+4. Script generation is automatic.
+5. TTS generation is automatic.
+6. Captions are synchronized automatically.
+7. Footage is cropped, trimmed, looped, and duration-matched automatically.
+8. A playable vertical MP4 is rendered automatically.
+9. The finished draft is previewable in AO.
+10. Approve, Revise, and Reject are available at the result level.
+11. A revision does not require rebuilding records manually.
+12. Normal production requires no external video editor.
+13. Internal records do not require repetitive CEO input.
+14. Existing application data is not deleted.
+15. No external publication occurs.
+16. Production build, desktop launch, persistence, failure handling, and restart verification pass.
+
+## Explicitly Out of Scope
+
+- AI-generated background footage;
+- automated posting, scheduling, or analytics ingestion;
+- multiple finished content formats;
+- broad B2B features;
+- legacy-data deletion;
+- provider marketplace expansion;
+- unrelated department, opportunity, memory, or queue development;
+- manual production bureaucracy in the new primary workflow.
+
+## Next Required Action
+
+Complete Task 1 repository inspection and architecture freeze from the synchronized local worktree.
 
 ---
 
