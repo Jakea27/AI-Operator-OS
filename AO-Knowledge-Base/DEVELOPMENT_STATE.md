@@ -8,7 +8,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Sprint 016 Task 2 production build PASS. The synchronized `npm.cmd run dev:desktop` path completed its required TypeScript/Vite build and launched Build ID `C7X5XItI`.
+Sprint 016 Task 3 production build PASS. `npm.cmd run build` completed TypeScript and Vite after the initializer fix: 2,601 modules transformed in 5.08 seconds. The existing large-chunk warning remains non-blocking. Desktop relaunch and restart persistence also passed.
 
 Command used:
 
@@ -22,19 +22,19 @@ Command used:
 
 ## Current Status
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1 and 2 are COMPLETE - REPOSITORY VERIFIED. Task 3 is NOT STARTED. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 4 is AUTHORIZED - NOT STARTED. Sprint 015 remains COMPLETE - REPOSITORY VERIFIED.
 
 
 
 ## Next Phase
 
-Begin Sprint 016 Task 3 - Manual Production, QA, and Finished Asset from the frozen contract. Task 4 publication/performance work remains unauthorized.
+Begin Sprint 016 Task 4 - Owned-Page Manual Publication and Performance Recording from the frozen contract. Keep publication manual and require real external evidence.
 
 
 
 ## Sprint 016 Implementation Status
 
-Sprint 016 application implementation: Task 2 COMPLETE; later tasks NOT STARTED.
+Sprint 016 application implementation: Tasks 2 and 3 COMPLETE; Task 4 AUTHORIZED - NOT STARTED.
 
 Task 1 - Architecture Definition and Freeze:
 
@@ -64,8 +64,25 @@ Task 2 - Short-Form Production Foundation:
 
 Task 3 - Manual Production, QA, and Finished Asset:
 
-- Status: NOT STARTED.
-- Required boundary: follow the frozen Sprint 016 Task 3 contract.
+- Status: COMPLETE - REPOSITORY VERIFIED.
+- Implementation commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
+- Initializer fix / final application source checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
+- Implementation: Project-owned production metadata; metadata-only source and finished-video references; append-preserved finished-asset versions; 11 mandatory QA checks; separate Approval Queue final review; approved-version locking.
+- Persistence: reused `ai-operator-os-projects-v1`; no new store or persistence key.
+- Build: PASS - TypeScript and Vite, 2,601 modules transformed, 5.08 seconds; existing large-chunk warning non-blocking.
+- CEO QA: PASS on Project `PROJ-0002`.
+- Real asset: `AI Operator OS Short 001 - Final v1.mp4`, 44.97 seconds, 9:16, 1080p, produced manually in Microsoft Clipchamp.
+- Finished asset: `SFA-1789199763560-7il1v5` Version 1, TikTok target, package `CAP-1789191063129-30hvmo`.
+- Mandatory QA: PASS - 11/11 checks; recorded pilot exception preserved.
+- Final approval: APPROVED through the existing Approval Queue; approval did not publish or upload.
+- Version lock: PASS; material changes require a new version and new approval.
+- Restart persistence: PASS.
+- Repository closeout: COMPLETE.
+
+Task 4 - Owned-Page Manual Publication and Performance Recording:
+
+- Status: AUTHORIZED - NOT STARTED.
+- Required boundary: manual publication only; AO records truthful publication evidence and observed metrics without social integration, scheduling, or analytics ingestion.
 
 ## Sprint 015 Implementation Status
 
@@ -326,10 +343,14 @@ Missing Sprint 014 required requirements: NONE.
 - Sprint 016 Startup Bundle: VALID.
 - Sprint 016 Task 2 application implementation: COMPLETE.
 - Sprint 016 Task 2 remote TypeScript and deterministic QA: PASS.
-- Sprint 016 automated application QA beyond Task 2 foundation: NOT STARTED.
-- Sprint 016 CEO QA: NOT STARTED.
-- Sprint 016 real publication verification: NOT STARTED.
-- Sprint 016 Task 2 production build: PENDING; no build PASS claimed in the connected GitHub-only environment.
+- Sprint 016 Task 3 application implementation: COMPLETE.
+- Sprint 016 Task 3 production build: PASS.
+- Sprint 016 Task 3 CEO QA: PASS.
+- Sprint 016 Task 3 mandatory finished-asset QA: PASS - 11/11.
+- Sprint 016 Task 3 final CEO approval: APPROVED.
+- Sprint 016 Task 3 restart persistence: PASS.
+- Sprint 016 Task 3 repository closeout: COMPLETE.
+- Sprint 016 real publication verification: NOT STARTED; Task 4 is next.
 
 ## Historical Sprint QA Status
 

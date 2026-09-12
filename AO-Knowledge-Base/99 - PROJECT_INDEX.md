@@ -35,7 +35,7 @@ Every AI operator must read the following source documents in this exact order.
 
 ## Active Sprint 016 Handoff
 
-Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1 and 2 are COMPLETE - REPOSITORY VERIFIED. Task 2 final application checkpoint is `d389cf19028ea0c00af5e7059d0ec0c9f4ac93ff`; production build, CEO QA, restart persistence, six-deliverable approval, Creative Asset Package creation, and Markdown/JSON export all passed. Task 3 - Manual Production, QA, and Finished Asset is NOT STARTED and is the next required action. Task 4 publication/performance work remains unauthorized. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
+Sprint 016 - Shared Short-Form Operating Capability is ACTIVE. Tasks 1, 2, and 3 are COMPLETE - REPOSITORY VERIFIED. Task 3 final application checkpoint is `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`; production build, real 44.97-second 1080p 9:16 finished asset, 11/11 mandatory QA, separate final CEO approval, approved-version locking, and restart persistence all passed. Task 4 - Owned-Page Manual Publication and Performance Recording is AUTHORIZED - NOT STARTED and is the next required action. Publication remains manual and requires real external evidence. Keep the Sprint 016 summary in the required reading order. Active Project State remains authoritative for checkpoint metadata.
 
 
 
