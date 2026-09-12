@@ -2132,7 +2132,7 @@ function CreativeAssetPackagePanel({
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <p className="m-0 text-sm font-semibold text-white">{deliverable.deliverableName}</p>
                         <span className="text-[10px] uppercase tracking-[0.12em] text-muted">
-                          Review {deliverable.reviewApprovalId ?? 'not recorded'} - Execution {deliverable.sourceExecutionId ?? 'not recorded'}
+                          Review {deliverable.reviewApprovalId ?? deliverable.reviewHistoryIds[0] ?? 'not recorded'} - Execution {deliverable.sourceExecutionId ?? 'manual deliverable'}
                         </span>
                       </div>
                       <p className="m-0 mt-2 whitespace-pre-wrap text-sm leading-6 text-[#d7e2dc]">{deliverable.approvedContent}</p>
