@@ -14,10 +14,80 @@ export type ShortFormPlatform = 'TikTok' | 'YouTube Shorts' | 'Instagram Reels'
 
 export type ShortFormProductionStatus = 'Not Started' | 'Ready' | 'In Production' | 'QA Pending' | 'QA Failed' | 'QA Passed'
 
+export type ShortFormFileReferenceKind = 'Source Asset' | 'Finished Video'
+
+export type ShortFormFileLocationType = 'Local Path' | 'External Reference'
+
+export type ShortFormRightsStatus = 'Unknown' | 'Cleared' | 'Restricted'
+
+export type ShortFormFileReference = {
+  id: string
+  kind: ShortFormFileReferenceKind
+  label: string
+  locationType: ShortFormFileLocationType
+  location: string
+  mediaType?: string
+  rightsStatus: ShortFormRightsStatus
+  notes: string
+  recordedAt: string
+  metadata: Record<string, string>
+}
+
+export type ShortFormQaCheckKey =
+  | 'finished-video-reference'
+  | 'selected-platform'
+  | 'portrait-or-exception'
+  | 'duration-reviewed'
+  | 'video-playback-reviewed'
+  | 'audio-reviewed'
+  | 'on-screen-text-reviewed'
+  | 'caption-cta-reviewed'
+  | 'production-components-present'
+  | 'source-rights-reviewed'
+  | 'platform-suitability-reviewed'
+
+export type ShortFormQaCheck = {
+  key: ShortFormQaCheckKey
+  passed: boolean
+  note: string
+  reviewedAt?: string
+}
+
+export type ShortFormFinishedAssetStatus = 'Draft' | 'QA Pending' | 'QA Failed' | 'QA Passed'
+
+export type ShortFormFinishedAssetVersion = {
+  id: string
+  finishedAssetId: string
+  version: number
+  status: ShortFormFinishedAssetStatus
+  finishedVideoReferenceId: string
+  sourceAssetReferenceIds: string[]
+  sourceCreativeAssetPackageId: string
+  sourceBlueprintType: 'Short-Form Video Blueprint'
+  targetPlatform: ShortFormPlatform
+  productionCompletedAt: string
+  productionNotes: string
+  qaChecks: ShortFormQaCheck[]
+  qaActor?: string
+  qaCompletedAt?: string
+  qaNotes: string
+  finalApprovalId?: string
+  approvalHistoryIds: string[]
+  supersedesFinishedAssetId?: string
+  createdAt: string
+  updatedAt: string
+  metadata: Record<string, string>
+}
+
 export type ShortFormProductionProfile = {
   enabled: true
   productionId: string
   status: ShortFormProductionStatus
+  toolProcessDescription: string
+  productionNotes: string
+  blockers: string
+  fileReferences: ShortFormFileReference[]
+  finishedAssetVersions: ShortFormFinishedAssetVersion[]
   createdAt: string
   updatedAt: string
   metadata: Record<string, string>
@@ -334,6 +404,28 @@ export const businessAssetTypes: BusinessAssetType[] = ['Short-Form Video', 'You
 export const shortFormPlatforms: ShortFormPlatform[] = ['TikTok', 'YouTube Shorts', 'Instagram Reels']
 
 export const shortFormProductionStatuses: ShortFormProductionStatus[] = ['Not Started', 'Ready', 'In Production', 'QA Pending', 'QA Failed', 'QA Passed']
+
+export const shortFormFileReferenceKinds: ShortFormFileReferenceKind[] = ['Source Asset', 'Finished Video']
+
+export const shortFormFileLocationTypes: ShortFormFileLocationType[] = ['Local Path', 'External Reference']
+
+export const shortFormRightsStatuses: ShortFormRightsStatus[] = ['Unknown', 'Cleared', 'Restricted']
+
+export const shortFormFinishedAssetStatuses: ShortFormFinishedAssetStatus[] = ['Draft', 'QA Pending', 'QA Failed', 'QA Passed']
+
+export const shortFormQaCheckDefinitions: Array<{ key: ShortFormQaCheckKey; label: string }> = [
+  { key: 'finished-video-reference', label: 'Finished-video reference is present' },
+  { key: 'selected-platform', label: 'Target platform is selected' },
+  { key: 'portrait-or-exception', label: 'Portrait orientation or recorded exception reviewed' },
+  { key: 'duration-reviewed', label: 'Duration reviewed' },
+  { key: 'video-playback-reviewed', label: 'Video playback reviewed' },
+  { key: 'audio-reviewed', label: 'Audio reviewed' },
+  { key: 'on-screen-text-reviewed', label: 'On-screen text reviewed' },
+  { key: 'caption-cta-reviewed', label: 'Caption and call to action reviewed' },
+  { key: 'production-components-present', label: 'Required production components are present' },
+  { key: 'source-rights-reviewed', label: 'Source rights and restrictions reviewed' },
+  { key: 'platform-suitability-reviewed', label: 'Platform suitability reviewed' },
+]
 
 export const businessAssetProductionStatuses: BusinessAssetProductionStatus[] = ['Planning', 'Ready', 'In Production', 'Review', 'Approved', 'Packaged', 'Archived']
 

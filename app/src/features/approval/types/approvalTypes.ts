@@ -43,6 +43,9 @@ export type Approval = {
   sourceBlueprintDeliverableName?: string
   sourceResultId?: string
   sourceReviewStatus?: string
+  sourceShortFormProductionId?: string
+  sourceFinishedAssetId?: string
+  sourceFinishedAssetVersion?: number
   decisionHistory: ApprovalDecisionHistoryItem[]
 }
 

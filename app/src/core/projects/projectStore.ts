@@ -22,8 +22,15 @@ import {
   productionBlueprintDeliverableStatuses,
   productionBlueprintTypes,
   projectKnowledgeSections,
+  shortFormFileLocationTypes,
+  shortFormFileReferenceKinds,
+  shortFormFinishedAssetStatuses,
   shortFormPlatforms,
   shortFormProductionStatuses,
+  shortFormQaCheckDefinitions,
+  shortFormRightsStatuses,
+  ShortFormFileReference,
+  ShortFormFinishedAssetVersion,
   ShortFormProductionProfile,
   ProjectInput,
   ProjectPriority,
@@ -445,6 +452,75 @@ function normalizeProductionBlueprint(raw: unknown, projectCreatedAt: string, as
   }
 }
 
+function normalizeShortFormFileReference(raw: unknown, createdAt: string): ShortFormFileReference | undefined {
+  if (!isRecord(raw)) return undefined
+  const kind = shortFormFileReferenceKinds.includes(raw.kind as ShortFormFileReference['kind'])
+    ? raw.kind as ShortFormFileReference['kind']
+    : undefined
+  if (!kind) return undefined
+
+  return {
+    id: normalizeString(raw.id, id('SFR')),
+    kind,
+    label: normalizeString(raw.label, 'Untitled reference'),
+    locationType: shortFormFileLocationTypes.includes(raw.locationType as ShortFormFileReference['locationType'])
+      ? raw.locationType as ShortFormFileReference['locationType']
+      : 'Local Path',
+    location: normalizeString(raw.location),
+    mediaType: normalizeString(raw.mediaType) || undefined,
+    rightsStatus: shortFormRightsStatuses.includes(raw.rightsStatus as ShortFormFileReference['rightsStatus'])
+      ? raw.rightsStatus as ShortFormFileReference['rightsStatus']
+      : 'Unknown',
+    notes: normalizeString(raw.notes),
+    recordedAt: normalizeString(raw.recordedAt, createdAt),
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
+function normalizeShortFormFinishedAsset(raw: unknown, createdAt: string): ShortFormFinishedAssetVersion | undefined {
+  if (!isRecord(raw)) return undefined
+  const targetPlatform = shortFormPlatforms.includes(raw.targetPlatform as ShortFormFinishedAssetVersion['targetPlatform'])
+    ? raw.targetPlatform as ShortFormFinishedAssetVersion['targetPlatform']
+    : undefined
+  if (!targetPlatform) return undefined
+  const assetCreatedAt = normalizeString(raw.createdAt, createdAt)
+  const rawChecks = Array.isArray(raw.qaChecks) ? raw.qaChecks : []
+
+  return {
+    id: normalizeString(raw.id, id('finished-asset-version')),
+    finishedAssetId: normalizeString(raw.finishedAssetId, id('SFA')),
+    version: Number.isFinite(Number(raw.version)) ? Math.max(1, Math.round(Number(raw.version))) : 1,
+    status: shortFormFinishedAssetStatuses.includes(raw.status as ShortFormFinishedAssetVersion['status'])
+      ? raw.status as ShortFormFinishedAssetVersion['status']
+      : 'Draft',
+    finishedVideoReferenceId: normalizeString(raw.finishedVideoReferenceId),
+    sourceAssetReferenceIds: Array.from(new Set(normalizeStringArray(raw.sourceAssetReferenceIds).filter(Boolean))),
+    sourceCreativeAssetPackageId: normalizeString(raw.sourceCreativeAssetPackageId),
+    sourceBlueprintType: 'Short-Form Video Blueprint',
+    targetPlatform,
+    productionCompletedAt: normalizeString(raw.productionCompletedAt),
+    productionNotes: normalizeString(raw.productionNotes),
+    qaChecks: shortFormQaCheckDefinitions.map((definition) => {
+      const source = rawChecks.find((item) => isRecord(item) && item.key === definition.key)
+      return {
+        key: definition.key,
+        passed: isRecord(source) && source.passed === true,
+        note: isRecord(source) ? normalizeString(source.note) : '',
+        reviewedAt: isRecord(source) ? normalizeString(source.reviewedAt) || undefined : undefined,
+      }
+    }),
+    qaActor: normalizeString(raw.qaActor) || undefined,
+    qaCompletedAt: normalizeString(raw.qaCompletedAt) || undefined,
+    qaNotes: normalizeString(raw.qaNotes),
+    finalApprovalId: normalizeString(raw.finalApprovalId) || undefined,
+    approvalHistoryIds: Array.from(new Set(normalizeStringArray(raw.approvalHistoryIds).filter(Boolean))),
+    supersedesFinishedAssetId: normalizeString(raw.supersedesFinishedAssetId) || undefined,
+    createdAt: assetCreatedAt,
+    updatedAt: normalizeString(raw.updatedAt, assetCreatedAt),
+    metadata: normalizeMetadata(raw.metadata),
+  }
+}
+
 function normalizeShortFormProduction(raw: unknown, projectCreatedAt: string): ShortFormProductionProfile | undefined {
   if (!isRecord(raw) || raw.enabled !== true) return undefined
 
@@ -452,11 +528,27 @@ function normalizeShortFormProduction(raw: unknown, projectCreatedAt: string): S
   const status = shortFormProductionStatuses.includes(raw.status as ShortFormProductionProfile['status'])
     ? raw.status as ShortFormProductionProfile['status']
     : 'Not Started'
+  const fileReferences = Array.isArray(raw.fileReferences)
+    ? raw.fileReferences
+      .map((item) => normalizeShortFormFileReference(item, createdAt))
+      .filter((item): item is ShortFormFileReference => Boolean(item))
+    : []
+  const finishedAssetVersions = Array.isArray(raw.finishedAssetVersions)
+    ? raw.finishedAssetVersions
+      .map((item) => normalizeShortFormFinishedAsset(item, createdAt))
+      .filter((item): item is ShortFormFinishedAssetVersion => Boolean(item))
+      .sort((a, b) => b.version - a.version || b.createdAt.localeCompare(a.createdAt))
+    : []
 
   return {
     enabled: true,
     productionId: normalizeString(raw.productionId, id('SFP')),
     status,
+    toolProcessDescription: normalizeString(raw.toolProcessDescription),
+    productionNotes: normalizeString(raw.productionNotes),
+    blockers: normalizeString(raw.blockers),
+    fileReferences,
+    finishedAssetVersions,
     createdAt,
     updatedAt: normalizeString(raw.updatedAt, createdAt),
     metadata: normalizeMetadata(raw.metadata),

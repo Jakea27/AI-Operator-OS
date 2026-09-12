@@ -16,8 +16,13 @@ import {
   ProductionBlueprint,
   ProductionBlueprintDeliverable,
   ProductionBlueprintDeliverableStatus,
+  ShortFormFileLocationType,
+  ShortFormFileReference,
+  ShortFormFileReferenceKind,
+  ShortFormFinishedAssetVersion,
   ShortFormPlatform,
   ShortFormProductionProfile,
+  ShortFormRightsStatus,
   ProjectKnowledgeEntry,
   ProjectKnowledgeSection,
   ProjectKnowledgeWorkspace,
@@ -33,8 +38,12 @@ import {
   creativeBriefStatuses,
   getProductionBlueprintDeliverableNames,
   productionBlueprintDeliverableStatuses,
+  shortFormFileLocationTypes,
+  shortFormFileReferenceKinds,
   shortFormPlatforms,
   shortFormProductionStatuses,
+  shortFormQaCheckDefinitions,
+  shortFormRightsStatuses,
   projectKnowledgeSections,
   projectPriorities,
   projectStatuses,
@@ -488,6 +497,11 @@ export function ProjectDetailPage() {
       enabled: true,
       productionId: `SFP-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       status: 'Not Started',
+      toolProcessDescription: '',
+      productionNotes: '',
+      blockers: '',
+      fileReferences: record.shortFormProduction?.fileReferences ?? [],
+      finishedAssetVersions: record.shortFormProduction?.finishedAssetVersions ?? [],
       createdAt: record.shortFormProduction?.createdAt ?? timestamp,
       updatedAt: timestamp,
       metadata: record.shortFormProduction?.metadata ?? {},
@@ -508,6 +522,104 @@ export function ProjectDetailPage() {
         },
       }
     })
+  }
+
+  function persistShortFormProduction(production: ShortFormProductionProfile, notice: string) {
+    const timestamp = new Date().toISOString()
+    const nextProduction = {
+      ...production,
+      enabled: true as const,
+      updatedAt: timestamp,
+    }
+    projectStore.updateProject(activeProject.id, { shortFormProduction: nextProduction })
+    setDraft({
+      ...activeDraft,
+      shortFormProduction: nextProduction,
+      updatedAt: timestamp,
+    })
+    setExecutionRequestNotice(notice)
+  }
+
+  function createFinishedAssetApproval(asset: ShortFormFinishedAssetVersion) {
+    const production = activeDraft.shortFormProduction
+    const blueprint = activeDraft.productionBlueprint
+    if (!production || !blueprint) {
+      setExecutionRequestNotice('Final approval blocked: Short-Form production and Blueprint records are required.')
+      return
+    }
+
+    const finishedVideo = production.fileReferences.find((item) =>
+      item.id === asset.finishedVideoReferenceId && item.kind === 'Finished Video' && item.location.trim(),
+    )
+    const sourcePackage = blueprint.creativeAssetPackages.find((item) => item.packageId === asset.sourceCreativeAssetPackageId)
+    const qaPassed = asset.qaChecks.length === shortFormQaCheckDefinitions.length && asset.qaChecks.every((item) => item.passed)
+    if (!finishedVideo || !sourcePackage || !activeDraft.businessAsset?.targetPlatforms.includes(asset.targetPlatform) || !qaPassed || asset.status !== 'QA Passed') {
+      setExecutionRequestNotice('Final approval blocked: an approved package, finished-video reference, selected target, and every mandatory QA check must pass first.')
+      return
+    }
+
+    const currentApproval = approvalStore.approvals.find((item) => item.id === asset.finalApprovalId)
+    if (currentApproval?.status === 'Pending' || currentApproval?.status === 'Approved') {
+      setExecutionRequestNotice('Final approval already exists for this finished-asset version.')
+      return
+    }
+
+    const approval = approvalStore.addApproval({
+      title: 'Final finished-video approval for ' + activeProject.name + ' v' + asset.version,
+      description: [
+        'A real finished short-form video completed mandatory QA and requires separate CEO approval.',
+        '',
+        'Project: ' + activeProject.projectId + ' · ' + activeProject.name,
+        'Production: ' + production.productionId,
+        'Finished Asset: ' + asset.finishedAssetId + ' · Version ' + asset.version,
+        'Target Platform: ' + asset.targetPlatform,
+        'Finished Video Reference: ' + finishedVideo.label + ' · ' + finishedVideo.locationType,
+        'Creative Asset Package: ' + sourcePackage.packageId,
+        'QA Actor: ' + (asset.qaActor || 'Not recorded'),
+        'QA Completed: ' + (asset.qaCompletedAt || 'Not recorded'),
+        '',
+        'Approval does not publish, upload, schedule, or execute any external action.',
+      ].join('\n'),
+      submittedBy: 'AI Operator OS',
+      operator: 'System',
+      department: activeProject.departmentName,
+      relatedIssue: asset.finishedAssetId,
+      recommendationId: '',
+      priority: activeProject.priority,
+      effort: 'Medium',
+      risk: 'Medium',
+      status: 'Pending',
+      requiresCEOApproval: true,
+      submittedAt: new Date().toISOString(),
+      businessValue: 'Confirm the actual finished video is ready for controlled downstream use.',
+      supportingEvidence: [
+        'Finished Asset: ' + asset.finishedAssetId,
+        'Version: ' + asset.version,
+        'Target: ' + asset.targetPlatform,
+        'QA Checks Passed: ' + asset.qaChecks.filter((item) => item.passed).length + '/' + shortFormQaCheckDefinitions.length,
+        'Package: ' + sourcePackage.packageId,
+      ],
+      recommendedNextAction: 'CEO should review the actual referenced video and approve, request changes, reject, or defer it. Approval does not publish.',
+      sourceProjectId: activeProject.id,
+      sourceBusinessId: activeProject.businessId,
+      sourceShortFormProductionId: production.productionId,
+      sourceFinishedAssetId: asset.finishedAssetId,
+      sourceFinishedAssetVersion: asset.version,
+    })
+
+    persistShortFormProduction({
+      ...production,
+      finishedAssetVersions: production.finishedAssetVersions.map((item) =>
+        item.id === asset.id
+          ? {
+            ...item,
+            finalApprovalId: approval.id,
+            approvalHistoryIds: unique([approval.id, ...item.approvalHistoryIds]),
+            updatedAt: new Date().toISOString(),
+          }
+          : item,
+      ),
+    }, 'Final finished-video review created in the Approval Queue. No publication or external action occurred.')
   }
 
   function updateProductionBlueprint(updates: Partial<ProductionBlueprint>) {
@@ -1737,41 +1849,17 @@ export function ProjectDetailPage() {
           ) : null}
 
           {draft.businessAsset?.assetType === 'Short-Form Video' && draft.shortFormProduction?.enabled ? (
-            <Section title="Short-Form Production Foundation" eyebrow="Shared operating readiness">
-              <p className="m-0 mb-4 text-sm leading-6 text-muted">
-                This Project-owned record tracks whether the shared production plan is ready. It does not create a finished video, perform QA, publish, schedule, or call an external platform.
-              </p>
-              <div className="grid gap-4 md:grid-cols-3">
-                <Info label="Production ID" value={draft.shortFormProduction.productionId} />
-                <Info
-                  label="Target Platforms"
-                  value={draft.businessAsset.targetPlatforms.length > 0 ? draft.businessAsset.targetPlatforms.join(', ') : 'Required'}
-                />
-                <Info label="Planning Readiness" value={shortFormPlanningReady ? 'Complete' : 'Incomplete'} />
-                <label className="space-y-2 md:col-span-2">
-                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Foundation Status</span>
-                  <select
-                    value={draft.shortFormProduction.status}
-                    onChange={(event) => updateShortFormProduction({ status: event.target.value as ShortFormProductionProfile['status'] })}
-                    className="field"
-                  >
-                    {shortFormProductionStatuses
-                      .filter((status) => status === 'Not Started' || status === 'Ready')
-                      .map((status) => (
-                        <option key={status} value={status} disabled={status === 'Ready' && !shortFormPlanningReady}>{status}</option>
-                      ))}
-                  </select>
-                  <span className="block text-xs leading-5 text-muted">
-                    Ready requires at least one target platform and content in every Short-Form Blueprint deliverable.
-                  </span>
-                </label>
-              </div>
-              {!shortFormPlanningReady ? (
-                <div className="mt-4 rounded-xl border border-orange-300/25 bg-orange-300/[0.05] p-3 text-sm leading-6 text-orange-100">
-                  Complete the target-platform selection and every Short-Form Blueprint deliverable before marking the foundation Ready.
-                </div>
-              ) : null}
-              <button onClick={() => save(project, draft)} className="btn-primary mt-4">Save Short-Form Foundation</button>
+            <Section title="Short-Form Production and Finished Asset" eyebrow="Manual production · QA · final CEO approval">
+              <ShortFormProductionPanel
+                project={activeProject}
+                production={draft.shortFormProduction}
+                targetPlatforms={draft.businessAsset.targetPlatforms}
+                packages={draft.productionBlueprint?.creativeAssetPackages ?? []}
+                approvals={approvalStore.approvals}
+                onChange={updateShortFormProduction}
+                onPersist={persistShortFormProduction}
+                onCreateFinalApproval={createFinishedAssetApproval}
+              />
             </Section>
           ) : null}
 
@@ -2034,6 +2122,403 @@ function BreakdownRow({
       <p className="m-0 mt-2 text-xs leading-5 text-muted">
         Actual Recorded Cost: {formatMoney(item.actualRecordedCost)} · Estimated Execution Cost: {formatMoney(item.estimatedExecutionCost)}
       </p>
+    </div>
+  )
+}
+
+function shortFormRecordId(prefix: string) {
+  return prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
+}
+
+function ShortFormProductionPanel({
+  project,
+  production,
+  targetPlatforms,
+  packages,
+  approvals,
+  onChange,
+  onPersist,
+  onCreateFinalApproval,
+}: {
+  project: ProjectRecord
+  production: ShortFormProductionProfile
+  targetPlatforms: ShortFormPlatform[]
+  packages: CreativeAssetPackage[]
+  approvals: Approval[]
+  onChange: (updates: Partial<ShortFormProductionProfile>) => void
+  onPersist: (production: ShortFormProductionProfile, notice: string) => void
+  onCreateFinalApproval: (asset: ShortFormFinishedAssetVersion) => void
+}) {
+  const [referenceKind, setReferenceKind] = useState<ShortFormFileReferenceKind>('Source Asset')
+  const [referenceLabel, setReferenceLabel] = useState('')
+  const [referenceLocationType, setReferenceLocationType] = useState<ShortFormFileLocationType>('Local Path')
+  const [referenceLocation, setReferenceLocation] = useState('')
+  const [referenceMediaType, setReferenceMediaType] = useState('')
+  const [referenceRights, setReferenceRights] = useState<ShortFormRightsStatus>('Unknown')
+  const [referenceNotes, setReferenceNotes] = useState('')
+  const [selectedTarget, setSelectedTarget] = useState<ShortFormPlatform | ''>(targetPlatforms[0] ?? '')
+  const [qaActor, setQaActor] = useState('CEO')
+  const [qaNotes, setQaNotes] = useState('')
+
+  const sourceAssets = production.fileReferences.filter((item) => item.kind === 'Source Asset')
+  const finishedVideos = production.fileReferences.filter((item) => item.kind === 'Finished Video')
+  const latestPackage = [...packages].sort((a, b) => b.packageVersion - a.packageVersion || b.createdAt.localeCompare(a.createdAt))[0]
+  const latestAsset = [...production.finishedAssetVersions].sort((a, b) => b.version - a.version || b.createdAt.localeCompare(a.createdAt))[0]
+  const latestApproval = latestAsset?.finalApprovalId
+    ? approvals.find((item) => item.id === latestAsset.finalApprovalId)
+    : undefined
+  const latestIsApproved = latestApproval?.status === 'Approved'
+  const allQaPassed = Boolean(latestAsset) &&
+    latestAsset.qaChecks.length === shortFormQaCheckDefinitions.length &&
+    latestAsset.qaChecks.every((item) => item.passed)
+  const canCreateVersion = Boolean(
+    latestPackage &&
+    finishedVideos.length > 0 &&
+    sourceAssets.length > 0 &&
+    selectedTarget &&
+    targetPlatforms.includes(selectedTarget as ShortFormPlatform) &&
+    (!latestAsset || latestIsApproved),
+  )
+
+  function addReference() {
+    const label = referenceLabel.trim()
+    const location = referenceLocation.trim()
+    if (!label || !location) return
+    const timestamp = new Date().toISOString()
+    const reference: ShortFormFileReference = {
+      id: shortFormRecordId('SFR'),
+      kind: referenceKind,
+      label,
+      locationType: referenceLocationType,
+      location,
+      mediaType: referenceMediaType.trim() || undefined,
+      rightsStatus: referenceRights,
+      notes: referenceNotes.trim(),
+      recordedAt: timestamp,
+      metadata: {},
+    }
+    onPersist({
+      ...production,
+      status: production.status === 'Not Started' || production.status === 'Ready' ? 'In Production' : production.status,
+      fileReferences: [...production.fileReferences, reference],
+      updatedAt: timestamp,
+    }, reference.kind + ' reference recorded. AI Operator OS stored metadata only and did not access or copy the file.')
+    setReferenceLabel('')
+    setReferenceLocation('')
+    setReferenceMediaType('')
+    setReferenceNotes('')
+  }
+
+  function createVersion() {
+    if (!canCreateVersion || !latestPackage || !selectedTarget) return
+    const timestamp = new Date().toISOString()
+    const previous = latestAsset
+    const version = production.finishedAssetVersions.reduce((highest, item) => Math.max(highest, item.version), 0) + 1
+    const finishedVideo = finishedVideos[finishedVideos.length - 1]
+    const asset: ShortFormFinishedAssetVersion = {
+      id: shortFormRecordId('finished-asset-version'),
+      finishedAssetId: shortFormRecordId('SFA'),
+      version,
+      status: 'QA Pending',
+      finishedVideoReferenceId: finishedVideo.id,
+      sourceAssetReferenceIds: sourceAssets.map((item) => item.id),
+      sourceCreativeAssetPackageId: latestPackage.packageId,
+      sourceBlueprintType: 'Short-Form Video Blueprint',
+      targetPlatform: selectedTarget,
+      productionCompletedAt: timestamp,
+      productionNotes: production.productionNotes,
+      qaChecks: shortFormQaCheckDefinitions.map((item) => ({ key: item.key, passed: false, note: '' })),
+      qaNotes: '',
+      approvalHistoryIds: [],
+      supersedesFinishedAssetId: previous?.finishedAssetId,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      metadata: {
+        projectRecordId: project.id,
+        projectId: project.projectId,
+        productionId: production.productionId,
+      },
+    }
+    onPersist({
+      ...production,
+      status: 'QA Pending',
+      finishedAssetVersions: [asset, ...production.finishedAssetVersions],
+      updatedAt: timestamp,
+    }, 'Finished-asset draft Version ' + version + ' created for manual QA. No file was opened, copied, uploaded, or published.')
+    setQaNotes('')
+  }
+
+  function updateLatestAsset(updates: Partial<ShortFormFinishedAssetVersion>) {
+    if (!latestAsset || latestIsApproved) return
+    onChange({
+      finishedAssetVersions: production.finishedAssetVersions.map((item) =>
+        item.id === latestAsset.id ? { ...item, ...updates, updatedAt: new Date().toISOString() } : item,
+      ),
+    })
+  }
+
+  function saveQa() {
+    if (!latestAsset || latestIsApproved) return
+    const timestamp = new Date().toISOString()
+    const currentAsset = production.finishedAssetVersions.find((item) => item.id === latestAsset.id) ?? latestAsset
+    const passed = currentAsset.qaChecks.length === shortFormQaCheckDefinitions.length &&
+      currentAsset.qaChecks.every((item) => item.passed) &&
+      Boolean(production.fileReferences.find((item) =>
+        item.id === currentAsset.finishedVideoReferenceId && item.kind === 'Finished Video' && item.location.trim(),
+      )) &&
+      targetPlatforms.includes(currentAsset.targetPlatform)
+    const nextAsset: ShortFormFinishedAssetVersion = {
+      ...currentAsset,
+      status: passed ? 'QA Passed' : 'QA Failed',
+      qaActor: qaActor.trim() || 'CEO',
+      qaCompletedAt: timestamp,
+      qaNotes: qaNotes.trim(),
+      updatedAt: timestamp,
+    }
+    onPersist({
+      ...production,
+      status: passed ? 'QA Passed' : 'QA Failed',
+      finishedAssetVersions: production.finishedAssetVersions.map((item) => item.id === nextAsset.id ? nextAsset : item),
+      updatedAt: timestamp,
+    }, passed
+      ? 'Mandatory QA passed for finished-asset Version ' + nextAsset.version + '. Final CEO approval remains separate.'
+      : 'QA result recorded as Failed. Correct the referenced asset or checks before final approval.')
+  }
+
+  return (
+    <div className="space-y-5">
+      <p className="m-0 text-sm leading-6 text-muted">
+        Record metadata for manually produced files, preserve each finished-video version, complete mandatory QA, and request separate CEO approval. AI Operator OS does not open, copy, render, upload, publish, or schedule these files.
+      </p>
+
+      <div className="grid gap-3 md:grid-cols-4">
+        <Info label="Production ID" value={production.productionId} />
+        <Info label="Status" value={production.status} />
+        <Info label="File References" value={String(production.fileReferences.length)} />
+        <Info label="Finished Versions" value={String(production.finishedAssetVersions.length)} />
+      </div>
+
+      <div className="grid gap-4 rounded-2xl border border-line bg-ink/35 p-4 md:grid-cols-2">
+        <label className="space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Tool / Process</span>
+          <input
+            value={production.toolProcessDescription}
+            onChange={(event) => onChange({ toolProcessDescription: event.target.value, status: 'In Production' })}
+            className="field"
+            placeholder="CapCut desktop, manual edit, recorded screen capture..."
+          />
+        </label>
+        <label className="space-y-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Blockers / Missing Components</span>
+          <input
+            value={production.blockers}
+            onChange={(event) => onChange({ blockers: event.target.value })}
+            className="field"
+            placeholder="None, missing voiceover, replacement capture required..."
+          />
+        </label>
+        <label className="space-y-2 md:col-span-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Production Notes</span>
+          <textarea
+            value={production.productionNotes}
+            onChange={(event) => onChange({ productionNotes: event.target.value })}
+            className="field min-h-[90px]"
+            placeholder="Record how the real video was produced and any material decisions."
+          />
+        </label>
+        <button
+          type="button"
+          className="btn-secondary md:col-span-2 md:justify-self-start"
+          onClick={() => onPersist(production, 'Short-Form production record saved. No external action occurred.')}
+        >
+          Save Production Record
+        </button>
+      </div>
+
+      <div className="rounded-2xl border border-line bg-ink/35 p-4">
+        <p className="eyebrow mb-3">File Reference Metadata</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Kind</span>
+            <select value={referenceKind} onChange={(event) => setReferenceKind(event.target.value as ShortFormFileReferenceKind)} className="field">
+              {shortFormFileReferenceKinds.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Label</span>
+            <input value={referenceLabel} onChange={(event) => setReferenceLabel(event.target.value)} className="field" placeholder="Screen captures, voiceover, final vertical MP4..." />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Location Type</span>
+            <select value={referenceLocationType} onChange={(event) => setReferenceLocationType(event.target.value as ShortFormFileLocationType)} className="field">
+              {shortFormFileLocationTypes.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Path or External Reference</span>
+            <input value={referenceLocation} onChange={(event) => setReferenceLocation(event.target.value)} className="field" placeholder="C:\Videos\short-001.mp4 or https://..." />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Media Type</span>
+            <input value={referenceMediaType} onChange={(event) => setReferenceMediaType(event.target.value)} className="field" placeholder="video/mp4, audio/wav, image/png..." />
+          </label>
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Rights / Restrictions</span>
+            <select value={referenceRights} onChange={(event) => setReferenceRights(event.target.value as ShortFormRightsStatus)} className="field">
+              {shortFormRightsStatuses.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </label>
+          <label className="space-y-2 md:col-span-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Reference Notes</span>
+            <textarea value={referenceNotes} onChange={(event) => setReferenceNotes(event.target.value)} className="field min-h-[76px]" />
+          </label>
+        </div>
+        <button type="button" className="btn-primary mt-4" onClick={addReference} disabled={!referenceLabel.trim() || !referenceLocation.trim()}>
+          Add File Reference
+        </button>
+
+        {production.fileReferences.length > 0 ? (
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {production.fileReferences.map((item) => (
+              <div key={item.id} className="rounded-xl border border-line bg-white/[0.025] p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="m-0 text-sm font-semibold text-white">{item.label}</p>
+                  <span className="rounded-full border border-line px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-muted">{item.kind}</span>
+                </div>
+                <p className="m-0 mt-2 break-all text-xs leading-5 text-muted">{item.locationType}: {item.location}</p>
+                <p className="m-0 mt-1 text-xs leading-5 text-muted">Rights: {item.rightsStatus} · Media: {item.mediaType || 'Not recorded'}</p>
+                {item.notes ? <p className="m-0 mt-2 text-xs leading-5 text-[#c3cbc7]">{item.notes}</p> : null}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="m-0 mt-4 text-sm text-muted">Add at least one source asset and one finished-video reference.</p>
+        )}
+      </div>
+
+      <div className="rounded-2xl border border-lime/20 bg-lime/[0.035] p-4">
+        <p className="eyebrow mb-3">Finished Asset Version</p>
+        <div className="grid gap-4 md:grid-cols-3">
+          <label className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Target Platform</span>
+            <select value={selectedTarget} onChange={(event) => setSelectedTarget(event.target.value as ShortFormPlatform)} className="field">
+              <option value="">Select target</option>
+              {targetPlatforms.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </label>
+          <Info label="Source Package" value={latestPackage ? latestPackage.packageId + ' · v' + latestPackage.packageVersion : 'Approved package required'} />
+          <Info label="Version Rule" value={latestAsset && !latestIsApproved ? 'Update existing draft' : 'Create append-preserved version'} />
+        </div>
+        <button type="button" className="btn-primary mt-4" onClick={createVersion} disabled={!canCreateVersion}>
+          {latestAsset && !latestIsApproved ? 'Draft Version Already Exists' : latestAsset ? 'Create New Finished Version' : 'Create Finished Version'}
+        </button>
+        {!canCreateVersion ? (
+          <p className="m-0 mt-3 text-xs leading-5 text-orange-100">
+            Creation requires an approved Creative Asset Package, one source-asset reference, one finished-video reference, and a selected Project target platform. An unapproved draft must be completed before another version can be created.
+          </p>
+        ) : null}
+      </div>
+
+      {latestAsset ? (
+        <div className="rounded-2xl border border-line bg-ink/35 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="eyebrow mb-2">Latest Finished Asset</p>
+              <h4 className="m-0 font-display text-base font-semibold text-white">{latestAsset.finishedAssetId} · Version {latestAsset.version}</h4>
+              <p className="m-0 mt-2 text-sm text-muted">QA Status: {latestAsset.status} · Target: {latestAsset.targetPlatform}</p>
+            </div>
+            <span className="rounded-full border border-line px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+              Final Review: {latestApproval?.status ?? 'Not submitted'}
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <Info label="Package" value={latestAsset.sourceCreativeAssetPackageId} />
+            <Info label="Source Assets" value={String(latestAsset.sourceAssetReferenceIds.length)} />
+            <Info label="Completed" value={formatDate(latestAsset.productionCompletedAt)} />
+          </div>
+
+          <div className="mt-4 space-y-3">
+            {shortFormQaCheckDefinitions.map((definition) => {
+              const check = latestAsset.qaChecks.find((item) => item.key === definition.key)
+              return (
+                <label key={definition.key} className="flex items-start gap-3 rounded-xl border border-line bg-white/[0.025] p-3">
+                  <input
+                    type="checkbox"
+                    checked={check?.passed === true}
+                    onChange={(event) => updateLatestAsset({
+                      status: 'QA Pending',
+                      qaChecks: latestAsset.qaChecks.map((item) =>
+                        item.key === definition.key
+                          ? { ...item, passed: event.target.checked, reviewedAt: event.target.checked ? new Date().toISOString() : undefined }
+                          : item,
+                      ),
+                      qaCompletedAt: undefined,
+                      finalApprovalId: undefined,
+                    })}
+                    disabled={latestIsApproved}
+                    className="mt-1 h-4 w-4 accent-lime"
+                  />
+                  <span className="text-sm leading-6 text-[#d7e2dc]">{definition.label}</span>
+                </label>
+              )
+            })}
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">QA Actor</span>
+              <input value={qaActor} onChange={(event) => setQaActor(event.target.value)} className="field" disabled={latestIsApproved} />
+            </label>
+            <label className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">QA Notes / Recorded Exception</span>
+              <textarea value={qaNotes} onChange={(event) => setQaNotes(event.target.value)} className="field min-h-[76px]" disabled={latestIsApproved} />
+            </label>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button type="button" className="btn-secondary" onClick={saveQa} disabled={latestIsApproved}>
+              {allQaPassed ? 'Save QA Pass' : 'Save QA Result'}
+            </button>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => onCreateFinalApproval(latestAsset)}
+              disabled={!allQaPassed || latestAsset.status !== 'QA Passed' || latestApproval?.status === 'Pending' || latestIsApproved}
+            >
+              {latestApproval?.status === 'Pending' ? 'Final Review Pending' : latestIsApproved ? 'Finished Asset Approved' : 'Request Final CEO Approval'}
+            </button>
+            {latestApproval ? <Link to={'/approval?approvalId=' + latestApproval.id} className="btn-secondary">Open Final Review</Link> : null}
+          </div>
+
+          {latestIsApproved ? (
+            <div className="mt-4 rounded-xl border border-lime/25 bg-lime/[0.06] p-3 text-sm leading-6 text-lime">
+              This exact finished-asset version is CEO approved. It is locked; material changes require a new version and new final approval. Approval did not publish or upload anything.
+            </div>
+          ) : latestApproval && latestApproval.status !== 'Pending' ? (
+            <div className="mt-4 rounded-xl border border-orange-300/25 bg-orange-300/[0.05] p-3 text-sm leading-6 text-orange-100">
+              Latest final decision: {latestApproval.status}. Correct and resave this draft version, then request a new final review.
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {production.finishedAssetVersions.length > 1 ? (
+        <div className="rounded-2xl border border-line bg-ink/35 p-4">
+          <p className="eyebrow mb-3">Preserved Version History</p>
+          <div className="space-y-3">
+            {production.finishedAssetVersions.slice(1).map((item) => {
+              const approval = item.finalApprovalId ? approvals.find((candidate) => candidate.id === item.finalApprovalId) : undefined
+              return (
+                <div key={item.id} className="rounded-xl border border-line bg-white/[0.025] p-3">
+                  <p className="m-0 text-sm font-semibold text-white">{item.finishedAssetId} · Version {item.version}</p>
+                  <p className="m-0 mt-1 text-xs leading-5 text-muted">QA: {item.status} · Final Review: {approval?.status ?? 'Not submitted'} · Target: {item.targetPlatform}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
