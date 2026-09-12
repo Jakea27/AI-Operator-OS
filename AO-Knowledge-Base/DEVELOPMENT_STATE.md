@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. Task 1 repository/application inspection is complete and architecture freeze is PASS; documentation repository closeout is pending. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. Task 1 repository/application inspection, architecture freeze, documentation, commit, push, and repository verification are complete. Task 2 is authorized and not started. Sprint 016 stopped and closed after the Task 3 pilot; Task 4 publication and Task 5 closeout are cancelled.
 
 ## Next Phase
 
-Complete Sprint 017 Task 1 documentation repository closeout, then begin Task 2 - Automated Editor Engine from the frozen architecture. Task 3 remains not started.
+Begin Task 2 - Automated Editor Engine from the frozen Task 1 architecture. Task 3 remains not started.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 application implementation has NOT STARTED. Task 1 architecture freeze is PASS. Task 2 is authorized after Task 1 documentation repository closeout.
+Sprint 017 application implementation has NOT STARTED. Task 1 architecture freeze and repository closeout are complete. Task 2 is authorized and not started.
 
 Required MVP input:
 - topic or source story;
@@ -81,8 +81,11 @@ Task 1 application files changed: NONE.
 Build/QA: not run because Task 1 is documentation/architecture only.
 Task 1 architecture review: PASS.
 Task 1 architecture freeze: PASS.
-Task 1 documentation: COMPLETE locally; repository closeout PENDING.
-Task 2: AUTHORIZED AFTER TASK 1 REPOSITORY CLOSEOUT - NOT STARTED.
+Task 1 documentation: COMPLETE.
+Task 1 architecture/documentation commit: `304ad17486df539b7efa20b2b360e3a624b22ab3`.
+Task 1 push and repository verification: PASS.
+Task 1 repository closeout: COMPLETE.
+Task 2: AUTHORIZED - NOT STARTED.
 
 ## Sprint 016 Implementation Status
 

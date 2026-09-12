@@ -1,5 +1,12 @@
 # Changelog
 
+## Sprint 017 Task 1 - Repository Closeout - 2026-09-12
+
+- Verified Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3` on `origin/main`.
+- Recorded Task 1 as documentation COMPLETE, architecture freeze PASS, and repository closeout COMPLETE.
+- Updated the authoritative checkpoint and next action without beginning Task 2 application implementation.
+- Regenerated and validated the Startup Bundle.
+
 ## Sprint 017 Task 1 - Automation-First Architecture Freeze - 2026-09-12
 
 - Inspected the synchronized Electron/React application, provider/execution path, persistence boundaries, approval workflow, Windows speech capability, and available media tooling.
