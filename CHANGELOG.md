@@ -5,7 +5,7 @@
 - Proved real topic-and-requirements-only generation through the configured provider, including provider-created hook, full narration, and CTA.
 - Fixed target-duration enforcement with measured narration validation and bounded System.Speech rate calibration; invalid duration does not render or trigger automatic provider retry.
 - Updated captions to six-word groups with a 350 ms display lead based on CEO timing feedback.
-- CEO approved an 83-second result for the 90-second target and verified approval persistence after a full application restart. Automated/build/package checks pass; repository closeout is pending.
+- CEO approved an 83-second result for the 90-second target and verified approval persistence after a full application restart. Automated/build/package checks pass. Acceptance-fix commit `a3b52fb573e2f25ce12dd761b292cafcf912e76d` is pushed and repository verified; closeout is complete.
 
 ## Sprint 017 - Final Repository Closeout - 2026-09-13
 

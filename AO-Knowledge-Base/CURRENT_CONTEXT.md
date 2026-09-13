@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 017 - Automation-First Content Production MVP remains mission-satisfied. The reopened Task 4 topic-only CEO acceptance test and bounded fixes pass locally; repository closeout is pending. No implementation sprint is active. Sprint 016 Task 4 remains cancelled and its pilot must not be published.
+Sprint 017 - Automation-First Content Production MVP is COMPLETE and repository verified. The reopened Task 4 topic-only CEO acceptance test, bounded fixes, approval persistence, and repository closeout pass. No implementation sprint is active. Sprint 016 Task 4 remains cancelled and its pilot must not be published.
 
 ## Last Completed Sprint
 
@@ -91,7 +91,7 @@ Sprint 017 - Automation-First Content Production MVP.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3`, Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc`, Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd`, and original Task 4 implementation/QA commit `ca860feccf5853b84b12aef6aa2d5c47574c5968` are pushed and repository verified. The reopened Task 4 topic-only acceptance fix is verified locally and awaits commit/push closeout. Do not publish under the superseded Sprint 016 Task 4 contract.
+- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3`, Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc`, Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd`, original Task 4 implementation/QA commit `ca860feccf5853b84b12aef6aa2d5c47574c5968`, and reopened Task 4 acceptance-fix commit `a3b52fb573e2f25ce12dd761b292cafcf912e76d` are pushed and repository verified. Do not publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -230,8 +230,8 @@ Sprint 017 - Automation-First Content Production MVP.
 - Task 1 Commit: `304ad17486df539b7efa20b2b360e3a624b22ab3` pushed and verified on `origin/main`.
 - Task 2 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 - Task 3 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
-- Task 4 Status: IMPLEMENTATION AND CEO QA PASS / BUILD PASS / DOCUMENTATION UPDATED / REOPENED REPOSITORY CLOSEOUT PENDING.
-- Sprint 017 Status: MISSION SATISFIED / REOPENED REPOSITORY CLOSEOUT PENDING.
+- Task 4 Status: COMPLETE / CEO QA PASS / BUILD PASS / DOCUMENTATION COMPLETE / REPOSITORY VERIFIED.
+- Sprint 017 Status: COMPLETE / MISSION SATISFIED / REPOSITORY VERIFIED.
 - Next Required Action: define the next sprint scope and first task from the authoritative roadmap; do not activate implementation yet.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 

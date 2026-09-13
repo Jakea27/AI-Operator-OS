@@ -7,7 +7,7 @@
 - Fixed a real duration defect with structured sentence-array output, measured narration-duration validation, and bounded deterministic System.Speech rate calibration; out-of-range narration now fails without rendering or automatic provider retry.
 - Adjusted captions to six-word groups with a 350 ms visual lead after CEO timing feedback.
 - CEO accepted and approved the final 83-second result for a 90-second target; approval persisted after a full stop/restart. Installed Windows voice quality remains a deferred limitation.
-- Deterministic engine/media, real provider duration, UI/state persistence, packaged resources, TypeScript, Vite, and unpacked Windows package checks PASS. Repository closeout is pending.
+- Deterministic engine/media, real provider duration, UI/state persistence, packaged resources, TypeScript, Vite, and unpacked Windows package checks PASS. Acceptance-fix commit `a3b52fb573e2f25ce12dd761b292cafcf912e76d` is pushed and repository verified; closeout is complete.
 
 ## Sprint 017 - Final Repository Closeout - 2026-09-13
 

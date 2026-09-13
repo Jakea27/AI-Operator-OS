@@ -271,8 +271,9 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 - Automated verification after the reopened fixes: TypeScript PASS, Vite production build PASS, deterministic content-engine/media PASS, real configured-provider duration PASS, UI/state persistence PASS, Windows unpacked package PASS, and packaged FFmpeg/System.Speech PASS. The existing large-chunk warning remains non-blocking.
 - Approval of the topic-only result persisted after a full application stop/restart. No publication or external action occurred. Installed Windows voice quality remains a documented non-production-grade limitation.
 - Original Task 4 implementation/QA commit: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
-- Reopened acceptance-fix commit and push verification: PENDING.
-- Sprint 017 mission: SATISFIED. Reopened repository closeout is PENDING until the acceptance fix is pushed and verified.
+- Reopened acceptance-fix commit: `a3b52fb573e2f25ce12dd761b292cafcf912e76d`.
+- Push and repository verification: PASS on `origin/main` with local/remote parity `0/0`.
+- Sprint 017 mission: SATISFIED. Task 4 and Sprint 017 repository closeout are COMPLETE.
 
 ## Acceptance Criteria
 
