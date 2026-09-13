@@ -36,7 +36,7 @@ Every AI operator must read the following source documents in this exact order.
 
 ## Active Sprint Handoff
 
-Sprint 016 is STOPPED AND CLOSED AFTER PILOT; its rejected pilot must not be published. Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 4 repository closeout. Packaged Windows CEO QA passed after real generation, bounded QA fixes, review decisions, persistence, and full restart verification. The next required action is to commit and push Task 4 and verify repository synchronization before Sprint 017 closure. Active Project State remains authoritative for checkpoint metadata.
+Sprint 016 is STOPPED AND CLOSED AFTER PILOT; its rejected pilot must not be published. Sprint 017 - Automation-First Content Production MVP is COMPLETE and repository verified after packaged Windows CEO QA, bounded QA fixes, review decisions, persistence, and full restart verification. No implementation sprint is active. The next required action is to define the next sprint scope and first task from the authoritative roadmap. Active Project State remains authoritative for checkpoint metadata.
 
 ## Startup Source Priority
 

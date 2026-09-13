@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1-3 are complete and repository verified. Task 4 Windows Integration and CEO QA passed; documentation and repository closeout are pending.
+Sprint 017 - Automation-First Content Production MVP is COMPLETE and repository verified. No implementation sprint is active.
 
 ## Next Phase
 
-Complete Task 4 documentation and repository closeout, then evaluate Sprint 017 completion.
+Define the next sprint scope and first task from the authoritative roadmap; do not begin implementation before architecture/documentation approval.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 Tasks 1-3 are COMPLETE and repository verified. Task 4 CEO QA is PASS with bounded replay, hook-layout, caption-grouping, and repeated-narration fixes verified; repository closeout is pending.
+Sprint 017 Tasks 1-4 are COMPLETE and repository verified. Task 4 CEO QA, post-fix build/package verification, persistence, full restart, and repository closeout are PASS/COMPLETE. Sprint mission is SATISFIED.
 
 Required MVP input:
 - topic or source story;
@@ -139,9 +139,14 @@ Task 3 implementation/documentation checkpoint: `d4124ac85ec80ac3b628615befbc2c4
 Task 3 documentation: COMPLETE.
 Task 3 push and synchronization verification: PASS - commit verified on `origin/main` with local/remote parity `0/0`.
 Task 3 repository closeout: COMPLETE.
-Task 4 Windows Integration and CEO QA: CEO QA PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+Task 4 Windows Integration and CEO QA: COMPLETE - CEO QA PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 
 Task 4 verified real packaged-Windows generation from two source stories and reusable prerecorded footage. Provider failure/manual retry, script generation, System.Speech narration, ASS captions, footage crop/loop/trim, protected MP4 preview/replay, reveal-in-folder, revision, append-only versions, Approve, Reject, persistence, and full restart passed. The CEO accepted QA with installed voice quality and approximate-duration undershoot deferred as limitations.
+
+Task 4 implementation/QA checkpoint: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
+Task 4 push and synchronization verification: PASS.
+Task 4 documentation and repository closeout: COMPLETE.
+Sprint 017 status: COMPLETE - MISSION SATISFIED - REPOSITORY VERIFIED.
 
 ## Sprint 016 Implementation Status
 

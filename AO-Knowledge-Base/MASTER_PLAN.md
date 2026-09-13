@@ -250,19 +250,23 @@ Begin practical early revenue systems, especially B2C opportunities that can com
 
 Improve the operating system's ability to manage multiple active businesses without increasing CEO workload linearly.
 
-### Current
-
 #### AO-016 - Shared Short-Form Operating Capability
 
-Activate the transition from building AI Operator OS to using it for real business operations. Extend the shared Creative Production Engine so one real short-form idea can become a CEO-approved finished asset, be manually published to one AO-owned TikTok, YouTube Shorts, or Instagram Reels page, and have its initial observed performance recorded in AO.
+Stopped and closed after the Task 3 pilot. The verified technical records remain preserved, but the CEO rejected the manual production design, withdrew publication authorization, and cancelled the remaining publication/closeout tasks.
 
-Sprint 016 must prove the minimum operational capability through the real workflow rather than build generalized infrastructure in isolation. Short-form production remains reusable by owned-content and future B2B workflows without depending on a customer model.
+#### Sprint 017 - Automation-First Content Production MVP
+
+Completed the automation-first Reddit Stories production path from topic/requirements and reusable prerecorded footage through provider script generation, Windows narration, synchronized captions, automated vertical rendering, CEO review/revision decisions, local persistence, and restart verification. This product-reset sprint used Sprint 017 as its authoritative identifier and superseded the earlier planned AO-017 milestone label below.
+
+### Current
+
+Post-Sprint 017 planning. No implementation milestone is active. The next sprint scope, first task, and roadmap identifier require CEO architecture definition before activation.
 
 ### Future
 
-#### AO-017 - B2B Short-Form Service Operations
+#### B2B Short-Form Service Operations - Identifier Pending
 
-Reuse the shared finished short-form capability for prospects, offers, engagements, client review, delivery, payment records, follow-up, and repeat service operations without duplicating the production engine.
+This objective was previously labeled AO-017 before the automation-first product reset used Sprint 017 as the authoritative completed sprint identifier. Preserve the objective, but assign or confirm its future milestone identifier only during the next documentation-first planning decision. Reuse the shared finished short-form capability for prospects, offers, engagements, client review, delivery, payment records, follow-up, and repeat service operations without duplicating the production engine.
 
 #### AO-018 - Active Content Operations and Feedback
 

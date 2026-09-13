@@ -1,6 +1,6 @@
 # Sprint 017 - Automation-First Content Production MVP
 
-Status: ACTIVE - TASK 4 CEO QA PASS - REPOSITORY CLOSEOUT PENDING
+Status: COMPLETE - CEO QA PASS - REPOSITORY VERIFIED
 Owner: Jake Allen  
 Activated: 2026-09-12  
 Timebox: Four development days
@@ -222,7 +222,7 @@ Implement script, narration, caption timing, footage preparation, and vertical M
 
 ## Task 3 - Simple Content UI
 
-Status: IMPLEMENTATION COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 
 Implement the minimum Create, progress, preview, and Approve/Revise/Reject experience. Legacy operational forms must not enter the normal workflow.
 
@@ -255,7 +255,7 @@ Implement the minimum Create, progress, preview, and Approve/Revise/Reject exper
 
 ## Task 4 - Windows Integration and CEO QA
 
-Status: CEO QA PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+Status: COMPLETE - CEO QA PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 
 Verify real generation on the CEO's Windows computer using reusable prerecorded footage. Test multiple topics, revisions, failures, persistence, application restart, and produced MP4 playback.
 
@@ -268,6 +268,9 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 - CEO QA exposed bounded defects in custom-protocol replay, long-hook wrapping, loose caption grouping, and repeated provider narration. The fixes forward media range headers, enable ASS smart wrapping, use shorter caption groups, instruct against repeated narration, and reject exact repeated narration sentences before rendering.
 - Automated verification after the fixes: TypeScript PASS, Vite production build PASS, deterministic content-engine/media PASS, provider path PASS, UI/state persistence PASS, Windows unpacked package PASS, and packaged FFmpeg/System.Speech PASS. The existing large-chunk warning remains non-blocking.
 - CEO accepted Task 4 QA as PASS. Installed Windows voice quality and provider-generated duration undershooting the approximate target are documented limitations deferred from this bounded QA recovery.
+- Task 4 implementation/QA commit: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
+- Push and repository verification: PASS on `origin/main` with local/remote parity `0/0`.
+- Sprint 017 mission: SATISFIED. Task 4 and Sprint 017 repository closeout are COMPLETE.
 
 ## Acceptance Criteria
 
@@ -301,4 +304,4 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 
 ## Next Required Action
 
-Complete Task 4 documentation and repository closeout, then evaluate Sprint 017 completion. Do not begin another sprint or publish content during closeout.
+Define the next sprint scope and first task from the authoritative roadmap. Do not activate or implement another sprint until its architecture and documentation are approved.
