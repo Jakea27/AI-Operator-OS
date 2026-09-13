@@ -24,11 +24,11 @@ Post-Sprint 017 Planning
 
 ## Current Sprint
 
-No active implementation sprint. Sprint 017 - Automation-First Content Production MVP is complete and repository verified.
+No active implementation sprint. Sprint 017 - Automation-First Content Production MVP remains mission-satisfied; reopened Task 4 repository closeout is pending.
 
 ## Sprint Status
 
-COMPLETE - CEO QA PASS - REPOSITORY VERIFIED.
+CEO QA PASS - MISSION SATISFIED - REOPENED REPOSITORY CLOSEOUT PENDING.
 
 ## Current Phase
 
@@ -68,11 +68,11 @@ main
 
 ## Last QA Result
 
-Sprint 017 Task 4 CEO QA PASS. Real packaged-Windows generation verified provider failure/manual retry, script/TTS/captions/footage/rendering, protected preview and replay, reveal-in-folder, manual revision, append-only versions, Approve, Reject, persistence, and full restart. Bounded replay, hook-layout, caption-grouping, and repeated-narration fixes were rebuilt and retested.
+Sprint 017 Task 4 CEO QA PASS, including the reopened topic-only acceptance test. From only a CEO-entered topic, requirements, prerecorded footage, and settings, the configured Ollama provider independently generated the hook, full narration, and CTA before TTS, captions, and rendering. The final 83-second result for a 90-second target was approved and remained approved after a full application restart. No publication occurred.
 
 ## Last Build Result
 
-Sprint 017 Task 4 post-fix `npm.cmd run build` PASS with TypeScript and Vite; 2,610 modules transformed. Deterministic engine/media, provider, and UI/state verification PASS. `npm.cmd run dist:unpacked` and packaged FFmpeg/System.Speech verification PASS. The existing large-chunk warning remains non-blocking.
+Sprint 017 Task 4 reopened post-fix `npm.cmd run build` PASS with TypeScript and Vite; 2,610 modules transformed. Deterministic engine/media, real configured-provider duration, packaged-resource, and UI/state persistence verification PASS. `npm.cmd run dist:unpacked` PASS. The existing large-chunk warning remains non-blocking.
 
 
 
@@ -147,17 +147,20 @@ Sprint 017 Task 4 post-fix `npm.cmd run build` PASS with TypeScript and Vite; 2,
 ## Sprint 017 Task 4 Windows Integration and CEO QA
 
 - CEO QA: PASS on the packaged Windows application.
-- Real production: PASS with two source stories, reusable prerecorded footage, Ollama script generation, System.Speech narration, ASS captions, and FFmpeg-rendered vertical MP4 output.
+- Real production: PASS with two source stories plus a separate topic-only test using reusable prerecorded footage, Ollama-generated hook/full narration/CTA, System.Speech narration, ASS captions, and FFmpeg-rendered vertical MP4 output.
 - Failure/retry: PASS; initial missing packaged-app provider metadata produced a visible failure, Local Ollama/model registration was explicit, and manual retry completed without automatic retry.
 - Review: PASS for required written revision feedback, separate manual revision execution, append-only versions, Approve, and separate-job Reject with a persisted reason.
 - Persistence/restart: PASS; approved, changes-requested, and rejected history plus generated MP4 results persisted across full application restart without automatic generation or publication.
-- QA fixes: media byte-range headers are forwarded for replay; ASS smart wrapping contains long hooks; caption groups are shortened for closer narration timing; exact repeated narration sentences are rejected before rendering.
-- Deferred limitations: installed Windows System.Speech voice quality is functional but not production-grade; provider output can undershoot the approximate target duration.
+- Reopened acceptance: PASS. The CEO supplied only a topic, requirements, prerecorded footage, and settings; no script, story, hook, narration, or CTA was supplied. AO generated those elements through the configured provider before local media production.
+- Reopened QA defects and fixes: a 90-second request initially rendered at about 40 seconds. The bounded fix requests structured sentence-array JSON, validates measured narration duration, calibrates System.Speech rate from measured output, and rejects out-of-range narration without rendering or automatic provider retry. Caption readability/timing was then corrected with six-word groups and a 350 ms display lead.
+- Final reopened result: PASS at 83 seconds for the 90-second target; CEO approval persisted after a full stop/restart and no publishing or external action occurred.
+- Deferred limitation: installed Windows System.Speech voice quality is functional but not production-grade.
 - Automated post-fix verification: PASS.
 - Documentation: COMPLETE.
-- Implementation/QA commit: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
-- Push and synchronization: PASS at local/remote parity `0/0`.
-- Repository closeout: COMPLETE.
+- Original implementation/QA commit: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
+- Reopened acceptance-fix commit: PENDING.
+- Push and synchronization: PENDING for the reopened acceptance fix.
+- Repository closeout: PENDING until the reopened acceptance fix is pushed and verified.
 - Sprint 017 mission: SATISFIED.
 
 ## CEO Product Reset - 2026-09-12

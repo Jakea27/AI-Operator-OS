@@ -1,5 +1,14 @@
 # AO Knowledge Base Changelog
 
+## Sprint 017 Task 4 - Topic-Only Acceptance Recovery - 2026-09-13
+
+- Reopened CEO QA because the earlier test used supplied story material and did not prove AO could create the hook, full narration, and CTA from only a topic and requirements.
+- Verified the configured Ollama provider generated all three content elements before Windows narration, captions, footage handling, and rendering.
+- Fixed a real duration defect with structured sentence-array output, measured narration-duration validation, and bounded deterministic System.Speech rate calibration; out-of-range narration now fails without rendering or automatic provider retry.
+- Adjusted captions to six-word groups with a 350 ms visual lead after CEO timing feedback.
+- CEO accepted and approved the final 83-second result for a 90-second target; approval persisted after a full stop/restart. Installed Windows voice quality remains a deferred limitation.
+- Deterministic engine/media, real provider duration, UI/state persistence, packaged resources, TypeScript, Vite, and unpacked Windows package checks PASS. Repository closeout is pending.
+
 ## Sprint 017 - Final Repository Closeout - 2026-09-13
 
 - Verified Task 4 implementation/QA commit `ca860feccf5853b84b12aef6aa2d5c47574c5968` on `origin/main` with local/remote parity `0/0`.
@@ -11,9 +20,9 @@
 ## Sprint 017 Task 4 - Windows Integration and CEO QA - 2026-09-13
 
 - Completed real packaged-Windows CEO QA using two source stories and reusable prerecorded footage; verified provider failure/manual retry, script generation, System.Speech narration, ASS captions, FFmpeg rendering, preview/replay, reveal-in-folder, revision, append-only versions, Approve, Reject, persistence, and full restart.
-- Fixed protected-media replay by forwarding byte-range headers, enabled ASS smart wrapping for long hooks, shortened caption groups for closer speech timing, and rejected exact repeated narration sentences before rendering.
+- Fixed protected-media replay by forwarding byte-range headers, enabled ASS smart wrapping for long hooks, initially shortened caption groups for closer speech timing, and rejected exact repeated narration sentences before rendering. The later topic-only acceptance recovery supersedes the initial caption grouping.
 - TypeScript, Vite, deterministic engine/media, provider, UI/state persistence, unpacked Windows package, and packaged FFmpeg/System.Speech verification passed. Existing large-chunk warning remains non-blocking.
-- CEO QA PASS. Windows voice quality and provider duration undershoot remain documented limitations; no publishing, AI footage, automatic retry, or unrelated feature was added. Repository closeout is pending.
+- CEO QA PASS. Windows voice quality remains a documented limitation; the later topic-only acceptance recovery fixes duration enforcement. No publishing, AI footage, automatic retry, or unrelated feature was added.
 
 ## Sprint 017 Task 3 - Repository Closeout - 2026-09-12
 

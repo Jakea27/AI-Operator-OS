@@ -55,7 +55,7 @@ async function buildAttempt(jobId: string, revisionInstructions?: string) {
       attemptId: attempt.attemptId,
       formatId: job.formatId,
       instructions,
-      outputRequirements: 'Return one JSON object containing exactly hookText, narrationText, and ctaText as non-empty strings.',
+      outputRequirements: 'Return one JSON object containing hookText, narrationSentences, and ctaText. narrationSentences must be an array of non-empty strings.',
     })
     contentProductionStore.updateAttempt(jobId, attempt.attemptId, {
       executionRecordId: execution.id,

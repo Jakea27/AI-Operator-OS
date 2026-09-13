@@ -8,7 +8,11 @@ import {
   createContentProductionStore,
   normalizeContentProductionJobs,
 } from '../src/core/contentProduction/contentProductionStore'
-import { parseRedditStoriesScript, redditStoriesFormat } from '../src/core/contentProduction/redditStoriesFormat'
+import {
+  narrationWordRange,
+  parseRedditStoriesScript,
+  redditStoriesFormat,
+} from '../src/core/contentProduction/redditStoriesFormat'
 import { executionStore } from '../src/core/execution'
 
 const require = createRequire(import.meta.url)
@@ -16,6 +20,9 @@ const media = require('../electron/content-production.cjs') as {
   assertInside(root: string, candidate: string): string
   buildFfmpegArguments(input: Record<string, unknown>): string[]
   createAssSubtitles(hookText: string, ctaText: string, cues: Array<{ text: string; startMs: number; endMs: number }>, duration: number): string
+  narrationRateForDuration(narrationDurationMs: number, targetDurationSeconds: number): number
+  refinedNarrationRate(previousRate: number, previousDurationMs: number, currentRate: number, currentDurationMs: number, targetDurationSeconds: number): number
+  validateNarrationDuration(narrationDurationMs: number, targetDurationSeconds: number): void
   groupWordTimings(words: Array<{ text: string; startMs: number }>, duration: number): Array<{ text: string; startMs: number; endMs: number }>
   listSystemVoices(environment: Record<string, unknown>): Promise<Array<{ id: string }>>
   renderContentProduction(request: Record<string, unknown>, environment: Record<string, unknown>): Promise<Record<string, unknown>>
@@ -102,11 +109,36 @@ function parserAndCaptionVerification() {
   const expected = { hookText: 'Wait for it.', narrationText: 'A short story happened.', ctaText: 'What would you do?' }
   assert.deepEqual(parseRedditStoriesScript(JSON.stringify(expected)), expected)
   assert.deepEqual(parseRedditStoriesScript(`\`\`\`json\n${JSON.stringify(expected)}\n\`\`\``), expected)
+  assert.deepEqual(parseRedditStoriesScript(JSON.stringify({
+    hookText: expected.hookText,
+    narrationSentences: ['A short story', 'happened.'],
+    ctaText: expected.ctaText,
+  })), expected)
   for (const invalid of [
     '', '{bad json}', JSON.stringify({ hookText: 'Hook', narrationText: 'Story' }),
     JSON.stringify({ ...expected, extra: 'not allowed' }), `Explanation\n${JSON.stringify(expected)}`,
     JSON.stringify({ ...expected, narrationText: 'What was he missing? What was he missing?' }),
   ]) assert.throws(() => parseRedditStoriesScript(invalid))
+  const ninetySecondRange = narrationWordRange(90)
+  assert.deepEqual(ninetySecondRange, { minimum: 248, maximum: 297 })
+  assert.match(
+    redditStoriesFormat.buildProviderInstructions({
+      topicOrSourceStory: 'A topic only.',
+      requirements: 'Create the story independently.',
+      footage: { displayName: 'footage.mp4', sourcePath: 'C:\\footage.mp4', extension: '.mp4', selectedAt: '2026-09-13T00:00:00.000Z' },
+      targetDurationSeconds: 90,
+    }),
+    /HARD LENGTH REQUIREMENT: the combined narrationSentences text must contain 248-297 words/,
+  )
+  assert.match(
+    redditStoriesFormat.buildProviderInstructions({
+      topicOrSourceStory: 'A topic only.',
+      requirements: 'Create the story independently.',
+      footage: { displayName: 'footage.mp4', sourcePath: 'C:\\footage.mp4', extension: '.mp4', selectedAt: '2026-09-13T00:00:00.000Z' },
+      targetDurationSeconds: 90,
+    }),
+    /array of exactly 31 distinct strings, each containing 8-9 words/,
+  )
   assert.equal(redditStoriesFormat.validateInput({
     topicOrSourceStory: '', requirements: '', footage: { displayName: '', sourcePath: '', extension: '', selectedAt: '' },
   }).length > 0, true)
@@ -116,12 +148,19 @@ function parserAndCaptionVerification() {
     { text: 'Next', startMs: 1100 }, { text: 'caption', startMs: 1450 },
   ], 2200)
   assert.deepEqual(cues.map((cue) => cue.text), ['One short sentence.', 'Next caption'])
+  assert.deepEqual(cues.map((cue) => cue.startMs), [0, 750])
   assert(cues.every((cue) => cue.endMs > cue.startMs))
   const denseCues = media.groupWordTimings([
     { text: 'One', startMs: 0 }, { text: 'two', startMs: 250 }, { text: 'three', startMs: 500 },
     { text: 'four', startMs: 750 }, { text: 'five', startMs: 1000 }, { text: 'six', startMs: 1250 },
   ], 1600)
-  assert(denseCues.every((cue) => cue.text.split(' ').length <= 3))
+  assert.deepEqual(denseCues.map((cue) => cue.text), ['One two three four five six'])
+  const pacedCues = media.groupWordTimings([
+    { text: 'One', startMs: 0 }, { text: 'two', startMs: 500 }, { text: 'three', startMs: 1000 },
+    { text: 'four', startMs: 1500 }, { text: 'five', startMs: 2000 }, { text: 'six', startMs: 2500 },
+    { text: 'seven', startMs: 3000 },
+  ], 3600)
+  assert.deepEqual(pacedCues.map((cue) => cue.text), ['One two three four five six', 'seven'])
   const subtitles = media.createAssSubtitles(
     'A long opening hook must wrap inside the vertical frame instead of clipping at either edge.',
     'What would you do?',
@@ -130,6 +169,15 @@ function parserAndCaptionVerification() {
   )
   assert.match(subtitles, /WrapStyle: 0/)
   assert.match(subtitles, /Style: Hook,[^\n]+,8,90,90,170,1/)
+  assert.throws(() => media.validateNarrationDuration(40_000, 90), /40 seconds; the 90-second target requires 80-100 seconds/)
+  assert.doesNotThrow(() => media.validateNarrationDuration(80_000, 90))
+  assert.doesNotThrow(() => media.validateNarrationDuration(95_000, 90))
+  assert.throws(() => media.validateNarrationDuration(101_000, 90))
+  assert.equal(media.narrationRateForDuration(95_000, 90), 0)
+  assert.equal(media.narrationRateForDuration(138_000, 90), 3)
+  assert.equal(media.narrationRateForDuration(67_000, 90), -2)
+  assert.equal(media.refinedNarrationRate(0, 54_000, -2, 67_000, 90), -6)
+  assert.equal(media.refinedNarrationRate(0, 138_000, 3, 105_000, 90), 4)
 }
 
 function executionCoreBoundaryVerification() {
@@ -176,9 +224,10 @@ async function realMediaVerification() {
       jobId: 'verify-job', attemptId: 'verify-attempt', formatId: 'reddit-stories', footagePath: source,
       script: {
         hookText: 'This happened fast.',
-        narrationText: 'A short local narration verifies synchronized captions and vertical video rendering.',
+        narrationText: 'A short local narration verifies synchronized captions and vertical video rendering while prerecorded footage is safely cropped, looped, timed, and prepared for final CEO review without changing source records or publishing anything.',
         ctaText: 'What would you do?',
       },
+      targetDurationSeconds: 15,
     }, {
       outputRoot, tempRoot, ffmpegPath, ttsScriptPath,
     })

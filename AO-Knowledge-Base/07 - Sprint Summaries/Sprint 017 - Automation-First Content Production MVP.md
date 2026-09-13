@@ -261,16 +261,18 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 
 ### Verified Result
 
-- Generated real Reddit Stories videos from CEO-entered source stories, requirements, and reusable prerecorded Minecraft footage through Ollama / `qwen2.5:7b`, Windows System.Speech, deterministic ASS captions, and pinned FFmpeg.
+- Generated real Reddit Stories videos from CEO-entered source stories and from a separate topic-only input with requirements and reusable prerecorded Minecraft footage through Ollama / `qwen2.5:7b`, Windows System.Speech, deterministic ASS captions, and pinned FFmpeg.
 - Verified provider-unavailable failure visibility, explicit Local Ollama registration/model enablement, and successful manual retry without automatic retry.
 - Verified protected 1080x1920 H.264/AAC MP4 preview, replay, reveal-in-folder, footage crop/loop/trim, narration, captions, hook/CTA presentation, and no publication or external action.
 - Verified required written revision feedback, no automatic revision execution, separate manual Generate Revision, append-only Versions 1-3, Approve, a separate-job Reject with written reason, persisted review history, and full application restart.
-- CEO QA exposed bounded defects in custom-protocol replay, long-hook wrapping, loose caption grouping, and repeated provider narration. The fixes forward media range headers, enable ASS smart wrapping, use shorter caption groups, instruct against repeated narration, and reject exact repeated narration sentences before rendering.
-- Automated verification after the fixes: TypeScript PASS, Vite production build PASS, deterministic content-engine/media PASS, provider path PASS, UI/state persistence PASS, Windows unpacked package PASS, and packaged FFmpeg/System.Speech PASS. The existing large-chunk warning remains non-blocking.
-- CEO accepted Task 4 QA as PASS. Installed Windows voice quality and provider-generated duration undershooting the approximate target are documented limitations deferred from this bounded QA recovery.
-- Task 4 implementation/QA commit: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
-- Push and repository verification: PASS on `origin/main` with local/remote parity `0/0`.
-- Sprint 017 mission: SATISFIED. Task 4 and Sprint 017 repository closeout are COMPLETE.
+- The reopened acceptance test used only a CEO-entered topic, requirements, footage, and settings. The CEO supplied no script, story, hook, narration, or CTA; AO independently generated the hook, full narration, and CTA before TTS, captions, and rendering.
+- The reopened test exposed a duration defect: a 90-second request initially rendered at about 40 seconds. The fix uses provider-native structured JSON, a bounded sentence-array contract, measured narration-duration validation, and deterministic System.Speech rate calibration. Out-of-range narration fails without a render or automatic provider retry.
+- Caption retesting replaced overly small groups with six-word groups and applies a 350 ms visual lead to final word timing. The CEO accepted the final caption timing and approved an 83-second result for the 90-second target.
+- Automated verification after the reopened fixes: TypeScript PASS, Vite production build PASS, deterministic content-engine/media PASS, real configured-provider duration PASS, UI/state persistence PASS, Windows unpacked package PASS, and packaged FFmpeg/System.Speech PASS. The existing large-chunk warning remains non-blocking.
+- Approval of the topic-only result persisted after a full application stop/restart. No publication or external action occurred. Installed Windows voice quality remains a documented non-production-grade limitation.
+- Original Task 4 implementation/QA commit: `ca860feccf5853b84b12aef6aa2d5c47574c5968`.
+- Reopened acceptance-fix commit and push verification: PENDING.
+- Sprint 017 mission: SATISFIED. Reopened repository closeout is PENDING until the acceptance fix is pushed and verified.
 
 ## Acceptance Criteria
 

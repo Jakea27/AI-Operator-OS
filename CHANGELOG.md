@@ -1,5 +1,12 @@
 # Changelog
 
+## Sprint 017 Task 4 - Topic-Only Acceptance Recovery - 2026-09-13
+
+- Proved real topic-and-requirements-only generation through the configured provider, including provider-created hook, full narration, and CTA.
+- Fixed target-duration enforcement with measured narration validation and bounded System.Speech rate calibration; invalid duration does not render or trigger automatic provider retry.
+- Updated captions to six-word groups with a 350 ms display lead based on CEO timing feedback.
+- CEO approved an 83-second result for the 90-second target and verified approval persistence after a full application restart. Automated/build/package checks pass; repository closeout is pending.
+
 ## Sprint 017 - Final Repository Closeout - 2026-09-13
 
 - Verified and pushed Task 4 commit `ca860feccf5853b84b12aef6aa2d5c47574c5968` after real Windows CEO QA and bounded fixes.
@@ -9,7 +16,7 @@
 ## Sprint 017 Task 4 - Windows Integration and CEO QA - 2026-09-13
 
 - Passed real packaged-Windows CEO QA for the automation-first Reddit Stories workflow, including failure/manual retry, generation, review/revision decisions, protected MP4 playback, persistence, and full restart.
-- Corrected media replay range handling, long-hook wrapping, caption grouping, and exact repeated-narration validation without adding new architecture or automatic behavior.
+- Corrected media replay range handling, long-hook wrapping, initial caption grouping, and exact repeated-narration validation without adding new architecture or automatic behavior. The later topic-only acceptance recovery supersedes the initial caption timing configuration.
 - Post-fix TypeScript, Vite, deterministic, provider, UI/state, Windows packaging, and packaged-runtime checks passed. Repository closeout remains pending.
 
 ## Sprint 017 Task 3 - Repository Closeout - 2026-09-12

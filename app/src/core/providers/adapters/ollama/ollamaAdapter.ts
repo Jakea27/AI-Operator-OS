@@ -871,6 +871,7 @@ export async function executeOllamaPrompt(input: ProviderAdapterPromptExecutionI
       model: input.model.modelName,
       prompt: buildPrompt(input),
       stream: false,
+      ...(input.structuredResponse ? { format: 'json' } : {}),
       options: {
         temperature: input.temperature,
         num_predict: input.maxTokens,

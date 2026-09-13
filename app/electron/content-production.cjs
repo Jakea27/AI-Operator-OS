@@ -121,7 +121,7 @@ async function listSystemVoices(options = {}) {
   return Array.isArray(parsed) ? parsed : []
 }
 
-async function synthesizeNarration({ text, voiceId, attemptDirectory, processKey, options = {} }) {
+async function synthesizeNarration({ text, voiceId, rate = 0, attemptDirectory, processKey, options = {} }) {
   if (typeof text !== 'string' || !text.trim() || text.length > 30_000) throw new Error('Narration text must contain 1 to 30,000 characters.')
   const wavPath = path.join(attemptDirectory, 'narration.wav')
   const timingPath = path.join(attemptDirectory, 'word-timings.json')
@@ -129,7 +129,7 @@ async function synthesizeNarration({ text, voiceId, attemptDirectory, processKey
   const config = {
     text: text.trim(),
     voiceId: typeof voiceId === 'string' ? voiceId.slice(0, 160) : '',
-    rate: 0,
+    rate: Math.max(-10, Math.min(10, Math.round(Number(rate) || 0))),
     volume: 100,
     outputWavPath: wavPath,
     timingJsonPath: timingPath,
@@ -168,7 +168,7 @@ async function readWaveDurationMs(wavPath) {
   return Math.round((dataSize / bytesPerSecond) * 1000)
 }
 
-function groupWordTimings(words, narrationDurationMs, { maxWords = 3, maxCharacters = 24, maxDurationMs = 1400 } = {}) {
+function groupWordTimings(words, narrationDurationMs, { maxWords = 6, maxCharacters = 44, maxDurationMs = 2600, captionLeadMs = 350 } = {}) {
   const normalized = words
     .filter((word) => word && typeof word.text === 'string' && word.text.trim() && Number.isFinite(word.startMs) && word.startMs >= 0)
     .map((word) => ({ text: word.text.trim(), startMs: Math.round(word.startMs) }))
@@ -193,10 +193,12 @@ function groupWordTimings(words, narrationDurationMs, { maxWords = 3, maxCharact
 
   return groups.map((group, index) => {
     const nextStart = groups[index + 1]?.startMs ?? narrationDurationMs
+    const displayStart = Math.max(0, group.startMs - captionLeadMs)
+    const displayEnd = Math.min(narrationDurationMs, nextStart - captionLeadMs - 40)
     return {
       text: group.words.map((word) => word.text).join(' '),
-      startMs: Math.min(group.startMs, narrationDurationMs),
-      endMs: Math.max(group.startMs + 250, Math.min(narrationDurationMs, nextStart - 40)),
+      startMs: Math.min(displayStart, narrationDurationMs),
+      endMs: Math.max(displayStart + 250, displayEnd),
     }
   }).filter((cue) => cue.startMs < narrationDurationMs && cue.endMs > cue.startMs)
 }
@@ -230,6 +232,36 @@ function createAssSubtitles(hookText, ctaText, cues, narrationDurationMs) {
     ...cues.map((cue) => `Dialogue: 1,${assTime(cue.startMs)},${assTime(cue.endMs)},Caption,,0,0,0,,${escapeAssText(cue.text)}`),
     `Dialogue: 2,${assTime(ctaStart)},${assTime(duration)},CTA,,0,0,0,,${escapeAssText(ctaText)}`,
   ].join('\n')}\n`
+}
+
+function narrationDurationBounds(targetDurationSeconds) {
+  const targetMs = targetDurationSeconds * 1000
+  const toleranceMs = Math.min(10_000, Math.max(3_000, targetMs * 0.12))
+  return { targetMs, minimumMs: targetMs - toleranceMs, maximumMs: targetMs + toleranceMs }
+}
+
+function narrationRateForDuration(narrationDurationMs, targetDurationSeconds) {
+  const { targetMs, minimumMs, maximumMs } = narrationDurationBounds(targetDurationSeconds)
+  if (narrationDurationMs >= minimumMs && narrationDurationMs <= maximumMs) return 0
+  return Math.max(-10, Math.min(10, Math.round(Math.log(narrationDurationMs / targetMs) / Math.log(1.15))))
+}
+
+function refinedNarrationRate(previousRate, previousDurationMs, currentRate, currentDurationMs, targetDurationSeconds) {
+  const targetMs = targetDurationSeconds * 1000
+  const durationChangePerRate = (currentDurationMs - previousDurationMs) / (currentRate - previousRate)
+  if (!Number.isFinite(durationChangePerRate) || Math.abs(durationChangePerRate) < 100) {
+    return currentRate + (currentDurationMs < targetMs ? -2 : 2)
+  }
+  return Math.round(currentRate + ((targetMs - currentDurationMs) / durationChangePerRate))
+}
+
+function validateNarrationDuration(narrationDurationMs, targetDurationSeconds) {
+  const { minimumMs, maximumMs } = narrationDurationBounds(targetDurationSeconds)
+  if (narrationDurationMs < minimumMs || narrationDurationMs > maximumMs) {
+    throw new Error(
+      `Generated narration is ${Math.round(narrationDurationMs / 1000)} seconds; the ${targetDurationSeconds}-second target requires ${Math.round(minimumMs / 1000)}-${Math.round(maximumMs / 1000)} seconds. Retry manually to generate a new script.`,
+    )
+  }
 }
 
 function buildFfmpegArguments({ footagePath, narrationPath, outputPath, durationSeconds }) {
@@ -283,6 +315,32 @@ async function renderContentProduction(request, environment, onProgress = () => 
         options: environment,
       })
       durationMs = await readWaveDurationMs(narration.wavPath)
+      let currentRate = 0
+      let adjustedRate = narrationRateForDuration(durationMs, request.targetDurationSeconds ?? 60)
+      for (let adjustment = 0; adjustedRate !== currentRate && adjustment < 2; adjustment += 1) {
+        const previousRate = currentRate
+        const previousDurationMs = durationMs
+        currentRate = Math.max(-10, Math.min(10, adjustedRate))
+        narration = await synthesizeNarration({
+          text: request.script.narrationText,
+          voiceId: request.voiceId,
+          rate: currentRate,
+          attemptDirectory,
+          processKey,
+          options: environment,
+        })
+        durationMs = await readWaveDurationMs(narration.wavPath)
+        const bounds = narrationDurationBounds(request.targetDurationSeconds ?? 60)
+        if (durationMs >= bounds.minimumMs && durationMs <= bounds.maximumMs) break
+        adjustedRate = Math.max(-10, Math.min(10, refinedNarrationRate(
+          previousRate,
+          previousDurationMs,
+          currentRate,
+          durationMs,
+          request.targetDurationSeconds ?? 60,
+        )))
+      }
+      validateNarrationDuration(durationMs, request.targetDurationSeconds ?? 60)
       cues = groupWordTimings(narration.words, durationMs)
       if (!cues.length) throw new Error('Narration word timing could not produce caption cues.')
       const captionsPath = path.join(attemptDirectory, 'captions.ass')
@@ -352,6 +410,9 @@ module.exports = {
   runProcess,
   safeOutputPath,
   synthesizeNarration,
+  narrationRateForDuration,
+  refinedNarrationRate,
+  validateNarrationDuration,
   validateFootagePath,
   validateMediaRequest,
 }

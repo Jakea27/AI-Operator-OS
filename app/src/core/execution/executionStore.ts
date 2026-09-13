@@ -892,7 +892,7 @@ export const executionStore = {
           : isCreativeConceptDevelopment
             ? 'You are AI Operator OS executing one approved local provider request for creative concept development. Return valid JSON only with exactly 4 concept candidates. Do not publish, approve, rank, create blueprints, create work orders, or update final deliverables.'
             : 'You are AI Operator OS executing one approved local provider request. Return only draft content for CEO review. Do not publish, approve, or update final deliverables.',
-        temperature: 0.2,
+        temperature: isContentScriptGeneration ? 0 : 0.2,
         maxTokens: isContentScriptGeneration ? 1800 : isCreativeConceptDevelopment ? 900 : request.blueprintDeliverableName === 'Script' ? 1200 : 240,
         structuredResponse: isContentScriptGeneration,
         metadata: providerExecutionMetadata(working),

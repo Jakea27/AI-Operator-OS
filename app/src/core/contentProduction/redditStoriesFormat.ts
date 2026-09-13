@@ -6,6 +6,25 @@ import type {
 
 const MAX_SOURCE_LENGTH = 20_000
 const MAX_REQUIREMENTS_LENGTH = 4_000
+const MIN_NARRATION_WORDS_PER_SECOND = 2.75
+const MAX_NARRATION_WORDS_PER_SECOND = 3.3
+
+export function narrationWordRange(targetDurationSeconds: number) {
+  return {
+    minimum: Math.ceil(Number((targetDurationSeconds * MIN_NARRATION_WORDS_PER_SECOND).toFixed(6))),
+    maximum: Math.floor(targetDurationSeconds * MAX_NARRATION_WORDS_PER_SECOND),
+  }
+}
+
+function narrationSentencePlan(targetDurationSeconds: number) {
+  const range = narrationWordRange(targetDurationSeconds)
+  const sentenceCount = Math.max(2, Math.ceil(range.minimum / 8))
+  return {
+    sentenceCount,
+    minimumWordsPerSentence: Math.ceil(range.minimum / sentenceCount),
+    maximumWordsPerSentence: Math.floor(range.maximum / sentenceCount),
+  }
+}
 
 function requiredText(value: unknown, fieldName: string) {
   if (typeof value !== 'string' || !value.trim()) {
@@ -49,7 +68,7 @@ function parseJsonObject(responseText: string) {
 
 export function parseRedditStoriesScript(responseText: string): ContentScript {
   const parsed = parseJsonObject(responseText)
-  const permittedKeys = new Set(['hookText', 'narrationText', 'ctaText'])
+  const permittedKeys = new Set(['hookText', 'narrationText', 'narrationSentences', 'ctaText'])
   const extraKeys = Object.keys(parsed).filter((key) => !permittedKeys.has(key))
 
   if (extraKeys.length > 0) {
@@ -57,7 +76,15 @@ export function parseRedditStoriesScript(responseText: string): ContentScript {
   }
 
   const hookText = requiredText(parsed.hookText, 'hookText')
-  const narrationText = requiredText(parsed.narrationText, 'narrationText')
+  if (parsed.narrationText !== undefined && parsed.narrationSentences !== undefined) {
+    throw new Error('Provider response must contain narrationText or narrationSentences, not both.')
+  }
+  if (Array.isArray(parsed.narrationSentences) && parsed.narrationSentences.length === 0) {
+    throw new Error('narrationSentences must contain at least one sentence.')
+  }
+  const narrationText = Array.isArray(parsed.narrationSentences)
+    ? parsed.narrationSentences.map((sentence, index) => requiredText(sentence, `narrationSentences[${index}]`)).join(' ')
+    : requiredText(parsed.narrationText, 'narrationText')
   const ctaText = requiredText(parsed.ctaText, 'ctaText')
   assertNoRepeatedNarrationSentences(narrationText)
   return { hookText, narrationText, ctaText }
@@ -77,9 +104,16 @@ function validateInput(input: ContentProductionInput) {
 
 function buildProviderInstructions(input: ContentProductionInput, revisionInstructions?: string) {
   const target = input.targetDurationSeconds ?? 60
+  const wordRange = narrationWordRange(target)
+  const sentencePlan = narrationSentencePlan(target)
   return [
-    'Create one concise vertical-video narration package for the Reddit Stories content format.',
+    'Create one complete vertical-video narration package for the Reddit Stories content format.',
     `Target spoken duration: approximately ${target} seconds.`,
+    `HARD LENGTH REQUIREMENT: the combined narrationSentences text must contain ${wordRange.minimum}-${wordRange.maximum} words so the spoken narration matches that target.`,
+    `Return narrationSentences as an array of exactly ${sentencePlan.sentenceCount} distinct strings, each containing ${sentencePlan.minimumWordsPerSentence}-${sentencePlan.maximumWordsPerSentence} words.`,
+    'Do not finish early. Count all narrationSentences words before responding and revise them until the combined total is inside the required range. Do not report the word count.',
+    'When the source is only a topic, independently invent a complete story with a setup, escalating events, a turning point, and a clear ending.',
+    'Do not merely summarize or restate the supplied topic.',
     input.style?.trim() ? `Style preference: ${input.style.trim()}` : '',
     '',
     'Source story or topic:',
@@ -91,10 +125,11 @@ function buildProviderInstructions(input: ContentProductionInput, revisionInstru
     revisionInstructions?.trim() ? 'CEO revision instructions:' : '',
     revisionInstructions?.trim() ?? '',
     '',
-    'Return JSON only, with exactly these three string fields:',
-    '{"hookText":"...","narrationText":"...","ctaText":"..."}',
-    'All three fields must be non-empty. Do not add Markdown, analysis, titles, or additional fields.',
-    'Do not repeat any narration sentence. Keep ctaText separate from narrationText.',
+    'Return JSON only, with exactly hookText, narrationSentences, and ctaText:',
+    '{"hookText":"...","narrationSentences":["sentence 1","sentence 2"],"ctaText":"..."}',
+    'hookText and ctaText must be non-empty strings; narrationSentences must contain only non-empty strings. Do not add Markdown, analysis, titles, or additional fields.',
+    'hookText and ctaText are separate from narrationSentences and do not count toward its required word range.',
+    'Do not repeat any narration sentence. Keep ctaText separate from narrationSentences.',
     'Do not publish, approve, create work records, or trigger another action.',
   ].filter((line, index, lines) => line !== '' || lines[index - 1] !== '').join('\n').trim()
 }

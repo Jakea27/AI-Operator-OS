@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 017 - Automation-First Content Production MVP is COMPLETE and repository verified. Packaged Windows CEO QA passed after real generation, bounded QA fixes, review decisions, persistence, and full restart verification. No implementation sprint is active. Sprint 016 Task 4 remains cancelled and its pilot must not be published.
+Sprint 017 - Automation-First Content Production MVP remains mission-satisfied. The reopened Task 4 topic-only CEO acceptance test and bounded fixes pass locally; repository closeout is pending. No implementation sprint is active. Sprint 016 Task 4 remains cancelled and its pilot must not be published.
 
 ## Last Completed Sprint
 
@@ -42,9 +42,10 @@ Sprint 017 - Automation-First Content Production MVP.
 - Approval Queue remains decision owner. Result approvals are deduplicated by result ID; revision feedback is saved without AI execution and a separate CEO action starts the append-only revision attempt.
 - Deterministic UI/state and restart persistence, Task 2 media tests, real provider routing, TypeScript/Vite production build, unpacked Windows packaging, packaged resource execution, desktop startup, and rendered desktop-layout smoke checks PASS.
 - Task 3 added no store, persistence key, provider/execution path, publication/upload, AI footage, automatic retry/revision, legacy deletion, or unrelated system.
-- Sprint 017 Task 4 packaged-Windows CEO QA passed. Real footage and two source stories verified generation, provider failure/manual retry, narration, captions, vertical rendering, preview/replay, reveal-in-folder, manual revision, append-only versions, Approve, Reject, and full restart persistence.
-- Task 4 fixed media replay by forwarding byte-range headers, enabled ASS smart wrapping for long hooks, shortened caption groups for closer speech timing, and rejected exact repeated narration sentences before rendering.
-- The CEO accepted Task 4 QA with two deferred limitations: installed Windows System.Speech voice quality is functional but not production-grade, and provider-generated narration can undershoot the approximate duration target.
+- Sprint 017 Task 4 packaged-Windows CEO QA passed, including a reopened acceptance test proving AO can generate a hook, full narration, and CTA from only a CEO-entered topic, requirements, prerecorded footage, and settings.
+- The reopened test exposed a 90-second request rendering at about 40 seconds. Task 4 now requests structured sentence-array JSON, validates measured narration duration, calibrates System.Speech rate from measured output, and fails out-of-range narration without rendering or automatically retrying the provider.
+- Caption retesting led to six-word caption groups with a 350 ms lead against final System.Speech word timing. The CEO accepted the final 83-second version, approved it, and verified approval persistence after a full stop/restart.
+- Installed Windows System.Speech voice quality remains functional but not production-grade. Duration undershoot is no longer accepted as an unbounded limitation.
 
 - The Dashboard is now treated as the CEO Command Center.
 - The Command Center should answer: "What requires my attention right now?"
@@ -90,7 +91,7 @@ Sprint 017 - Automation-First Content Production MVP.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3`, Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc`, Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd`, and Task 4 implementation/QA commit `ca860feccf5853b84b12aef6aa2d5c47574c5968` are pushed and repository verified. Sprint 017 is complete. Do not publish under the superseded Sprint 016 Task 4 contract.
+- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3`, Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc`, Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd`, and original Task 4 implementation/QA commit `ca860feccf5853b84b12aef6aa2d5c47574c5968` are pushed and repository verified. The reopened Task 4 topic-only acceptance fix is verified locally and awaits commit/push closeout. Do not publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -229,8 +230,8 @@ Sprint 017 - Automation-First Content Production MVP.
 - Task 1 Commit: `304ad17486df539b7efa20b2b360e3a624b22ab3` pushed and verified on `origin/main`.
 - Task 2 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 - Task 3 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
-- Task 4 Status: COMPLETE / CEO QA PASS / BUILD PASS / DOCUMENTATION COMPLETE / REPOSITORY VERIFIED.
-- Sprint 017 Status: COMPLETE / MISSION SATISFIED / REPOSITORY VERIFIED.
+- Task 4 Status: IMPLEMENTATION AND CEO QA PASS / BUILD PASS / DOCUMENTATION UPDATED / REOPENED REPOSITORY CLOSEOUT PENDING.
+- Sprint 017 Status: MISSION SATISFIED / REOPENED REPOSITORY CLOSEOUT PENDING.
 - Next Required Action: define the next sprint scope and first task from the authoritative roadmap; do not activate implementation yet.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
