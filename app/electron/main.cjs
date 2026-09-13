@@ -184,7 +184,7 @@ function registerContentProductionIpc() {
     try {
       const outputFileName = decodeURIComponent(url.pathname.replace(/^\//, ''))
       const outputPath = safeOutputPath(contentOutputRoot(), outputFileName)
-      return net.fetch(pathToFileURL(outputPath).toString())
+      return net.fetch(pathToFileURL(outputPath).toString(), { headers: request.headers })
     } catch {
       return new Response('Not found', { status: 404 })
     }

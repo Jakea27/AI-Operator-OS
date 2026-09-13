@@ -28,15 +28,15 @@ Sprint 017 - Automation-First Content Production MVP
 
 ## Sprint Status
 
-ACTIVE - TASK 3 COMPLETE - REPOSITORY VERIFIED; Task 4 Windows Integration and CEO QA is NOT STARTED.
+ACTIVE - TASK 4 CEO QA PASS; documentation and repository closeout are pending.
 
 ## Current Phase
 
-Sprint 017 Task 4 - Windows Integration and CEO QA - NOT STARTED.
+Sprint 017 Task 4 - Windows Integration and CEO QA - CEO QA PASS / REPOSITORY CLOSEOUT PENDING.
 
 ## Current Task
 
-Begin Sprint 017 Task 4 - Windows Integration and CEO QA against the verified Task 2 engine and Task 3 UI.
+Complete Sprint 017 Task 4 documentation and repository closeout.
 
 ## Last Completed Sprint
 
@@ -56,11 +56,11 @@ AO-012 is Execution Infrastructure and remains separate from AI intelligence. AO
 
 ## Next Required Action
 
-Begin Sprint 017 Task 4 - Windows Integration and CEO QA. Verify real generation, playback, review/revision/failure behavior, persistence, and restart; do not resume Sprint 016 Task 4 or publish the rejected pilot.
+Commit and push the verified Sprint 017 Task 4 fixes and synchronized documentation, then perform final repository verification before closing Sprint 017.
 
 ## Blocking Issues
 
-No implementation blocker is documented. Task 4 requires CEO Windows integration and manual QA.
+None. CEO Windows integration and manual QA passed with documented voice-quality and approximate-duration limitations.
 
 ## Current Branch
 
@@ -68,17 +68,17 @@ main
 
 ## Last QA Result
 
-Sprint 017 Task 3 automated verification PASS. Deterministic tests verified focused UI/review state, approval deduplication, no review-triggered execution, append-only manual revision, decision persistence, and reload reconstruction. A 1440x1000 rendered smoke check showed the expected simple workflow without overflow. Task 4 Windows CEO QA has not started.
+Sprint 017 Task 4 CEO QA PASS. Real packaged-Windows generation verified provider failure/manual retry, script/TTS/captions/footage/rendering, protected preview and replay, reveal-in-folder, manual revision, append-only versions, Approve, Reject, persistence, and full restart. Bounded replay, hook-layout, caption-grouping, and repeated-narration fixes were rebuilt and retested.
 
 ## Last Build Result
 
-Sprint 017 Task 3 `npm run build` PASS with TypeScript and Vite; 2,610 modules transformed in 5.15 seconds. `npm run dist:unpacked` PASS with a final 4.70-second Vite build. The existing large-chunk warning remains non-blocking. Packaged FFmpeg/System.Speech execution and packaged desktop startup PASS.
+Sprint 017 Task 4 post-fix `npm.cmd run build` PASS with TypeScript and Vite; 2,610 modules transformed. Deterministic engine/media, provider, and UI/state verification PASS. `npm.cmd run dist:unpacked` and packaged FFmpeg/System.Speech verification PASS. The existing large-chunk warning remains non-blocking.
 
 
 
 ## Last Updated
 
-2026-09-12
+2026-09-13
 
 ## Sprint 017 Task 1 Architecture Freeze
 
@@ -143,6 +143,19 @@ Sprint 017 Task 3 `npm run build` PASS with TypeScript and Vite; 2,610 modules t
 - Documentation: COMPLETE.
 - Repository closeout: COMPLETE.
 - Task 4 Windows CEO QA: NOT STARTED.
+
+## Sprint 017 Task 4 Windows Integration and CEO QA
+
+- CEO QA: PASS on the packaged Windows application.
+- Real production: PASS with two source stories, reusable prerecorded footage, Ollama script generation, System.Speech narration, ASS captions, and FFmpeg-rendered vertical MP4 output.
+- Failure/retry: PASS; initial missing packaged-app provider metadata produced a visible failure, Local Ollama/model registration was explicit, and manual retry completed without automatic retry.
+- Review: PASS for required written revision feedback, separate manual revision execution, append-only versions, Approve, and separate-job Reject with a persisted reason.
+- Persistence/restart: PASS; approved, changes-requested, and rejected history plus generated MP4 results persisted across full application restart without automatic generation or publication.
+- QA fixes: media byte-range headers are forwarded for replay; ASS smart wrapping contains long hooks; caption groups are shortened for closer narration timing; exact repeated narration sentences are rejected before rendering.
+- Deferred limitations: installed Windows System.Speech voice quality is functional but not production-grade; provider output can undershoot the approximate target duration.
+- Automated post-fix verification: PASS.
+- Documentation: UPDATED.
+- Repository closeout: PENDING.
 
 ## CEO Product Reset - 2026-09-12
 

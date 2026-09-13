@@ -168,7 +168,7 @@ async function readWaveDurationMs(wavPath) {
   return Math.round((dataSize / bytesPerSecond) * 1000)
 }
 
-function groupWordTimings(words, narrationDurationMs, { maxWords = 5, maxCharacters = 34, maxDurationMs = 2200 } = {}) {
+function groupWordTimings(words, narrationDurationMs, { maxWords = 3, maxCharacters = 24, maxDurationMs = 1400 } = {}) {
   const normalized = words
     .filter((word) => word && typeof word.text === 'string' && word.text.trim() && Number.isFinite(word.startMs) && word.startMs >= 0)
     .map((word) => ({ text: word.text.trim(), startMs: Math.round(word.startMs) }))
@@ -219,7 +219,7 @@ function createAssSubtitles(hookText, ctaText, cues, narrationDurationMs) {
   const hookEnd = Math.min(duration, 3000)
   const ctaStart = Math.max(0, duration - 2800)
   return `${[
-    '[Script Info]', 'ScriptType: v4.00+', 'PlayResX: 1080', 'PlayResY: 1920', 'WrapStyle: 2', 'ScaledBorderAndShadow: yes', '',
+    '[Script Info]', 'ScriptType: v4.00+', 'PlayResX: 1080', 'PlayResY: 1920', 'WrapStyle: 0', 'ScaledBorderAndShadow: yes', '',
     '[V4+ Styles]',
     'Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
     'Style: Caption,Arial,74,&H00FFFFFF,&H000000FF,&H00101010,&H78000000,1,0,0,0,100,100,0,0,1,5,1,2,80,80,260,1',

@@ -1,6 +1,6 @@
 # Sprint 017 - Automation-First Content Production MVP
 
-Status: ACTIVE - TASK 3 COMPLETE - REPOSITORY VERIFIED - TASK 4 CEO QA NOT STARTED
+Status: ACTIVE - TASK 4 CEO QA PASS - REPOSITORY CLOSEOUT PENDING
 Owner: Jake Allen  
 Activated: 2026-09-12  
 Timebox: Four development days
@@ -255,9 +255,19 @@ Implement the minimum Create, progress, preview, and Approve/Revise/Reject exper
 
 ## Task 4 - Windows Integration and CEO QA
 
-Status: NOT STARTED.
+Status: CEO QA PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
 
 Verify real generation on the CEO's Windows computer using reusable prerecorded footage. Test multiple topics, revisions, failures, persistence, application restart, and produced MP4 playback.
+
+### Verified Result
+
+- Generated real Reddit Stories videos from CEO-entered source stories, requirements, and reusable prerecorded Minecraft footage through Ollama / `qwen2.5:7b`, Windows System.Speech, deterministic ASS captions, and pinned FFmpeg.
+- Verified provider-unavailable failure visibility, explicit Local Ollama registration/model enablement, and successful manual retry without automatic retry.
+- Verified protected 1080x1920 H.264/AAC MP4 preview, replay, reveal-in-folder, footage crop/loop/trim, narration, captions, hook/CTA presentation, and no publication or external action.
+- Verified required written revision feedback, no automatic revision execution, separate manual Generate Revision, append-only Versions 1-3, Approve, a separate-job Reject with written reason, persisted review history, and full application restart.
+- CEO QA exposed bounded defects in custom-protocol replay, long-hook wrapping, loose caption grouping, and repeated provider narration. The fixes forward media range headers, enable ASS smart wrapping, use shorter caption groups, instruct against repeated narration, and reject exact repeated narration sentences before rendering.
+- Automated verification after the fixes: TypeScript PASS, Vite production build PASS, deterministic content-engine/media PASS, provider path PASS, UI/state persistence PASS, Windows unpacked package PASS, and packaged FFmpeg/System.Speech PASS. The existing large-chunk warning remains non-blocking.
+- CEO accepted Task 4 QA as PASS. Installed Windows voice quality and provider-generated duration undershooting the approximate target are documented limitations deferred from this bounded QA recovery.
 
 ## Acceptance Criteria
 
@@ -291,4 +301,4 @@ Verify real generation on the CEO's Windows computer using reusable prerecorded 
 
 ## Next Required Action
 
-Begin Task 4 - Windows Integration and CEO QA on the CEO's Windows computer. Verify real generation, playback, review decisions, revision/failure behavior, persistence, and application restart without claiming untested cases.
+Complete Task 4 documentation and repository closeout, then evaluate Sprint 017 completion. Do not begin another sprint or publish content during closeout.

@@ -15,6 +15,7 @@ const require = createRequire(import.meta.url)
 const media = require('../electron/content-production.cjs') as {
   assertInside(root: string, candidate: string): string
   buildFfmpegArguments(input: Record<string, unknown>): string[]
+  createAssSubtitles(hookText: string, ctaText: string, cues: Array<{ text: string; startMs: number; endMs: number }>, duration: number): string
   groupWordTimings(words: Array<{ text: string; startMs: number }>, duration: number): Array<{ text: string; startMs: number; endMs: number }>
   listSystemVoices(environment: Record<string, unknown>): Promise<Array<{ id: string }>>
   renderContentProduction(request: Record<string, unknown>, environment: Record<string, unknown>): Promise<Record<string, unknown>>
@@ -104,6 +105,7 @@ function parserAndCaptionVerification() {
   for (const invalid of [
     '', '{bad json}', JSON.stringify({ hookText: 'Hook', narrationText: 'Story' }),
     JSON.stringify({ ...expected, extra: 'not allowed' }), `Explanation\n${JSON.stringify(expected)}`,
+    JSON.stringify({ ...expected, narrationText: 'What was he missing? What was he missing?' }),
   ]) assert.throws(() => parseRedditStoriesScript(invalid))
   assert.equal(redditStoriesFormat.validateInput({
     topicOrSourceStory: '', requirements: '', footage: { displayName: '', sourcePath: '', extension: '', selectedAt: '' },
@@ -115,6 +117,19 @@ function parserAndCaptionVerification() {
   ], 2200)
   assert.deepEqual(cues.map((cue) => cue.text), ['One short sentence.', 'Next caption'])
   assert(cues.every((cue) => cue.endMs > cue.startMs))
+  const denseCues = media.groupWordTimings([
+    { text: 'One', startMs: 0 }, { text: 'two', startMs: 250 }, { text: 'three', startMs: 500 },
+    { text: 'four', startMs: 750 }, { text: 'five', startMs: 1000 }, { text: 'six', startMs: 1250 },
+  ], 1600)
+  assert(denseCues.every((cue) => cue.text.split(' ').length <= 3))
+  const subtitles = media.createAssSubtitles(
+    'A long opening hook must wrap inside the vertical frame instead of clipping at either edge.',
+    'What would you do?',
+    cues,
+    2200,
+  )
+  assert.match(subtitles, /WrapStyle: 0/)
+  assert.match(subtitles, /Style: Hook,[^\n]+,8,90,90,170,1/)
 }
 
 function executionCoreBoundaryVerification() {

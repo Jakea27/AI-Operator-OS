@@ -8,7 +8,7 @@ It is not a sprint plan, product roadmap, or design philosophy document.
 
 ## Current Build Status
 
-Sprint 017 Task 3 production build and Windows package PASS. `npm run build` completed TypeScript and Vite with 2,610 modules in 5.15 seconds; `npm run dist:unpacked` repeated the build in 4.70 seconds. The existing large-chunk warning remains non-blocking. Packaged FFmpeg/System.Speech execution and packaged desktop startup also passed.
+Sprint 017 Task 4 post-fix production build and Windows package PASS. TypeScript, Vite, deterministic engine/media, provider, UI/state persistence, unpacked packaging, and packaged FFmpeg/System.Speech checks passed. The existing large-chunk warning remains non-blocking.
 
 Command used:
 
@@ -22,15 +22,15 @@ Command used:
 
 ## Current Status
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1-3 are complete and repository verified. Task 4 Windows Integration and CEO QA is not started. Sprint 016 stopped and closed after the Task 3 pilot; its Task 4 publication and Task 5 closeout are cancelled.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE. Tasks 1-3 are complete and repository verified. Task 4 Windows Integration and CEO QA passed; documentation and repository closeout are pending.
 
 ## Next Phase
 
-Begin Task 4 - Windows Integration and CEO QA against the verified Task 2 engine and Task 3 UI.
+Complete Task 4 documentation and repository closeout, then evaluate Sprint 017 completion.
 
 ## Sprint 017 Implementation Status
 
-Sprint 017 Task 3 application implementation, automated verification, documentation, commit, push, and repository closeout are COMPLETE. Task 4 CEO QA is NOT STARTED.
+Sprint 017 Tasks 1-3 are COMPLETE and repository verified. Task 4 CEO QA is PASS with bounded replay, hook-layout, caption-grouping, and repeated-narration fixes verified; repository closeout is pending.
 
 Required MVP input:
 - topic or source story;
@@ -139,7 +139,9 @@ Task 3 implementation/documentation checkpoint: `d4124ac85ec80ac3b628615befbc2c4
 Task 3 documentation: COMPLETE.
 Task 3 push and synchronization verification: PASS - commit verified on `origin/main` with local/remote parity `0/0`.
 Task 3 repository closeout: COMPLETE.
-Task 4 Windows Integration and CEO QA: NOT STARTED.
+Task 4 Windows Integration and CEO QA: CEO QA PASS - BUILD/PACKAGE PASS - REPOSITORY CLOSEOUT PENDING.
+
+Task 4 verified real packaged-Windows generation from two source stories and reusable prerecorded footage. Provider failure/manual retry, script generation, System.Speech narration, ASS captions, footage crop/loop/trim, protected MP4 preview/replay, reveal-in-folder, revision, append-only versions, Approve, Reject, persistence, and full restart passed. The CEO accepted QA with installed voice quality and approximate-duration undershoot deferred as limitations.
 
 ## Sprint 016 Implementation Status
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## Sprint 017 Task 4 - Windows Integration and CEO QA - 2026-09-13
+
+- Passed real packaged-Windows CEO QA for the automation-first Reddit Stories workflow, including failure/manual retry, generation, review/revision decisions, protected MP4 playback, persistence, and full restart.
+- Corrected media replay range handling, long-hook wrapping, caption grouping, and exact repeated-narration validation without adding new architecture or automatic behavior.
+- Post-fix TypeScript, Vite, deterministic, provider, UI/state, Windows packaging, and packaged-runtime checks passed. Repository closeout remains pending.
+
 ## Sprint 017 Task 3 - Repository Closeout - 2026-09-12
 
 - Verified Sprint 017 Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd` on `origin/main` at local/remote parity `0/0`.

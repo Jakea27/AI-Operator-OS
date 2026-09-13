@@ -14,6 +14,16 @@ function requiredText(value: unknown, fieldName: string) {
   return value.trim()
 }
 
+function assertNoRepeatedNarrationSentences(narrationText: string) {
+  const sentences = narrationText
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+  if (new Set(sentences).size !== sentences.length) {
+    throw new Error('narrationText must not repeat the same sentence.')
+  }
+}
+
 function parseJsonObject(responseText: string) {
   const trimmed = responseText.trim()
   const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i)
@@ -46,11 +56,11 @@ export function parseRedditStoriesScript(responseText: string): ContentScript {
     throw new Error(`Provider response contains unsupported fields: ${extraKeys.join(', ')}.`)
   }
 
-  return {
-    hookText: requiredText(parsed.hookText, 'hookText'),
-    narrationText: requiredText(parsed.narrationText, 'narrationText'),
-    ctaText: requiredText(parsed.ctaText, 'ctaText'),
-  }
+  const hookText = requiredText(parsed.hookText, 'hookText')
+  const narrationText = requiredText(parsed.narrationText, 'narrationText')
+  const ctaText = requiredText(parsed.ctaText, 'ctaText')
+  assertNoRepeatedNarrationSentences(narrationText)
+  return { hookText, narrationText, ctaText }
 }
 
 function validateInput(input: ContentProductionInput) {
@@ -84,6 +94,7 @@ function buildProviderInstructions(input: ContentProductionInput, revisionInstru
     'Return JSON only, with exactly these three string fields:',
     '{"hookText":"...","narrationText":"...","ctaText":"..."}',
     'All three fields must be non-empty. Do not add Markdown, analysis, titles, or additional fields.',
+    'Do not repeat any narration sentence. Keep ctaText separate from narrationText.',
     'Do not publish, approve, create work records, or trigger another action.',
   ].filter((line, index, lines) => line !== '' || lines[index - 1] !== '').join('\n').trim()
 }

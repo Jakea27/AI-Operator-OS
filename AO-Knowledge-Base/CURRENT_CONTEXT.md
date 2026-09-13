@@ -8,7 +8,7 @@ It should allow a brand-new AI operator to understand the project within five mi
 
 ## Current Focus
 
-Sprint 017 - Automation-First Content Production MVP is ACTIVE. The CEO stopped Sprint 016 after its Task 3 pilot proved the technical record/approval workflow but rejected the manual production design, excessive visible Work Items, and confusing interface. Sprint 016 Task 4 is cancelled and the pilot must not be published.
+Sprint 017 - Automation-First Content Production MVP is ACTIVE at Task 4 repository closeout. Packaged Windows CEO QA passed after real generation, bounded QA fixes, review decisions, persistence, and full restart verification. Sprint 016 Task 4 remains cancelled and its pilot must not be published.
 
 ## Last Completed Sprint
 
@@ -42,6 +42,9 @@ Sprint 015 - Multi-Business Management.
 - Approval Queue remains decision owner. Result approvals are deduplicated by result ID; revision feedback is saved without AI execution and a separate CEO action starts the append-only revision attempt.
 - Deterministic UI/state and restart persistence, Task 2 media tests, real provider routing, TypeScript/Vite production build, unpacked Windows packaging, packaged resource execution, desktop startup, and rendered desktop-layout smoke checks PASS.
 - Task 3 added no store, persistence key, provider/execution path, publication/upload, AI footage, automatic retry/revision, legacy deletion, or unrelated system.
+- Sprint 017 Task 4 packaged-Windows CEO QA passed. Real footage and two source stories verified generation, provider failure/manual retry, narration, captions, vertical rendering, preview/replay, reveal-in-folder, manual revision, append-only versions, Approve, Reject, and full restart persistence.
+- Task 4 fixed media replay by forwarding byte-range headers, enabled ASS smart wrapping for long hooks, shortened caption groups for closer speech timing, and rejected exact repeated narration sentences before rendering.
+- The CEO accepted Task 4 QA with two deferred limitations: installed Windows System.Speech voice quality is functional but not production-grade, and provider-generated narration can undershoot the approximate duration target.
 
 - The Dashboard is now treated as the CEO Command Center.
 - The Command Center should answer: "What requires my attention right now?"
@@ -87,7 +90,7 @@ Sprint 015 - Multi-Business Management.
 - Keep the generated Startup Bundle as a fallback transport artifact, not the authoritative source.
 - Maintain repository checkpoint metadata only in Active Project State.
 - Use `AO-Knowledge-Base/MASTER_PLAN.md` as the source of truth for long-term strategy, roadmap evolution, and major CEO-level planning decisions.
-- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3`, Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc`, and Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd` are pushed and repository verified. Task 4 Windows CEO QA is not started. Do not implement or publish under the superseded Sprint 016 Task 4 contract.
+- Sprint 017 Task 1 architecture/documentation commit `304ad17486df539b7efa20b2b360e3a624b22ab3`, Task 2 implementation/documentation commit `0cc6f771ec2eb4531707cbcb4321a6c8311c01cc`, and Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd` are pushed and repository verified. Task 4 CEO QA passed and awaits repository closeout. Do not publish under the superseded Sprint 016 Task 4 contract.
 - Preserve Task 4 results: Command Center and Business Manager consume the same Task 2 attention result and therefore share qualification, ownership, counting, ordering, and navigation semantics.
 - Preserve the Task 2 shared attention derivation as read-only; neither integrated view owns or persists derived attention.
 - Sprint 015 Task 5 CEO QA and repository closeout are complete.
@@ -221,13 +224,13 @@ Sprint 015 - Multi-Business Management.
 - Task 3 Implementation Commit: `5d4b4ff823bf56251086cd660e5e48734f30fd8f`.
 - Task 3 Initializer Fix / Final Application Source Checkpoint: `8e2f8c2a022cc6f8fa3eeae98b55377234d3f753`.
 - Task 3 Verification: build PASS; real 44.97-second 1080p 9:16 asset produced; 11/11 QA PASS; final CEO approval APPROVED; version locked; restart persistence PASS.
-- Current Task: Sprint 017 Task 4 - Windows Integration and CEO QA - NOT STARTED.
+- Current Task: Sprint 017 Task 4 - Windows Integration and CEO QA - CEO QA PASS / REPOSITORY CLOSEOUT PENDING.
 - Task 1 Status: COMPLETE - ARCHITECTURE FREEZE PASS - REPOSITORY VERIFIED - APPLICATION IMPLEMENTATION NOT PERFORMED.
 - Task 1 Commit: `304ad17486df539b7efa20b2b360e3a624b22ab3` pushed and verified on `origin/main`.
 - Task 2 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
 - Task 3 Status: COMPLETE - AUTOMATED VERIFICATION PASS - BUILD/PACKAGE PASS - REPOSITORY VERIFIED.
-- Task 4 Status: NOT STARTED.
-- Next Required Action: begin Task 4 - Windows Integration and CEO QA against the verified engine and focused UI.
+- Task 4 Status: CEO QA PASS / BUILD PASS / DOCUMENTATION UPDATED / REPOSITORY CLOSEOUT PENDING.
+- Next Required Action: commit and push Task 4 fixes and continuity documentation, verify repository synchronization, then close Sprint 017.
 - Broad B2B customer management, automated social publishing, automated analytics ingestion, trading, and broad external-integration infrastructure remain explicitly out of scope.
 
 ## Historical Current Handoff

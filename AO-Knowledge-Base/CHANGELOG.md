@@ -1,5 +1,12 @@
 # AO Knowledge Base Changelog
 
+## Sprint 017 Task 4 - Windows Integration and CEO QA - 2026-09-13
+
+- Completed real packaged-Windows CEO QA using two source stories and reusable prerecorded footage; verified provider failure/manual retry, script generation, System.Speech narration, ASS captions, FFmpeg rendering, preview/replay, reveal-in-folder, revision, append-only versions, Approve, Reject, persistence, and full restart.
+- Fixed protected-media replay by forwarding byte-range headers, enabled ASS smart wrapping for long hooks, shortened caption groups for closer speech timing, and rejected exact repeated narration sentences before rendering.
+- TypeScript, Vite, deterministic engine/media, provider, UI/state persistence, unpacked Windows package, and packaged FFmpeg/System.Speech verification passed. Existing large-chunk warning remains non-blocking.
+- CEO QA PASS. Windows voice quality and provider duration undershoot remain documented limitations; no publishing, AI footage, automatic retry, or unrelated feature was added. Repository closeout is pending.
+
 ## Sprint 017 Task 3 - Repository Closeout - 2026-09-12
 
 - Verified Task 3 implementation/documentation commit `d4124ac85ec80ac3b628615befbc2c4b8e8203fd` on `origin/main` with local/remote parity `0/0`.
